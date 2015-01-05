@@ -8,11 +8,15 @@ import dbtarzan.messages.{QueryRows, QueryForeignKeys, TableId}
 class Table private (description : TableDescription, columns : Fields, foreignConstraint : Option[ForeignKeyCriteria], additionalConstraint : Option[Constraint]) {
 	val sql = buildSql()
 
-	def buildSql() : String = { 
+	def buildSql() : String = {
+		def buildConstraints(constraints : List[String]) = if(!constraints.isEmpty)   
+			constraints.mkString(" WHERE (\n", ") AND (\n", ")")
+		else 
+			""
+
 		var foreignClosure = foreignConstraint.map(ForeignKeyTextBuilder.buildClause(_))
-		"select * from " + description.name +
-			foreignClosure.map(" WHERE (\n"+_+")").getOrElse("") +
-			additionalConstraint.map(" AND (\n"+_.text+")").getOrElse("")
+		val constraints = List(foreignClosure, additionalConstraint.map(_.text)).flatten
+		"select * from " + description.name + buildConstraints(constraints)
 	}
 
 
