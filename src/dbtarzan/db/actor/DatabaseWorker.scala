@@ -74,26 +74,34 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 		}
 	}
 
+	private def handleErr[R](r: => R): Unit = 
+	    try { r } catch {
+	      case e : Exception => guiActor ! Error(e)
+	    }
+	  
+
 	private def nextRow(rs : ResultSet, columnCount : Int) : Row = 
 		Row(Range(1, columnCount+1).map(i => rs.getString(i)).toList)
 
   def receive = {
-    case qry : QueryRows =>  query(qry, rows => guiActor ! ResponseRows(qry.id, rows))
+	    case qry : QueryRows => handleErr(
+	    		query(qry, rows => guiActor ! ResponseRows(qry.id, rows))
+	    	)
+	    case qry: QueryTables => handleErr(
+	    		tableNames(names => guiActor ! ResponseTables(qry.id, names))
+			)
 
-    case qry: QueryTables => {
-    		tableNames(names => guiActor ! ResponseTables(qry.id, names))
-			println("tableNames sent")
-		}
+	    case qry : QueryColumns => handleErr( 
+	    		columnNames(qry.tableName, columns => guiActor ! ResponseColumns(qry.id, qry.tableName, columns))
+	    	)
 
-    case qry : QueryColumns => { 
-    		columnNames(qry.tableName, columns => guiActor ! ResponseColumns(qry.id, qry.tableName, columns))
-    	}			
+	    case qry : QueryColumnsFollow => handleErr(
+	    		columnNames(qry.tableName, columns => guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columns))
+	    	)		
 
-    case qry : QueryColumnsFollow => { 
-    		columnNames(qry.tableName, columns => guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columns))
-    	}			
-
-    case qry: QueryForeignKeys => 
-    	guiActor ! ResponseForeignKeys(qry.id, foreignKeys(qry))
+	    case qry: QueryForeignKeys => handleErr(
+	    	guiActor ! ResponseForeignKeys(qry.id, foreignKeys(qry))
+	    	)    	
+    
   }
 }

@@ -7,8 +7,6 @@ object ResourceManagement {
 	{
 	  try {
 	    block(resource)
-	  } catch {
-	  	case e: Exception => println("exception caught: " + e);
 	  } finally {
 	    if (resource != null) resource.close()
 	  }

@@ -21,3 +21,5 @@ case class ResponseColumns(id: DatabaseId, tableName : String, columns : Fields)
 case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
 
 case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields)
+
+case class Error(ex : Exception)

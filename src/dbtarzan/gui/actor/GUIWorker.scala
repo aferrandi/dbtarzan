@@ -1,11 +1,11 @@
 package dbtarzan.gui.actor
 
 import akka.actor.Actor
-import dbtarzan.gui.TDatabases
+import dbtarzan.gui.{ TDatabases, TErrors }
 import dbtarzan.messages._
 import scalafx.application.Platform
 
-class GUIWorker(databases : TDatabases) extends Actor {
+class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
   def receive = {
     case rsp : ResponseRows =>  Platform.runLater { databases.addRows(rsp) }
 
@@ -17,6 +17,7 @@ class GUIWorker(databases : TDatabases) extends Actor {
 	
     case rsp: ResponseColumnsFollow => Platform.runLater { databases.addColumnsFollow(rsp) }
 
+    case err : Error => Platform.runLater { errors.addError(err) }
 	}
 
 }
