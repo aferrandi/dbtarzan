@@ -21,6 +21,7 @@ import akka.actor.ActorRef
 import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.messages.QueryTables
 
+
 /**
   Main class, containing everything
 */
@@ -31,7 +32,6 @@ object Main extends JFXApp {
   val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, errorList)).withDispatcher("my-pinned-dispatcher"), "guiworker")
   val databaseList = new DatabaseList(guiActor)
   databaseList.onDatabaseSelected( { case (databaseName, dbActor) => addDatabase(databaseName, dbActor) })
-
   val screenBounds = Screen.primary.visualBounds
   stage = buildStage()
 
@@ -43,24 +43,33 @@ object Main extends JFXApp {
   private def buildDatabaseSplitPane() = new SplitPane {
       items.addAll(JFXUtil.withTitle(databaseList.list, "Databases"), databaseTabs.tabs)
       dividerPositions = 0.2
+      SplitPane.setResizableWithParent(databaseList.list, false)
     }
   private def mainSplitPane() = new SplitPane {
         orientation() =  Orientation.VERTICAL
         items.addAll(buildDatabaseSplitPane(), errorList.list)
         dividerPositions = 0.85
+        SplitPane.setResizableWithParent(errorList.list, false)
       }
+  
+  private def closeApp() : Unit = {
+      println("Shutting down actors")
+      system.shutdown()
+      println("application exit")
+      scalafx.application.Platform.exit()
+      System.exit(0)  
+  }
+
+  private def appIcon() = 
+    new Image(getClass().getResourceAsStream("monkey-face-cartoon.png"))
 
   def buildStage() = new PrimaryStage {
     title = "DbTarzan"
-    icons.add(new Image(getClass().getResourceAsStream("monkey-face-cartoon.png")))
+    icons.add(appIcon())
     scene = new Scene(screenBounds.width / 2, screenBounds.height / 2 ) {
-      root = mainSplitPane()
-      onCloseRequest = handle {
-        println("Stage is closing")
-        system.shutdown()
-        System.exit(0)
+        root = mainSplitPane()
+        onCloseRequest = handle { closeApp() }
       }
-    }
   }
 }
 

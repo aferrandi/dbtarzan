@@ -26,7 +26,6 @@ class JFXRowFromRow(selected : SelectedRows) {
 	private def values(row : Row, columnNames: List[Field]) = {
 		if(row.values.size != columnNames.size)
 			throw new Exception("column sizes "+columnNames+" <> row cells size "+row.values)
-		println("Row:"+row)
 		row.values.zipWithIndex.map({ case (value, i) => valueToProperty(columnNames(i), value)})
 	}
 

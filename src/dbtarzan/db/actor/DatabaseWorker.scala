@@ -56,8 +56,7 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	  		val rs = statement.executeQuery(qry.sql)
 	  		val meta = rs.getMetaData()
 	  		val columnCount = meta.getColumnCount()
-	  		println("Column count:"+columnCount)
-	  		println("Rows to read :"+qry.maxRows)
+	  		println("Column count:"+columnCount+". Rows to read :"+qry.maxRows)
 	  		var rows = Vector.empty[Row]
 	  		var i = 0
 	  		while(rs.next() && i < qry.maxRows) {
@@ -79,6 +78,10 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	      case e : Exception => guiActor ! Error(e)
 	    }
 	  
+	override def postStop(): Unit = {
+		println("connection stop")
+		connection.close()
+	}
 
 	private def nextRow(rs : ResultSet, columnCount : Int) : Row = 
 		Row(Range(1, columnCount+1).map(i => rs.getString(i)).toList)
@@ -90,17 +93,14 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	    case qry: QueryTables => handleErr(
 	    		tableNames(names => guiActor ! ResponseTables(qry.id, names))
 			)
-
 	    case qry : QueryColumns => handleErr( 
 	    		columnNames(qry.tableName, columns => guiActor ! ResponseColumns(qry.id, qry.tableName, columns))
 	    	)
-
 	    case qry : QueryColumnsFollow => handleErr(
 	    		columnNames(qry.tableName, columns => guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columns))
 	    	)		
-
 	    case qry: QueryForeignKeys => handleErr(
-	    	guiActor ! ResponseForeignKeys(qry.id, foreignKeys(qry))
+	    		guiActor ! ResponseForeignKeys(qry.id, foreignKeys(qry))
 	    	)    	
     
   }

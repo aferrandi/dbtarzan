@@ -16,14 +16,9 @@ class Database (dbActor : ActorRef, databaseName : String){
   val id = IDGenerator.databaseId(databaseName)
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(id, tableName))
   val pane = new SplitPane {
-        id = "page-splitpane"
-        maxHeight = Double.MaxValue
-        maxWidth = Double.MaxValue
         items.addAll(JFXUtil.withTitle(tableList.list, "Tables"), tableTabs.tabs)
         dividerPositions = 0.20
   }
-  SplitPane.setResizableWithParent(tableList.list, false)
-
   def getDatabaseName = databaseName
   def addTableNames(names : TableNames) : Unit = tableList.addTableNames(names)    
 }

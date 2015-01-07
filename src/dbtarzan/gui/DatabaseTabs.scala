@@ -16,7 +16,9 @@ class DatabaseTabs() extends TDatabases {
   def addDatabase(database : Database) : Unit = {
           val databaseName = database.getDatabaseName 	
 	  			println("add database tab for "+databaseName)
-	  			tabs += buildTab(database)
+          val tab = buildTab(database)
+	  			tabs += tab
+          tabs.selectionModel().select(tab)
           mapDatabase += databaseName -> database
   	}
 

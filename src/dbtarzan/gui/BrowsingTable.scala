@@ -35,6 +35,7 @@ class BrowsingTable(dbActor : ActorRef, dbTable : dbtarzan.db.Table, databaseNam
         maxWidth = Double.MaxValue
         items.addAll(table.table, JFXUtil.withTitle(foreignKeyList.list, "Foreign keys"))
         dividerPositions = 0.8
+        SplitPane.setResizableWithParent(foreignKeyList.list, false)
     }
 
   def onTextEntered(useTable : dbtarzan.db.Table => Unit) : Unit =
