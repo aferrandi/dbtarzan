@@ -15,10 +15,12 @@ class BrowsingTable(dbActor : ActorRef, dbTable : dbtarzan.db.Table, databaseNam
   val id = IDGenerator.tableId(databaseName, dbTable.tableDescription.name)
   val table = new Table(dbActor, id, dbTable)
   val queryText = new QueryText()
+  val progressBar = new TableProgressBar()
 
   val layout = new BorderPane {
     top = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
     center = buildSplitPane()
+    bottom =  progressBar.bar
   }
     foreignKeyList.onForeignKeySelected(key => {
       println("Selected "+key)
@@ -44,7 +46,14 @@ class BrowsingTable(dbActor : ActorRef, dbTable : dbtarzan.db.Table, databaseNam
       useTable(tableWithConstraints)
   })    
 
-  def addRows(rows : ResponseRows) : Unit  = table.addRows(rows.rows)
-  def addForeignKeys(keys : ResponseForeignKeys) : Unit = foreignKeyList.addForeignKeys(keys.keys)
+  def addRows(rows : ResponseRows) : Unit  = { 
+    table.addRows(rows.rows)
+    progressBar.receivedRows()
+  }
+
+  def addForeignKeys(keys : ResponseForeignKeys) : Unit = {
+    foreignKeyList.addForeignKeys(keys.keys)
+    progressBar.receivedForeignKeys()
+  }
 
 }

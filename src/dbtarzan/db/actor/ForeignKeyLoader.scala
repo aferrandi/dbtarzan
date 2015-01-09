@@ -3,6 +3,7 @@ package dbtarzan.db.actor
 import java.sql.{Connection, ResultSet}
 import scala.collection.mutable.ListBuffer
 import dbtarzan.db.{ ForeignKey, ForeignKeys, FieldsOnTable }
+import dbtarzan.db.util.ResourceManagement.using
 
 class ForeignKeyLoader(connection : java.sql.Connection) {
 	case class ForeignKeyKey(name: String, fromTable : String, toTable : String)
@@ -49,15 +50,16 @@ class ForeignKeyLoader(connection : java.sql.Connection) {
 	/**
 		All the foreign keys from the table and TO the table (used in reverse order)
 	*/
-	def foreignKeys(tableName : String, schema: Option[String]) : ForeignKeys = {
+	def foreignKeys(tableName : String, schema: Option[String], useResult : ForeignKeys => Unit) : Unit = {
 		var meta = connection.getMetaData()
-		var rsImported = meta.getImportedKeys(null, schema.orNull, tableName)
-		var rsExported = meta.getExportedKeys(null, schema.orNull, tableName)
-		val keysImported = rsToForeignKeys(rsImported) 
-		val keysExported = rsToForeignKeys(rsExported).map(turnForeignKey(_)) 
-		println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
-		val keys = keysImported ++ keysExported 
-
-		ForeignKeys(keys)
+		using(meta.getImportedKeys(null, schema.orNull, tableName)) { rs =>
+			val keysImported = rsToForeignKeys(rs) 
+			using(meta.getExportedKeys(null, schema.orNull, tableName)) { rs =>
+				val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
+				println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
+				val keys = keysImported ++ keysExported
+				useResult(ForeignKeys(keys))
+			} 
+		}
 	}
 }

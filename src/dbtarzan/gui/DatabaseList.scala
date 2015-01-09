@@ -8,6 +8,7 @@ import dbtarzan.config.{ Config, ConfigReader }
 import akka.actor.ActorRef
 import dbtarzan.gui.util.JFXUtil
 import scalafx.scene.control.SplitPane
+import dbtarzan.db.ConnectionBuilder
 
 /**
 	The list of database to choose from
@@ -21,8 +22,9 @@ class DatabaseList(guiActor : ActorRef) {
 
   def onDatabaseSelected(use : (String, ActorRef) => Unit) : Unit = 
       JFXUtil.onAction(list, { selectedDatabase : String => 
-        println("Selected "+selectedDatabase)      
-        val dbActor = config.connect(selectedDatabase, guiActor).get
-        use(selectedDatabase, dbActor)
+        println("Selected "+selectedDatabase)
+        val optData = config.connect(selectedDatabase)      
+        val oldDbActor = optData.map(data => ConnectionBuilder.build(data, guiActor))
+        oldDbActor.foreach(dbActor => use(selectedDatabase, dbActor))
       })
 }

@@ -37,8 +37,9 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 		}
 	}
 
-	def foreignKeys(qry : QueryForeignKeys) : ForeignKeys = 
-		new ForeignKeyLoader(connection).foreignKeys(qry.id.tableName, data.schema)
+	def foreignKeys(qry : QueryForeignKeys, useResult : ForeignKeys => Unit) : Unit
+	 = 
+		new ForeignKeyLoader(connection).foreignKeys(qry.id.tableName, data.schema, useResult)
 
 
 	private def toType(sqlType : Int) : Option[FieldType] = 
@@ -67,8 +68,7 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	  			}
 	  			i += 1
 	  		}
-	  		if(!rows.isEmpty) 
-	  			use(Rows(rows.toList))
+	  		use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
 	  		println("Query terminated")
 		}
 	}
@@ -100,7 +100,7 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	    		columnNames(qry.tableName, columns => guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columns))
 	    	)		
 	    case qry: QueryForeignKeys => handleErr(
-	    		guiActor ! ResponseForeignKeys(qry.id, foreignKeys(qry))
+	    		foreignKeys(qry, keys => guiActor ! ResponseForeignKeys(qry.id, keys))
 	    	)    	
     
   }
