@@ -17,6 +17,8 @@ class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
 	
     case rsp: ResponseColumnsFollow => Platform.runLater { databases.addColumnsFollow(rsp) }
 
+    case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 
+
     case err : Error => Platform.runLater { errors.addError(err) }
 	}
 

@@ -15,11 +15,14 @@ import scalafx.Includes._
 import scala.util.{Try, Success, Failure}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.{ Config, ConfigReader }
+import dbtarzan.db.ConnectionBuilder
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.actor.ActorRef
 import dbtarzan.gui.actor.GUIWorker
+import dbtarzan.config.actor.ConfigWorker
 import dbtarzan.messages.QueryTables
+import dbtarzan.messages.QueryDatabase
 
 
 /**
@@ -29,17 +32,14 @@ object Main extends JFXApp {
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs()
   val errorList = new ErrorList()
+  val config = new Config(ConfigReader.read(new File("connections.config")))
   val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, errorList)).withDispatcher("my-pinned-dispatcher"), "guiworker")
-  val databaseList = new DatabaseList(guiActor)
-  databaseList.onDatabaseSelected( { case (databaseName, dbActor) => addDatabase(databaseName, dbActor) })
+  val configActor = system.actorOf(Props(new ConfigWorker(config, guiActor)).withDispatcher("my-pinned-dispatcher"), "configworker")
+  val databaseList = new DatabaseList(config.connections)
+  databaseList.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
   val screenBounds = Screen.primary.visualBounds
   stage = buildStage()
 
-  def addDatabase(databaseName : String, dbActor : ActorRef ) : Unit = {
-    val database = new Database(dbActor, databaseName)
-    databaseTabs.addDatabase(database)
-    dbActor ! QueryTables(database.id)
-  }
   private def buildDatabaseSplitPane() = new SplitPane {
       items.addAll(JFXUtil.withTitle(databaseList.list, "Databases"), databaseTabs.tabs)
       dividerPositions = 0.2

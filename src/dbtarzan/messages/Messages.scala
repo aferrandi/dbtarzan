@@ -1,6 +1,7 @@
 package dbtarzan.messages
 
 import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey}
+import akka.actor.ActorRef
 
 case class QueryRows(id : TableId, sql : String, maxRows : Int)
 
@@ -23,3 +24,7 @@ case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
 case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields)
 
 case class Error(ex : Exception)
+
+case class QueryDatabase(databaseName : String)
+
+case class ResponseDatabase(databaseName : String, dbActor : ActorRef)

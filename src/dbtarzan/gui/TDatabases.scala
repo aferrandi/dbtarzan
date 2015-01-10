@@ -14,4 +14,5 @@ trait TTables extends TTable {
 
 trait TDatabases extends TTables {
 	def addTables(tables : ResponseTables) : Unit
+	def addDatabase(databaseData : ResponseDatabase) : Unit
 }

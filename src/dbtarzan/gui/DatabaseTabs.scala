@@ -13,7 +13,7 @@ class DatabaseTabs() extends TDatabases {
   val tabs = new TabPane()
   val mapDatabase = HashMap.empty[String, Database]
 
-  def addDatabase(database : Database) : Unit = {
+  private def addDatabaseTab(database : Database) : Unit = {
           val databaseName = database.getDatabaseName 	
 	  			println("add database tab for "+databaseName)
           val tab = buildTab(database)
@@ -37,4 +37,9 @@ class DatabaseTabs() extends TDatabases {
   def addColumns(columns : ResponseColumns) : Unit= withDatabaseId(columns.id, database => database.tableTabs.addColumns(columns))
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= withDatabaseId(columns.id, database => database.tableTabs.addColumnsFollow(columns))
   def addTables(tables : ResponseTables) : Unit = withDatabaseId(tables.id, database => database.addTableNames(tables.names))
+  def addDatabase(databaseData : ResponseDatabase) : Unit = {
+      val database = new Database(databaseData.dbActor, databaseData.databaseName)
+      addDatabaseTab(database)
+      databaseData.dbActor ! QueryTables(database.id)
+  }
 }
