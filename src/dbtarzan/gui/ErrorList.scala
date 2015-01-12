@@ -13,13 +13,16 @@ class ErrorList extends TErrors {
       cellFactory = { _ => buildCell() }
     }   
   
+
+  private def getWholeErrorText(err : Error) : String = 
+    err.ex.getMessage() + " at:\n"+ err.ex.getStackTrace().mkString("\n")
   /**
     need to show only the "to table" as cell text. And a tooltip for each cell
   */
   private def buildCell() = new ListCell[Error] {
           item.onChange { (_, _, _) => 
             Option(item.value).foreach(err => {
-              tooltip.value = Tooltip(err.ex.toString)
+              tooltip.value = Tooltip(getWholeErrorText(err))
               text.value = err.ex.getMessage
             })
           }

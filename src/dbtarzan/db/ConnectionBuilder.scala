@@ -13,18 +13,27 @@ import java.net.{ URL, URLClassLoader }
 class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef) {
 	val system = ActorSystem("Sys")
 	def buildConnection() : ActorRef = {
-		registerDriver()		
-		val range = 1 to data.instances.getOrElse(1)
-		val actorRefs = range.map(index => buildWorker(index))
-		system.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
+		try {
+			registerDriver()		
+			val range = 1 to data.instances.getOrElse(1)
+			val actorRefs = range.map(index => buildWorker(index))
+			system.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
+		} catch { 
+			case t: Throwable => throw new Exception("Getting the driver "+data.driver+" got:"+t)
+		}
+
 	}
 
 	private def registerDriver() : Unit = {
 		// Load the driver
-		val url = new URL("jar:file:"+data.jar+"!/");
+		val url = new URL("jar:file:"+data.jar+"!/")
 		val classLoader = new URLClassLoader(Array(url))
-		val driver = Class.forName(data.driver, true, classLoader).newInstance().asInstanceOf[Driver]
-		DriverManager.registerDriver(new DriverShim(driver))
+		println("classLoader:"+classLoader)
+		val driverClass = Class.forName(data.driver, true, classLoader)
+		println("driverClass:"+driverClass)
+		val driver = driverClass.newInstance().asInstanceOf[Driver]
+		println("driver:"+driver)
+		DriverManager.registerDriver(new DriverShim(driver))		
 	} 
 
 	private def buildWorker(index : Int) = {

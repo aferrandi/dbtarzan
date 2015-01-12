@@ -5,13 +5,13 @@ import scala.util.{Try, Success, Failure}
 class Config(connectionDatas : List[ConnectionData]) {
 	val connectionDatasByName = connectionDatas.groupBy(data => data.name)
 
-	def connect(name : String) : Try[ConnectionData] = 
+	def connect(name : String) : ConnectionData = 
 		connectionDatasByName.get(name).map(datasPerName => 
 			if(datasPerName.size == 1) 
-				Success(datasPerName.head)
+				datasPerName.head
 			else
-				Failure(new Exception("Multiple connections with the name "+name))
-		).getOrElse(Failure(new Exception("No connection with the name "+name)))
+				throw new Exception("Multiple connections with the name "+name)
+		).getOrElse( throw new Exception("No connection with the name "+name))
 
 	def connections() = connectionDatasByName.keys.toList
 }

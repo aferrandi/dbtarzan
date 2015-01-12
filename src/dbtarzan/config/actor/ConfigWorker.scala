@@ -8,10 +8,15 @@ import dbtarzan.db.ConnectionBuilder
 
 class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 	 def receive = {
-	    case qry : QueryDatabase =>    {
-	    	val optData = config.connect(qry.databaseName)      
-    		val optDbActor = optData.map(data => ConnectionBuilder.build(data, guiActor))
-		    optDbActor.foreach(dbActor => guiActor ! ResponseDatabase(qry.databaseName, dbActor))
+	    case qry : QueryDatabase => {
+	    	println("Querying the database "+qry.databaseName)
+	    	try {
+		    	val data = config.connect(qry.databaseName)
+	    		val dbActor = ConnectionBuilder.build(data, guiActor)
+			    guiActor ! ResponseDatabase(qry.databaseName, dbActor)
+			} catch {
+				case e : Exception => guiActor ! Error(e)
+	    	}
     	}
 	}
 }
