@@ -28,11 +28,8 @@ class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef) {
 		// Load the driver
 		val url = new URL("jar:file:"+data.jar+"!/")
 		val classLoader = new URLClassLoader(Array(url))
-		println("classLoader:"+classLoader)
 		val driverClass = Class.forName(data.driver, true, classLoader)
-		println("driverClass:"+driverClass)
 		val driver = driverClass.newInstance().asInstanceOf[Driver]
-		println("driver:"+driver)
 		DriverManager.registerDriver(new DriverShim(driver))		
 	} 
 
