@@ -1,0 +1,10 @@
+CONNECT 'jdbc:derby:firstdb;create=true';
+run 'toursdb/ToursDB_schema.sql';
+run 'toursdb/loadCOUNTRIES.sql';
+run 'toursdb/loadCITIES.sql';
+run 'toursdb/loadAIRLINES.sql';
+run 'toursdb/loadFLIGHTS1.sql';
+run 'toursdb/loadFLIGHTS2.sql';
+run 'toursdb/loadFLIGHTAVAILABILITY1.sql';
+run 'toursdb/loadFLIGHTAVAILABILITY2.sql';
+commit:
