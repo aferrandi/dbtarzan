@@ -1,10 +1,9 @@
-DbTarzan
+dbtarzan
 ========
 
-To explore the tables of a database following the relations as defined in their foreign keys.
+To explore the tables of a database following their relations as defined in their foreign keys.
 
-
-[[doc\window.jpeg]]
+![DbTarzan](doc/window.jpeg?raw=true)
 
 If the database foreign keys are well defined and cover all tables in the database, they can 
 be used not only as constraints, but also to know which relations connect the tables in the database.
