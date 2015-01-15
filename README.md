@@ -9,7 +9,7 @@ To explore the tables of a database following the relations as defined in their 
 Foreign keys are  used as constraints, but they contain information about the relationships among tables. 
 DbTarzan uses this information to traverse the tables of a database.
 
-More details in the wiki.
+More details in the [Wiki](https://github.com/aferrandi/dbtarzan/wiki).
 
 Examples
 --------
