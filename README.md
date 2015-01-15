@@ -11,7 +11,13 @@ DbTarzan uses this information to traverse the tables of a database.
 
 More details in the wiki.
 
-It possible to explore the parts of database related to specific items in a table. 
+Examples
+--------
+
+Bank: find fast who is the owner of a contract, its coupons, its portfolio.
+Hospital: find fast all the people that got a special kind of sickness.
+
+You can do the same with standard SQL queries, but in this way it is much faster.
 
 Code
 ----
