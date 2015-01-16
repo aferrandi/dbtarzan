@@ -15,6 +15,7 @@ Examples
 --------
 
 Bank: find fast who is the owner of a contract, its coupons, its portfolio.
+
 Hospital: find fast all the people that got a special kind of sickness.
 
 You can do the same with standard SQL queries, but in this way it is much faster.
@@ -22,6 +23,6 @@ You can do the same with standard SQL queries, but in this way it is much faster
 Code
 ----
 
-DBTarzan is written in Scala, uses JavaFX via ScalaFX for its GUI, uses the actors of Akka, Spray 
-(now part of Akka) to read the configurations written in JSON.
+DBTarzan is written in Scala, uses JavaFX 8 via ScalaFX for its GUI, uses the actors of Akka, Spray 
+(now part of Akka) to read the configurations written in JSON. 
 
