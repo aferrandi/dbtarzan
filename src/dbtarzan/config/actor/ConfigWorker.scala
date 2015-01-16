@@ -5,18 +5,30 @@ import akka.actor.ActorRef
 import dbtarzan.messages._
 import dbtarzan.config.Config
 import dbtarzan.db.ConnectionBuilder
+import scala.collection.mutable.HashMap
 
 class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
+	 private val mapDatabase = HashMap.empty[String, ActorRef]
+
+	 private def getDatabase(databaseName : String) : ActorRef = {
+	    	val data = config.connect(databaseName)
+    		val dbActor = ConnectionBuilder.build(data, guiActor)
+    		mapDatabase += databaseName -> dbActor
+    		dbActor
+	 } 
+
 	 def receive = {
 	    case qry : QueryDatabase => {
 	    	println("Querying the database "+qry.databaseName)
 	    	try {
-		    	val data = config.connect(qry.databaseName)
-	    		val dbActor = ConnectionBuilder.build(data, guiActor)
-			    guiActor ! ResponseDatabase(qry.databaseName, dbActor)
+	    		if(!mapDatabase.isDefinedAt(qry.databaseName))
+	    			guiActor ! ResponseDatabase(qry.databaseName, getDatabase(qry.databaseName))
+	    		else
+	    			guiActor ! Error(new Exception("Database "+qry.databaseName+" already opened"))
 			} catch {
-				case e : Exception => guiActor ! Error(e)
-	    	}
+				case e : Exception => guiActor ! Error(e)	    	
+			}
+
     	}
 	}
 }
