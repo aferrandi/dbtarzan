@@ -1,7 +1,7 @@
 DbTarzan
 ========
 
-To explore the tables of a database following the relations as defined in their foreign keys.
+To explore the tables of a relational database following the relations as defined in their foreign keys.
 
 
 ![DbTarzan](doc/window.jpeg?raw=true)
