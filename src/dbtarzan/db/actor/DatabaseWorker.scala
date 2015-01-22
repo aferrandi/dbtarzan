@@ -9,6 +9,9 @@ import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.messages._
 
+/**
+	The actor that reads data from the database
+*/
 class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	val connection = DriverManager.getConnection(data.url, data.user, data.password)
 	def databaseName = data.name

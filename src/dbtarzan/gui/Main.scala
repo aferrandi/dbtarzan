@@ -29,7 +29,7 @@ import dbtarzan.messages.QueryDatabase
   Main class, containing everything
 */
 object Main extends JFXApp {
-  val version = "0.9"
+  val version = "0.91"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs()
   val errorList = new ErrorList()

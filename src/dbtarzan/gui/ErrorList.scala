@@ -28,7 +28,10 @@ class ErrorList extends TErrors {
           }
         }       
 
+  /**
+    Prepends: the last message come becomes the first in the list
+  */
   def addError(err : Error) : Unit = 
-    buffer += err
+    err +=: buffer 
 }
 

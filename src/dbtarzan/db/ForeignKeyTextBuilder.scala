@@ -6,6 +6,9 @@ case class FKRow(values : List[FieldWithValue])
 
 case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field]) 
 
+/**
+	Builds the query clause related to the selected foreign key
+*/
 class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria) {
 	val mapColumnTypes = criteria.columns.map(field => (field.name, field.fieldType)).toMap
 	

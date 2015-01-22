@@ -11,6 +11,9 @@ import dbtarzan.db.{Field, Row, Rows}
 import dbtarzan.messages._
 import akka.actor.ActorRef
 
+/**
+  The GUI piece showing the content of a database table in a GUI table
+*/
 class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table){
 
   val names = dbTable.columnNames

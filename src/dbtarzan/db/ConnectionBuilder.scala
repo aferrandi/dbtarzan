@@ -9,7 +9,9 @@ import dbtarzan.config.ConnectionData
 import java.sql.{DriverManager, Driver}
 import java.net.{ URL, URLClassLoader }
 
-
+/**
+	builds database actors with connections created on the basis of a block in the configuration file.
+*/
 class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef) {
 	val system = ActorSystem("Sys")
 	def buildConnection() : ActorRef = {

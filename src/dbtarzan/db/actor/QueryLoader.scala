@@ -7,7 +7,9 @@ import dbtarzan.db.{ Row, Rows}
 import dbtarzan.messages.QueryRows
 
 
-
+/**
+	The part of the database actor that runs the table queries
+*/
 class QueryLoader(connection : java.sql.Connection) {
 	
 	def query(qry : QueryRows, use : Rows => Unit) : Unit = {

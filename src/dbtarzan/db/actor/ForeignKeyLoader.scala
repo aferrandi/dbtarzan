@@ -5,6 +5,9 @@ import scala.collection.mutable.ListBuffer
 import dbtarzan.db.{ ForeignKey, ForeignKeys, FieldsOnTable }
 import dbtarzan.db.util.ResourceManagement.using
 
+/**
+	The part of the database actor that reads the foreign keys
+*/
 class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String]) {
 	case class ForeignKeyKey(name: String, fromTable : String, toTable : String)
 	case class ForeignKeyPart(key : ForeignKeyKey, fromField : String, toField : String)
@@ -58,7 +61,8 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 				val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
 				println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 				val keys = keysImported ++ keysExported
-				useResult(ForeignKeys(keys))
+				val keysSorted = keys.sortBy(key => (key.to.table, key.name) )
+				useResult(ForeignKeys(keysSorted))
 			} 
 		}
 	}
