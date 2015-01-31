@@ -4,6 +4,7 @@ import scalafx.scene.control.{ TabPane, Tab }
 import dbtarzan.messages._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.HashMap
+import scalafx.Includes._
 
 
 /**
@@ -41,5 +42,9 @@ class DatabaseTabs() extends TDatabases {
       val database = new Database(databaseData.dbActor, databaseData.databaseName)
       addDatabaseTab(database)
       databaseData.dbActor ! QueryTables(database.id)
+  }
+  def showDatabase(databaseName : String) : Unit = {
+    val optTab = tabs.tabs.filter(_.text == databaseName)
+     optTab.foreach(tabs.selectionModel().select(_))
   }
 }

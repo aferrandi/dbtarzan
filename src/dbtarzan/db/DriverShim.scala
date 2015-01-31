@@ -2,6 +2,7 @@ package dbtarzan.db
 
 /**
 	Needed to load database drivers dynamically.
+	See http://www.kfu.com/~nsayer/Java/dyn-jdbc.html
 */
 class DriverShim(driver : java.sql.Driver) extends java.sql.Driver {
   def acceptsURL(url: String): Boolean = driver.acceptsURL(url)

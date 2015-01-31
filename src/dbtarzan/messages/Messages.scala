@@ -25,6 +25,8 @@ case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : F
 
 case class Error(ex : Exception)
 
+case class ErrorDatabaseAlreadyOpen(databaseName : String)
+
 case class QueryDatabase(databaseName : String)
 
 case class ResponseDatabase(databaseName : String, dbActor : ActorRef)

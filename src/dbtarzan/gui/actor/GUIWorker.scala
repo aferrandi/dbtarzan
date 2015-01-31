@@ -5,6 +5,9 @@ import dbtarzan.gui.{ TDatabases, TErrors }
 import dbtarzan.messages._
 import scalafx.application.Platform
 
+/*
+    Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUI 
+*/
 class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
   def receive = {
     case rsp : ResponseRows =>  Platform.runLater { databases.addRows(rsp) }
@@ -20,6 +23,11 @@ class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
     case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 
 
     case err : Error => Platform.runLater { errors.addError(err) }
+
+    case err : ErrorDatabaseAlreadyOpen => Platform.runLater { 
+                databases.showDatabase(err.databaseName)
+                errors.addError(Error(new Exception("Database "+err.databaseName+" already open")))
+            }
 	}
 
 }

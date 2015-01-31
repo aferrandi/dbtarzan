@@ -24,7 +24,7 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 	    		if(!mapDatabase.isDefinedAt(qry.databaseName))
 	    			guiActor ! ResponseDatabase(qry.databaseName, getDatabase(qry.databaseName))
 	    		else
-	    			guiActor ! Error(new Exception("Database "+qry.databaseName+" already opened"))
+	    			guiActor ! ErrorDatabaseAlreadyOpen(qry.databaseName)
 			} catch {
 				case e : Exception => guiActor ! Error(e)	    	
 			}
