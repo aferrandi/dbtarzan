@@ -19,4 +19,5 @@ trait TDatabases extends TTables {
 	def addTables(tables : ResponseTables) : Unit
 	def addDatabase(databaseData : ResponseDatabase) : Unit
 	def showDatabase(databaseName : String) : Unit
+	def removeDatabase(databaseToClose : ResponseClose) : Unit 
 }

@@ -2,6 +2,7 @@ package dbtarzan.config.actor
 
 import akka.actor.Actor
 import akka.actor.ActorRef
+import akka.routing.Broadcast
 import dbtarzan.messages._
 import dbtarzan.config.Config
 import dbtarzan.db.ConnectionBuilder
@@ -12,23 +13,32 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 
 	 private def getDatabase(databaseName : String) : ActorRef = {
 	    	val data = config.connect(databaseName)
-    		val dbActor = ConnectionBuilder.build(data, guiActor)
+    		val dbActor = ConnectionBuilder.build(data, guiActor, context)
     		mapDatabase += databaseName -> dbActor
     		dbActor
 	 } 
 
-	 def receive = {
-	    case qry : QueryDatabase => {
-	    	println("Querying the database "+qry.databaseName)
+	 private def queryDatabase(databaseName : String) : Unit = {
+	    	println("Querying the database "+databaseName)
 	    	try {
-	    		if(!mapDatabase.isDefinedAt(qry.databaseName))
-	    			guiActor ! ResponseDatabase(qry.databaseName, getDatabase(qry.databaseName))
+	    		if(!mapDatabase.isDefinedAt(databaseName))
+	    			guiActor ! ResponseDatabase(databaseName, getDatabase(databaseName))
 	    		else
-	    			guiActor ! ErrorDatabaseAlreadyOpen(qry.databaseName)
+	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseName)
 			} catch {
 				case e : Exception => guiActor ! Error(e)	    	
-			}
+			}	 	
+	 }
 
-    	}
+	 private def queryClose(databaseName : String) : Unit = {
+	    println("Closing the database "+databaseName) 
+	 	mapDatabase.remove(databaseName).foreach(
+	 		dbActor => dbActor ! Broadcast(QueryClose(databaseName)) // routed to all dbWorkers of the router
+	 		)
+	 }
+
+	 def receive = {
+	    case qry : QueryDatabase => queryDatabase(qry.databaseName)
+	    case qry : QueryClose => queryClose(qry.databaseName)
 	}
 }

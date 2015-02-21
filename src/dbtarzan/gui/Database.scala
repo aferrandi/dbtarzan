@@ -5,7 +5,7 @@ import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields }
 import scalafx.Includes._
 import akka.actor.ActorRef
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.messages.{QueryColumns, IDGenerator}
+import dbtarzan.messages.{QueryColumns, QueryClose, IDGenerator}
 
 /**
   A panel containing all the tabs related to a database

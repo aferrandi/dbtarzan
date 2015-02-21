@@ -13,6 +13,8 @@ case class QueryColumnsFollow(id : DatabaseId, tableName : String, follow : Foll
 
 case class QueryForeignKeys(id : TableId)
 
+case class QueryClose(databaseName : String)
+
 case class ResponseRows(id : TableId, rows: Rows)
 
 case class ResponseTables(id : DatabaseId, names: TableNames)
@@ -30,3 +32,5 @@ case class ErrorDatabaseAlreadyOpen(databaseName : String)
 case class QueryDatabase(databaseName : String)
 
 case class ResponseDatabase(databaseName : String, dbActor : ActorRef)
+
+case class ResponseClose(databaseName : String)

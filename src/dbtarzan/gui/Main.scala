@@ -29,13 +29,14 @@ import dbtarzan.messages.QueryDatabase
   Main class, containing everything
 */
 object Main extends JFXApp {
-  val version = "0.91"
+  val version = "0.92"
   val system = ActorSystem("Sys")
-  val databaseTabs = new DatabaseTabs()
+  val databaseTabs = new DatabaseTabs(system)
   val errorList = new ErrorList()
   val config = new Config(ConfigReader.read(new File("connections.config")))
-  val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, errorList)).withDispatcher("my-pinned-dispatcher"), "guiworker")
-  val configActor = system.actorOf(Props(new ConfigWorker(config, guiActor)).withDispatcher("my-pinned-dispatcher"), "configworker")
+  val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, errorList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
+  val configActor = system.actorOf(Props(new ConfigWorker(config, guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
+  println("configWorker "+configActor)  
   val databaseList = new DatabaseList(config.connections)
   databaseList.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
   val screenBounds = Screen.primary.visualBounds
@@ -47,18 +48,31 @@ object Main extends JFXApp {
       SplitPane.setResizableWithParent(databaseList.list, false)
     }
   private def mainSplitPane() = new SplitPane {
-        orientation() =  Orientation.VERTICAL
-        items.addAll(buildDatabaseSplitPane(), errorList.list)
-        dividerPositions = 0.85
-        SplitPane.setResizableWithParent(errorList.list, false)
-      }
+      orientation() =  Orientation.VERTICAL
+      items.addAll(buildDatabaseSplitPane(), errorList.list)
+      dividerPositions = 0.85
+      SplitPane.setResizableWithParent(errorList.list, false)
+  }
   
+  /* first we close the dbWorker actors. Then the config and gui actors. Then we stop the actor system and we check that there are no more actors. 
+      Once this is done, we close JavaF (the GUI)
+  */
   private def closeApp() : Unit = {
-      println("Shutting down actors")
-      system.shutdown()
       println("application exit")
-      scalafx.application.Platform.exit()
-      System.exit(0)  
+      databaseTabs.sendCloseToAllOpen()
+      import akka.pattern.gracefulStop
+      import scala.concurrent._
+      import scala.concurrent.duration._
+      import ExecutionContext.Implicits.global
+      val stopAll = for {
+        stopGui : Boolean <- gracefulStop(guiActor, 1 seconds)
+        stopConfig : Boolean <- gracefulStop(configActor, 1 seconds)
+      } yield stopGui && stopConfig
+      stopAll.foreach(x => { 
+        system.shutdown()
+        println("shutdown")
+        system.registerOnTermination(() => scalafx.application.Platform.exit())
+      })
   }
 
   private def appIcon() = 

@@ -1,7 +1,7 @@
 package dbtarzan.db
 
 abstract sealed class FieldType
-/* the fields type that are normally used in a foreign key */
+/* the fields types that are normally used in a foreign key */
 object FieldType {
 object STRING extends FieldType
 object INT extends FieldType

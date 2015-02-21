@@ -1,8 +1,6 @@
 package dbtarzan.db
 
-import akka.actor.ActorRef
-import akka.actor.Props
-import akka.actor.ActorSystem
+import akka.actor.{ ActorRef, Props, ActorContext }
 import dbtarzan.db.actor.DatabaseWorker
 import akka.routing.RoundRobinRouter
 import dbtarzan.config.ConnectionData
@@ -12,14 +10,13 @@ import java.net.{ URL, URLClassLoader }
 /**
 	builds database actors with connections created on the basis of a block in the configuration file.
 */
-class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef) {
-	val system = ActorSystem("Sys")
+class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext) {	
 	def buildConnection() : ActorRef = {
 		try {
 			registerDriver()		
 			val range = 1 to data.instances.getOrElse(1)
 			val actorRefs = range.map(index => buildWorker(index))
-			system.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
+			context.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
 		} catch { 
 			case t: Throwable => throw new Exception("Getting the driver "+data.driver+" got:"+t)
 		}
@@ -35,13 +32,13 @@ class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef) {
 		DriverManager.registerDriver(new DriverShim(driver))		
 	} 
 
-	private def buildWorker(index : Int) = {
+	private def buildWorker(index : Int) : ActorRef = {
 		val name = "dbworker" + data.name + index
-		system.actorOf(Props(new DatabaseWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
+		context.actorOf(Props(new DatabaseWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
 	}	
 }
 
 object ConnectionBuilder {
-	def build(data : ConnectionData, guiActor : ActorRef) : ActorRef = 
-		new ConnectionBuilder(data, guiActor).buildConnection()
+	def build(data : ConnectionData, guiActor : ActorRef, context : ActorContext) : ActorRef = 
+		new ConnectionBuilder(data, guiActor, context).buildConnection()
 }

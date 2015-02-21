@@ -6,7 +6,7 @@ import dbtarzan.messages._
 import scalafx.application.Platform
 
 /*
-    Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUI 
+    Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf 
 */
 class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
   def receive = {
@@ -21,6 +21,8 @@ class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
     case rsp: ResponseColumnsFollow => Platform.runLater { databases.addColumnsFollow(rsp) }
 
     case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 
+
+    case rsp: ResponseClose => Platform.runLater { databases.removeDatabase(rsp) } 
 
     case err : Error => Platform.runLater { errors.addError(err) }
 

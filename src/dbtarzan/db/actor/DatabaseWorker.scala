@@ -57,15 +57,20 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	      case e : Exception => guiActor ! Error(e)
 	    }
 	  
-	override def postStop(): Unit = {
-		println("connection stop")
-		connection.close()
-	}
 
+	override def  postStop() : Unit = {
+		println("Actor for "+databaseName+" stopped")
+	}
   def receive = {
 	    case qry : QueryRows => handleErr(
 	    		queryLoader.query(qry, rows => guiActor ! ResponseRows(qry.id, rows))
 	    	)
+	    case qry : QueryClose => handleErr({
+	    		println("Closing the worker for "+databaseName)
+	    		guiActor ! ResponseClose(databaseName)
+	    		connection.close()
+	    		context.stop(self)
+	    	})	    
 	    case qry: QueryTables => handleErr(
 	    		tableNames(names => guiActor ! ResponseTables(qry.id, names))
 			)
