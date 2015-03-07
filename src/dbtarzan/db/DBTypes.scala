@@ -29,7 +29,7 @@ case class FieldWithValue(field : String, value : String)
 case class Row(values : List[String])
 /* rows in a table */
 case class Rows(rows : List[Row])
-/* a text constraint to use it in a where clause */
-case class Constraint(text : String)
+/* a text filter to use it in a where clause */
+case class Filter(text : String)
 /* when we click on a foreign key, this is the information we need to open the new table */
 case class FollowKey(columns : List[Field], key : ForeignKey, rows : List[Row])

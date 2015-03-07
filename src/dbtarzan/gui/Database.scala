@@ -10,9 +10,9 @@ import dbtarzan.messages.{QueryColumns, QueryClose, IDGenerator}
 /**
   A panel containing all the tabs related to a database
 */
-class Database (dbActor : ActorRef, databaseName : String){
+class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String){
   val tableList = new TableList()
-  val tableTabs = new TableTabs(dbActor, databaseName)
+  val tableTabs = new TableTabs(dbActor, guiActor, databaseName)
   val id = IDGenerator.databaseId(databaseName)
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(id, tableName))
   val pane = new SplitPane {

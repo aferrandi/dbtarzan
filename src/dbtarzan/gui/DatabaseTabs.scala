@@ -15,7 +15,7 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases {
   val mapDatabase = HashMap.empty[String, Database]
   private def addDatabaseTab(dbActor : ActorRef, databaseName : String) : Database = {
           println("add database tab for "+databaseName)
-          val database = new Database(dbActor, databaseName)
+          val database = new Database(dbActor,  system.actorFor("/user/guiWorker"), databaseName)
           val tab = buildTab(database)
           tabs += tab
           selectTab(tab)

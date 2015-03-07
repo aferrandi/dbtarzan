@@ -25,7 +25,11 @@ case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
 
 case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields)
 
-case class Error(ex : Exception)
+sealed trait TTextMessage
+
+case class Error(ex : Exception) extends TTextMessage
+
+case class Warning(text : String) extends TTextMessage
 
 case class ErrorDatabaseAlreadyOpen(databaseName : String)
 

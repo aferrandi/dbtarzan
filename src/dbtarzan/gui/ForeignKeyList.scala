@@ -45,7 +45,7 @@ class ForeignKeyList() {
 		"\n- "+ buildSide(key.from)+
 		"\n- "+ buildSide(key.to)
 	}
-
+	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */
   	def onForeignKeySelected(useKey : ForeignKey => Unit) : Unit =
 	     JFXUtil.onAction(list, { selectedKey : ForeignKey =>
 	        println("Selected "+selectedKey)      

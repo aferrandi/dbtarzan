@@ -9,7 +9,7 @@ import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper}
 /**
   One tab for each table
 */
-class TableTabs(dbActor : ActorRef, databaseName : String) extends TTables {
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseName : String) extends TTables {
   val tabs = new TabPane()
   val mapTable = HashMap.empty[TableId, BrowsingTable]
 
@@ -21,22 +21,30 @@ class TableTabs(dbActor : ActorRef, databaseName : String) extends TTables {
     ForeignKeyMapper.toFollowTable(follow, columns) 
   }
 
-
-  private def buildTab(dbTable : dbtarzan.db.Table, browsingTable :  BrowsingTable) = new Tab() {
-      val description = dbTable.tableDescription
-      text = description.name + description.origin.map("<"+_).getOrElse("") + starForConstraint(dbTable)
+  private def buildTab(dbTable : dbtarzan.db.Table, browsingTable :  BrowsingTable) = new Tab() {      
+      text = buildTabText(dbTable)
       content = browsingTable.layout     
       tooltip.value = Tooltip(dbTable.sql) 
     }
 
-  private def starForConstraint(dbTable : dbtarzan.db.Table) = 
-    if(dbTable.hasConstraint) 
-        " *" 
-    else 
-        ""
+  /*
+    Normally it shows the name of the table.
+
+    If the tab is derived from a foreign key, it is in the form:
+      [table] < [origin table]
+      where origin table is the table on the other side of the foreign key
+
+    If a filter (where) has been applied, a star (*) character is shown at the end of the text 
+  */
+  private def buildTabText(dbTable : dbtarzan.db.Table) : String = {
+    def starForFilter(dbTable : dbtarzan.db.Table) = if(dbTable.hasFilter) " *" else ""
+
+    val description = dbTable.tableDescription
+    description.name + description.origin.map("<"+_).getOrElse("") + starForFilter(dbTable)
+  } 
 
   def addBrowsingTable(dbTable : dbtarzan.db.Table) : Unit = {
-    val browsingTable = new BrowsingTable(dbActor, dbTable, databaseName)
+    val browsingTable = new BrowsingTable(dbActor, guiActor, dbTable, databaseName)
     val tab = buildTab(dbTable, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)

@@ -29,7 +29,7 @@ import dbtarzan.messages.QueryDatabase
   Main class, containing everything
 */
 object Main extends JFXApp {
-  val version = "0.92"
+  val version = "0.93"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs(system)
   val errorList = new ErrorList()
@@ -46,7 +46,8 @@ object Main extends JFXApp {
       items.addAll(JFXUtil.withTitle(databaseList.list, "Databases"), databaseTabs.tabs)
       dividerPositions = 0.2
       SplitPane.setResizableWithParent(databaseList.list, false)
-    }
+  }
+  
   private def mainSplitPane() = new SplitPane {
       orientation() =  Orientation.VERTICAL
       items.addAll(buildDatabaseSplitPane(), errorList.list)

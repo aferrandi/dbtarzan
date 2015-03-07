@@ -5,39 +5,39 @@ import dbtarzan.messages.{QueryRows, QueryForeignKeys, TableId}
 /**
 	Represents the table of a database 
 */
-class Table private (description : TableDescription, columns : Fields, foreignConstraint : Option[ForeignKeyCriteria], additionalConstraint : Option[Constraint]) {
+class Table private (description : TableDescription, columns : Fields, foreignFilter : Option[ForeignKeyCriteria], additionalFilter : Option[Filter]) {
 	val sql = buildSql()
 
 	def buildSql() : String = {
-		def buildConstraints(constraints : List[String]) : String = { 
-			if(!constraints.isEmpty)   
-				constraints.mkString(" WHERE (\n", ") AND (\n", ")")
+		def buildFilters(filters : List[String]) : String = { 
+			if(!filters.isEmpty)   
+				filters.mkString(" WHERE (\n", ") AND (\n", ")")
 			else 
 				""
 		}
 
-		var foreignClosure = foreignConstraint.map(ForeignKeyTextBuilder.buildClause(_))
-		val constraints = List(foreignClosure, additionalConstraint.map(_.text)).flatten
-		"select * from " + description.name + buildConstraints(constraints)
+		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_))
+		val filters = List(foreignClosure, additionalFilter.map(_.text)).flatten
+		"select * from " + description.name + buildFilters(filters)
 	}
 
 	def tableDescription = description
 
 	def columnNames = columns.fields
 
-	def hasConstraint = additionalConstraint.isDefined
+	def hasFilter = additionalFilter.isDefined
 	
-	private def addConstraintToExisting(constraint : Constraint) = 
-		additionalConstraint.map("(" + _.text + ")\nAND (" + constraint.text + ")").map(Constraint(_))
-			.getOrElse(constraint)
+	private def addFilterToExisting(filter : Filter) = 
+		additionalFilter.map("(" + _.text + ")\nAND (" + filter.text + ")").map(Filter(_))
+			.getOrElse(filter)
 
-	def withAdditionalConstraint(constraint : Constraint) =
-		new Table(description, columns, foreignConstraint, Some(addConstraintToExisting(constraint)))
+	def withAdditionalFilter(filter : Filter) =
+		new Table(description, columns, foreignFilter, Some(addFilterToExisting(filter)))
 }
 
 object Table {
-	def build(description : TableDescription, columns : Fields, foreignConstraint : Option[ForeignKeyCriteria], additionalConstraint : Option[Constraint]) : Table =
-		new Table(description, columns, foreignConstraint, additionalConstraint)  
+	def build(description : TableDescription, columns : Fields, foreignFilter : Option[ForeignKeyCriteria], additionalFilter : Option[Filter]) : Table =
+		new Table(description, columns, foreignFilter, additionalFilter)  
 
 	def build(description : TableDescription, columns : Fields) : Table =
 		build(description, columns, None, None)

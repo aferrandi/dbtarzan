@@ -61,7 +61,8 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	override def  postStop() : Unit = {
 		println("Actor for "+databaseName+" stopped")
 	}
-  def receive = {
+
+  	def receive = {
 	    case qry : QueryRows => handleErr(
 	    		queryLoader.query(qry, rows => guiActor ! ResponseRows(qry.id, rows))
 	    	)
@@ -84,5 +85,5 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	    		foreignKeyLoader.foreignKeys(qry.id.tableName, keys => guiActor ! ResponseForeignKeys(qry.id, keys))
 	    	)    	
     
-  }
+  	}
 }

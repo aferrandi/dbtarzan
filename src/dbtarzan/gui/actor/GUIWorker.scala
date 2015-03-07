@@ -24,11 +24,11 @@ class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
 
     case rsp: ResponseClose => Platform.runLater { databases.removeDatabase(rsp) } 
 
-    case err : Error => Platform.runLater { errors.addError(err) }
+    case msg : TTextMessage => Platform.runLater { errors.addTextMessage(msg) }
 
     case err : ErrorDatabaseAlreadyOpen => Platform.runLater { 
                 databases.showDatabase(err.databaseName)
-                errors.addError(Error(new Exception("Database "+err.databaseName+" already open")))
+                errors.addTextMessage(Warning("Database "+err.databaseName+" already open"))
             }
 	}
 

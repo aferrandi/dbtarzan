@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
-import dbtarzan.messages.Error
+import dbtarzan.messages.TTextMessage
 
 trait TErrors {
-	def addError(err : Error) : Unit
+	def addTextMessage(msg : TTextMessage) : Unit
 }
