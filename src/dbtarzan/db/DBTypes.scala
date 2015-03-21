@@ -33,3 +33,7 @@ case class Rows(rows : List[Row])
 case class Filter(text : String)
 /* when we click on a foreign key, this is the information we need to open the new table */
 case class FollowKey(columns : List[Field], key : ForeignKey, rows : List[Row])
+/* the foreign keys involving a table, with the table */
+case class ForeignKeysForTable(table : String, keys : ForeignKeys)
+/* all the foreign keys for all tables in the database */
+case class ForeignKeysForTableList(keys : List[ForeignKeysForTable])

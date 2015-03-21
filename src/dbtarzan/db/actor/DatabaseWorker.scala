@@ -8,16 +8,28 @@ import dbtarzan.db.util.ResourceManagement.using
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.messages._
+import scala.collection.mutable.HashMap
+import dbtarzan.db.util.FileReadWrite
+import dbtarzan.db.ForeignKeysToFile
 
-/**
-	The actor that reads data from the database
-*/
+
+/* The actor that reads data from the database */
 class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	val connection = DriverManager.getConnection(data.url, data.user, data.password)
 	def databaseName = data.name
 	val foreignKeyLoader =  new ForeignKeyLoader(connection, data.schema)
+	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
 	val queryLoader = new QueryLoader(connection)
-	def columnNames(tableName : String, useResult : Fields => Unit) : Unit = {
+	loadForeignKeysFromFile()	
+
+	private def loadForeignKeysFromFile() : Unit = 
+		if(FileReadWrite.fileExist(databaseName)) {
+			println("Load foreign keys from the database file "+databaseName)
+			ForeignKeysToFile.fromFile(databaseName).keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
+		}
+
+	/* gets the columns of a table from the database metadata */
+	def columnNames(tableName : String) : Fields = {
 		var meta = connection.getMetaData()
 		using(meta.getColumns(null, data.schema.orNull, tableName, "%")) { rs =>
 			val list = new ListBuffer[Field]()			
@@ -26,22 +38,23 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 				toType(rs.getInt("DATA_TYPE")).map(fieldType => list += Field(fieldName, fieldType))
 			}
 			println("Columns loaded")
-			useResult(Fields(list.toList))
+			Fields(list.toList)
 		}
 	}
 
-	def tableNames(useResult : TableNames => Unit) : Unit = {
+	/* gets all the tables in the database/schema from the database metadata */
+	def tableNames() : TableNames = {
 		var meta = connection.getMetaData()
 		using(meta.getTables(null, data.schema.orNull, "%", Array("TABLE"))) { rs =>
 			val list = new ListBuffer[String]()
 			while(rs.next) {
 				list += rs.getString("TABLE_NAME")			
 			}
-			useResult(TableNames(list.toList))
+			TableNames(list.toList)
 		}
 	}
 
-
+	/* converts the database column type to a DBTarzan internal type */
 	private def toType(sqlType : Int) : Option[FieldType] = 
 		sqlType match {
 			case java.sql.Types.CHAR => Some(FieldType.STRING)
@@ -64,7 +77,7 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 
   	def receive = {
 	    case qry : QueryRows => handleErr(
-	    		queryLoader.query(qry, rows => guiActor ! ResponseRows(qry.id, rows))
+	    		queryLoader.query(qry, guiActor ! ResponseRows(qry.id, _))
 	    	)
 	    case qry : QueryClose => handleErr({
 	    		println("Closing the worker for "+databaseName)
@@ -73,17 +86,19 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	    		context.stop(self)
 	    	})	    
 	    case qry: QueryTables => handleErr(
-	    		tableNames(names => guiActor ! ResponseTables(qry.id, names))
+	    		guiActor ! ResponseTables(qry.id, tableNames())
 			)
 	    case qry : QueryColumns => handleErr( 
-	    		columnNames(qry.tableName, columns => guiActor ! ResponseColumns(qry.id, qry.tableName, columns))
+	    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName))
 	    	)
 	    case qry : QueryColumnsFollow => handleErr(
-	    		columnNames(qry.tableName, columns => guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columns))
+	    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName))
 	    	)		
-	    case qry: QueryForeignKeys => handleErr(
-	    		foreignKeyLoader.foreignKeys(qry.id.tableName, keys => guiActor ! ResponseForeignKeys(qry.id, keys))
-	    	)    	
+	    case qry: QueryForeignKeys => handleErr({
+	    		val tableName = qry.id.tableName
+	    		val foreignKeys = foreignKeysCache.getOrElseUpdate(tableName, foreignKeyLoader.foreignKeys(tableName))
+	    		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)
+	    	})    	
     
   	}
 }

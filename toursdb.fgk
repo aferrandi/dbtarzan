@@ -1,0 +1,78 @@
+{
+  "keys": [{
+    "name": "AIRLINES",
+    "keys": {
+      "keys": []
+    }
+  }, {
+    "name": "CITIES",
+    "keys": {
+      "keys": [{
+        "name": "COUNTRIES_FK",
+        "from": {
+          "table": "CITIES",
+          "fields": ["COUNTRY_ISO_CODE"]
+        },
+        "to": {
+          "table": "COUNTRIES",
+          "fields": ["COUNTRY_ISO_CODE"]
+        }
+      }]
+    }
+  }, {
+    "name": "COUNTRIES",
+    "keys": {
+      "keys": [{
+        "name": "COUNTRIES_FK",
+        "from": {
+          "table": "COUNTRIES",
+          "fields": ["COUNTRY_ISO_CODE"]
+        },
+        "to": {
+          "table": "CITIES",
+          "fields": ["COUNTRY_ISO_CODE"]
+        }
+      }]
+    }
+  }, {
+    "name": "FLIGHTAVAILABILITY",
+    "keys": {
+      "keys": [{
+        "name": "FLIGHTS_FK2",
+        "from": {
+          "table": "FLIGHTAVAILABILITY",
+          "fields": ["FLIGHT_ID", "SEGMENT_NUMBER"]
+        },
+        "to": {
+          "table": "FLIGHTS",
+          "fields": ["FLIGHT_ID", "SEGMENT_NUMBER"]
+        }
+      }]
+    }
+  }, {
+    "name": "FLIGHTS",
+    "keys": {
+      "keys": [{
+        "name": "FLIGHTS_FK2",
+        "from": {
+          "table": "FLIGHTS",
+          "fields": ["FLIGHT_ID", "SEGMENT_NUMBER"]
+        },
+        "to": {
+          "table": "FLIGHTAVAILABILITY",
+          "fields": ["FLIGHT_ID", "SEGMENT_NUMBER"]
+        }
+      }]
+    }
+  }, {
+    "name": "FLIGHTS_HISTORY",
+    "keys": {
+      "keys": []
+    }
+  }, {
+    "name": "MAPS",
+    "keys": {
+      "keys": []
+    }
+  }]
+}

@@ -1,12 +1,12 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.{ ListView, ListCell, Tooltip}
+import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.VBox
 import scalafx.beans.property.ObjectProperty
 import scalafx.collections.ObservableBuffer 
 import scalafx.Includes._
 import dbtarzan.db.{ForeignKey, FieldsOnTable, Field, ForeignKeys}
-import scalafx.scene.input.MouseEvent
 import dbtarzan.gui.util.JFXUtil
 
 

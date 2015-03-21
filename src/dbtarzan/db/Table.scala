@@ -8,6 +8,7 @@ import dbtarzan.messages.{QueryRows, QueryForeignKeys, TableId}
 class Table private (description : TableDescription, columns : Fields, foreignFilter : Option[ForeignKeyCriteria], additionalFilter : Option[Filter]) {
 	val sql = buildSql()
 
+	/* builds the SQL to query the table from the (potential) original foreign key (to know which rows it has to show), the potential where filter and the table name */
 	def buildSql() : String = {
 		def buildFilters(filters : List[String]) : String = { 
 			if(!filters.isEmpty)   
@@ -26,8 +27,8 @@ class Table private (description : TableDescription, columns : Fields, foreignFi
 	def columnNames = columns.fields
 
 	def hasFilter = additionalFilter.isDefined
-	
-	private def addFilterToExisting(filter : Filter) = 
+	/* to accumulate the existing filter + the new filter in the table that gets created with the new filter */
+	private def addFilterToExisting(filter : Filter) : Filter = 
 		additionalFilter.map("(" + _.text + ")\nAND (" + filter.text + ")").map(Filter(_))
 			.getOrElse(filter)
 

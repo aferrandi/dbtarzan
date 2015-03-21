@@ -9,20 +9,28 @@ import dbtarzan.db.ConnectionBuilder
 import scala.collection.mutable.HashMap
 
 class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
-	 private val mapDatabase = HashMap.empty[String, ActorRef]
+	 private val mapDBWorker = HashMap.empty[String, ActorRef]
 
-	 private def getDatabase(databaseName : String) : ActorRef = {
+	 private def getDBWorker(databaseName : String) : ActorRef = {
 	    	val data = config.connect(databaseName)
-    		val dbActor = ConnectionBuilder.build(data, guiActor, context)
-    		mapDatabase += databaseName -> dbActor
+    		val dbActor = ConnectionBuilder.buildDBWorker(data, guiActor, context)
+    		mapDBWorker += databaseName -> dbActor
     		dbActor
 	 } 
+
+
+	 private def startCopyWorker(databaseName : String) : Unit = {
+	    	val data = config.connect(databaseName)
+    		val copyActor = ConnectionBuilder.buildCopyWorker(data, guiActor, context)
+    		copyActor ! CopyToFile
+	 } 
+
 
 	 private def queryDatabase(databaseName : String) : Unit = {
 	    	println("Querying the database "+databaseName)
 	    	try {
-	    		if(!mapDatabase.isDefinedAt(databaseName))
-	    			guiActor ! ResponseDatabase(databaseName, getDatabase(databaseName))
+	    		if(!mapDBWorker.isDefinedAt(databaseName))
+	    			guiActor ! ResponseDatabase(databaseName, getDBWorker(databaseName))
 	    		else
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseName)
 			} catch {
@@ -32,7 +40,7 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 
 	 private def queryClose(databaseName : String) : Unit = {
 	    println("Closing the database "+databaseName) 
-	 	mapDatabase.remove(databaseName).foreach(
+	 	mapDBWorker.remove(databaseName).foreach(
 	 		dbActor => dbActor ! Broadcast(QueryClose(databaseName)) // routed to all dbWorkers of the router
 	 		)
 	 }
@@ -40,5 +48,6 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 	 def receive = {
 	    case qry : QueryDatabase => queryDatabase(qry.databaseName)
 	    case qry : QueryClose => queryClose(qry.databaseName)
+	    case cpy : CopyToFile => startCopyWorker(cpy.databaseName)
 	}
 }

@@ -5,15 +5,20 @@ import scala.collection.mutable.ListBuffer
 import dbtarzan.db.{ ForeignKey, ForeignKeys, FieldsOnTable }
 import dbtarzan.db.util.ResourceManagement.using
 
+
 /**
 	The part of the database actor that reads the foreign keys
+	schema is the database schema (in case of Oracle and SQL server)
 */
 class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String]) {
+	/* the foreign key between two tables, has a name */
 	case class ForeignKeyKey(name: String, fromTable : String, toTable : String)
-	case class ForeignKeyPart(key : ForeignKeyKey, fromField : String, toField : String)
+	/* a column of the foreign key */
+	case class ForeignKeyColumn(key : ForeignKeyKey, fromField : String, toField : String)
 
-	private def rsToForeignPart(rs : ResultSet) : ForeignKeyPart = 
-		ForeignKeyPart(
+	/* extract the foreign key from the result set */
+	private def rsToForeignColumn(rs : ResultSet) = 
+		ForeignKeyColumn(
 				ForeignKeyKey(
 					rs.getString("FK_NAME"), 
 					rs.getString("FKTABLE_NAME"), 
@@ -22,29 +27,30 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 				rs.getString("FKCOLUMN_NAME"), 				
 				rs.getString("PKCOLUMN_NAME")
 			)
-
-	private def foreignPartsToForeignKeys(list : List[ForeignKeyPart]) : List[ForeignKey] = {
-		val mapByKey = list.groupBy(part => part.key)
-		mapByKey .toList.map({case (key, listOfKey) => 
-			foreignKeyPartToForeignKey(key,  
+	/* converts the foreign columns of a foreign key to the foreign key itself */
+	private def foreignColumnsToForeignKeys(list : List[ForeignKeyColumn]) : List[ForeignKey] = {
+		val mapByKey = list.groupBy(column => column.key)
+		mapByKey.toList.map({case (key, listOfKey) => 
+			foreignKeyColumnsToForeignKey(key,  
 				listOfKey.map(_.fromField).toList, 
 				listOfKey.map(_.toField).toList
 			)
 		})
 	}
 
-	private def foreignKeyPartToForeignKey(key : ForeignKeyKey, from : List[String], to : List[String]) = 
+	private def foreignKeyColumnsToForeignKey(key : ForeignKeyKey, from : List[String], to : List[String]) = 
 		ForeignKey(key.name, 
 			FieldsOnTable(key.fromTable, from),
 			FieldsOnTable(key.toTable, to)
 			)
 
 
+	/* reads the columns of foreign keys from the database and then builds the actual foreign keys from them */
 	private def rsToForeignKeys(rs : ResultSet) : List[ForeignKey] = {
-		val list = new ListBuffer[ForeignKeyPart]()
+		val list = new ListBuffer[ForeignKeyColumn]()
 		while(rs.next) 
-			list += rsToForeignPart(rs)			
-		foreignPartsToForeignKeys(list.toList)
+			list += rsToForeignColumn(rs)			
+		foreignColumnsToForeignKeys(list.toList)
 	}
 
 	private def turnForeignKey(key : ForeignKey) =
@@ -53,7 +59,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 	/**
 		All the foreign keys from the table and TO the table (used in reverse order)
 	*/
-	def foreignKeys(tableName : String, useResult : ForeignKeys => Unit) : Unit = {
+	def foreignKeys(tableName : String) : ForeignKeys = {
 		var meta = connection.getMetaData()
 		using(meta.getImportedKeys(null, schema.orNull, tableName)) { rs =>
 			val keysImported = rsToForeignKeys(rs) 
@@ -62,8 +68,9 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 				println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 				val keys = keysImported ++ keysExported
 				val keysSorted = keys.sortBy(key => (key.to.table, key.name) )
-				useResult(ForeignKeys(keysSorted))
+				ForeignKeys(keysSorted)
 			} 
 		}
 	}
+
 }

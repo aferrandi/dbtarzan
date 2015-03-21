@@ -38,3 +38,5 @@ case class QueryDatabase(databaseName : String)
 case class ResponseDatabase(databaseName : String, dbActor : ActorRef)
 
 case class ResponseClose(databaseName : String)
+
+case class CopyToFile(databaseName : String)

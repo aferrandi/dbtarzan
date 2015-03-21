@@ -16,29 +16,27 @@ import scala.util.{Try, Success, Failure}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.{ Config, ConfigReader }
 import dbtarzan.db.ConnectionBuilder
-import akka.actor.ActorSystem
-import akka.actor.Props
-import akka.actor.ActorRef
+import akka.actor.{ ActorSystem, Props, ActorRef }
 import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.config.actor.ConfigWorker
-import dbtarzan.messages.QueryTables
-import dbtarzan.messages.QueryDatabase
+import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile }
 
 
 /**
   Main class, containing everything
 */
 object Main extends JFXApp {
-  val version = "0.93"
+  val version = "0.94"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs(system)
   val errorList = new ErrorList()
-  val config = new Config(ConfigReader.read(new File("connections.config")))
+  val config = new Config(ConfigReader.read("connections.config"))
   val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, errorList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val configActor = system.actorOf(Props(new ConfigWorker(config, guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   println("configWorker "+configActor)  
   val databaseList = new DatabaseList(config.connections)
   databaseList.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
+  databaseList.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })
   val screenBounds = Screen.primary.visualBounds
   stage = buildStage()
 

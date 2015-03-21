@@ -1,9 +1,11 @@
 package dbtarzan.db.util
 
 object ResourceManagement {
-	def using[T <: { def close() }]
+
+
+	def using[T <: { def close() }, R]
 	    (resource: T)
-	    (block: T => Unit) : Unit =
+	    (block: T => R) : R =
 	{
 	  try {
 	    block(resource)

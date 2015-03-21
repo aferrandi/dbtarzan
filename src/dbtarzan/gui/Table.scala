@@ -4,9 +4,9 @@ import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.{TableColumn, TableView, SelectionMode}
 import scalafx.beans.property.{StringProperty, ObjectProperty, BooleanProperty}
 import scalafx.collections.ObservableBuffer 
+import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.Includes._
 import dbtarzan.config.{ Config, ConfigReader }
-import scalafx.scene.control.cell.CheckBoxTableCell
 import dbtarzan.db.{Field, Row, Rows}
 import dbtarzan.messages._
 import akka.actor.ActorRef
@@ -33,9 +33,9 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table){
   }
 
   def buildColumn(field : Field, i : Int) = new TableColumn[JFXRow,String]() {
-	        		text = field.name
-	        		cellValueFactory = { _.value.values(i) }
-					    prefWidth = 180
+		text = field.name
+		cellValueFactory = { _.value.values(i) }
+    prefWidth = 180
 	}.delegate
 
   def buildSelectColumn() =  {

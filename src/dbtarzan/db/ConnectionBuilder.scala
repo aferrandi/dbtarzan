@@ -1,7 +1,7 @@
 package dbtarzan.db
 
 import akka.actor.{ ActorRef, Props, ActorContext }
-import dbtarzan.db.actor.DatabaseWorker
+import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
 import akka.routing.RoundRobinRouter
 import dbtarzan.config.ConnectionData
 import java.sql.{DriverManager, Driver}
@@ -11,16 +11,21 @@ import java.net.{ URL, URLClassLoader }
 	builds database actors with connections created on the basis of a block in the configuration file.
 */
 class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext) {	
-	def buildConnection() : ActorRef = {
-		try {
-			registerDriver()		
-			val range = 1 to data.instances.getOrElse(1)
-			val actorRefs = range.map(index => buildWorker(index))
-			context.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
-		} catch { 
-			case t: Throwable => throw new Exception("Getting the driver "+data.driver+" got:"+t)
-		}
+	def buildDBWorker() : ActorRef = try {
+		registerDriver()		
+		val range = 1 to data.instances.getOrElse(1)
+		val actorRefs = range.map(index => buildSubWorker(index))
+		context.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
+	} catch { 
+		case t: Throwable => throw new Exception("Building the dbWorker with the driver "+data.driver+" got:"+t)
+	}
 
+	def buildCopyWorker() : ActorRef = try {
+		registerDriver()
+		val name = "copyworker" + data.name		
+		context.actorOf(Props(new CopyWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name)
+	} catch { 
+		case t: Throwable => throw new Exception("Getting the copyworker with the driver "+data.driver+" got:"+t)
 	}
 
 	private def registerDriver() : Unit = {
@@ -32,13 +37,18 @@ class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : Ac
 		DriverManager.registerDriver(new DriverShim(driver))		
 	} 
 
-	private def buildWorker(index : Int) : ActorRef = {
+	private def buildSubWorker(index : Int) : ActorRef = {
 		val name = "dbworker" + data.name + index
 		context.actorOf(Props(new DatabaseWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
 	}	
+
+
 }
 
 object ConnectionBuilder {
-	def build(data : ConnectionData, guiActor : ActorRef, context : ActorContext) : ActorRef = 
-		new ConnectionBuilder(data, guiActor, context).buildConnection()
+	def buildDBWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext) : ActorRef = 
+		new ConnectionBuilder(data, guiActor, context).buildDBWorker()
+
+	def buildCopyWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext) : ActorRef = 
+		new ConnectionBuilder(data, guiActor, context).buildCopyWorker()
 }
