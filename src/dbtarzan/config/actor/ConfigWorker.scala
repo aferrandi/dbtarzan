@@ -34,7 +34,7 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 	    		else
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseName)
 			} catch {
-				case e : Exception => guiActor ! Error(e)	    	
+				case e : Exception => guiActor ! Error("Querying the database "+databaseName+" got", e)	    	
 			}	 	
 	 }
 

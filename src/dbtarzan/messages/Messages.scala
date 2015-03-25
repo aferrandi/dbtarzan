@@ -27,9 +27,11 @@ case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : F
 
 sealed trait TTextMessage
 
-case class Error(ex : Exception) extends TTextMessage
+case class Error(text: String, ex : Exception) extends TTextMessage
 
 case class Warning(text : String) extends TTextMessage
+
+case class Info(text : String) extends TTextMessage
 
 case class ErrorDatabaseAlreadyOpen(databaseName : String)
 

@@ -15,7 +15,7 @@ object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
 
 object ForeignKeysToFile {
 	import ForeignKeysForTableJsonProtocol._
-	private def fileName(databaseName : String) : String = databaseName+".fgk"
+	def fileName(databaseName : String) : String = databaseName+".fgk"
 
 	def toFile(databaseName : String, list : ForeignKeysForTableList) : Unit =  
 		FileReadWrite.writeFile(fileName(databaseName), list.toJson.prettyPrint)
@@ -25,4 +25,6 @@ object ForeignKeysToFile {
 		text.parseJson.convertTo[ForeignKeysForTableList]
 	}
 
+	def fileExist(databaseName : String) : Boolean = 
+		FileReadWrite.fileExist(fileName(databaseName))
 }

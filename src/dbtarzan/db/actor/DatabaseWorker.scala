@@ -23,9 +23,15 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	loadForeignKeysFromFile()	
 
 	private def loadForeignKeysFromFile() : Unit = 
-		if(FileReadWrite.fileExist(databaseName)) {
-			println("Load foreign keys from the database file "+databaseName)
-			ForeignKeysToFile.fromFile(databaseName).keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
+		if(ForeignKeysToFile.fileExist(databaseName)) {
+			guiActor ! Info("Loading foreign keys from the database file "+databaseName)
+			try
+			{
+				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
+				tablesKeys.keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
+			} catch {
+				case e : Exception => guiActor ! Error("Reading the keys file for database "+databaseName+" got", e)		
+			}
 		}
 
 	/* gets the columns of a table from the database metadata */
@@ -67,7 +73,7 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 
 	private def handleErr[R](r: => R): Unit = 
 	    try { r } catch {
-	      case e : Exception => guiActor ! Error(e)
+	      case e : Exception => guiActor ! Error("dbWorker", e)
 	    }
 	  
 
