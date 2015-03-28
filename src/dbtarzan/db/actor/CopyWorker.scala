@@ -32,6 +32,7 @@ class CopyWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 		}
 	}
 
+	/* loads the keys from the database (table by table) and saves them to the file */
 	def loadAllKeysAndWriteThemToFile() : Unit  = {
 		val names = tableNames()
 		val keysForTables = names.map(name => 

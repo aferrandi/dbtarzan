@@ -10,7 +10,7 @@ import java.net.{ URL, URLClassLoader }
 /**
 	builds database actors with connections created on the basis of a block in the configuration file.
 */
-class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext) {	
+private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext) {	
 	def buildDBWorker() : ActorRef = try {
 		registerDriver()		
 		val range = 1 to data.instances.getOrElse(1)
@@ -41,8 +41,6 @@ class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : Ac
 		val name = "dbworker" + data.name + index
 		context.actorOf(Props(new DatabaseWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
 	}	
-
-
 }
 
 object ConnectionBuilder {

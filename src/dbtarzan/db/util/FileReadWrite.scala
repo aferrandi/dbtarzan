@@ -5,6 +5,7 @@ import java.io.{ FileWriter, File }
 import scala.io.Source
 import java.nio.file.{Paths, Files}
 
+/* simple functions to read, write and check the existance of a small (configuration) file */
 object FileReadWrite {
 	def fileExist(name : String) = new File(name).canRead()
 

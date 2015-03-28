@@ -4,6 +4,7 @@ import spray.json._
 import java.io.File
 import dbtarzan.db.util.FileReadWrite
 
+/* JDBC configuration for a database */
 case class ConnectionData(
 	/* the path of the jar file of the driver */
 	jar : String, 
@@ -28,6 +29,7 @@ import DefaultJsonProtocol._
   implicit val connectionDataFormat = jsonFormat(ConnectionData, "jar", "name", "driver", "url", "schema", "user", "password", "instances")
 }
 
+/* reads the databases configuration file */
 object ConfigReader {
 	import ConnectionDataJsonProtocol._
 
