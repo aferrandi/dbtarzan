@@ -10,3 +10,5 @@ target
 project
 target
 *.sql
+*.~
+*.fgk
