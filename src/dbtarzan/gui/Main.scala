@@ -26,7 +26,7 @@ import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile }
   Main class, containing everything
 */
 object Main extends JFXApp {
-  val version = "0.94"
+  val version = "0.95"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs(system)
   val errorList = new ErrorList()

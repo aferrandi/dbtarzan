@@ -1,10 +1,13 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ TabPane, Tab, Tooltip}
+import scalafx.scene.control.{ TabPane, Tab, Tooltip, ContextMenu, MenuItem}
+import scalafx.event.ActionEvent
 import dbtarzan.messages._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
 import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper}
+import dbtarzan.gui.util.JFXUtil
+import scalafx.Includes._
 
 /**
   One tab for each table
@@ -24,8 +27,18 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
   private def buildTab(dbTable : dbtarzan.db.Table, browsingTable :  BrowsingTable) = new Tab() {      
       text = buildTabText(dbTable)
       content = browsingTable.layout     
-      tooltip.value = Tooltip(dbTable.sql) 
+      tooltip.value = Tooltip(dbTable.sql)
+      contextMenu = new ContextMenu(buildClipboardMenu(dbTable))
     }
+
+  private def buildClipboardMenu(dbTable : dbtarzan.db.Table) = new MenuItem {
+          text = "Copy SQL To Clipboard"
+          onAction = (ev: ActionEvent) =>  try {
+              JFXUtil.copyTextToClipboard(dbTable.sql)
+            } catch {
+              case ex: Exception => guiActor ! Error("Copying the query to the clipboard got", ex)
+            }
+      }
 
   /*
     Normally it shows the name of the table.

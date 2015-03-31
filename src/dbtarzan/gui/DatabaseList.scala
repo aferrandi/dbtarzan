@@ -10,7 +10,7 @@ import dbtarzan.gui.util.JFXUtil
 	The list of database to choose from
 */
 class DatabaseList(databases :List[String]) {
-  var menuForeignKeyToFile = new MenuItem("Build foreign keys file")
+  val menuForeignKeyToFile = new MenuItem("Build foreign keys file")
   val list = new ListView[String](databases) {
   	SplitPane.setResizableWithParent(this, false) 
   	contextMenu = new ContextMenu(menuForeignKeyToFile)   

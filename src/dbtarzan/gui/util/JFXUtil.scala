@@ -5,7 +5,7 @@ import scalafx.scene.control.{ ListView, Label, MenuItem }
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.text.TextAlignment
 import scalafx.geometry.Insets
-import scalafx.scene.input.{ MouseEvent, KeyEvent, KeyCode }
+import scalafx.scene.input.{ MouseEvent, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._
 import scalafx.event.ActionEvent
 
@@ -32,4 +32,10 @@ object JFXUtil {
 
 	def onContextMenu[T](menu : MenuItem, list : ListView[T] , action : T => Unit) = 
 		menu.onAction = (ev: ActionEvent) => action(focusedItem(list))
+
+	def copyTextToClipboard(text : String) : Unit = {
+      val content = new ClipboardContent()
+      content.putString(text)
+      Clipboard.systemClipboard.setContent(content)		
+	}
 }
