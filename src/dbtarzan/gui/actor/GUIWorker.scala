@@ -1,14 +1,14 @@
 package dbtarzan.gui.actor
 
 import akka.actor.Actor
-import dbtarzan.gui.{ TDatabases, TErrors }
+import dbtarzan.gui.{ TDatabases, TLogs}
 import dbtarzan.messages._
 import scalafx.application.Platform
 
 /*
     Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf 
 */
-class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
+class GUIWorker(databases : TDatabases, logs : TLogs) extends Actor {
   def receive = {
     case rsp : ResponseRows =>  Platform.runLater { databases.addRows(rsp) }
 
@@ -24,11 +24,11 @@ class GUIWorker(databases : TDatabases, errors : TErrors) extends Actor {
 
     case rsp: ResponseClose => Platform.runLater { databases.removeDatabase(rsp) } 
 
-    case msg : TTextMessage => Platform.runLater { errors.addTextMessage(msg) }
+    case msg : TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
 
     case err : ErrorDatabaseAlreadyOpen => Platform.runLater { 
                 databases.showDatabase(err.databaseName)
-                errors.addTextMessage(Warning("Database "+err.databaseName+" already open"))
+                logs.addLogMessage(Warning("Database "+err.databaseName+" already open"))
             }
 	}
 

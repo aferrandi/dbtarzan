@@ -29,7 +29,7 @@ object Main extends JFXApp {
   val version = "0.95"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs(system)
-  val errorList = new ErrorList()
+  val errorList = new LogList()
   val config = new Config(ConfigReader.read("connections.config"))
   val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, errorList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val configActor = system.actorOf(Props(new ConfigWorker(config, guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")

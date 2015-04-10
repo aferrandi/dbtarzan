@@ -6,19 +6,18 @@ import dbtarzan.messages._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
 import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper}
-import dbtarzan.gui.util.JFXUtil
 import scalafx.Includes._
 
-/**
-  One tab for each table
-*/
+/* One tab for each table */
 class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseName : String) extends TTables {
   val tabs = new TabPane()
   val mapTable = HashMap.empty[TableId, BrowsingTable]
 
+  /* creates a table from scratch */
   private def createTable(tableName : String, columns : Fields) : dbtarzan.db.Table = 
     dbtarzan.db.Table.build(TableDescription(tableName, None, None), columns)
 
+  /* create a table that is given by following a foreign key of a table */  
   private def createTableFollow(tableName : String, columns : Fields, follow : FollowKey) : dbtarzan.db.Table = {
     println("table follow created "+columns)
     ForeignKeyMapper.toFollowTable(follow, columns) 
@@ -28,18 +27,8 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
       text = buildTabText(dbTable)
       content = browsingTable.layout     
       tooltip.value = Tooltip(dbTable.sql)
-      contextMenu = new ContextMenu(buildClipboardMenu(dbTable))
+      contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql))
     }
-
-  private def buildClipboardMenu(dbTable : dbtarzan.db.Table) = new MenuItem {
-          text = "Copy SQL To Clipboard"
-          onAction = (ev: ActionEvent) =>  try {
-              JFXUtil.copyTextToClipboard(dbTable.sql)
-            } catch {
-              case ex: Exception => guiActor ! Error("Copying the query to the clipboard got", ex)
-            }
-      }
-
   /*
     Normally it shows the name of the table.
 
