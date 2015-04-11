@@ -22,7 +22,7 @@ class LogList extends TLogs {
       Option(item.value).foreach(err => {
         tooltip.value = Tooltip(LogText.extractWholeLogText(err))
         text.value = LogText.extractLogPrefix(err)+"> "+LogText.extractLogMessage(err)
-        contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("Message", () => LogText.extractLogMessage(err)))
+        contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("Message", () => LogText.extractWholeLogText(err)))
       })
     }
   }    
