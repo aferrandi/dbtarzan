@@ -87,7 +87,7 @@ class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
 	    	)
 	    case qry : QueryClose => handleErr({
 	    		println("Closing the worker for "+databaseName)
-	    		guiActor ! ResponseClose(databaseName)
+	    		guiActor ! ResponseCloseDatabase(databaseName)
 	    		connection.close()
 	    		context.stop(self)
 	    	})	    

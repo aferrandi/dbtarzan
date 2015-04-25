@@ -10,16 +10,16 @@ import akka.actor.ActorRef
 /**
   table + constraint input box + foreign keys
 */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.db.Table, databaseName : String) extends TTable {
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.db.Table, databaseId : DatabaseId) extends TTable {
   val foreignKeyList = new ForeignKeyList()
-  val id = IDGenerator.tableId(databaseName, dbTable.tableDescription.name)
+  val id = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
   val table = new Table(dbActor, id, dbTable)
   val queryText = new QueryText()
   val progressBar = new TableProgressBar()
   val layout = new BorderPane {
     top = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
     center = buildSplitPane()
-    bottom =  progressBar.bar
+    bottom = progressBar.bar
   }
   foreignKeyList.onForeignKeySelected(key => openTableConnectedByForeignKey(key))
 
@@ -27,9 +27,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
       println("Selected "+key)
       val selectedRows = table.selected.rows
       if(!selectedRows.isEmpty) {
-        dbActor ! QueryColumnsFollow(DatabaseId(databaseName), key.to.table, FollowKey(dbTable.columnNames, key, selectedRows))
+        dbActor ! QueryColumnsFollow(databaseId, key.to.table, FollowKey(dbTable.columnNames, key, selectedRows))
       } else {
-        dbActor ! QueryColumns(DatabaseId(databaseName), key.to.table)
+        dbActor ! QueryColumns(databaseId, key.to.table)
         guiActor ! Warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
       }
   } 

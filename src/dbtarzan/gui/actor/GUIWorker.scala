@@ -22,7 +22,9 @@ class GUIWorker(databases : TDatabases, logs : TLogs) extends Actor {
 
     case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 
 
-    case rsp: ResponseClose => Platform.runLater { databases.removeDatabase(rsp) } 
+    case rsp: ResponseCloseDatabase => Platform.runLater { databases.removeDatabase(rsp) } 
+
+    case rsp: ResponseCloseTables => Platform.runLater { databases.removeTables(rsp) }
 
     case msg : TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
 

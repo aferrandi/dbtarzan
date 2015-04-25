@@ -43,11 +43,12 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases {
   private def withDatabaseName(databaseName : String, doWith : Database => Unit) : Unit =
     mapDatabase.get(databaseName).foreach(database => doWith(database))
 
-  /* utility method to do something (given by a closure) to a table */
-  private def withTableId(id : TableId, doWith : Database => Unit) : Unit = withDatabaseName(id.databaseName, doWith)
-
   /* utility method to do something (given by a closure) to a database */
   private def withDatabaseId(id : DatabaseId, doWith : Database => Unit) : Unit = withDatabaseName(id.databaseName, doWith)
+
+  /* utility method to do something (given by a closure) to a table */
+  private def withTableId(id : TableId, doWith : Database => Unit) : Unit = withDatabaseId(id.databaseId, doWith)
+
 
   /* received some rows coming as a result of a query, that have to be shown within a table tab */
   def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, database => database.tableTabs.addRows(rows))
@@ -79,13 +80,16 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases {
     tabs.selectionModel().select(tab)
 
   /* removes the database tab and its content */
-  def removeDatabase(databaseToClose : ResponseClose) : Unit = {
+  def removeDatabase(databaseToClose : ResponseCloseDatabase) : Unit = {
     val databaseName = databaseToClose.databaseName 
     mapDatabase -= databaseName
      val optTab = getTabByDatabaseName(databaseName)
      optTab.foreach(tab => tabs.tabs -= tab)
    }
 
+  def removeTables(tablesToClose : ResponseCloseTables) : Unit = 
+    withDatabaseId(tablesToClose.id, database => database.removeTables(tablesToClose.ids))
+  
   /* shows the tab of a database */
   def showDatabase(databaseName : String) : Unit = {
     val optTab = getTabByDatabaseName(databaseName)

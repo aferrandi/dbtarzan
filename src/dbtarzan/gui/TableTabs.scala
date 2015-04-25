@@ -8,10 +8,12 @@ import akka.actor.ActorRef
 import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper}
 import scalafx.Includes._
 
+case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)
+
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseName : String) extends TTables {
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TTables {
   val tabs = new TabPane()
-  val mapTable = HashMap.empty[TableId, BrowsingTable]
+  val mapTable = HashMap.empty[TableId, BrowsingTableWIthTab]
 
   /* creates a table from scratch */
   private def createTable(tableName : String, columns : Fields) : dbtarzan.db.Table = 
@@ -27,8 +29,24 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
       text = buildTabText(dbTable)
       content = browsingTable.layout     
       tooltip.value = Tooltip(dbTable.sql)
-      contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql))
+      contextMenu = new ContextMenu(
+        ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql),
+        buildRemoveAfterMenu(this)
+     )
     }
+
+    private def buildRemoveAfterMenu(tab : Tab) = new MenuItem {
+        def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) = 
+          mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
+
+          text = "Close tabs after this"
+          onAction = (ev: ActionEvent) => {
+            val toCloseTabs = tabs.tabs.reverse.takeWhile(_ != tab.delegate).toList // need to check the javafx class
+            val toCloseIds = idsFromTabs(toCloseTabs)
+            guiActor ! ResponseCloseTables(databaseId, toCloseIds)
+          }
+        }
+ 
   /*
     Normally it shows the name of the table.
 
@@ -46,20 +64,26 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
   } 
 
   def addBrowsingTable(dbTable : dbtarzan.db.Table) : Unit = {
-    val browsingTable = new BrowsingTable(dbActor, guiActor, dbTable, databaseName)
+    val browsingTable = new BrowsingTable(dbActor, guiActor, dbTable, databaseId)
     val tab = buildTab(dbTable, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)
     browsingTable.onTextEntered(newTable => addBrowsingTable(newTable))
-    mapTable += browsingTable.id -> browsingTable
+    mapTable += browsingTable.id -> BrowsingTableWIthTab(browsingTable, tab)
   }
 
   private def withTableId(id : TableId, doWith : BrowsingTable => Unit) : Unit =
-    mapTable.get(id).foreach(table => doWith(table))
+    mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab.table))
 
   def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, table => table.addRows(rows))
   def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.id, table => table.addForeignKeys(keys)) 
   def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableName,columns.columns))
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow))
+  def removeTables(ids : List[TableId]) : Unit = {
+      val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)
+      mapTable --= ids
+      tabs.tabs --= tabsToClose
+    }
+
 }
 

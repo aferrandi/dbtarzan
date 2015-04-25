@@ -19,6 +19,8 @@ case class ResponseRows(id : TableId, rows: Rows)
 
 case class ResponseTables(id : DatabaseId, names: TableNames)
 
+case class ResponseCloseTables(id : DatabaseId, ids : List[TableId])
+
 case class ResponseColumns(id: DatabaseId, tableName : String, columns : Fields)
 
 case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
@@ -39,6 +41,6 @@ case class QueryDatabase(databaseName : String)
 
 case class ResponseDatabase(databaseName : String, dbActor : ActorRef)
 
-case class ResponseClose(databaseName : String)
+case class ResponseCloseDatabase(databaseName : String)
 
 case class CopyToFile(databaseName : String)

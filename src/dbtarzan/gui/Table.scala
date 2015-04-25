@@ -52,5 +52,5 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table){
 
   def addRows(rows : Rows) : Unit = 
     buffer ++= fromRow(rows, names)
-  
+  def getId = id
 }
