@@ -1,6 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.{ TabPane, Tab, Tooltip, ContextMenu, MenuItem}
+import scalafx.scene.Node
 import scalafx.event.ActionEvent
 import dbtarzan.messages._
 import scala.collection.mutable.HashMap
@@ -11,9 +12,9 @@ import scalafx.Includes._
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TTables {
-  val tabs = new TabPane()
-  val mapTable = HashMap.empty[TableId, BrowsingTableWIthTab]
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TTables with TControlBuilder {
+  private val tabs = new TabPane()
+  private val mapTable = HashMap.empty[TableId, BrowsingTableWIthTab]
 
   /* creates a table from scratch */
   private def createTable(tableName : String, columns : Fields) : dbtarzan.db.Table = 
@@ -27,7 +28,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   private def buildTab(dbTable : dbtarzan.db.Table, browsingTable :  BrowsingTable) = new Tab() {      
       text = buildTabText(dbTable)
-      content = browsingTable.layout     
+      content = browsingTable.control     
       tooltip.value = Tooltip(dbTable.sql)
       contextMenu = new ContextMenu(
         ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql),
@@ -69,7 +70,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     tabs += tab
     tabs.selectionModel().select(tab)
     browsingTable.onTextEntered(newTable => addBrowsingTable(newTable))
-    mapTable += browsingTable.id -> BrowsingTableWIthTab(browsingTable, tab)
+    mapTable += browsingTable.getId -> BrowsingTableWIthTab(browsingTable, tab)
   }
 
   private def withTableId(id : TableId, doWith : BrowsingTable => Unit) : Unit =
@@ -85,5 +86,6 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
       tabs.tabs --= tabsToClose
     }
 
+  def control : Node = tabs
 }
 

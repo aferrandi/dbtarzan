@@ -29,9 +29,9 @@ object Main extends JFXApp {
   val version = "0.96"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs(system)
-  val errorList = new LogList()
+  val logList = new LogList()
   val config = new Config(ConfigReader.read("connections.config"))
-  val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, errorList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
+  val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, logList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val configActor = system.actorOf(Props(new ConfigWorker(config, guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   println("configWorker "+configActor)  
   val databaseList = new DatabaseList(config.connections)
@@ -41,16 +41,16 @@ object Main extends JFXApp {
   stage = buildStage()
 
   private def buildDatabaseSplitPane() = new SplitPane {
-      items.addAll(JFXUtil.withTitle(databaseList.list, "Databases"), databaseTabs.tabs)
+      items.addAll(JFXUtil.withTitle(databaseList.control, "Databases"), databaseTabs.control)
       dividerPositions = 0.2
-      SplitPane.setResizableWithParent(databaseList.list, false)
+      SplitPane.setResizableWithParent(databaseList.control, false)
   }
   
   private def mainSplitPane() = new SplitPane {
       orientation() =  Orientation.VERTICAL
-      items.addAll(buildDatabaseSplitPane(), errorList.list)
+      items.addAll(buildDatabaseSplitPane(), logList.control)
       dividerPositions = 0.85
-      SplitPane.setResizableWithParent(errorList.list, false)
+      SplitPane.setResizableWithParent(logList.control, false)
   }
   
   /* first we close the dbWorker actors. Then the config and gui actors. Then we stop the actor system and we check that there are no more actors. 

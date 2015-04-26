@@ -1,6 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.{ TabPane, Tab }
+import scalafx.scene.Node
 import dbtarzan.messages._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.HashMap
@@ -10,9 +11,9 @@ import akka.actor.{ ActorRef, ActorSystem }
 /**
   All the tabs with one database for each
 */
-class DatabaseTabs(system : ActorSystem) extends TDatabases {
-  val tabs = new TabPane()
-  val mapDatabase = HashMap.empty[String, Database]
+class DatabaseTabs(system : ActorSystem) extends TDatabases with TControlBuilder {
+  private val tabs = new TabPane()
+  private val mapDatabase = HashMap.empty[String, Database]
   private def addDatabaseTab(dbActor : ActorRef, databaseName : String) : Database = {
           println("add database tab for "+databaseName)
           val database = new Database(dbActor,  system.actorFor("/user/guiWorker"), databaseName)
@@ -31,7 +32,7 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases {
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {
       text = database.getDatabaseName
-      content = database.pane
+      content = database.control
       onCloseRequest = (e : Event) => { sendClose(database.getDatabaseName) }
   }      
 
@@ -51,16 +52,16 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases {
 
 
   /* received some rows coming as a result of a query, that have to be shown within a table tab */
-  def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, database => database.tableTabs.addRows(rows))
+  def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, database => database.addRows(rows))
 
   /* received some foreign keys, that have to be shown within a table tab  */
-  def addForeignKeys(keys : ResponseForeignKeys) : Unit = withTableId(keys.id, database => database.tableTabs.addForeignKeys(keys)) 
+  def addForeignKeys(keys : ResponseForeignKeys) : Unit = withTableId(keys.id, database => database.addForeignKeys(keys)) 
 
   /* received the columns of a table, that are used to build the table in a tab  */
-  def addColumns(columns : ResponseColumns) : Unit= withDatabaseId(columns.id, database => database.tableTabs.addColumns(columns))
+  def addColumns(columns : ResponseColumns) : Unit= withDatabaseId(columns.id, database => database.addColumns(columns))
 
   /* received the columns of a table, that are used to build the table coming from the selection of a foreign key, in a tab */
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= withDatabaseId(columns.id, database => database.tableTabs.addColumnsFollow(columns))
+  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= withDatabaseId(columns.id, database => database.addColumnsFollow(columns))
 
   /* received the list of the tables in the database, to show in the list on the left side */
   def addTables(tables : ResponseTables) : Unit = withDatabaseId(tables.id, database => database.addTableNames(tables.names))
@@ -68,7 +69,7 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases {
   /* received the data of a database, to open a database tab */
   def addDatabase(databaseData : ResponseDatabase) : Unit = {
       val database = addDatabaseTab(databaseData.dbActor, databaseData.databaseName)
-      databaseData.dbActor ! QueryTables(database.id)
+      databaseData.dbActor ! QueryTables(database.getId)
     }
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
@@ -95,4 +96,6 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases {
     val optTab = getTabByDatabaseName(databaseName)
      optTab.foreach(tab => selectTab(tab))
   }
+
+  def control : Node = tabs
 }

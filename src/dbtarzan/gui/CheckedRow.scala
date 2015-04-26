@@ -7,15 +7,15 @@ import scalafx.Includes._
 /**
 	One row of a table. The first column is for the check box, the others come from the database
 */
-case class JFXRow(checked: BooleanProperty, values : List[StringProperty], row : Row)
+case class CheckedRow(checked: BooleanProperty, values : List[StringProperty], row : Row)
 
 
 /* needed to have the check box working */
-class JFXRowFromRow(checked : CheckedRows) {
-	def apply(rows : Rows, columnNames: List[Field]) : List[JFXRow] = rows.rows.map(row => {
-		val jfxRow = JFXRow(checkedProperty(), values(row, columnNames), row)
-		jfxRow.checked.onChange((_, _, newValue) => fromCheckBoxToChecked(newValue, row))
-		jfxRow
+class CheckedRowFromRow(checked : CheckedRowsBuffer) {
+	def apply(rows : Rows, columnNames: List[Field]) : List[CheckedRow] = rows.rows.map(row => {
+		val checkedRow = CheckedRow(checkedProperty(), values(row, columnNames), row)
+		checkedRow.checked.onChange((_, _, newValue) => fromCheckBoxToChecked(newValue, row))
+		checkedRow
 	})
 
 	/* if the check box gets checked or unchecked the related row gets added or removed from the list of checked rows */
@@ -24,6 +24,7 @@ class JFXRowFromRow(checked : CheckedRows) {
 			checked.add(row)
 		else
 			checked.remove(row)
+	
 	/* creates the fields of a row */
 	private def values(row : Row, columnNames: List[Field]) = {
 		if(row.values.size != columnNames.size)

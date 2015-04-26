@@ -3,6 +3,7 @@ package dbtarzan.gui
 import scalafx.scene.control.{ ListView, ListCell, Tooltip}
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.VBox
+import scalafx.scene.Node
 import scalafx.beans.property.ObjectProperty
 import scalafx.collections.ObservableBuffer 
 import scalafx.Includes._
@@ -13,9 +14,9 @@ import dbtarzan.gui.util.JFXUtil
 /**
 	foreign keys list
 */
-class ForeignKeyList() {
-	val buffer = ObservableBuffer.empty[ForeignKey]
-	val list = new ListView[ForeignKey](buffer) {
+class ForeignKeyList() extends TControlBuilder {
+	private val buffer = ObservableBuffer.empty[ForeignKey]
+	private val list = new ListView[ForeignKey](buffer) {
 	    cellFactory = { _ => buildCell() }
 	  }		
 	
@@ -51,5 +52,6 @@ class ForeignKeyList() {
 	        println("Selected "+selectedKey)      
 	        useKey(selectedKey)
 	      })
+	def control : Node = list
  }
 

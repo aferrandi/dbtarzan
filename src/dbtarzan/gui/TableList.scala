@@ -5,13 +5,14 @@ import scalafx.scene.control.ListView
 import scalafx.Includes._
 import dbtarzan.db.TableNames
 import dbtarzan.gui.util.JFXUtil
+import scalafx.scene.Node
 
 /**
   The list of tables to choose from
 */
-class TableList {
-  val buffer = ObservableBuffer.empty[String] 
-  val list = new ListView[String](buffer)
+class TableList extends TControlBuilder {
+  private val buffer = ObservableBuffer.empty[String] 
+  private val list = new ListView[String](buffer)
 
 
   def addTableNames(names : TableNames) : Unit = 
@@ -23,6 +24,6 @@ class TableList {
         useTable(selectedTable)
         })
     }
-
+  def control : Node = list
 }
 

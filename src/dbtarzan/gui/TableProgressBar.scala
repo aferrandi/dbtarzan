@@ -3,15 +3,16 @@ package dbtarzan.gui
 import scalafx.scene.control.ProgressBar
 import scala.collection.mutable.HashSet
 import scalafx.scene.layout.Priority
+import scalafx.scene.Node
 
 /**
 	Progress bar that signals when we got (at least one row of) the query result and the foreign keys
 */
-class TableProgressBar {
-	val bar = new ProgressBar() {
+class TableProgressBar extends TControlBuilder {
+	private val bar = new ProgressBar() {
 		prefWidth = Double.MaxValue
 	}
-	val setReceived = new HashSet[String]()
+	private val setReceived = new HashSet[String]()
 
 	private def updateProgressBar() : Unit = 
 		bar.progress() = setReceived.size * .5
@@ -25,4 +26,6 @@ class TableProgressBar {
 		setReceived += "ROWS"
 		updateProgressBar()
 	}
+
+	def control : Node = bar
 }
