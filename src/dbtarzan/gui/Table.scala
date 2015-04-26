@@ -21,10 +21,10 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
   private val buffer = ObservableBuffer.empty[CheckedRow]
   /* keeps track of the rows that have the check box turned on */ 
   private val checkedRows = new CheckedRowsBuffer()
-  /* converts rows to structures usable from the table */
-  private val fromRow = new CheckedRowFromRow(checkedRows)
   /* the table */
   private val table = buildTable()
+   /* converts rows to structures usable from the table */
+  private val fromRow = new CheckedRowFromRow(checkedRows, table.selectionModel()) 
   /* requests the rows for the table to the database actor. They come back using the addRows function */
   dbActor ! QueryRows(id, dbTable.sql, 500) 
   /* requests the foreign keys for this table. */

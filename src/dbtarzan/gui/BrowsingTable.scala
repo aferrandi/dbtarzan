@@ -34,7 +34,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
         guiActor ! Warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
       }
   } 
-
+  /* builds the split panel containing the table and the foreign keys list */
   private def buildSplitPane() =new SplitPane {
         maxHeight = Double.MaxValue
         maxWidth = Double.MaxValue
@@ -43,17 +43,20 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
         SplitPane.setResizableWithParent(foreignKeyList.control, false)
   }
 
+  /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */
   def onTextEntered(useTable : dbtarzan.db.Table => Unit) : Unit =
     queryText.onEnter(text => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
         useTable(tableWithFilters)
     })    
 
+  /* adds the following rows to the table */
   def addRows(rows : ResponseRows) : Unit  = { 
     table.addRows(rows.rows)
     progressBar.receivedRows()
   }
 
+  /* adds the foreign keys to the foreign key list */
   def addForeignKeys(keys : ResponseForeignKeys) : Unit = {
     foreignKeyList.addForeignKeys(keys.keys)
     progressBar.receivedForeignKeys()

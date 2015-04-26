@@ -3,7 +3,7 @@ package dbtarzan.gui
 import scalafx.beans.property.{StringProperty, ObjectProperty, BooleanProperty}
 import dbtarzan.db.{Row, Rows, Field}
 import scalafx.Includes._
-
+import scalafx.scene.control.MultipleSelectionModel
 /**
 	One row of a table. The first column is for the check box, the others come from the database
 */
@@ -11,15 +11,34 @@ case class CheckedRow(checked: BooleanProperty, values : List[StringProperty], r
 
 
 /* needed to have the check box working */
-class CheckedRowFromRow(checked : CheckedRowsBuffer) {
-	def apply(rows : Rows, columnNames: List[Field]) : List[CheckedRow] = rows.rows.map(row => {
+class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSelectionModel[CheckedRow]) {
+	def apply(rows : Rows, columnNames: List[Field]) : List[CheckedRow] = 
+		rows.rows.map(row => buildCheckedRow(row, columnNames))
+		
+	/* builds the row representation used as row of the table */
+	private def buildCheckedRow(row : Row, columnNames: List[Field]) : CheckedRow = {
 		val checkedRow = CheckedRow(checkedProperty(), values(row, columnNames), row)
-		checkedRow.checked.onChange((_, _, newValue) => fromCheckBoxToChecked(newValue, row))
+		onCheckedRowCheck(checkedRow)
 		checkedRow
-	})
+	}
+	/* when the checkbox on the row get checked, also the selected rows get checked and the list of checked rows gets filled up with the checked rows */
+	private def onCheckedRowCheck(checkedRow : CheckedRow) : Unit =
+	{
+		def checkedRowCheckAction(newValue : Boolean, row : Row) : Unit = {
+			checkSelectedRows(newValue)
+			fromCheckBoxToChecked(newValue, row)
+		}
+
+		checkedRow.checked.onChange((_, _, newValue) => checkedRowCheckAction(newValue, checkedRow.row))
+	}
+
+	/* if someone checks one row but has other rows selected we want also the selected rows to be checked */
+	private def checkSelectedRows(newValue : Boolean) : Unit = {
+		selectionModel.selectedItems.foreach(checkedRow => checkedRow.checked() = newValue)
+	}
 
 	/* if the check box gets checked or unchecked the related row gets added or removed from the list of checked rows */
-	private def fromCheckBoxToChecked(newValue : Boolean, row : Row) = 			
+	private def fromCheckBoxToChecked(newValue : Boolean, row : Row) : Unit = 			
 		if(newValue) 
 			checked.add(row)
 		else
