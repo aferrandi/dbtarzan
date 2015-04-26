@@ -6,7 +6,7 @@ import dbtarzan.db.Row
 /**
 	The checked boxes in the table
 */
-class SelectedRows {
+class CheckedRows {
 	val selected = new ListBuffer[Row]()
 
 	def add(row : Row) : Unit = selected += row

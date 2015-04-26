@@ -25,9 +25,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
 
   private def openTableConnectedByForeignKey(key : ForeignKey) : Unit = {
       println("Selected "+key)
-      val selectedRows = table.selected.rows
-      if(!selectedRows.isEmpty) {
-        dbActor ! QueryColumnsFollow(databaseId, key.to.table, FollowKey(dbTable.columnNames, key, selectedRows))
+      val checkedRows = table.checkedRows.rows
+      if(!checkedRows.isEmpty) {
+        dbActor ! QueryColumnsFollow(databaseId, key.to.table, FollowKey(dbTable.columnNames, key, checkedRows))
       } else {
         dbActor ! QueryColumns(databaseId, key.to.table)
         guiActor ! Warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
