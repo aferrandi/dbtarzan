@@ -1,9 +1,0 @@
-echo git all
-git add --all
-echo commit
-git commit -m $1
-echo pull
-git pull origin master
-echo push
-git push origin master
-
