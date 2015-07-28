@@ -3,7 +3,7 @@ package dbtarzan.gui
 import scalafx.scene.control.ProgressBar
 import scala.collection.mutable.HashSet
 import scalafx.scene.layout.Priority
-import scalafx.scene.Node
+import scalafx.scene.Parent
 
 /**
 	Progress bar that signals when we got (at least one row of) the query result and the foreign keys
@@ -27,5 +27,5 @@ class TableProgressBar extends TControlBuilder {
 		updateProgressBar()
 	}
 
-	def control : Node = bar
+	def control : Parent = bar
 }

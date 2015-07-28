@@ -5,7 +5,7 @@ import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.Scene
-import scalafx.stage.Screen
+import scalafx.stage.{ Screen, Stage, StageStyle }
 import scalafx.scene.control.SplitPane
 import scalafx.scene.image.Image
 import scalafx.scene.layout.GridPane
@@ -14,10 +14,11 @@ import scalafx.beans.property.{StringProperty, ObjectProperty}
 import scalafx.Includes._
 import scala.util.{Try, Success, Failure}
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.config.{ Config, ConfigReader }
+import dbtarzan.config.{ Config, ConfigReader, ConfigWriter }
 import dbtarzan.db.ConnectionBuilder
 import akka.actor.{ ActorSystem, Props, ActorRef }
 import dbtarzan.gui.actor.GUIWorker
+import dbtarzan.gui.config.ConnectionEditor
 import dbtarzan.config.actor.ConfigWorker
 import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile }
 
@@ -26,17 +27,19 @@ import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile }
   Main class, containing everything
 */
 object Main extends JFXApp {
-  val version = "0.96"
+  val version = "0.97"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs(system)
   val logList = new LogList()
-  val config = new Config(ConfigReader.read("connections.config"))
+  val connections = ConfigReader.read("connections.config")
+  val config = new Config(connections)
   val guiActor = system.actorOf(Props(new GUIWorker(databaseTabs, logList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val configActor = system.actorOf(Props(new ConfigWorker(config, guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   println("configWorker "+configActor)  
   val databaseList = new DatabaseList(config.connections)
   databaseList.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
   databaseList.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })
+  databaseList.onEditConnections(openConnectionsEditor)
   val screenBounds = Screen.primary.visualBounds
   stage = buildStage()
 
@@ -45,6 +48,28 @@ object Main extends JFXApp {
       dividerPositions = 0.2
       SplitPane.setResizableWithParent(databaseList.control, false)
   }
+
+
+  private def openConnectionsEditor() : Unit = {
+    println("open connections editor")  
+     val connectionStage = new Stage {
+      title = "Edit Connections"
+      width = 800
+      height = 600
+      scene = new Scene {
+        val editor = new ConnectionEditor(ConfigReader.read("connections.config"))
+        editor.onSave(connectionsToSave => {
+            ConfigWriter.write("connections.config", connectionsToSave)
+            scene.window().hide()
+          })
+        root = editor.control
+      }
+    }
+    connectionStage.initOwner(stage)
+    connectionStage.initStyle(StageStyle.UTILITY);
+    connectionStage.show()
+  }
+
   
   private def mainSplitPane() = new SplitPane {
       orientation() =  Orientation.VERTICAL

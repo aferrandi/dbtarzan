@@ -5,7 +5,7 @@ import scalafx.scene.control.ListView
 import scalafx.Includes._
 import dbtarzan.db.TableNames
 import dbtarzan.gui.util.JFXUtil
-import scalafx.scene.Node
+import scalafx.scene.Parent
 
 /**
   The list of tables to choose from
@@ -24,6 +24,6 @@ class TableList extends TControlBuilder {
         useTable(selectedTable)
         })
     }
-  def control : Node = list
+  def control : Parent = list
 }
 

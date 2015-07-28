@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.{ TabPane, Tab }
-import scalafx.scene.Node
+import scalafx.scene.Parent
 import dbtarzan.messages._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.HashMap
@@ -97,5 +97,5 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases with TControlBuilder
      optTab.foreach(tab => selectTab(tab))
   }
 
-  def control : Node = tabs
+  def control : Parent = tabs
 }

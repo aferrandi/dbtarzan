@@ -5,7 +5,7 @@ import scalafx.scene.control.{TableColumn, TableView, SelectionMode, ContextMenu
 import scalafx.beans.property.{StringProperty, ObjectProperty, BooleanProperty}
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.control.cell.CheckBoxTableCell
-import scalafx.scene.Node
+import scalafx.scene.Parent
 import scalafx.Includes._
 import dbtarzan.config.{ Config, ConfigReader }
 import dbtarzan.db.{Field, Row, Rows}
@@ -75,5 +75,5 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
 
   def getCheckedRows = checkedRows.rows
 
-  def control : Node = table
+  def control : Parent = table
 }

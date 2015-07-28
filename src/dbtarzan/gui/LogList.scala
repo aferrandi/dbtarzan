@@ -3,7 +3,7 @@ package dbtarzan.gui
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.control.{ ListView, ListCell, Tooltip, ContextMenu, MenuItem}
 import scalafx.Includes._
-import scalafx.scene.Node
+import scalafx.scene.Parent
 import dbtarzan.messages.TLogMessage
 import dbtarzan.messages.LogText
 import scalafx.event.ActionEvent
@@ -32,6 +32,6 @@ class LogList extends TLogs with TControlBuilder {
   def addLogMessage(log :TLogMessage) : Unit = 
     log +=: buffer
 
-  def control : Node = list 
+  def control : Parent = list 
 }
 

@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.{ TabPane, Tab, Tooltip, ContextMenu, MenuItem}
-import scalafx.scene.Node
+import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import dbtarzan.messages._
 import scala.collection.mutable.HashMap
@@ -86,6 +86,6 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
       tabs.tabs --= tabsToClose
     }
 
-  def control : Node = tabs
+  def control : Parent = tabs
 }
 

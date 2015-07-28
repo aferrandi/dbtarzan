@@ -2,7 +2,7 @@ package dbtarzan.gui
 
 import scalafx.scene.control.{ TableView, SplitPane }
 import scalafx.scene.layout.BorderPane
-import scalafx.scene.Node
+import scalafx.scene.Parent
 import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages._
@@ -63,5 +63,5 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   }
 
   def getId = id
-  def control : Node = layout
+  def control : Parent = layout
 }

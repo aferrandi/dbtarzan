@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.SplitPane
-import scalafx.scene.Node
+import scalafx.scene.Parent
 import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields }
 import scalafx.Includes._
 import akka.actor.ActorRef
@@ -28,7 +28,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
   def removeTables(ids : List[TableId]) : Unit = 
     tableTabs.removeTables(ids)
 
-  def control : Node = pane
+  def control : Parent = pane
 
   def addRows(rows : ResponseRows) : Unit = tableTabs.addRows(rows)
 
