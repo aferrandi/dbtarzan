@@ -1,0 +1,3 @@
+FROM java:jre
+COPY ./deploy/* /
+ENTRYPOINT ["java", "-cp", "\* dbtarzan.gui.Main"]
