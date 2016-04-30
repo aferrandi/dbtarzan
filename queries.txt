@@ -1,0 +1,8 @@
+update deal set counterpartkey = 740 where dealkey in (101774, 101776, 101778 );
+update deal set counterpartkey = 740 where dealkey in (84368, 84372 );
+update deal set counterpartkey = 740 where dealkey in (84369 );
+update deal set counterpartkey = 740 where dealkey in (85453, 95618  );
+update deal set counterpartkey = 740 where dealkey in (85438, 85442, 85448, 85454, 88801, 88805, 94267, 94271, 98870, 98874, 98878, 99831, 101741, 101745, 101749 );
+update deal set counterpartkey = 740 where dealkey in ( 85437, 85441, 85447, 88800, 88804, 94266, 94270, 98869, 98873, 98877, 101740, 101744, 101748  );
+update deal set portfoliokey = 552 where dealkey in (95619 );
+update deal set portfoliokey = 552 where dealkey in (83625, 83631, 83639, 83648 );

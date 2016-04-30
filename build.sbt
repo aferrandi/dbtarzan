@@ -19,7 +19,7 @@ scalaSource in Test := baseDirectory.value / "test"
 libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.3.1",
   "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
-  "org.scalafx" %% "scalafx" % "8.0.20-R6",
+  "org.scalafx" %% "scalafx" % "8.+",
   "com.typesafe.akka" %% "akka-actor" % "2.3.7"
 )
 

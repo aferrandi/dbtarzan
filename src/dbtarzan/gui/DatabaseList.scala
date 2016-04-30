@@ -11,10 +11,9 @@ import scalafx.event.ActionEvent
 */
 class DatabaseList(databases :List[String]) extends TControlBuilder {
   private val menuForeignKeyToFile = new MenuItem("Build foreign keys file")
-  private val menuEditConnections = new MenuItem("Edit Connections")
   private val list = new ListView[String](databases) {
   	SplitPane.setResizableWithParent(this, false) 
-  	contextMenu = new ContextMenu(menuForeignKeyToFile, menuEditConnections)   
+  	contextMenu = new ContextMenu(menuForeignKeyToFile)   
   }
 
   def onDatabaseSelected(use : String => Unit) : Unit = 
@@ -27,10 +26,5 @@ class DatabaseList(databases :List[String]) extends TControlBuilder {
         println("Selected "+selectedDatabase)
         use(selectedDatabase)
       })
-  def onEditConnections(editConnections : ()  => Unit) : Unit = {
-    menuEditConnections.onAction = (ev: ActionEvent) => {
-        println("Edit Connections")
-        editConnections()
-      }}
   def control : Parent = list
 }

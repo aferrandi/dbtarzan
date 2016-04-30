@@ -8,6 +8,8 @@ import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.ConnectionData
 
+case class ConnectionDataErrors(name : String, errors : List[String])
+
 /**
 	The list of database to choose from
 */
@@ -42,6 +44,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
     println("Selected index:"+index)
     index
   }
+
   def onConnectionSelected(use : ConnectionData => Unit) : Unit = 
     selectionModel().selectedIndex.onChange {  (item, oldIndex, newIndex) => {
         println("Selected index changed to "+newIndex) 
@@ -56,6 +59,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
         val valueOrEmpty = optValue.map(_.name).orElse(Some(""))
         valueOrEmpty.foreach({ text.value = _ })
       }}}
+
   /* there must be always at least one connection */
   def removeCurrent() : Unit = 
     if(connectionDatas.length > 1) 
@@ -65,7 +69,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
         newSelectedIndex(selectedIndex).foreach(selectionModel().select(_))
       })
 
-  case class ConnectionDataErrors(name : String, errors : List[String])
+  
   /* returns errors validating the items in the list */
   def validate() : List[ConnectionDataErrors] = {
     println("Validate")

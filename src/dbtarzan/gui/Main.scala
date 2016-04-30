@@ -5,20 +5,22 @@ import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.Scene
-import scalafx.stage.{ Screen, Stage, StageStyle }
-import scalafx.scene.control.SplitPane
+import scalafx.stage.{ Screen, Stage, StageStyle, WindowEvent }
+import scalafx.scene.control.{ SplitPane, MenuItem, Menu, MenuBar }
 import scalafx.scene.image.Image
 import scalafx.scene.layout.GridPane
 import scalafx.geometry.Orientation
 import scalafx.beans.property.{StringProperty, ObjectProperty}
+import scalafx.scene.layout.BorderPane
 import scalafx.Includes._
+import scalafx.event.ActionEvent
 import scala.util.{Try, Success, Failure}
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.config.{ Config, ConfigReader, ConfigWriter }
+import dbtarzan.config.{ Config, ConfigReader }
 import dbtarzan.db.ConnectionBuilder
 import akka.actor.{ ActorSystem, Props, ActorRef }
 import dbtarzan.gui.actor.GUIWorker
-import dbtarzan.gui.config.ConnectionEditor
+import dbtarzan.gui.config.ConnectionEditorStarter
 import dbtarzan.config.actor.ConfigWorker
 import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile }
 
@@ -27,7 +29,7 @@ import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile }
   Main class, containing everything
 */
 object Main extends JFXApp {
-  val version = "0.97"
+  val version = "0.98"
   val system = ActorSystem("Sys")
   val databaseTabs = new DatabaseTabs(system)
   val logList = new LogList()
@@ -39,38 +41,16 @@ object Main extends JFXApp {
   val databaseList = new DatabaseList(config.connections)
   databaseList.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
   databaseList.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })
-  databaseList.onEditConnections(openConnectionsEditor)
   val screenBounds = Screen.primary.visualBounds
   stage = buildStage()
 
   private def buildDatabaseSplitPane() = new SplitPane {
-      items.addAll(JFXUtil.withTitle(databaseList.control, "Databases"), databaseTabs.control)
+      val databaseListWithTitle = JFXUtil.withTitle(databaseList.control, "Databases")
+      items.addAll(databaseListWithTitle, databaseTabs.control)
       dividerPositions = 0.2
-      SplitPane.setResizableWithParent(databaseList.control, false)
+      SplitPane.setResizableWithParent(databaseListWithTitle, false)
   }
 
-
-  private def openConnectionsEditor() : Unit = {
-    println("open connections editor")  
-     val connectionStage = new Stage {
-      title = "Edit Connections"
-      width = 800
-      height = 600
-      scene = new Scene {
-        val editor = new ConnectionEditor(ConfigReader.read("connections.config"))
-        editor.onSave(connectionsToSave => {
-            ConfigWriter.write("connections.config", connectionsToSave)
-            scene.window().hide()
-          })
-        root = editor.control
-      }
-    }
-    connectionStage.initOwner(stage)
-    connectionStage.initStyle(StageStyle.UTILITY);
-    connectionStage.show()
-  }
-
-  
   private def mainSplitPane() = new SplitPane {
       orientation() =  Orientation.VERTICAL
       items.addAll(buildDatabaseSplitPane(), logList.control)
@@ -99,6 +79,25 @@ object Main extends JFXApp {
       })
   }
 
+  private def buildMenu() = new MenuBar {
+    menus = List(
+      new Menu("Connections") {
+        items = List(
+          new MenuItem("Edit Connections") {
+            onAction = {
+              e: ActionEvent => ConnectionEditorStarter.openConnectionsEditor(stage)
+            }
+          }
+        )
+      }
+    )
+  }
+
+  private def buildMainView() = new BorderPane {
+    top = buildMenu() 
+    center = mainSplitPane()
+  }
+
   private def appIcon() = 
     new Image(getClass().getResourceAsStream("monkey-face-cartoon.png"))
 
@@ -106,7 +105,7 @@ object Main extends JFXApp {
     title = "DbTarzan "+version
     icons.add(appIcon())
     scene = new Scene(screenBounds.width / 2, screenBounds.height / 2 ) {
-        root = mainSplitPane()
+        root = buildMainView()
         onCloseRequest = handle { closeApp() }
       }
   }
