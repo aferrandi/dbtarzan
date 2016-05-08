@@ -11,6 +11,8 @@ To explore the tables of a relational database following the relations defined i
 Foreign keys are  used as constraints, but they contain information about the relationships among tables. 
 DbTarzan uses this information to traverse the tables of a database.
 
+This [video](https://youtu.be/-hR9ZLf3bNY)  showing an example of database exploration.
+
 More details in the [Wiki](https://github.com/aferrandi/dbtarzan/wiki).
 
 Examples
