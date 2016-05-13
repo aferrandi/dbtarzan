@@ -13,3 +13,5 @@ target
 *.~
 *.fgk
 togit
+db
+sqllite
