@@ -4,7 +4,7 @@ oneJarSettings
 
 name := "dbtarzan"
 
-version := "0.97"
+version := "0.99"
 
 scalaVersion := "2.11.4"
 
@@ -27,5 +27,3 @@ unmanagedJars in Compile += Attributed.blank(
     file(scala.util.Properties.javaHome) / "lib" / "jfxrt.jar")
 
 fork := true
-
-

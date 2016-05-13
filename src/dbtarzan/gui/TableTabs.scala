@@ -36,17 +36,17 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
      )
     }
 
-    private def buildRemoveAfterMenu(tab : Tab) = new MenuItem {
-        def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) = 
-          mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
+  private def buildRemoveAfterMenu(tab : Tab) = new MenuItem {
+    def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) = 
+      mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
 
-          text = "Close tabs after this"
-          onAction = (ev: ActionEvent) => {
-            val toCloseTabs = tabs.tabs.reverse.takeWhile(_ != tab.delegate).toList // need to check the javafx class
-            val toCloseIds = idsFromTabs(toCloseTabs)
-            guiActor ! ResponseCloseTables(databaseId, toCloseIds)
-          }
-        }
+      text = "Close tabs after this"
+      onAction = (ev: ActionEvent) => {
+        val toCloseTabs = tabs.tabs.reverse.takeWhile(_ != tab.delegate).toList // need to check the javafx class
+        val toCloseIds = idsFromTabs(toCloseTabs)
+        guiActor ! ResponseCloseTables(databaseId, toCloseIds)
+      }
+    }
  
   /*
     Normally it shows the name of the table.
@@ -77,9 +77,13 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab.table))
 
   def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, table => table.addRows(rows))
+
   def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.id, table => table.addForeignKeys(keys)) 
+
   def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableName,columns.columns))
+
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow))
+  
   def removeTables(ids : List[TableId]) : Unit = {
       val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)
       mapTable --= ids

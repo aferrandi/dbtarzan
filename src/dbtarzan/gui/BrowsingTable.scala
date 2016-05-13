@@ -38,9 +38,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   private def buildSplitPane() =new SplitPane {
         maxHeight = Double.MaxValue
         maxWidth = Double.MaxValue
-        items.addAll(table.control, JFXUtil.withTitle(foreignKeyList.control, "Foreign keys"))
+        val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
+        items.addAll(table.control, foreignKeyListWithTitle)
         dividerPositions = 0.8
-        SplitPane.setResizableWithParent(foreignKeyList.control, false)
+        SplitPane.setResizableWithParent(foreignKeyListWithTitle, false)
   }
 
   /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */

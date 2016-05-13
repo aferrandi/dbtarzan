@@ -17,8 +17,10 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
   private val tableTabs = new TableTabs(dbActor, guiActor, id)  
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(id, tableName))
   private val pane = new SplitPane {
-        items.addAll(JFXUtil.withTitle(tableList.control, "Tables"), tableTabs.control)
-        dividerPositions = 0.20
+    val tableListWithTitle = JFXUtil.withTitle(tableList.control, "Tables")
+    items.addAll(tableListWithTitle, tableTabs.control)
+    dividerPositions = 0.20
+    SplitPane.setResizableWithParent(tableListWithTitle, false)
   }
   def getDatabaseName = databaseName
   

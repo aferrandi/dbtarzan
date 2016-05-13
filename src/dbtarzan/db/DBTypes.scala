@@ -3,9 +3,9 @@ package dbtarzan.db
 abstract sealed class FieldType
 /* the fields types that are normally used in a foreign key */
 object FieldType {
-object STRING extends FieldType
-object INT extends FieldType
-object FLOAT extends FieldType
+	object STRING extends FieldType
+	object INT extends FieldType
+	object FLOAT extends FieldType
 }
 
 
@@ -19,7 +19,7 @@ case class Field(name : String,  fieldType : FieldType)
 case class Fields(fields : List[Field])
 /* all fields in a table (with the table name)n*/
 case class FieldsOnTable(table : String, fields : List[String])
-/* a foreign key is a relation between two tables. It has a name and matches fields on the two tables */
+/* a foreign key is a relation between two tables. It has a name and matches fields on the two tables (can clearly be more than one) */
 case class ForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable)
 /* the foreign keys involving a table */
 case class ForeignKeys(keys : List[ForeignKey])
@@ -31,7 +31,12 @@ case class Row(values : List[String])
 case class Rows(rows : List[Row])
 /* a text filter to use it in a where clause */
 case class Filter(text : String)
-/* when we click on a foreign key, this is the information we need to open the new table */
+/* when we click on a foreign key, this is the information we need to open the new table
+Contains:
+- all columns of the original table
+- the foreign key
+- the rows checked by the user in the original table
+ */
 case class FollowKey(columns : List[Field], key : ForeignKey, rows : List[Row])
 /* the foreign keys involving a table, with the table */
 case class ForeignKeysForTable(table : String, keys : ForeignKeys)
