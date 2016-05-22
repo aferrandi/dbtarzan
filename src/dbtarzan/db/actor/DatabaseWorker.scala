@@ -14,8 +14,7 @@ import dbtarzan.db.ForeignKeysToFile
 
 
 /* The actor that reads data from the database */
-class DatabaseWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
-	val connection = DriverManager.getConnection(data.url, data.user, data.password)
+class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, guiActor : ActorRef) extends Actor {
 	def databaseName = data.name
 	val foreignKeyLoader =  new ForeignKeyLoader(connection, data.schema)
 	val foreignKeysCache = HashMap.empty[String, ForeignKeys]

@@ -14,17 +14,17 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 
 	 /* creates the actors to serve the queries for a database */
 	 private def getDBWorker(databaseName : String) : ActorRef = {
-	    	val data = config.connect(databaseName)
-    		val dbActor = ConnectionBuilder.buildDBWorker(data, guiActor, context)
-    		mapDBWorker += databaseName -> dbActor
-    		dbActor
+    	val data = config.connect(databaseName)
+		val dbActor = ConnectionBuilder.buildDBWorker(data, guiActor, context)
+		mapDBWorker += databaseName -> dbActor
+		dbActor
 	 } 
 
 	/* creates the actor to serve the creation of foreign keys text files and start the copy */
 	 private def startCopyWorker(databaseName : String) : Unit = {
-	    	val data = config.connect(databaseName)
-    		val copyActor = ConnectionBuilder.buildCopyWorker(data, guiActor, context)
-    		copyActor ! CopyToFile
+    	val data = config.connect(databaseName)
+		val copyActor = ConnectionBuilder.buildCopyWorker(data, guiActor, context)
+		copyActor ! CopyToFile
 	 } 
 
 	 /* if no actors are serving the queries to a specific database, creates them */
@@ -36,7 +36,10 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 	    		else
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseName)
 			} catch {
-				case e : Exception => guiActor ! Error("Querying the database "+databaseName+" got", e)	    	
+				case e : Exception => {
+					guiActor ! Error("Querying the database "+databaseName+" got", e)
+					e.printStackTrace()
+				}	    	
 			}	 	
 	 }
 

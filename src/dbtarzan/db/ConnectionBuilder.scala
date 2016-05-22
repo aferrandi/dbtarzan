@@ -17,7 +17,7 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 		val actorRefs = range.map(index => buildSubWorker(index))
 		context.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
 	} catch { 
-		case t: Throwable => throw new Exception("Building the dbWorker with the driver "+data.driver+" got:"+t)
+		case t: Throwable => throw new Exception("Building the dbWorker with the driver "+data.driver+" got:",t)
 	}
 
 	def buildCopyWorker() : ActorRef = try {
@@ -25,7 +25,7 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 		val name = "copyworker" + data.name		
 		context.actorOf(Props(new CopyWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name)
 	} catch { 
-		case t: Throwable => throw new Exception("Getting the copyworker with the driver "+data.driver+" got:"+t)
+		case t: Throwable => throw new Exception("Getting the copyworker with the driver "+data.driver+" got:",t)
 	}
 
 	private def registerDriver() : Unit = {
@@ -39,7 +39,8 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 
 	private def buildSubWorker(index : Int) : ActorRef = {
 		val name = "dbworker" + data.name + index
-		context.actorOf(Props(new DatabaseWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
+		val connection = DriverManager.getConnection(data.url, data.user, data.password)
+		context.actorOf(Props(new DatabaseWorker(connection, data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
 	}	
 }
 
