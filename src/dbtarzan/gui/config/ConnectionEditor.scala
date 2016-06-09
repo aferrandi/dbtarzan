@@ -63,8 +63,8 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
          }.showAndWait()
   }
 
-  def onSave(dataToSave : List[ConnectionData]  => Unit): Unit =
-    buttons.onSave(() => saveIfPossible(dataToSave))
+  def onSave(save : List[ConnectionData]  => Unit): Unit =
+    buttons.onSave(() => saveIfPossible(save))
 
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))

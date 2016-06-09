@@ -1,6 +1,7 @@
 package dbtarzan.messages
 
 import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey}
+import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
 
 case class QueryRows(id : TableId, sql : String, maxRows : Int)
@@ -44,3 +45,7 @@ case class ResponseDatabase(databaseName : String, dbActor : ActorRef)
 case class ResponseCloseDatabase(databaseName : String)
 
 case class CopyToFile(databaseName : String)
+
+case class ConnectionDatas(datas : List[ConnectionData])
+
+case class DatabaseNames(names : List[String])

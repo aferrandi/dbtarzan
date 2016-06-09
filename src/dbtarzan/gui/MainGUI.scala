@@ -7,24 +7,28 @@ import scalafx.scene.image.Image
 import scalafx.stage.{ Screen}
 import scalafx.Includes._
 import dbtarzan.gui.util.JFXUtil
+import dbtarzan.messages.ConnectionDatas
 import scalafx.scene.layout.BorderPane
 import dbtarzan.gui.config.ConnectionEditorStarter
 import scalafx.event.ActionEvent
 import scalafx.geometry.Orientation
-import akka.actor.{ ActorSystem, ActorRef }
+import akka.actor.ActorRef
 
 
 
-
-class MainGUI(system : ActorSystem, version: String, databases :List[String], closeApp : () => Unit)
+/* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle */
+class MainGUI(guiWorker: => ActorRef, configActor : => ActorRef, version: String, closeApp : () => Unit)
 {
-	val databaseTabs = new DatabaseTabs(system)
+	val databaseTabs = new DatabaseTabs(guiWorker, configActor)
 	val logList = new LogList()
-	val databaseList = new DatabaseList(databases)
+	val databaseList = new DatabaseList()
 	val screenBounds = Screen.primary.visualBounds
 	val stage = buildStage()
 
-	
+	def onDatabaseSelected(use : String => Unit) : Unit = databaseList.onDatabaseSelected(use)
+
+	def onForeignKeyToFile(use : String => Unit) : Unit = databaseList.onForeignKeyToFile(use)
+
 	private def buildStage() : PrimaryStage = new PrimaryStage {
 	    title = "DbTarzan "+version
 	    icons.add(appIcon())
@@ -43,17 +47,13 @@ class MainGUI(system : ActorSystem, version: String, databases :List[String], cl
 		    items = List(
 		      new MenuItem("Edit Connections") {
 		        onAction = {
-		          e: ActionEvent => ConnectionEditorStarter.openConnectionsEditor(stage)
+		          e: ActionEvent => ConnectionEditorStarter.openConnectionsEditor(stage, configActor)
 		        }
 		      }
 		    )
 		  }
 		)
 	}
-
-	def onDatabaseSelected(use : String => Unit) : Unit = databaseList.onDatabaseSelected(use)
-	def onForeignKeyToFile(use : String => Unit) : Unit = databaseList.onForeignKeyToFile(use)
-
 
 	private def buildMainView() = new BorderPane {
 		top = buildMenu() 
@@ -74,7 +74,5 @@ class MainGUI(system : ActorSystem, version: String, databases :List[String], cl
 		SplitPane.setResizableWithParent(logList.control, false)
 	}
   
-
-	private def appIcon() = 
-		new Image(getClass().getResourceAsStream("monkey-face-cartoon.png"))
+	private def appIcon() = new Image(getClass().getResourceAsStream("monkey-face-cartoon.png"))
 }

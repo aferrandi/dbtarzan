@@ -16,5 +16,5 @@ class Config(connectionDatas : List[ConnectionData]) {
 		).getOrElse( throw new Exception("No connection with the name "+name))
 
 	/* all the database names */
-	def connections() = connectionDatasByName.keys.toList
+	def connections() : List[String] = connectionDatasByName.keys.toList
 }

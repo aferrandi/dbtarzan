@@ -11,12 +11,13 @@ import akka.actor.{ ActorRef, ActorSystem }
 /**
   All the tabs with one database for each
 */
-class DatabaseTabs(system : ActorSystem) extends TDatabases with TControlBuilder {
+class DatabaseTabs(guiWorker: => ActorRef, configActor : => ActorRef) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
   private val mapDatabase = HashMap.empty[String, Database]
+
   private def addDatabaseTab(dbActor : ActorRef, databaseName : String) : Database = {
           println("add database tab for "+databaseName)
-          val database = new Database(dbActor,  system.actorFor("/user/guiWorker"), databaseName)
+          val database = new Database(dbActor, guiWorker, databaseName)
           val tab = buildTab(database)
           tabs += tab
           selectTab(tab)
@@ -26,7 +27,6 @@ class DatabaseTabs(system : ActorSystem) extends TDatabases with TControlBuilder
 
   /* requests to close the connection to the database to the central database actor */
   private def sendClose(databaseName : String) : Unit = {
-        val configActor = system.actorFor("/user/configWorker")
         configActor ! QueryClose(databaseName)     
   }
   /* build the GUI tab for the database */

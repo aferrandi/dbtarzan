@@ -9,8 +9,9 @@ import dbtarzan.db.ConnectionBuilder
 import scala.collection.mutable.HashMap
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
-class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
+class ConfigWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Actor {
 	 private val mapDBWorker = HashMap.empty[String, ActorRef]
+	 private var config = new Config(datas.datas)
 
 	 /* creates the actors to serve the queries for a database */
 	 private def getDBWorker(databaseName : String) : ActorRef = {
@@ -51,9 +52,16 @@ class ConfigWorker(config : Config, guiActor : ActorRef) extends Actor {
 	 		)
 	 }
 
+	 private def newConnections(datas: ConnectionDatas) : Unit =
+	 {
+	 	config = new Config(datas.datas)
+	 	guiActor ! DatabaseNames(config.connections)
+	 }
+
 	 def receive = {
 	    case qry : QueryDatabase => queryDatabase(qry.databaseName)
 	    case qry : QueryClose => queryClose(qry.databaseName)
 	    case cpy : CopyToFile => startCopyWorker(cpy.databaseName)
+	    case datas: ConnectionDatas => newConnections(datas)
 	}
 }
