@@ -82,7 +82,9 @@ class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, gu
 
   	def receive = {
 	    case qry : QueryRows => handleErr(
-	    		queryLoader.query(qry, guiActor ! ResponseRows(qry.id, _))
+	    		queryLoader.query(qry, rows => 
+	    			guiActor ! ResponseRows(qry.id, rows)
+	    			)
 	    	)
 	    case qry : QueryClose => handleErr({
 	    		println("Closing the worker for "+databaseName)

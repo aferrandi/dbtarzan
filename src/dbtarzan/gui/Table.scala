@@ -75,5 +75,7 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
 
   def getCheckedRows = checkedRows.rows
 
+  def rowsNumber = buffer.length
+
   def control : Parent = table
 }

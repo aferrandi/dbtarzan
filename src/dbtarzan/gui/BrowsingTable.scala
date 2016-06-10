@@ -64,5 +64,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   }
 
   def getId = id
+  def rowsNumber = table.rowsNumber
+  def sql = dbTable.sql
   def control : Parent = layout
 }

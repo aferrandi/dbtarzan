@@ -7,6 +7,7 @@ import dbtarzan.messages._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
 import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper}
+import scalafx.beans.property.StringProperty
 import scalafx.Includes._
 
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)
@@ -29,7 +30,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def buildTab(dbTable : dbtarzan.db.Table, browsingTable :  BrowsingTable) = new Tab() {      
       text = buildTabText(dbTable)
       content = browsingTable.control     
-      tooltip.value = Tooltip(dbTable.sql)
+      tooltip.value = Tooltip("")
       contextMenu = new ContextMenu(
         ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql),
         buildRemoveAfterMenu(this)
@@ -73,12 +74,17 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     mapTable += browsingTable.getId -> BrowsingTableWIthTab(browsingTable, tab)
   }
 
-  private def withTableId(id : TableId, doWith : BrowsingTable => Unit) : Unit =
-    mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab.table))
+  private def withTableId(id : TableId, doWith : BrowsingTableWIthTab => Unit) : Unit =
+    mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab))
 
-  def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, table => table.addRows(rows))
-
-  def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.id, table => table.addForeignKeys(keys)) 
+  def addRows(rows : ResponseRows) : Unit = 
+     withTableId(rows.id, table => {
+      table.table.addRows(rows)
+      table.tab.tooltip.value.text = table.table.sql +" ("+table.table.rowsNumber+" rows)"
+    })
+  
+  
+  def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.id, table => table.table.addForeignKeys(keys)) 
 
   def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableName,columns.columns))
 
