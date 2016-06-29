@@ -1,7 +1,7 @@
 package dbtarzan.gui.util
 
 import scalafx.scene.Node
-import scalafx.scene.control.{ ListView, Label, MenuItem }
+import scalafx.scene.control.{ ListView, TableView, Label, MenuItem }
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.text.TextAlignment
 import scalafx.geometry.Insets
@@ -29,6 +29,16 @@ object JFXUtil {
 		list.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 			action(focusedItem(list))
 	}
+
+
+	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()    
+	def onAction[T](table : TableView[T] , action : T => Unit) = {
+		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2) 
+			action(focusedItem(table))
+		table.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
+			action(focusedItem(table))
+	}
+
 
 	def onContextMenu[T](menu : MenuItem, list : ListView[T] , action : T => Unit) = 
 		menu.onAction = (ev: ActionEvent) => action(focusedItem(list))

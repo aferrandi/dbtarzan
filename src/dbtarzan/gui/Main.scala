@@ -20,7 +20,7 @@ import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames
   Main class, starts the main gui, the actors, and connects them together
 */
 object Main extends JFXApp {
-  val version = "1.00"
+  val version = versionFromManifest()
   val system = ActorSystem("Sys")
   val connections = ConfigReader.read("connections.config")
   val mainGUI = new MainGUI(_guiActor, _configActor, version, closeApp)
@@ -38,20 +38,22 @@ object Main extends JFXApp {
       Once this is done, we close JavaF (the GUI)
   */
   private def closeApp() : Unit = {
-      println("application exit")
-      import akka.pattern.gracefulStop
-      import scala.concurrent._
-      import scala.concurrent.duration._
-      import ExecutionContext.Implicits.global
-      val stopAll = for {
-        stopGui : Boolean <- gracefulStop(guiActor, 1 seconds)
-        stopConfig : Boolean <- gracefulStop(configActor, 1 seconds)
-      } yield stopGui && stopConfig
-      stopAll.foreach(x => { 
-        system.shutdown()
-        println("shutdown")
-        system.registerOnTermination(() => scalafx.application.Platform.exit())
-      })
+    println("application exit")
+    import akka.pattern.gracefulStop
+    import scala.concurrent._
+    import scala.concurrent.duration._
+    import ExecutionContext.Implicits.global
+    val stopAll = for {
+      stopGui : Boolean <- gracefulStop(guiActor, 1 seconds)
+      stopConfig : Boolean <- gracefulStop(configActor, 1 seconds)
+    } yield stopGui && stopConfig
+    stopAll.foreach(x => { 
+      system.shutdown()
+      println("shutdown")
+      system.registerOnTermination(() => scalafx.application.Platform.exit())
+    })
   }
+
+  private def versionFromManifest() = Option(getClass().getPackage().getImplementationVersion()).getOrElse("")
 }
 

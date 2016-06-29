@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>/home/andrea/prj/dbtarzan/target/scala-2.11/dbtarzan_2.11-0.99-one-jar.jar</jar>
-  <outfile>/home/andrea/prj/dbtarzan/deploy/dbtarzan_0.99.exe</outfile>
+  <jar>/home/andrea/prj/dbtarzan/target/scala-2.11/dbtarzan_2.11-1.01-one-jar.jar</jar>
+  <outfile>/home/andrea/prj/dbtarzan/target/scala-2.11/dbtarzan_1.01.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon></icon>
+  <icon>monkey-face-cartoon.ico</icon>
   <jre>
     <path></path>
     <bundledJre64Bit>false</bundledJre64Bit>

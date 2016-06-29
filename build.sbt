@@ -4,7 +4,7 @@ oneJarSettings
 
 name := "dbtarzan"
 
-version := "0.99"
+version := "1.01"
 
 scalaVersion := "2.11.4"
 

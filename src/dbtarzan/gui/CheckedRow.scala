@@ -45,7 +45,7 @@ class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSel
 			checked.remove(row)
 	
 	/* creates the fields of a row */
-	private def values(row : Row, columnNames: List[Field]) = {
+	private def values(row : Row, columnNames: List[Field]) : List[StringProperty] = {
 		if(row.values.size != columnNames.size)
 			throw new Exception("column sizes "+columnNames+" <> row cells size "+row.values)
 		row.values.zipWithIndex.map({ case (value, i) => valueToProperty(columnNames(i), value)})
