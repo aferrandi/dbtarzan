@@ -2,6 +2,7 @@ package dbtarzan.db
 
 import spray.json._
 import dbtarzan.db.util.FileReadWrite
+import java.nio.file.{Path, Paths}
 
 
 object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
@@ -15,7 +16,7 @@ object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
 
 object ForeignKeysToFile {
 	import ForeignKeysForTableJsonProtocol._
-	def fileName(databaseName : String) : String = databaseName+".fgk"
+	def fileName(databaseName : String) : Path = Paths.get(databaseName+".fgk")
 
 	def toFile(databaseName : String, list : ForeignKeysForTableList) : Unit =  
 		FileReadWrite.writeFile(fileName(databaseName), list.toJson.prettyPrint)

@@ -2,9 +2,13 @@ import com.github.retronym.SbtOneJar._
 
 oneJarSettings
 
+enablePlugins(DebianPlugin,JavaAppPackaging)
+
 name := "dbtarzan"
 
-version := "1.01"
+version := "1.02"
+
+maintainer := "Max Smith <max.smith@yourcompany.io>"
 
 scalaVersion := "2.11.4"
 
@@ -27,3 +31,14 @@ unmanagedJars in Compile += Attributed.blank(
     file(scala.util.Properties.javaHome) / "lib" / "jfxrt.jar")
 
 fork := true
+
+/* debian package */
+packageSummary := "DBTarzan Debian Package"
+packageDescription := "DBTarzan, the database browser"
+debianPackageDependencies in Debian ++= Seq("openjdk-8-jre")
+bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
+
+addCommandAlias("packageAll", 
+	"; one-jar " + 
+	"; debian:package-bin"
+)

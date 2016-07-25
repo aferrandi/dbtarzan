@@ -13,21 +13,24 @@ import dbtarzan.db.ConnectionBuilder
 import akka.actor.{ ActorSystem, Props, ActorRef }
 import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.config.actor.ConfigWorker
+import dbtarzan.types.ConfigPath
 import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas }
-
+import java.nio.file.{ Path, Paths }
 
 /**
   Main class, starts the main gui, the actors, and connects them together
 */
 object Main extends JFXApp {
+  println("Named commend line arguments:"+ parameters.named.mkString(","))
   val version = versionFromManifest()
   val system = ActorSystem("Sys")
-  val connections = ConfigReader.read("connections.config")
-  val mainGUI = new MainGUI(_guiActor, _configActor, version, closeApp)
+  val connectionsConfigPath = ConfigPath(Paths.get(parameters.named.getOrElse("configPath", "."), "connections.config"))
+  println("connectionsConfigPath:"+connectionsConfigPath.path)
+  val connections = ConfigReader.read(connectionsConfigPath)
+  val mainGUI = new MainGUI(_guiActor, _configActor, connectionsConfigPath, version, openWeb, closeApp)
   val guiActor = system.actorOf(Props(new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val configActor = system.actorOf(Props(new ConfigWorker(ConnectionDatas(connections), guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   mainGUI.databaseList.setDatabases(DatabaseNames(connections.map(_.name)))
-  println("configWorker "+configActor)  
   mainGUI.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
   mainGUI.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })
 
@@ -53,6 +56,11 @@ object Main extends JFXApp {
       system.registerOnTermination(() => scalafx.application.Platform.exit())
     })
   }
+
+  private def openWeb(url : String) : Unit =
+    // hostServices.showDocument(url)
+    new ProcessBuilder("x-www-browser", url).start();
+  
 
   private def versionFromManifest() = Option(getClass().getPackage().getImplementationVersion()).getOrElse("")
 }

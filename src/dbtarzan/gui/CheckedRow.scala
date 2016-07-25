@@ -22,13 +22,11 @@ class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSel
 		checkedRow
 	}
 	/* when the checkbox on the row get checked, also the selected rows get checked and the list of checked rows gets filled up with the checked rows */
-	private def onCheckedRowCheck(checkedRow : CheckedRow) : Unit =
-	{
+	private def onCheckedRowCheck(checkedRow : CheckedRow) : Unit =	{
 		def checkedRowCheckAction(newValue : Boolean, row : Row) : Unit = {
 			checkSelectedRows(newValue)
 			fromCheckBoxToChecked(newValue, row)
 		}
-
 		checkedRow.checked.onChange((_, _, newValue) => checkedRowCheckAction(newValue, checkedRow.row))
 	}
 

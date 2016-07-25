@@ -3,17 +3,22 @@ package dbtarzan.db.util
 import ResourceManagement._
 import java.io.{ FileWriter, File }
 import scala.io.Source
-import java.nio.file.{Paths, Files}
+import java.nio.file.{Paths, Files, Path}
 
 /* simple functions to read, write and check the existance of a small (configuration) file */
 object FileReadWrite {
-	def fileExist(name : String) = new File(name).canRead()
+	def fileExist(name : Path) = name.toFile().canRead()
 
-	def writeFile(name : String, content : String) : Unit =
-		using(new FileWriter(name)) { fw =>
+	def writeFile(name : Path, content : String) : Unit = {
+		println("Creating:"+name)
+		Files.createDirectories(name.getParent())
+		using(new FileWriter(name.toFile())) { fw =>
 			fw.write(content)
 		}
+	}
 
-	def readFile(name : String) : String = 
-		Source.fromFile(name, "utf-8").getLines.mkString
+	def readFile(name : Path) : String = {
+		println("Reading:"+name.toFile().getPath())
+		Source.fromFile(name.toFile(), "utf-8").getLines.mkString
+	}
 }

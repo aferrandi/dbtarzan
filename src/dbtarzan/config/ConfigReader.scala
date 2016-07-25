@@ -3,15 +3,15 @@ package dbtarzan.config
 import spray.json._
 import java.io.{ File, FileNotFoundException }
 import dbtarzan.db.util.FileReadWrite
-
+import dbtarzan.types.ConfigPath
 
 /* reads the databases configuration file */
 object ConfigReader {
 	import ConnectionDataJsonProtocol._
 
-	def read(name : String) : List[ConnectionData] = {
+	def read(path: ConfigPath) : List[ConnectionData] = {
 		try { 
-			 val text = FileReadWrite.readFile(name)
+			val text = FileReadWrite.readFile(path.path)
 			parseText(text)
 		} catch {
 		  case e: FileNotFoundException => List.empty[ConnectionData]

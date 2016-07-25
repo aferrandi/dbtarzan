@@ -10,14 +10,16 @@ import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.ConnectionDatas
 import scalafx.scene.layout.BorderPane
 import dbtarzan.gui.config.ConnectionEditorStarter
+import dbtarzan.types.ConfigPath
 import scalafx.event.ActionEvent
 import scalafx.geometry.Orientation
+import scalafx.scene.web.WebView
 import akka.actor.ActorRef
 
 
 
 /* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle */
-class MainGUI(guiWorker: => ActorRef, configActor : => ActorRef, version: String, closeApp : () => Unit)
+class MainGUI(guiWorker: => ActorRef, configActor : => ActorRef, connectonsConfigPath: ConfigPath, version: String, openWeb : String => Unit, closeApp : () => Unit)
 {
 	val databaseTabs = new DatabaseTabs(guiWorker, configActor)
 	val logList = new LogList()
@@ -47,7 +49,16 @@ class MainGUI(guiWorker: => ActorRef, configActor : => ActorRef, version: String
 		    items = List(
 		      new MenuItem("Edit Connections") {
 		        onAction = {
-		          e: ActionEvent => ConnectionEditorStarter.openConnectionsEditor(stage, configActor)
+		          e: ActionEvent => ConnectionEditorStarter.openConnectionsEditor(stage, configActor, connectonsConfigPath)
+		        }
+		      }
+		    )
+		  },
+		  new Menu("Help") {
+		    items = List(
+		      new MenuItem("Documentation") {
+		        onAction = {		        	
+		          e: ActionEvent =>  openWeb("http://github.com/aferrandi/dbtarzan/wiki") 
 		        }
 		      }
 		    )

@@ -41,13 +41,13 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex() = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
-    println("Selected index:"+index)
+    // println("Selected index:"+index)
     index
   }
 
   def onConnectionSelected(use : ConnectionData => Unit) : Unit = 
     selectionModel().selectedIndex.onChange {  (item, oldIndex, newIndex) => {
-        println("Selected index changed to "+newIndex) 
+        //println("Selected index changed to "+newIndex) 
         Option(newIndex).map(_.intValue()).filter(_ >= 0).foreach(index => use(connectionDatas(index)))
       }}
 
@@ -96,10 +96,10 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
 
   def changeSelected(data : ConnectionData) : Unit = 
     getSelectedIndex().foreach(selectedIndex => {
-      println("Before setconnectionDatas of "+selectedIndex+":"+data)
+      // println("Before setconnectionDatas of "+selectedIndex+":"+data)
       connectionDatas.update(selectedIndex, data)
       selectionModel.select(selectedIndex) // patch to avoid deselection when changing data    
-      println("After setconnectionDatas")
+      // println("After setconnectionDatas")
     })
 
   def control : Parent = list

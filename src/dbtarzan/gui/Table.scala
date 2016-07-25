@@ -1,11 +1,12 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView, SelectionMode, ContextMenu}
+import scalafx.scene.control.{TableColumn, TableView, SelectionMode, ContextMenu, MenuItem}
 import scalafx.beans.property.{StringProperty, ObjectProperty, BooleanProperty}
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
+import scalafx.event.ActionEvent
 import scalafx.Includes._
 import dbtarzan.config.{ Config, ConfigReader }
 import dbtarzan.db.{Field, Row, Rows}
@@ -25,10 +26,12 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
   private val table = buildTable()
    /* converts rows to structures usable from the table */
   private val fromRow = new CheckedRowFromRow(checkedRows, table.selectionModel()) 
+
   /* requests the rows for the table to the database actor. They come back using the addRows function */
   dbActor ! QueryRows(id, dbTable.sql, 500) 
   /* requests the foreign keys for this table. */
   dbActor ! QueryForeignKeys(id)
+ 
 
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
   def buildTable() = new TableView[CheckedRow](buffer) {
@@ -36,8 +39,21 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
     columns ++= names.zipWithIndex.map({ case (field, i) => buildColumn(field, i) })
     editable = true
     selectionModel().selectionMode() = SelectionMode.MULTIPLE
-    contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("Selection", () => selectionToString()))
+    contextMenu = new ContextMenu(
+      ClipboardMenuMaker.buildClipboardMenu("Selection", () => selectionToString()),
+      new MenuItem("Check All")  {
+            onAction = { e: ActionEvent => checkAll(true) }
+      },
+      new MenuItem("Uncheck All")  {
+            onAction = { e: ActionEvent => checkAll(false) }
+      }      
+      )
   }
+
+  private def checkAll(check : Boolean) : Unit = {
+    buffer.foreach(row => row.checked.value = check)
+  }
+  
 
  /* gets the nth column from the database row */
   def buildColumn(field : Field, index : Int) = new TableColumn[CheckedRow,String]() {
