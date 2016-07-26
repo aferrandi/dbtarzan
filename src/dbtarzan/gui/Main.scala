@@ -57,9 +57,11 @@ object Main extends JFXApp {
     })
   }
 
-  private def openWeb(url : String) : Unit =
-    // hostServices.showDocument(url)
-    new ProcessBuilder("x-www-browser", url).start();
+  private def openWeb(url : String) : Unit = try
+  {  hostServices.showDocument(url) }
+  catch {
+    case e: Throwable =>  new ProcessBuilder("x-www-browser", url).start()
+  }
   
 
   private def versionFromManifest() = Option(getClass().getPackage().getImplementationVersion()).getOrElse("")

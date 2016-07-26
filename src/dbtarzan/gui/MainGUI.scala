@@ -21,10 +21,15 @@ import akka.actor.ActorRef
 /* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle */
 class MainGUI(guiWorker: => ActorRef, configActor : => ActorRef, connectonsConfigPath: ConfigPath, version: String, openWeb : String => Unit, closeApp : () => Unit)
 {
+	/* the database tabs on the middle-right side */
 	val databaseTabs = new DatabaseTabs(guiWorker, configActor)
+	/* the log/error list on the bottom */
 	val logList = new LogList()
+	/* the database/connection list on the left side */
 	val databaseList = new DatabaseList()
+	/* how big is the screen */
 	val screenBounds = Screen.primary.visualBounds
+	/* the gui */
 	val stage = buildStage()
 
 	def onDatabaseSelected(use : String => Unit) : Unit = databaseList.onDatabaseSelected(use)
