@@ -33,14 +33,16 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
       tooltip.value = Tooltip("")
       contextMenu = new ContextMenu(
         ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql),
-        buildRemoveAfterMenu(this)
+        buildRemoveBeforeMenu(this),
+        buildRemoveAfterMenu(this),
+        buildRemoveAllMenu()
      )
     }
 
-  private def buildRemoveAfterMenu(tab : Tab) = new MenuItem {
-    def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) = 
-      mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
+  private def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) = 
+    mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
 
+  private def buildRemoveAfterMenu(tab : Tab) = new MenuItem {
       text = "Close tabs after this"
       onAction = (ev: ActionEvent) => {
         val toCloseTabs = tabs.tabs.reverse.takeWhile(_ != tab.delegate).toList // need to check the javafx class
@@ -48,7 +50,25 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
         guiActor ! ResponseCloseTables(databaseId, toCloseIds)
       }
     }
+
+  private def buildRemoveBeforeMenu(tab : Tab) = new MenuItem {
+      text = "Close tabs before this"
+      onAction = (ev: ActionEvent) => {
+        val toCloseTabs = tabs.tabs.takeWhile(_ != tab.delegate).toList // need to check the javafx class
+        val toCloseIds = idsFromTabs(toCloseTabs)
+        guiActor ! ResponseCloseTables(databaseId, toCloseIds)
+      }
+    }
  
+  private def buildRemoveAllMenu() = new MenuItem {
+      text = "Close all tabs"
+      onAction = (ev: ActionEvent) => {
+        val toCloseIds = idsFromTabs(tabs.tabs.toList)
+        guiActor ! ResponseCloseTables(databaseId, toCloseIds)
+      }
+    }
+ 
+
   /*
     Normally it shows the name of the table.
 
