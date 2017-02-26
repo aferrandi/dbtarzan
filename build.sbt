@@ -6,9 +6,9 @@ enablePlugins(DebianPlugin,JavaAppPackaging)
 
 name := "dbtarzan"
 
-version := "1.04"
+version := "1.05"
 
-maintainer := "Max Smith <max.smith@yourcompany.io>"
+maintainer := "Andrea Ferrandi"
 
 scalaVersion := "2.11.4"
 

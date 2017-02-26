@@ -1,17 +1,17 @@
 package dbtarzan.gui.util
 
 
+/* onChange does not run the action if noChangeEventDuring is running. Works with GUI events */ 
 class OnChangeSafe {
-	var changEvents = true
+	var changeEvents = true
 
 	def noChangeEventDuring(action : () => Unit) : Unit = {
-		changEvents = false
+		changeEvents = false
 		action()
-		changEvents = true
+		changeEvents = true
 	}
 
 	def onChange(action : () => Unit) : Unit =
-		if(changEvents)
+		if(changeEvents)
 			action()
-
 }

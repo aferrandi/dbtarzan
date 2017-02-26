@@ -4,7 +4,7 @@ package dbtarzan.db
 /**
 	builds the table that is the result of using a foreign key of another table
 */
-class ForeignKeyMapper(follow : FollowKey, newColumns : Fields) {
+class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, identifierDelimiters : DelimitersApplier) {
 	val mapNameToIndex = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
 
 
@@ -12,7 +12,7 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields) {
 		val fkRows= follow.rows.map(row => buildKeyValuesForRow(row))
 		val keyCriteria = ForeignKeyCriteria(fkRows, newColumns.fields)
 		val description = TableDescription(follow.key.to.table, Option(follow.key.from.table), None)
-		Table.build(description, newColumns, Some(keyCriteria), None)		
+		Table.build(description, newColumns, Some(keyCriteria), None,  identifierDelimiters)		
 	}
 
 	/**
@@ -33,6 +33,6 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields) {
 }
 
 object ForeignKeyMapper {
-	def toFollowTable(follow : FollowKey, newColumns : Fields) : Table = 
-		new ForeignKeyMapper(follow, newColumns).toFollowTable()
+	def toFollowTable(follow : FollowKey, newColumns : Fields, identifierDelimiters : DelimitersApplier) : Table = 
+		new ForeignKeyMapper(follow, newColumns, identifierDelimiters).toFollowTable()
 }

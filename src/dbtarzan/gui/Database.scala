@@ -2,7 +2,7 @@ package dbtarzan.gui
 
 import scalafx.scene.control.SplitPane
 import scalafx.scene.Parent
-import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields }
+import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields, IdentifierDelimiters }
 import scalafx.Includes._
 import akka.actor.ActorRef
 import dbtarzan.gui.util.JFXUtil

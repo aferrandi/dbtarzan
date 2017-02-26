@@ -6,7 +6,7 @@ import scalafx.event.ActionEvent
 import dbtarzan.messages._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
-import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper}
+import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper, DelimitersApplier, IdentifierDelimiters}
 import scalafx.beans.property.StringProperty
 import scalafx.Includes._
 
@@ -18,13 +18,13 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val mapTable = HashMap.empty[TableId, BrowsingTableWIthTab]
 
   /* creates a table from scratch */
-  private def createTable(tableName : String, columns : Fields) : dbtarzan.db.Table = 
-    dbtarzan.db.Table.build(TableDescription(tableName, None, None), columns)
+  private def createTable(tableName : String, columns : Fields, delimiters : DelimitersApplier) : dbtarzan.db.Table = 
+    dbtarzan.db.Table.build(TableDescription(tableName, None, None), columns, delimiters)
 
   /* create a table that is given by following a foreign key of a table */  
-  private def createTableFollow(tableName : String, columns : Fields, follow : FollowKey) : dbtarzan.db.Table = {
+  private def createTableFollow(tableName : String, columns : Fields, follow : FollowKey, delimiters : DelimitersApplier) : dbtarzan.db.Table = {
     println("table follow created "+columns)
-    ForeignKeyMapper.toFollowTable(follow, columns) 
+    ForeignKeyMapper.toFollowTable(follow, columns, delimiters) 
   }
 
   private def buildTab(dbTable : dbtarzan.db.Table, browsingTable :  BrowsingTable) = new Tab() {      
@@ -106,9 +106,9 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   
   def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.id, table => table.table.addForeignKeys(keys)) 
 
-  def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableName,columns.columns))
+  def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableName,columns.columns, DelimitersApplier.from(columns.delimiters)))
 
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow))
+  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow, DelimitersApplier.from(columns.delimiters)))
   
   def removeTables(ids : List[TableId]) : Unit = {
       val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)

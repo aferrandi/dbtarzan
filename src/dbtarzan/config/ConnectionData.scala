@@ -1,5 +1,8 @@
 package dbtarzan.config
 
+import dbtarzan.db.IdentifierDelimiters
+
+
 /* JDBC configuration for a database */
 case class ConnectionData(
 	/* the path of the jar file of the driver */
@@ -17,5 +20,7 @@ case class ConnectionData(
 	/* the password to login to the database */
 	password: String,
 	/* the number of connections that the application will open against this database (1 if not defined) */
-	instances: Option[Int]
+	instances: Option[Int],
+	/* the identifiers delimiters to prevent having troubles with reserved words */
+	identifierDelimiters: Option[IdentifierDelimiters] 
 	)

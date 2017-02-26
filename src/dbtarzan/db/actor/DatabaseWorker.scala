@@ -28,9 +28,8 @@ class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, gu
 			{
 				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
 				tablesKeys.keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
-			} catch {
-				case e : Exception => guiActor ! Error("Reading the keys file for database "+databaseName+" got", e)		
-			}
+			} 
+			catch { case e : Exception => guiActor ! Error("Reading the keys file for database "+databaseName+" got", e) }
 		}
 
 	/* gets the columns of a table from the database metadata */
@@ -96,10 +95,10 @@ class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, gu
 	    		guiActor ! ResponseTables(qry.id, tableNames())
 			)
 	    case qry : QueryColumns => handleErr( 
-	    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName))
+	    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName), data.identifierDelimiters)
 	    	)
 	    case qry : QueryColumnsFollow => handleErr(
-	    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName))
+	    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName), data.identifierDelimiters)
 	    	)		
 	    case qry: QueryForeignKeys => handleErr({
 	    		val tableName = qry.id.tableName

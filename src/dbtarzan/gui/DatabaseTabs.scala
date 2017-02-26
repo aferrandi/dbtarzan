@@ -8,32 +8,31 @@ import scala.collection.mutable.HashMap
 import scalafx.Includes._
 import scalafx.event.Event
 import akka.actor.{ ActorRef, ActorSystem }
-/**
-  All the tabs with one database for each
-*/
+
+/** All the tabs with one database for each*/
 class DatabaseTabs(guiWorker: => ActorRef, configActor : => ActorRef) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
   private val mapDatabase = HashMap.empty[String, Database]
 
   private def addDatabaseTab(dbActor : ActorRef, databaseName : String) : Database = {
-          println("add database tab for "+databaseName)
-          val database = new Database(dbActor, guiWorker, databaseName)
-          val tab = buildTab(database)
-          tabs += tab
-          selectTab(tab)
-          mapDatabase += databaseName -> database
-          database
+    println("add database tab for "+databaseName)
+    val database = new Database(dbActor, guiWorker, databaseName)
+    val tab = buildTab(database)
+    tabs += tab
+    selectTab(tab)
+    mapDatabase += databaseName -> database
+    database
   }
 
   /* requests to close the connection to the database to the central database actor */
   private def sendClose(databaseName : String) : Unit = {
-        configActor ! QueryClose(databaseName)     
+    configActor ! QueryClose(databaseName)     
   }
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {
-      text = database.getDatabaseName
-      content = database.control
-      onCloseRequest = (e : Event) => { sendClose(database.getDatabaseName) }
+    text = database.getDatabaseName
+    content = database.control
+    onCloseRequest = (e : Event) => { sendClose(database.getDatabaseName) }
   }      
 
   /* requests to close all the database connections */
@@ -49,7 +48,6 @@ class DatabaseTabs(guiWorker: => ActorRef, configActor : => ActorRef) extends TD
 
   /* utility method to do something (given by a closure) to a table */
   private def withTableId(id : TableId, doWith : Database => Unit) : Unit = withDatabaseId(id.databaseId, doWith)
-
 
   /* received some rows coming as a result of a query, that have to be shown within a table tab */
   def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, database => database.addRows(rows))
@@ -68,9 +66,9 @@ class DatabaseTabs(guiWorker: => ActorRef, configActor : => ActorRef) extends TD
 
   /* received the data of a database, to open a database tab */
   def addDatabase(databaseData : ResponseDatabase) : Unit = {
-      val database = addDatabaseTab(databaseData.dbActor, databaseData.databaseName)
-      databaseData.dbActor ! QueryTables(database.getId)
-    }
+    val database = addDatabaseTab(databaseData.dbActor, databaseData.databaseName)
+    databaseData.dbActor ! QueryTables(database.getId)
+  }
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
   private def getTabByDatabaseName(databaseName : String) = 

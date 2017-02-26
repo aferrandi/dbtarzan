@@ -9,3 +9,13 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 
 
 DBTarzan needs Java 8, but in case of the Windows installation and of the debian package it should get installed automatically.
+
+DBTarzan changelog
+=================
+
+
+- Release 1.04
+
+It is possible to close all table tabs, close all table tabs before the current tab.
+
+If a table has only one row, that row is automatically selected

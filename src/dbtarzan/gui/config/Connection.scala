@@ -5,7 +5,7 @@ import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
 import scalafx.geometry.Insets
 import scalafx.Includes._
-import dbtarzan.gui.util.{ JFXUtil, OnChangeSafe }
+import dbtarzan.gui.util.OnChangeSafe
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.ConnectionData
 
@@ -34,6 +34,8 @@ class Connection() extends TControlBuilder {
     text = ""
   }
  
+  val cmbDelimiters = new ComboDelimiters()
+
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
@@ -54,6 +56,8 @@ class Connection() extends TControlBuilder {
     add(txtPassword, 1, 5)
     add(new Label { text = "Schema:" }, 0, 6)
     add(txtSchema, 1, 6)
+    add(new Label { text = "Delimiters:" }, 0, 7)
+    add(cmbDelimiters.control, 1, 7)
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -67,9 +71,11 @@ class Connection() extends TControlBuilder {
     txtUser.text = data.user
     txtPassword.text = data.password
     txtSchema.text = data.schema.getOrElse("")
+    cmbDelimiters.show(data.identifierDelimiters); 
   })
 
-  def toData() = ConnectionData(
+  def toData() = {
+    ConnectionData(
       jarSelector.jarFilePath(), 
       txtName.text(), 
       txtDriver.text(), 
@@ -77,8 +83,9 @@ class Connection() extends TControlBuilder {
       if(!txtSchema.text().isEmpty) Some(txtSchema.text()) else None,
       txtUser.text(), 
       txtPassword.text(),
-      None
-  )
+      None,
+      cmbDelimiters.toDelimiters()    
+  )}
 
   def control : Parent = grid
 
@@ -90,8 +97,9 @@ class Connection() extends TControlBuilder {
       txtSchema.text,
       txtUser.text,
       txtPassword.text
-    ).foreach(_.onChange(safe.onChange(() => useData(toData))))
-    jarSelector.onChange(safe.onChange(() => useData(toData)))
+    ).foreach(_.onChange(safe.onChange(() => useData(toData()))))
+    jarSelector.onChange(safe.onChange(() => useData(toData())))
+    cmbDelimiters.onChanged(() => safe.onChange(() => useData(toData())))
   }
 }
 

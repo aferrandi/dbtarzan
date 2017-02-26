@@ -5,7 +5,7 @@ import dbtarzan.messages.{QueryRows, QueryForeignKeys, TableId}
 /**
 	Represents the table of a database 
 */
-class Table private (description : TableDescription, columns : Fields, foreignFilter : Option[ForeignKeyCriteria], additionalFilter : Option[Filter]) {
+class Table private (description : TableDescription, columns : Fields, foreignFilter : Option[ForeignKeyCriteria], additionalFilter : Option[Filter], identifierDelimiters : DelimitersApplier) {
 	val sql = buildSql()
 
 	/* builds the SQL to query the table from the (potential) original foreign key (to know which rows it has to show), the potential where filter and the table name */
@@ -17,9 +17,9 @@ class Table private (description : TableDescription, columns : Fields, foreignFi
 				""
 		}
 
-		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_))
+		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_, identifierDelimiters))
 		val filters = List(foreignClosure, additionalFilter.map(_.text)).flatten
-		"select * from " + description.name + buildFilters(filters)
+		"select * from " + identifierDelimiters(description.name) + buildFilters(filters)
 	}
 
 	def tableDescription = description
@@ -33,13 +33,13 @@ class Table private (description : TableDescription, columns : Fields, foreignFi
 			.getOrElse(filter)
 
 	def withAdditionalFilter(filter : Filter) =
-		new Table(description, columns, foreignFilter, Some(addFilterToExisting(filter)))
+		new Table(description, columns, foreignFilter, Some(addFilterToExisting(filter)), identifierDelimiters)
 }
 
 object Table {
-	def build(description : TableDescription, columns : Fields, foreignFilter : Option[ForeignKeyCriteria], additionalFilter : Option[Filter]) : Table =
-		new Table(description, columns, foreignFilter, additionalFilter)  
+	def build(description : TableDescription, columns : Fields, foreignFilter : Option[ForeignKeyCriteria], additionalFilter : Option[Filter], identifiersDelimiters : DelimitersApplier) : Table =
+		new Table(description, columns, foreignFilter, additionalFilter, identifiersDelimiters)  
 
-	def build(description : TableDescription, columns : Fields) : Table =
-		build(description, columns, None, None)
+	def build(description : TableDescription, columns : Fields, identifiersDelimiters : DelimitersApplier) : Table =
+		build(description, columns, None, None, identifiersDelimiters)
 }

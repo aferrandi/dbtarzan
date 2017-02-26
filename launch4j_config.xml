@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>/home/andrea/prj/dbtarzan/target/scala-2.11/dbtarzan_1.04-one-jar.jar</jar>
-  <outfile>/home/andrea/prj/dbtarzan/target/scala-2.11/dbtarzan_1.04.exe</outfile>
+  <jar>/home/andrea/prj/dbtarzan/target/scala-2.11/dbtarzan_2.11-1.05-one-jar.jar</jar>
+  <outfile>/home/andrea/prj/dbtarzan/target/scala-2.11/dbtarzan_1.05.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
