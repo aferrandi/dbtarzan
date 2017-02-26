@@ -14,6 +14,10 @@ DBTarzan changelog
 =================
 
 
+- Release 1.05
+
+Now it is possible to configure a connection such that all identifiers (table names + column names) are delimited by special delimiters ([ and ] or " and "), so that sql keys can be used as identifiers.
+
 - Release 1.04
 
 It is possible to close all table tabs, close all table tabs before the current tab.
