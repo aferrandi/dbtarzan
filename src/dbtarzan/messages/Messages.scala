@@ -16,6 +16,8 @@ case class QueryForeignKeys(id : TableId)
 
 case class QueryClose(databaseName : String)
 
+case class QueryReset(databaseName : String)
+
 case class ResponseRows(id : TableId, rows: Rows)
 
 case class ResponseTables(id : DatabaseId, names: TableNames)

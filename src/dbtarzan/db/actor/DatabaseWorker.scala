@@ -14,12 +14,13 @@ import dbtarzan.db.ForeignKeysToFile
 
 
 /* The actor that reads data from the database */
-class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, guiActor : ActorRef) extends Actor {
+class DatabaseWorker(createConnection : () => java.sql.Connection, data : ConnectionData, guiActor : ActorRef) extends Actor {
 	def databaseName = data.name
-	val foreignKeyLoader =  new ForeignKeyLoader(connection, data.schema)
+	var core = buildCore()
 	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
-	val queryLoader = new QueryLoader(connection)
 	loadForeignKeysFromFile()	
+
+	private def buildCore() = new DatabaseWorkerCore(createConnection(), data.schema)
 
 	private def loadForeignKeysFromFile() : Unit = 
 		if(ForeignKeysToFile.fileExist(databaseName)) {
@@ -34,7 +35,7 @@ class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, gu
 
 	/* gets the columns of a table from the database metadata */
 	def columnNames(tableName : String) : Fields = {
-		var meta = connection.getMetaData()
+		var meta = core.metadata()
 		using(meta.getColumns(null, data.schema.orNull, tableName, "%")) { rs =>
 			val list = new ListBuffer[Field]()			
 			while(rs.next) {
@@ -48,7 +49,7 @@ class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, gu
 
 	/* gets all the tables in the database/schema from the database metadata */
 	def tableNames() : TableNames = {
-		var meta = connection.getMetaData()
+		var meta = core.metadata()
 		using(meta.getTables(null, data.schema.orNull, "%", Array("TABLE"))) { rs =>
 			val list = new ListBuffer[String]()
 			while(rs.next) {
@@ -79,32 +80,50 @@ class DatabaseWorker(connection : java.sql.Connection, data : ConnectionData, gu
 		println("Actor for "+databaseName+" stopped")
 	}
 
+	private def close() : Unit = handleErr({
+		println("Closing the worker for "+databaseName)
+		guiActor ! ResponseCloseDatabase(databaseName)
+		core.closeConnection()
+		context.stop(self)
+	})
+
+	private def reset() : Unit = handleErr({
+		println("Reseting the connection of the worker for "+databaseName)
+		try { core.closeConnection() } catch { case e : Throwable => {} }
+		core = buildCore()
+	})		
+
+	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = handleErr({
+		val tableName = qry.id.tableName
+		val foreignKeys = foreignKeysCache.getOrElseUpdate(tableName, core.foreignKeyLoader.foreignKeys(tableName))
+		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)
+	})
+
+	private def queryRows(qry: QueryRows) : Unit = handleErr(
+		core.queryLoader.query(qry, rows => 
+			guiActor ! ResponseRows(qry.id, rows)
+			))
+
+	private def queryTables(qry: QueryTables) : Unit = handleErr(
+    		guiActor ! ResponseTables(qry.id, tableNames())
+		)
+
+	private def queryColumns(qry: QueryColumns) : Unit = handleErr( 
+    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName), data.identifierDelimiters)
+    	)
+
+	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  handleErr(
+    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName), data.identifierDelimiters)
+    	)		
+
+
   	def receive = {
-	    case qry : QueryRows => handleErr(
-	    		queryLoader.query(qry, rows => 
-	    			guiActor ! ResponseRows(qry.id, rows)
-	    			)
-	    	)
-	    case qry : QueryClose => handleErr({
-	    		println("Closing the worker for "+databaseName)
-	    		guiActor ! ResponseCloseDatabase(databaseName)
-	    		connection.close()
-	    		context.stop(self)
-	    	})	    
-	    case qry: QueryTables => handleErr(
-	    		guiActor ! ResponseTables(qry.id, tableNames())
-			)
-	    case qry : QueryColumns => handleErr( 
-	    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName), data.identifierDelimiters)
-	    	)
-	    case qry : QueryColumnsFollow => handleErr(
-	    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName), data.identifierDelimiters)
-	    	)		
-	    case qry: QueryForeignKeys => handleErr({
-	    		val tableName = qry.id.tableName
-	    		val foreignKeys = foreignKeysCache.getOrElseUpdate(tableName, foreignKeyLoader.foreignKeys(tableName))
-	    		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)
-	    	})    	
-    
+	    case qry : QueryRows => queryRows(qry)
+	    case qry : QueryClose => close() 	    
+	    case qry : QueryReset => reset() 	    
+	    case qry : QueryTables => queryTables(qry) 
+	    case qry : QueryColumns => queryColumns(qry)
+	    case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
+	    case qry : QueryForeignKeys => queryForeignKeys(qry)    	
   	}
 }

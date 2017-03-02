@@ -13,14 +13,16 @@ object JFXUtil {
 	def withTitle(graphic : Node, title : String) = new BorderPane {
 	    top = buildTitle(title)
 	    center = graphic
-	  }
+	}
+
 	def withLeftTitle(graphic : Node, title : String) = new BorderPane {
 	    left = buildTitle(title)
 	    center = graphic
-	  }	  
+	}
+
     def buildTitle(title : String) = new Label(title) {
-	    	margin = Insets(5)
-	    }
+    	margin = Insets(5)
+    }
 
 	private def focusedItem[T](list : ListView[T]) = list.focusModel().focusedItem()    
 	def onAction[T](list : ListView[T] , action : T => Unit) = {
@@ -30,7 +32,6 @@ object JFXUtil {
 			action(focusedItem(list))
 	}
 
-
 	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()    
 	def onAction[T](table : TableView[T] , action : T => Unit) = {
 		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2) 
@@ -38,7 +39,6 @@ object JFXUtil {
 		table.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 			action(focusedItem(table))
 	}
-
 
 	def onContextMenu[T](menu : MenuItem, list : ListView[T] , action : T => Unit) = 
 		menu.onAction = (ev: ActionEvent) => action(focusedItem(list))
