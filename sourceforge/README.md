@@ -13,6 +13,9 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.06
+
+Some databases close automatically a connection after a period of inactivity. Added a context menu to reset a connection so that it is not needed to open a new database tab in this case. 
 
 - Release 1.05
 
