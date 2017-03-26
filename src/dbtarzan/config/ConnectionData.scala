@@ -22,5 +22,7 @@ case class ConnectionData(
 	/* the number of connections that the application will open against this database (1 if not defined) */
 	instances: Option[Int],
 	/* the identifiers delimiters to prevent having troubles with reserved words */
-	identifierDelimiters: Option[IdentifierDelimiters] 
+	identifierDelimiters: Option[IdentifierDelimiters],
+	/* the path of the jar file of the driver */
+	maxRows : Option[Int]
 	)

@@ -1,6 +1,6 @@
 package dbtarzan.gui.config
 
-import scalafx.scene.control.{ TextField, Label }
+import scalafx.scene.control.{ TextField, Label, Spinner }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
 import scalafx.geometry.Insets
@@ -36,6 +36,17 @@ class Connection() extends TControlBuilder {
  
   val cmbDelimiters = new ComboDelimiters()
 
+  val txtMaxRows = new TextField {
+    text = ""
+    /* only digits allowed (or empty string) */
+    text.onChange { (_, oldValue, newValue) => {
+         if (!isAllDigits(newValue))
+            text = oldValue
+      }}
+   }
+
+    def isAllDigits(x: String) = x forall Character.isDigit
+
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
@@ -58,6 +69,8 @@ class Connection() extends TControlBuilder {
     add(txtSchema, 1, 6)
     add(new Label { text = "Delimiters:" }, 0, 7)
     add(cmbDelimiters.control, 1, 7)
+    add(new Label { text = "Max Rows:" }, 0, 8)
+    add(txtMaxRows, 1, 8)
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -70,9 +83,15 @@ class Connection() extends TControlBuilder {
     txtDriver.text = data.driver
     txtUser.text = data.user
     txtPassword.text = data.password
-    txtSchema.text = data.schema.getOrElse("")
-    cmbDelimiters.show(data.identifierDelimiters); 
+    txtSchema.text = noneToEmpty(data.schema)
+    cmbDelimiters.show(data.identifierDelimiters)
+    txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
   })
+
+  private def noneToEmpty(optS : Option[String]) : String = 
+    optS.getOrElse("")
+  private def emptyToNone(s : String) : Option[String] =
+    Option(s).filter(_.trim.nonEmpty)
 
   def toData() = {
     ConnectionData(
@@ -80,11 +99,12 @@ class Connection() extends TControlBuilder {
       txtName.text(), 
       txtDriver.text(), 
       txtUrl.text(),
-      if(!txtSchema.text().isEmpty) Some(txtSchema.text()) else None,
+      emptyToNone(txtSchema.text()),
       txtUser.text(), 
       txtPassword.text(),
       None,
-      cmbDelimiters.toDelimiters()    
+      cmbDelimiters.toDelimiters(),
+      emptyToNone(txtMaxRows.text()).map(_.toInt) // it can only be None or Int
   )}
 
   def control : Parent = grid
@@ -96,7 +116,8 @@ class Connection() extends TControlBuilder {
       txtUrl.text,
       txtSchema.text,
       txtUser.text,
-      txtPassword.text
+      txtPassword.text,
+      txtMaxRows.text
     ).foreach(_.onChange(safe.onChange(() => useData(toData()))))
     jarSelector.onChange(safe.onChange(() => useData(toData())))
     cmbDelimiters.onChanged(() => safe.onChange(() => useData(toData())))

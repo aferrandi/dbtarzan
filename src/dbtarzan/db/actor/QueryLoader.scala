@@ -13,16 +13,16 @@ import dbtarzan.messages.QueryRows
 class QueryLoader(connection : java.sql.Connection) {
 	/* does the queries in the database. Sends them back to the GUI in packets of 20 lines 
 	   QueryRows gives the SQL query and tells how many rows must be read in total */
-	def query(qry : QueryRows, use : Rows => Unit) : Unit = {
+	def query(qry : QueryRows, maxRows: Int, use : Rows => Unit) : Unit = {
 		println("SQL:"+qry.sql)
   		using(connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) { statement => 
 	  		val rs = statement.executeQuery(qry.sql)
 	  		val meta = rs.getMetaData()
 	  		val columnCount = meta.getColumnCount()
-	  		println("Column count:"+columnCount+". Rows to read :"+qry.maxRows)
+	  		println("Column count:"+columnCount+". Rows to read :"+maxRows)
 	  		var rows = Vector.empty[Row]
 	  		var i = 0
-	  		while(rs.next() && i < qry.maxRows) {
+	  		while(rs.next() && i < maxRows) {
 	  			rows = rows :+ nextRow(rs, columnCount)
 	  			if(rows.length >= 20) {
 	  				use(Rows(rows.toList))

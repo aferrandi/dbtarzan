@@ -8,11 +8,11 @@ import scalafx.scene.layout.GridPane
 import scalafx.beans.property.{StringProperty, ObjectProperty}
 import scalafx.Includes._
 import scala.util.{Try, Success, Failure}
-import dbtarzan.config.{ Config, ConfigReader }
 import dbtarzan.db.ConnectionBuilder
+import dbtarzan.config.ConnectionDataReader
 import akka.actor.{ ActorSystem, Props, ActorRef }
 import dbtarzan.gui.actor.GUIWorker
-import dbtarzan.config.actor.ConfigWorker
+import dbtarzan.config.actor.ConnectionsWorker
 import dbtarzan.types.ConfigPath
 import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas }
 import java.nio.file.{ Path, Paths }
@@ -24,12 +24,14 @@ object Main extends JFXApp {
   println("Named commend line arguments:"+ parameters.named.mkString(","))
   val version = versionFromManifest()
   val system = ActorSystem("Sys")
-  val connectionsConfigPath = ConfigPath(Paths.get(parameters.named.getOrElse("configPath", "."), "connections.config"))
-  println("connectionsConfigPath:"+connectionsConfigPath.path)
-  val connections = ConfigReader.read(connectionsConfigPath)
+  var configsPath = parameters.named.getOrElse("configPath", ".")
+  val generalConfigPath = ConfigPath(Paths.get(configsPath, "general.config"))
+  val connectionsConfigPath = ConfigPath(Paths.get(configsPath, "connections.config"))
+  println("generalConfigPath:"+generalConfigPath+" connectionsConfigPath:"+connectionsConfigPath.path)
+  val connections = ConnectionDataReader.read(connectionsConfigPath)
   val mainGUI = new MainGUI(_guiActor, _configActor, connectionsConfigPath, version, openWeb, closeApp)
   val guiActor = system.actorOf(Props(new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
-  val configActor = system.actorOf(Props(new ConfigWorker(ConnectionDatas(connections), guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
+  val configActor = system.actorOf(Props(new ConnectionsWorker(ConnectionDatas(connections), guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   mainGUI.databaseList.setDatabases(DatabaseNames(connections.map(_.name)))
   mainGUI.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
   mainGUI.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })

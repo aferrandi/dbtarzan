@@ -22,15 +22,15 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
   list.onConnectionSelected(connection.show(_))
   buttons.onNew(() => list.addNew())
   buttons.onRemove(() => list.removeCurrent())
-  buttons.onCancel(() => list.removeCurrent())
+  buttons.onDuplicate(() => list.duplicateCurrent())
   list.selectFirst()
     /* builds the split panel containing the table and the foreign keys list */
   private def buildSplitPane() = new SplitPane {
-        maxHeight = Double.MaxValue
-        maxWidth = Double.MaxValue
-        items.addAll(list.control, connection.control)
-        dividerPositions = 0.3
-        SplitPane.setResizableWithParent(list.control, false)
+    maxHeight = Double.MaxValue
+    maxWidth = Double.MaxValue
+    items.addAll(list.control, connection.control)
+    dividerPositions = 0.3
+    SplitPane.setResizableWithParent(list.control, false)
   }
 
   private def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
@@ -40,27 +40,27 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
       case _ => false
     }
 
-  private def saveIfPossible(save : List[ConnectionData]  => Unit) : Unit ={
-      val errors = list.validate()
-      if(errors.isEmpty) {
-        if(areYouSure("Are you sure you want to save the connections?", "Save connections"))
-          save(list.content())
-      }
-      else 
-        showErrorAlert(errors)
+  private def saveIfPossible(save : List[ConnectionData]  => Unit) : Unit = {
+    val errors = list.validate()
+    if(errors.isEmpty) {
+      if(areYouSure("Are you sure you want to save the connections?", "Save connections"))
+        save(list.content())
+    }
+    else 
+      showErrorAlert(errors)
   }
 
   def cancelIfPossible(cancel : () => Unit) : Unit = {
-      if(areYouSure("Are you sure you want to close without saving?", "Cancel"))
-          cancel()
+    if(areYouSure("Are you sure you want to close without saving?", "Cancel"))
+        cancel()
   }
 
   private def showErrorAlert(errors : List[ConnectionDataErrors]) : Unit = {
     val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
     new Alert(AlertType.Error) { 
-         headerText="Saving the connections got: "
-         contentText= errorText
-         }.showAndWait()
+       headerText="Saving the connections got: "
+       contentText= errorText
+       }.showAndWait()
   }
 
   def onSave(save : List[ConnectionData]  => Unit): Unit =
@@ -68,7 +68,6 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
 
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
-
 
   def control : Parent = layout
 }

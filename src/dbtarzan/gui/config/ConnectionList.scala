@@ -26,18 +26,17 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
     cellFactory = { _ => buildCell() }
   }
 
- def addNew():Unit={
-   println("addNew")
-   connectionDatas.append(newData())
-   selectionModel().selectLast()   
- }
-
+  def addNew():Unit={
+    println("addNew")
+    connectionDatas.append(newData())
+    selectionModel().selectLast()   
+  }
 
   def selectFirst() : Unit = selectionModel().selectFirst()
 
   private def selectionModel() = list.selectionModel() 
 
-  def newData() = ConnectionData("", "<NEW>", "","",None,"","",None, None)
+  def newData() = ConnectionData("", "<NEW>", "","",None,"","",None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex() = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
@@ -50,7 +49,6 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
         //println("Selected index changed to "+newIndex) 
         Option(newIndex).map(_.intValue()).filter(_ >= 0).foreach(index => use(connectionDatas(index)))
       }}
-
 
   private def buildCell() = new ListCell[ConnectionData] {
     item.onChange { (value , oldValue, newValue) => {
@@ -67,6 +65,15 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
         println("Remove current")
         connectionDatas.remove(selectedIndex)
         newSelectedIndex(selectedIndex).foreach(selectionModel().select(_))
+      })
+
+  def duplicateCurrent() : Unit = 
+    if(connectionDatas.length > 1) 
+      getSelectedIndex().foreach(selectedIndex => {
+        println("Duplicate current")
+        val toDuplicate = connectionDatas(selectedIndex)
+        connectionDatas += toDuplicate.copy(name = "<NEW>")
+        selectionModel().selectLast()   
       })
 
   

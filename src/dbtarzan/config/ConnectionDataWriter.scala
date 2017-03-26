@@ -7,7 +7,7 @@ import dbtarzan.types.ConfigPath
 
 
 /* writes the databases configuration file */
-object ConfigWriter {
+object ConnectionDataWriter {
 	import ConnectionDataJsonProtocol._
 
 	def write(path : ConfigPath, connections : List[ConnectionData]) : Unit  = {

@@ -99,8 +99,8 @@ class DatabaseWorker(createConnection : () => java.sql.Connection, data : Connec
 		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)
 	})
 
-	private def queryRows(qry: QueryRows) : Unit = handleErr(
-		core.queryLoader.query(qry, rows => 
+	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = handleErr(
+		core.queryLoader.query(qry, maxRows.getOrElse(500), rows => 
 			guiActor ! ResponseRows(qry.id, rows)
 			))
 
@@ -118,7 +118,7 @@ class DatabaseWorker(createConnection : () => java.sql.Connection, data : Connec
 
 
   	def receive = {
-	    case qry : QueryRows => queryRows(qry)
+	    case qry : QueryRows => queryRows(qry, data.maxRows)
 	    case qry : QueryClose => close() 	    
 	    case qry : QueryReset => reset() 	    
 	    case qry : QueryTables => queryTables(qry) 

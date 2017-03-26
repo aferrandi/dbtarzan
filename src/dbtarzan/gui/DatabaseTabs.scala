@@ -10,7 +10,7 @@ import scalafx.event.Event
 import akka.actor.{ ActorRef, ActorSystem }
 
 /** All the tabs with one database for each*/
-class DatabaseTabs(guiWorker: => ActorRef, configActor : => ActorRef) extends TDatabases with TControlBuilder {
+class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
   private val mapDatabase = HashMap.empty[String, Database]
 
@@ -26,7 +26,7 @@ class DatabaseTabs(guiWorker: => ActorRef, configActor : => ActorRef) extends TD
 
   /* requests to close the connection to the database to the central database actor */
   private def sendClose(databaseName : String) : Unit = {
-    configActor ! QueryClose(databaseName)     
+    connectionsActor ! QueryClose(databaseName)     
   }
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {

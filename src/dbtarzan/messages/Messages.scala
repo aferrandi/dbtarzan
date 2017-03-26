@@ -4,7 +4,7 @@ import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey, Identifier
 import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
 
-case class QueryRows(id : TableId, sql : String, maxRows : Int)
+case class QueryRows(id : TableId, sql : String)
 
 case class QueryTables(id : DatabaseId)
 

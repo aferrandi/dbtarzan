@@ -25,6 +25,7 @@ import IdentifierDelimitersJsonProtocol._
   	"user", 
   	"password", 
   	"instances", 
-  	"identifierDelimiters"
+  	"identifierDelimiters",
+    "maxRows"
   	)
 }

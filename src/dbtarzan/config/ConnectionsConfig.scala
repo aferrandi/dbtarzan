@@ -3,7 +3,7 @@ package dbtarzan.config
 import scala.util.{Try, Success, Failure}
 
 /* the database configuration file content as a map databaseName => database JDBC configuration */
-class Config(connectionDatas : List[ConnectionData]) {
+class ConnectionsConfig(connectionDatas : List[ConnectionData]) {
 	val connectionDatasByName = connectionDatas.groupBy(data => data.name)
 
 	/* returns the JDBC configuration for a database */

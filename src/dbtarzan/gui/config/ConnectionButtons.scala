@@ -16,6 +16,10 @@ class ConnectionButtons() extends TControlBuilder {
   val buttonRemove = new Button {
     text = "Remove"
   }
+  val buttonDuplicate = new Button {
+    text = "Duplicate"
+  }
+
   val buttonCancel = new Button {
     text = "Cancel"
     alignmentInParent = Pos.CENTER_RIGHT
@@ -27,7 +31,7 @@ class ConnectionButtons() extends TControlBuilder {
   }
 
 	private val layout = new HBox {
-    children = List(buttonNew, buttonRemove, new Region() { hgrow = Priority.Always }, buttonSave, buttonCancel )
+    children = List(buttonNew, buttonRemove, buttonDuplicate, new Region() { hgrow = Priority.Always }, buttonSave, buttonCancel )
   	padding = Insets(10)
   	spacing = 10
   }
@@ -37,6 +41,9 @@ class ConnectionButtons() extends TControlBuilder {
 
   def onRemove(action : () => Unit ): Unit =
     buttonRemove.onAction = (event: ActionEvent)  => action()
+
+  def onDuplicate(action : () => Unit ): Unit =
+    buttonDuplicate.onAction = (event: ActionEvent)  => action()
 
   def onSave(action : () => Unit ): Unit =
     buttonSave.onAction = (event: ActionEvent)  => action()

@@ -6,7 +6,7 @@ import dbtarzan.db.util.FileReadWrite
 import dbtarzan.types.ConfigPath
 
 /* reads the databases configuration file */
-object ConfigReader {
+object ConnectionDataReader {
 	import ConnectionDataJsonProtocol._
 
 	def read(path: ConfigPath) : List[ConnectionData] = {

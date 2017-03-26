@@ -8,7 +8,6 @@ import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import scalafx.Includes._
-import dbtarzan.config.{ Config, ConfigReader }
 import dbtarzan.db.{Field, Row, Rows}
 import dbtarzan.messages._
 import akka.actor.ActorRef
@@ -28,7 +27,7 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
   private val fromRow = new CheckedRowFromRow(checkedRows, table.selectionModel()) 
 
   /* requests the rows for the table to the database actor. They come back using the addRows function */
-  dbActor ! QueryRows(id, dbTable.sql, 500) 
+  dbActor ! QueryRows(id, dbTable.sql) 
   /* requests the foreign keys for this table. */
   dbActor ! QueryForeignKeys(id)
  
