@@ -26,10 +26,3 @@ Hospital: find fast all the people that got a special kind of sickness.
 
 You can do the same with standard SQL queries or with views, but in this way it is much faster.
 This is for example the best tool to explore a database you never saw before.
-
-Code
-----
-
-DBTarzan is written in Scala, uses JavaFX 8 via ScalaFX for its GUI, uses the actors of Akka, Spray 
-(now part of Akka) to read the configurations written in JSON. 
-
