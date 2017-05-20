@@ -13,16 +13,12 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.07
+
+Added a duplicate button in the connection editor, to reuse parts of an existing connection definition (driver path, driver class) when creating a new one.
+Added a field in the connection definition, maxRows, which defines the maximum amount of rows returned by a query. If not set, it remains 500 as it was before version 1.07. You need to reopen the connection to use the new value.
+
 - Release 1.06
 
 Some databases close automatically a connection after a period of inactivity. Added a context menu to reset a connection so that it is not needed to open a new database tab in this case. 
 
-- Release 1.05
-
-Now it is possible to configure a connection such that all identifiers (table names + column names) are delimited by special delimiters ([ and ] or " and "), so that sql keys can be used as identifiers.
-
-- Release 1.04
-
-It is possible to close all table tabs, close all table tabs before the current tab.
-
-If a table has only one row, that row is automatically selected
