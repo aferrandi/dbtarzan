@@ -12,5 +12,4 @@ class EncyrptionTest extends FlatSpec {
     val decrypted = encryption.decrypt(encrypted)
   	assert(decrypted === original)
   }
-
 }

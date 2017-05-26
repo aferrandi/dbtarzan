@@ -19,6 +19,8 @@ case class ConnectionData(
 	user: String, 
 	/* the password to login to the database */
 	password: String,
+	/* if true the password is encrypter. Used to be able to edit the password in configuration file */ 
+	passwordEncrypted: Option[Boolean],
 	/* the number of connections that the application will open against this database (1 if not defined) */
 	instances: Option[Int],
 	/* the identifiers delimiters to prevent having troubles with reserved words */

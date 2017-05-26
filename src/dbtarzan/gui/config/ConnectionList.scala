@@ -36,7 +36,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TContro
 
   private def selectionModel() = list.selectionModel() 
 
-  def newData() = ConnectionData("", "<NEW>", "","",None,"","",None, None, None)
+  def newData() = ConnectionData("", "<NEW>", "","",None,"","",None, None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex() = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)

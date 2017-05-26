@@ -24,6 +24,7 @@ import IdentifierDelimitersJsonProtocol._
   	"schema", 
   	"user", 
   	"password", 
+    "passwordEncrypted", 
   	"instances", 
   	"identifierDelimiters",
     "maxRows"

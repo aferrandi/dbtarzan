@@ -1,13 +1,13 @@
 package dbtarzan.gui.config
 
-import scalafx.scene.control.{ TextField, Label, Spinner }
+import scalafx.scene.control.{ TextField, Label, Spinner, PasswordField }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
 import scalafx.geometry.Insets
 import scalafx.Includes._
 import dbtarzan.gui.util.OnChangeSafe
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.config.ConnectionData
+import dbtarzan.config.{ ConnectionData, PasswordEncryption }
 
 /**
   The list of database to choose from
@@ -27,7 +27,7 @@ class Connection() extends TControlBuilder {
   val txtUser = new TextField {
     text = ""
   }  
-  val txtPassword = new TextField {
+  val txtPassword = new PasswordField {
     text = ""
   }
   val txtSchema = new TextField {
@@ -76,13 +76,23 @@ class Connection() extends TControlBuilder {
     hgap = 10
   }
 
+  private def decryptPasswordIfNeeded(password: String, passwordEncrypted : Boolean) : String =
+      if(passwordEncrypted)
+        try { 
+          PasswordEncryption.decrypt(password)
+        } catch {
+          case ex: Exception => throw new Exception("Decrypting the password "+password+" got", ex) 
+        }
+      else
+        password
+
   def show(data : ConnectionData) : Unit = safe.noChangeEventDuring(() => {
     txtName.text = data.name
     jarSelector.show(Some(data.jar))
     txtUrl.text = data.url
     txtDriver.text = data.driver
     txtUser.text = data.user
-    txtPassword.text = data.password
+    txtPassword.text = decryptPasswordIfNeeded(data.password, data.passwordEncrypted.getOrElse(false))
     txtSchema.text = noneToEmpty(data.schema)
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
@@ -93,6 +103,14 @@ class Connection() extends TControlBuilder {
   private def emptyToNone(s : String) : Option[String] =
     Option(s).filter(_.trim.nonEmpty)
 
+  private def encryptPassword(password: String) : String =
+    try { 
+      PasswordEncryption.encrypt(password)
+    } catch {
+      case ex: Exception => throw new Exception("Encrypting the password "+password+" got", ex) 
+    }
+
+
   def toData() = {
     ConnectionData(
       jarSelector.jarFilePath(), 
@@ -101,7 +119,8 @@ class Connection() extends TControlBuilder {
       txtUrl.text(),
       emptyToNone(txtSchema.text()),
       txtUser.text(), 
-      txtPassword.text(),
+      encryptPassword(txtPassword.text()),
+      Some(true),
       None,
       cmbDelimiters.toDelimiters(),
       emptyToNone(txtMaxRows.text()).map(_.toInt) // it can only be None or Int

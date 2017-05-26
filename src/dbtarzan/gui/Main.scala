@@ -14,7 +14,7 @@ import akka.actor.{ ActorSystem, Props, ActorRef }
 import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.config.actor.ConnectionsWorker
 import dbtarzan.types.ConfigPath
-import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas }
+import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas, Info }
 import java.nio.file.{ Path, Paths }
 
 /**
@@ -33,7 +33,10 @@ object Main extends JFXApp {
   val guiActor = system.actorOf(Props(new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val configActor = system.actorOf(Props(new ConnectionsWorker(ConnectionDatas(connections), guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   mainGUI.databaseList.setDatabases(DatabaseNames(connections.map(_.name)))
-  mainGUI.onDatabaseSelected( { case databaseName => configActor ! QueryDatabase(databaseName) })
+  mainGUI.onDatabaseSelected( { case databaseName => {
+    guiActor ! Info("Opening database "+databaseName)
+    configActor ! QueryDatabase(databaseName) 
+    }})
   mainGUI.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })
 
   def _guiActor() : ActorRef = guiActor

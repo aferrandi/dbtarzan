@@ -19,7 +19,7 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
     bottom = buttons.control
   }
   connection.onChanged(list.changeSelected(_))
-  list.onConnectionSelected(connection.show(_))
+  list.onConnectionSelected(showConnection(_))
   buttons.onNew(() => list.addNew())
   buttons.onRemove(() => list.removeCurrent())
   buttons.onDuplicate(() => list.duplicateCurrent())
@@ -32,6 +32,15 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
     dividerPositions = 0.3
     SplitPane.setResizableWithParent(list.control, false)
   }
+
+  private def showConnection(data : ConnectionData) : Unit = try {
+      connection.show(data)
+    } catch {
+      case ex : Exception => new Alert(AlertType.Error) { 
+       headerText="Displaying connections got: "
+       contentText= ex.getMessage()
+       }.showAndWait() 
+    } 
 
   private def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
       headerText = header

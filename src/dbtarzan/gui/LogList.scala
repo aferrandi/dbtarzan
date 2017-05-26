@@ -71,8 +71,10 @@ class LogList extends TLogs with TControlBuilder {
       LogText.extractWholeLogText(logTable.selectionModel().selectedItem())
 
   /* Prepends: the last message come becomes the first in the list */
-  def addLogMessage(log :TLogMessage) : Unit = 
+  def addLogMessage(log :TLogMessage) : Unit = {
+    println("Log:"+log)
     log +=: buffer
+  }
 
   def control : Parent = logTable 
 }

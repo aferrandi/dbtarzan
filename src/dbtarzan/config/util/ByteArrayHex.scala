@@ -2,7 +2,7 @@ package dbtarzan.config.util
 
 import java.math.BigInteger
 
-object BytArrayHex {
+object ByteArrayHex {
 	def toHex(bytes : Array[Byte]) : String =
 		bytes.map("%02X" format _).mkString
 
