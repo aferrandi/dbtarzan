@@ -14,5 +14,5 @@ target
 *.fgk
 togit
 db
-/db
+!/db
 sqllite
