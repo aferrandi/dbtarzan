@@ -36,10 +36,7 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
   private def showConnection(data : ConnectionData) : Unit = try {
       connection.show(data)
     } catch {
-      case ex : Exception => new Alert(AlertType.Error) { 
-       headerText="Displaying connections got: "
-       contentText= ex.getMessage()
-       }.showAndWait() 
+      case ex : Exception => showErrorAlert("Displaying connections got: ", ex.getMessage())
     } 
 
   private def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
@@ -53,10 +50,13 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
     val errors = list.validate()
     if(errors.isEmpty) {
       if(areYouSure("Are you sure you want to save the connections?", "Save connections"))
-        save(list.content())
+        try { save(list.content()) }
+        catch {
+          case ex : Exception => showErrorAlert("Saving the connections got: ", ex.getMessage())
+        }
     }
     else 
-      showErrorAlert(errors)
+      showConnectionDataErrors(errors)
   }
 
   def cancelIfPossible(cancel : () => Unit) : Unit = {
@@ -64,12 +64,15 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
         cancel()
   }
 
-  private def showErrorAlert(errors : List[ConnectionDataErrors]) : Unit = {
-    val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
-    new Alert(AlertType.Error) { 
-       headerText="Saving the connections got: "
-       contentText= errorText
+  private def showErrorAlert(header : String, error : String) : Unit = new Alert(AlertType.Error) { 
+       headerText= header
+       contentText= error
        }.showAndWait()
+ 
+
+  private def showConnectionDataErrors(errors : List[ConnectionDataErrors]) : Unit = {
+    val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
+    showErrorAlert("Saving the connections got: ", errorText)
   }
 
   def onSave(save : List[ConnectionData]  => Unit): Unit =

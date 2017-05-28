@@ -18,7 +18,9 @@ import akka.actor.ActorRef
 
 
 
-/* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle */
+/* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle.
+	the actors are still not been created when calling the constructor, therefore they are passed as functions.
+ */
 class MainGUI(guiWorker: => ActorRef, configActor : => ActorRef, connectonsConfigPath: ConfigPath, version: String, openWeb : String => Unit, closeApp : () => Unit)
 {
 	/* the database tabs on the middle-right side */

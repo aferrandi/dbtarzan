@@ -10,13 +10,11 @@ import dbtarzan.db._
 import dbtarzan.messages._
 
 
-
-
 /* The actor that copies the foreign keys it read from a database to a text file.
 The file is then used by DatabaseWorker instead of reading the foreign keys fron the database, 
 thus avoiding delays when reading foreign keys from the database is slow (Oracle) */
 class CopyWorker(data : ConnectionData, guiActor : ActorRef) extends Actor {
-	val connection = DriverManager.getConnection(data.url, data.user, data.password)
+	val connection = DriverManagerEncryption.getConnection(data)
 	def databaseName = data.name
 	val foreignKeyLoader =  new ForeignKeyLoader(connection, data.schema)
 	val queryLoader = new QueryLoader(connection)

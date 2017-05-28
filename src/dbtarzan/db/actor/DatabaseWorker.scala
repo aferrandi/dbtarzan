@@ -1,6 +1,6 @@
 package dbtarzan.db.actor
 
-import java.sql.{Connection, ResultSet, DriverManager}
+import java.sql.{Connection, ResultSet}
 import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
 import dbtarzan.config.ConnectionData
@@ -20,7 +20,13 @@ class DatabaseWorker(createConnection : () => java.sql.Connection, data : Connec
 	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
 	loadForeignKeysFromFile()	
 
-	private def buildCore() = new DatabaseWorkerCore(createConnection(), data.schema)
+	private def buildCore() : DatabaseWorkerCore = try {
+			new DatabaseWorkerCore(createConnection(), data.schema)
+		} 
+		catch { case e : Exception => { 
+			guiActor ! Error("Cronnecting to the database "+databaseName+" got", e) 
+			throw e 
+		}}
 
 	private def loadForeignKeysFromFile() : Unit = 
 		if(ForeignKeysToFile.fileExist(databaseName)) {
@@ -34,7 +40,7 @@ class DatabaseWorker(createConnection : () => java.sql.Connection, data : Connec
 		}
 
 	/* gets the columns of a table from the database metadata */
-	def columnNames(tableName : String) : Fields = {
+	private def columnNames(tableName : String) : Fields = {
 		var meta = core.metadata()
 		using(meta.getColumns(null, data.schema.orNull, tableName, "%")) { rs =>
 			val list = new ListBuffer[Field]()			
@@ -48,7 +54,7 @@ class DatabaseWorker(createConnection : () => java.sql.Connection, data : Connec
 	}
 
 	/* gets all the tables in the database/schema from the database metadata */
-	def tableNames() : TableNames = {
+	private def tableNames() : TableNames = {
 		var meta = core.metadata()
 		using(meta.getTables(null, data.schema.orNull, "%", Array("TABLE"))) { rs =>
 			val list = new ListBuffer[String]()

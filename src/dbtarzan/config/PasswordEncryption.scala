@@ -4,7 +4,7 @@ import dbtarzan.config.util.{ Encryption, ByteArrayHex }
 
 object PasswordEncryption
 {
-	val encryption = new Encryption("1gCDuAntiQiFPHIiTEEE", "AjbGyXxV")
+	val encryption = new Encryption("1gCDuAntiQiFPHIT", "eJSUpCT9VNo5AbF6")
 
 	def encrypt(plainPassword : String) : String =  ByteArrayHex.toHex(encryption.encrypt(plainPassword))
 

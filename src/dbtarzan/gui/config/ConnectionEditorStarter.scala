@@ -3,7 +3,7 @@ package dbtarzan.gui.config
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
 import scalafx.Includes._
-import dbtarzan.config.{ ConnectionDataReader, ConnectionDataWriter }
+import dbtarzan.config.{ ConnectionDataReader, ConnectionDataWriter, ConnectionData }
 import akka.actor.ActorRef
 import dbtarzan.messages.ConnectionDatas
 import dbtarzan.types.ConfigPath
@@ -12,26 +12,28 @@ import dbtarzan.types.ConfigPath
 object ConnectionEditorStarter
 {
  def openConnectionsEditor(parentStage : Stage, connectionsWorker : ActorRef, connectionsConfigPath: ConfigPath) : Unit = {
+
     println("open connections editor")  
      val connectionStage = new Stage {
       title = "Edit Connections"
       width = 800
       height = 600
       scene = new Scene {
-        val editor = new ConnectionEditor(ConnectionDataReader.read(connectionsConfigPath))
-        editor.onSave(connectionsToSave => {
+        def onSave(connectionsToSave: List[ConnectionData]) : Unit = {
             ConnectionDataWriter.write(connectionsConfigPath, connectionsToSave)
             connectionsWorker ! ConnectionDatas(connectionsToSave)
             window().hide()
-          })
-        editor.onCancel(() => {
-            window().hide()
-          })
+          }
+
+        def onCancel() : Unit = 
+          window().hide()
+
+        val editor = new ConnectionEditor(ConnectionDataReader.read(connectionsConfigPath))
+        editor.onSave(onSave(_))
+        editor.onCancel(() => onCancel())
         onCloseRequest = (event : WindowEvent) => { 
           event.consume()
-          editor.cancelIfPossible(() => {
-            window().hide()
-          }) 
+          editor.cancelIfPossible(() => onCancel()) 
           }
         root = editor.control
       }

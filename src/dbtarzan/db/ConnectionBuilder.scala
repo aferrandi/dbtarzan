@@ -4,7 +4,7 @@ import akka.actor.{ ActorRef, Props, ActorContext }
 import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
 import akka.routing.RoundRobinRouter
 import dbtarzan.config.ConnectionData
-import java.sql.{DriverManager, Driver}
+import java.sql.{DriverManager, Driver, Connection}
 import java.net.{ URL, URLClassLoader }
 
 /**
@@ -38,11 +38,11 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 		DriverManager.registerDriver(new DriverShim(driver))		
 	} 
 
-	private def connection() = DriverManager.getConnection(data.url, data.user, data.password)
+	private def connection() : Connection = DriverManagerEncryption.getConnection(data)
 
 	private def buildSubWorker(index : Int) : ActorRef = {
 		val name = "dbworker" + data.name + index
-			context.actorOf(Props(new DatabaseWorker(connection, data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
+		context.actorOf(Props(new DatabaseWorker(connection, data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
 	}	
 }
 

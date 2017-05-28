@@ -1,30 +1,30 @@
 package dbtarzan.config.util
 
-import javax.crypto.{Cipher, SecretKeyFactory}
-import javax.crypto.spec.{SecretKeySpec, PBEKeySpec, IvParameterSpec, PBEParameterSpec}
+import javax.crypto.{Cipher}
+import javax.crypto.spec.{SecretKeySpec, IvParameterSpec}
 
 
-/* to encrypt and decrypt the passwords included in the database JDBC definitions */
-class Encryption(key : String, salt : String) {
-	val pbeKeySpec = new PBEKeySpec(key.toCharArray());
-	val secretKeyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndTripleDES");
-	val secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
-
+/* to encrypt and decrypt the passwords included in the database JDBC definitions.
+	the key can't be over 16 characters, otherwise you get an error in windows
+ */
+class Encryption(key : String, initVector : String) {
+	val method = "AES/CBC/PKCS5PADDING"
+	val utf8 = "UTF-8"
+   	val iv = new IvParameterSpec(initVector.getBytes(utf8));
+    val keySpec =new SecretKeySpec(key.getBytes(utf8), "AES");
 
 	/* returns the JDBC configuration for a database */
 	def encrypt(plainText : String) : Array[Byte] =  {
-		val pbeParameterSpec = new PBEParameterSpec(salt.getBytes("UTF-8"), 100);
-		val cipher = Cipher.getInstance("PBEWithMD5AndTripleDES");
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey, pbeParameterSpec);
-		val cipherText = cipher.doFinal(plainText.getBytes("UTF-8"))
-		cipherText
+		val cipher = Cipher.getInstance(method)
+		cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
+		val encryptedText = cipher.doFinal(plainText.getBytes(utf8))
+		encryptedText
 	}
 
-	def decrypt(cipherText : Array[Byte]) : String = {
-		val pbeParameterSpec = new PBEParameterSpec(salt.getBytes("UTF-8"), 100);
-		val cipher = Cipher.getInstance("PBEWithMD5AndTripleDES");
-		cipher.init(Cipher.DECRYPT_MODE, secretKey, pbeParameterSpec);
-		val plainText = new String(cipher.doFinal(cipherText), "UTF-8");
+	def decrypt(encryptedText : Array[Byte]) : String = {
+		val cipher = Cipher.getInstance(method);
+		cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
+		val plainText = new String(cipher.doFinal(encryptedText), utf8);
 		plainText
 	}
 }

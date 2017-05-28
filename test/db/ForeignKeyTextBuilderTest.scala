@@ -44,8 +44,4 @@ class ForeignKeyTextBuilderTest extends FlatSpec {
 		FieldWithValue("name", name),
 		FieldWithValue("age", age)
 	))
-
-
-
 }
-
