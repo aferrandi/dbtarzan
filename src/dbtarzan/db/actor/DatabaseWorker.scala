@@ -106,7 +106,7 @@ class DatabaseWorker(createConnection : () => java.sql.Connection, data : Connec
 	})
 
 	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = handleErr(
-		core.queryLoader.query(qry, maxRows.getOrElse(500), rows => 
+		core.queryLoader.query(qry, maxRows.getOrElse(500),  rows => 
 			guiActor ! ResponseRows(qry.id, rows)
 			))
 
@@ -114,13 +114,16 @@ class DatabaseWorker(createConnection : () => java.sql.Connection, data : Connec
     		guiActor ! ResponseTables(qry.id, tableNames())
 		)
 
+
 	private def queryColumns(qry: QueryColumns) : Unit = handleErr( 
-    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName), data.identifierDelimiters)
+    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName), queryAttributes())
     	)
 
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  handleErr(
-    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName), data.identifierDelimiters)
+    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName), queryAttributes())
     	)		
+
+	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)
 
 
   	def receive = {

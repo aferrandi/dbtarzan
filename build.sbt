@@ -6,7 +6,7 @@ enablePlugins(DebianPlugin,JavaAppPackaging)
 
 name := "dbtarzan"
 
-version := "1.08"
+version := "1.09"
 
 maintainer := "Andrea Ferrandi"
 

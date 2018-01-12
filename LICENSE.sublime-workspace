@@ -1,0 +1,578 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Conn",
+				"Connection"
+			],
+			[
+				"Pas",
+				"PasswordEncryption"
+			],
+			[
+				"d",
+				"decrypt"
+			],
+			[
+				"encry",
+				"encryption"
+			],
+			[
+				"enc",
+				"encryption"
+			],
+			[
+				"pack",
+				"package"
+			],
+			[
+				"on",
+				"onChanged"
+			],
+			[
+				"C",
+				"ConnectionsConfig"
+			],
+			[
+				"ConnectionData",
+				"ConnectionDataReader"
+			],
+			[
+				"to",
+				"toDuplicate"
+			],
+			[
+				"me",
+				"metadata"
+			],
+			[
+				"is",
+				"isEmpty"
+			],
+			[
+				"new",
+				"newValue"
+			],
+			[
+				"String",
+				"StringProperty"
+			],
+			[
+				"I",
+				"IdentifierDelimiters"
+			],
+			[
+				"txtD",
+				"txtDelimiterStart"
+			],
+			[
+				"Config",
+				"ConfigPath"
+			],
+			[
+				"Confi",
+				"ConfigPath"
+			],
+			[
+				"Con",
+				"ConfigPath"
+			],
+			[
+				"dbta",
+				"dbtarzan"
+			],
+			[
+				"package",
+				"packageAll"
+			],
+			[
+				"all",
+				"allDigits"
+			],
+			[
+				"ad",
+				"asInt_fold"
+			],
+			[
+				"repea",
+				"repeatTree"
+			],
+			[
+				"na",
+				"natToInteger"
+			],
+			[
+				"get",
+				"getZIndex"
+			],
+			[
+				"toD",
+				"toDigitsRev"
+			],
+			[
+				"Connec",
+				"ConnectionDatas"
+			],
+			[
+				"conf",
+				"configActor"
+			],
+			[
+				"gui",
+				"guiWorker"
+			],
+			[
+				"data",
+				"databases"
+			],
+			[
+				"freddyS",
+				"freddySayZzz"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"sbt",
+				"SublimeREPL: SBT for opened folder"
+			],
+			[
+				"r",
+				"SublimeREPL: SBT for opened folder"
+			],
+			[
+				"su",
+				"SublimeREPL: Scala"
+			],
+			[
+				"Package Control:re",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 485.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/andrea/prj/exmap/server/systemdirtest/project1/project.ex",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/ConnectionData.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/ConnectionsConfig.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/DriverManagerWithEncryption.scala",
+		"/home/andrea/prj/dbtarzan/test/config/util/EncryptionTest.scala",
+		"/home/andrea/prj/dbtarzan/test/db/ForeignKeyTextBuilderTest.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/ForeignKeyTextBuilder.scala",
+		"/home/andrea/prj/dbtarzan/test/db/TableTest.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/ConnectionEditor.scala",
+		"/home/andrea/prj/dbtarzan/test/messages/LogTextTest.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/Connection.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/ConnectionEditorStarter.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/util/Encryption.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/DBTypes.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/MainGUI.scala",
+		"/home/andrea/prj/dbtarzan/test/config/ConfigReaderTest.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/PasswordEncryption.scala",
+		"/home/andrea/prj/dbtarzan/connections.config",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/LogList.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/IdentifierDelimiters.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/Main.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/ConnectionList.scala",
+		"/home/andrea/prj/dbtarzan/test/config/PasswordEncryptionTest.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/TableTabs.scala",
+		"/home/andrea/prj/dbtarzan/sourceforge/README.md",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/ConnectionDataJsonProtocol.scala",
+		"/home/andrea/prj/dbtarzan/test/config/util/ByteArrayHexTest.scala",
+		"/home/andrea/prj/dbtarzan/test/config/util/PasswordEncryptionTest.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/util/ByteArrayHex.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/BrowsingTable.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/actor/QueryLoader.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/actor/DatabaseWorker.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/messages/Messages.scala",
+		"/home/andrea/prj/dbtarzan/build.sbt",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/Table.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/Table.scala",
+		"/home/andrea/t2.txt",
+		"/home/andrea/610_flexibleperiod_log.txt",
+		"/home/andrea/t1.txt",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/Database.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/DatabaseTabs.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/messages/IDGenerator.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/GlobalConfig.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/util/FileReadWrite.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/ConnectionBuilder.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/actor/DatabaseWorkerCore.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/actor/ConnectionsWorker.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/actor/GUIWorker.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/ConnectionDataReader.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/ConnectionDataWriter.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/ConnectionButtons.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/ForeignKeyList.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/types/Types.scala",
+		"/home/andrea/prj/dbtarzan/launch4j_config.xml",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/DatabaseList.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/util/JFXUtil.scala",
+		"/home/andrea/prj/dbtarzan/target/dbtarzan-1.04/DEBIAN/control",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/ComboDelimiters.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/util/OnChangeSafe.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/CheckedDelimiters.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/config/Delimiters.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/actor/ConfigWorker.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/ConfigWriter.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/ForeignKeyMapper.scala",
+		"/home/andrea/Downloads/simantec.cert",
+		"/home/andrea/prj/dbtarzan/README.md",
+		"/home/andrea/exercism/haskell/matrix/src/Matrix.hs",
+		"/home/andrea/exercism/haskell/food-chain/src/FoodChain.hs",
+		"/home/andrea/diff1.txt",
+		"/home/andrea/node_modules/rd3/build/public/js/react-d3.js",
+		"/home/andrea/node_modules/rd3/build/cjs/package.json",
+		"/home/andrea/exercism/haskell/saddle-points/test/Tests.hs",
+		"/home/andrea/exercism/haskell/saddle-points/src/Matrix.hs",
+		"/home/andrea/exercism/haskell/wordy/src/WordProblem.hs",
+		"/home/andrea/node_modules/rd3/build/public/js/react-d3.js.map",
+		"/home/andrea/diff2.txt",
+		"/home/andrea/cesar.hs",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/loglist.css",
+		"/home/andrea/prj/dbtarzan/togit",
+		"/home/andrea/.stack/programs/x86_64-linux/ghc-8.0.1/lib/ghc-8.0.1/settings",
+		"/home/andrea/exercism/haskell/bank-account/src/BankAccount.hs",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/ConfigReader.scala",
+		"/home/andrea/exercises.hs",
+		"/home/andrea/prj/dbtarzan/project/plugins.sbt",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/CheckedRow.scala",
+		"/usr/share/dbtarzan/bin/dbtarzan",
+		"/home/andrea/prj/dbtarzan/target/sbt-launch4j/launch4j-util/launch4j/src/net/sf/launch4j/Util.java",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/db/ForeignKeysToFile.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/util/LogIcons.scala",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/config/Config.scala",
+		"/home/andrea/prj/dbtarzan/src/main/resources/dbtarzan/gui/loglist.css",
+		"/home/andrea/prj/dbtarzan/src/dbtarzan/gui/TDatabaseList.scala",
+		"/home/andrea/prj/MrsGreen2/www/js/pages/prologue.js",
+		"/home/andrea/.config/sublime-text-3/Packages/SublimeHaskell/Settings/SublimeHaskell.sublime-settings",
+		"/home/andrea/.config/sublime-text-3/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+		"/home/andrea/prj/MrsGreen2/www/js/pages/scene3.js",
+		"/home/andrea/prj/MrsGreen2/www/js/pages/scene8.js",
+		"/home/andrea/prj/MrsGreen2/www/js/util/sprites.js",
+		"/home/andrea/prj/MrsGreen2/www/css/balloon.css",
+		"/home/andrea/prj/MrsGreen2/www/js/pages/scene2.js",
+		"/home/andrea/prj/MrsGreen2/www/js/pages/scene1.js",
+		"/home/andrea/prj/MrsGreen2/www/css/mrsgreen.css",
+		"/home/andrea/wordpress_cristina/wp-content/themes/edin/style.css",
+		"/home/andrea/.ghci"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"/home/andrea/prj/dbtarzan,*.scala",
+			"/home/andrea/prj/dbtarzan",
+			"/home/andrea/prj/dbtarzan/src",
+			"/home/andrea/prj,/home/andrea/prj/dbtarzan/src",
+			"/home/andrea/exercism",
+			"/home/exercism",
+			"/home/andrea/node_modules/rd3/build",
+			"",
+			"*.js",
+			"*.scala",
+			"",
+			"this.sound.playLoop(\"birds.mp3\");",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"handling v",
+			"\\\"",
+			"\\",
+			"WebTypes",
+			"\\n",
+			"DriverManager",
+			"password",
+			"PasswordEncryption",
+			"ConnectionData",
+			"core",
+			"columnNames",
+			"buildDBWorker",
+			"getDBWorker",
+			"ConnectionBuilder",
+			"TableDescription",
+			"PBEParameterSpec",
+			"PBEKeySpec",
+			"openConnectionsEditor",
+			"Decrypting",
+			"onSave",
+			"DelimitersApplier",
+			"FieldWithValue",
+			"ForeignKeyCriteria",
+			"show",
+			"onDatabaseSelected",
+			"Info",
+			"ciphertext",
+			"plaintext",
+			"20170401_20170501_SYS_FLEXIBLE_NOK_595",
+			"sql",
+			"ForeignKeyTextBuilder",
+			"QueryRows",
+			"500",
+			"json",
+			"maxRows",
+			"500",
+			"rows",
+			"spn",
+			"TextField",
+			"textfield",
+			"config",
+			"GlobalConfig",
+			"config",
+			"configActor",
+			"Config",
+			"config",
+			"Config",
+			"connectionsWorker",
+			"ConfigWorker",
+			"Config",
+			"ConfigReader",
+			"500",
+			"onRemove",
+			"onDuplicate",
+			"ContextMenu",
+			"JFXUtil",
+			"menuForeignKeyToFile",
+			"queryLoader",
+			"DatabaseWorker",
+			"the connection is closed",
+			"1.04",
+			"javadoc",
+			"1.04",
+			"1.0",
+			"JFXUtil",
+			"IdentifierDelimiters",
+			"ObservableBuffer",
+			"ActionEvent",
+			"control",
+			"onAction",
+			"buildCell",
+			"selectionmodel",
+			"builCell",
+			"\nListCell",
+			"ListCell",
+			"safe",
+			"onChanged",
+			"onChangd",
+			"print",
+			"ActionEvent",
+			"StringProperty",
+			"stringproperty",
+			"writeFile",
+			"Creating",
+			"ConnectionDataJsonProtocol",
+			"ResponseColumns",
+			"ResponseTables",
+			"ResponseDatabase",
+			"addDatabase",
+			"QueryTables",
+			"schema",
+			"ConnectionData",
+			"ResponseDatabase",
+			"addDatabase(",
+			"addDatabaseTab",
+			"configActor",
+			"table",
+			"Check",
+			"check",
+			"connection",
+			"Connection",
+			"check",
+			"chk",
+			"ForeignKeyTextBuilder",
+			"buildFieldValueText",
+			"DEBUG\n",
+			"esultManagerWR\nResultManagerWR_IN_0\nResultManagerWR.Daos.InsertDao",
+			"Data.Array",
+			"window.React",
+			"window",
+			"_require",
+			"window",
+			"\\\\n",
+			"after this",
+			"catch",
+			"menuAddConnection",
+			"checkedProperty",
+			"ContextMenu",
+			"catch",
+			"cathc",
+			"url",
+			"print",
+			"Selected",
+			"connections",
+			"fold",
+			"either",
+			"Tooltip",
+			"MenuItem"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"\"",
+			"",
+			" ",
+			"cipherText",
+			"plainText",
+			"connectionsActor",
+			"ConnectionsWorker",
+			"",
+			"\\n",
+			"either",
+			" ",
+			"",
+			"ConnectionDatas",
+			"this.sound.playLoop(\"naturesounds.mp3\");",
+			"this.sound.playLoop(\"springVivaldi.mp3\");",
+			"this.sound.playLoop(\"boadFreddy.mp3\");",
+			"this.sound.playLoop(\"birds.mp3\");",
+			"<br/>\"+",
+			"\",",
+			"\"+nl+"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 34.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "LICENSE.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 307.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

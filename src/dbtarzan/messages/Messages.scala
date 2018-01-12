@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey, IdentifierDelimiters}
+import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes}
 import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
 
@@ -24,11 +24,11 @@ case class ResponseTables(id : DatabaseId, names: TableNames)
 
 case class ResponseCloseTables(id : DatabaseId, ids : List[TableId])
 
-case class ResponseColumns(id: DatabaseId, tableName : String, columns : Fields, delimiters : Option[IdentifierDelimiters])
+case class ResponseColumns(id: DatabaseId, tableName : String, columns : Fields, queryAttributes : QueryAttributes)
 
 case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
 
-case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields, delimiters : Option[IdentifierDelimiters])
+case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes)
 
 sealed trait TLogMessage
 

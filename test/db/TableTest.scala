@@ -9,24 +9,24 @@ class TableTest extends FlatSpec {
         Fields(buildColumns()),
         None,
         None,
-        DelimitersApplier.from(None)
+        noneApplier()
       )
     val sql = table.buildSql()
-  	assert("select * from customer" === sql)
+  	assert("SELECT * FROM customer" === sql)
   }
 
 
   "a simple table with delimiters" should "give a query with delimiters" in {
-    val identifiersDelimiters = DelimitersApplier.from(Some(IdentifierDelimiters('[', ']')))
+      val applier = QueryAttributesApplier.from(QueryAttributes(Some(IdentifierDelimiters('[', ']')), Some("TST")))
     val table = Table.build(
         buildDescription(),
         Fields(buildColumns()),
         None,
         None,
-        identifiersDelimiters
+        applier
       )
     val sql = table.buildSql()
-    assert("select * from [customer]" === sql)
+    assert("SELECT * FROM TST.[customer]" === sql)
   }
 
 
@@ -36,10 +36,10 @@ class TableTest extends FlatSpec {
         Fields(buildColumns()),
         Some(buildForeignKeyCriteria()),
         None,
-        DelimitersApplier.from(None)
+        noneApplier()
       )
     val sql = table.buildSql()
-    assert("select * from customer WHERE (\n(name='John' AND age=23))" === sql)
+    assert("SELECT * FROM customer WHERE (\n(name='John' AND age=23))" === sql)
   }
 
 
@@ -49,10 +49,10 @@ class TableTest extends FlatSpec {
         Fields(buildColumns()),
         None,
         Some(Filter("name = 'john'")),
-        DelimitersApplier.from(None)
+        noneApplier()
       )
     val sql = table.buildSql()
-    assert("select * from customer WHERE (\nname = 'john')" === sql)
+    assert("SELECT * FROM customer WHERE (\nname = 'john')" === sql)
   }
 
   private def buildForeignKeyCriteria() = {
@@ -75,4 +75,6 @@ class TableTest extends FlatSpec {
       FieldWithValue("name", name),
       FieldWithValue("age", age)
     ))
+
+  private def noneApplier() = QueryAttributesApplier.from(QueryAttributes(None, None))
 }
