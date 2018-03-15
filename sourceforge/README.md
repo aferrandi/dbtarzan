@@ -13,15 +13,15 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.09
+
+If the connection configuration includes a schema, it gets used not only for the foreign keys but also for the tables.
+Needed for SQL Server if the schema is not "dbo".
+
 - Release 1.08
 
 The passwords in the connections.config file are from now on encrypted by default.
 For backward compatibility the existing passwords, not encrypted, are correctly read and used by dbtarzan, but reentering them and saving them in the connection editor will turn them to encrypted.
 
 More error handling when connecting to a database.
-
-- Release 1.07
-
-Added a duplicate button in the connection editor, to reuse parts of an existing connection definition (driver path, driver class) when creating a new one.
-Added a field in the connection definition, maxRows, which defines the maximum amount of rows returned by a query. If not set, it remains 500 as it was before version 1.07. You need to reopen the connection to use the new value.
 

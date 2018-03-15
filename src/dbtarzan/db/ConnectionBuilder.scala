@@ -2,7 +2,7 @@ package dbtarzan.db
 
 import akka.actor.{ ActorRef, Props, ActorContext }
 import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
-import akka.routing.RoundRobinRouter
+import akka.routing.{ RoundRobinPool}
 import dbtarzan.config.ConnectionData
 import java.sql.{DriverManager, Driver, Connection}
 import java.net.{ URL, URLClassLoader }
@@ -13,9 +13,8 @@ import java.net.{ URL, URLClassLoader }
 private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext) {	
 	def buildDBWorker() : ActorRef = try {
 		registerDriver()		
-		val range = 1 to data.instances.getOrElse(1)
-		val actorRefs = range.map(index => buildSubWorker(index))
-		context.actorOf(Props.empty.withRouter(RoundRobinRouter(routees = actorRefs)))
+		val instances = data.instances.getOrElse(1)
+		context.actorOf(RoundRobinPool(instances).props(buildSubWorkerProps()))
 	} catch {
 		case c: ClassNotFoundException => throw new Exception("Building the dbWorker with the driver "+data.driver+" got ClassNotFoundException:",c)
 		case t: Throwable => throw new Exception("Building the dbWorker with the driver "+data.driver+" got the exception of type "+t.getClass().getCanonicalName()+":",t) 
@@ -38,12 +37,14 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 		DriverManager.registerDriver(new DriverShim(driver))		
 	} 
 
-	private def connection() : Connection = DriverManagerEncryption.getConnection(data)
-
-	private def buildSubWorker(index : Int) : ActorRef = {
-		val name = "dbworker" + data.name + index
-		context.actorOf(Props(new DatabaseWorker(connection, data, guiActor)).withDispatcher("my-pinned-dispatcher"), name) 
+	private def buildSubWorkerProps() : Props = {
+		Props(classOf[DatabaseWorker], DriverManagerWithEncryption, data, guiActor).withDispatcher("my-pinned-dispatcher") 
 	}	
+
+	private def buildSubWorkerName(index : Int) : String = {
+		"dbworker" + data.name + index
+	}	
+
 }
 
 object ConnectionBuilder {

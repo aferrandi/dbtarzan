@@ -1,8 +1,6 @@
-import com.github.retronym.SbtOneJar._
-
-oneJarSettings
-
 enablePlugins(DebianPlugin,JavaAppPackaging)
+
+scalacOptions += "-Ylog-classpath"
 
 name := "dbtarzan"
 
@@ -10,25 +8,23 @@ version := "1.09"
 
 maintainer := "Andrea Ferrandi"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.12.2"
 
 mainClass in Compile := Some("dbtarzan.gui.Main")
-
-mainClass in oneJar := Some("dbtarzan.gui.Main")
 
 scalaSource in Compile := baseDirectory.value / "src"
 
 scalaSource in Test := baseDirectory.value / "test"
 
 libraryDependencies ++= Seq(
-  "io.spray" %%  "spray-json" % "1.3.1",
-  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
+  "io.spray" %%  "spray-json" % "1.3.4",
+  "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test",
   "org.scalafx" %% "scalafx" % "8.+",
-  "com.typesafe.akka" %% "akka-actor" % "2.3.7"
+  "com.typesafe.akka" %% "akka-actor" % "2.5.11"
 )
 
 unmanagedJars in Compile += Attributed.blank(
-    file(scala.util.Properties.javaHome) / "lib" / "jfxrt.jar")
+    file(scala.util.Properties.javaHome) / "lib" / "ext" / "jfxrt.jar")
 
 fork := true
 
@@ -39,6 +35,6 @@ debianPackageDependencies in Debian ++= Seq("openjdk-8-jre")
 bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
 
 addCommandAlias("packageAll", 
-	"; one-jar " + 
+	"; assembly " + 
 	"; debian:package-bin"
 )

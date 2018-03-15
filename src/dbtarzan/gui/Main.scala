@@ -56,7 +56,7 @@ object Main extends JFXApp {
       stopConfig : Boolean <- gracefulStop(configActor, 1 seconds)
     } yield stopGui && stopConfig
     stopAll.foreach(x => { 
-      system.shutdown()
+      system.terminate()
       println("shutdown")
       system.registerOnTermination(() => scalafx.application.Platform.exit())
     })

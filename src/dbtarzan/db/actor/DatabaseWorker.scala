@@ -14,14 +14,14 @@ import dbtarzan.db.ForeignKeysToFile
 
 
 /* The actor that reads data from the database */
-class DatabaseWorker(createConnection : () => java.sql.Connection, data : ConnectionData, guiActor : ActorRef) extends Actor {
+class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionData, guiActor : ActorRef) extends Actor {
 	def databaseName = data.name
 	var core = buildCore()
 	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
 	loadForeignKeysFromFile()	
 
 	private def buildCore() : DatabaseWorkerCore = try {
-			new DatabaseWorkerCore(createConnection(), data.schema)
+			new DatabaseWorkerCore(createConnection.getConnection(data), data.schema)
 		} 
 		catch { case e : Exception => { 
 			guiActor ! Error("Cronnecting to the database "+databaseName+" got", e) 
