@@ -1,6 +1,6 @@
 enablePlugins(DebianPlugin,JavaAppPackaging)
 
-scalacOptions += "-Ylog-classpath"
+// scalacOptions += "-Ylog-classpath"
 
 name := "dbtarzan"
 
@@ -36,5 +36,5 @@ bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
 
 addCommandAlias("packageAll", 
 	"; assembly " + 
-	"; debian:package-bin"
+	"; debian:packageBin"
 )
