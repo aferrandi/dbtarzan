@@ -1,11 +1,13 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ TableView, SplitPane }
+import scalafx.scene.control.{ TableView, SplitPane, Button, MenuItem, Menu, MenuBar }
 import scalafx.scene.layout.BorderPane
+import scalafx.event.ActionEvent
 import scalafx.scene.Parent
-import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields}
+import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields, OrderByFields }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages._
+import scalafx.Includes._
 import akka.actor.ActorRef
 
 /**
@@ -15,11 +17,17 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   private val foreignKeyList = new ForeignKeyList()
   private val id = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
   private val table = new Table(dbActor, id, dbTable)
-  private val queryText = new QueryText()
+  private var useNewTable : dbtarzan.db.Table => Unit = table => {}
+  private val queryText = new QueryText() { 
+    onEnter(text => {
+        val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
+        useNewTable(tableWithFilters)
+    })
+  }
   private val progressBar = new TableProgressBar()
   private val layout = new BorderPane {
-    top = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
-    center = buildSplitPane()
+    top = buildTop()
+    center = buildCenter()
     bottom = progressBar.control
   }
   foreignKeyList.onForeignKeySelected(key => openTableConnectedByForeignKey(key))
@@ -34,8 +42,27 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
         guiActor ! Warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
       }
   } 
+
+  private def buildTop() = new BorderPane {
+	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
+	    right =new MenuBar {
+		    menus = List( buildOrderByMenu())
+         }
+	}
+
+  private def buildOrderByMenu() = new Menu("Order By") {
+      items = dbTable.columnNames.map(f => 
+        new MenuItem(f.name) {
+              onAction = {
+                e: ActionEvent => useNewTable(dbTable.withOrderByFields(
+                  OrderByFields(List(f))
+                  ))
+              }
+        })
+    }
+
   /* builds the split panel containing the table and the foreign keys list */
-  private def buildSplitPane() =new SplitPane {
+  private def buildCenter() = new SplitPane {
         maxHeight = Double.MaxValue
         maxWidth = Double.MaxValue
         val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
@@ -45,11 +72,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   }
 
   /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */
-  def onTextEntered(useTable : dbtarzan.db.Table => Unit) : Unit =
-    queryText.onEnter(text => {
-        val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
-        useTable(tableWithFilters)
-    })    
+  def onNewTable(useTable : dbtarzan.db.Table => Unit) : Unit = {
+    useNewTable = useTable
+  }
+
 
   /* adds the following rows to the table */
   def addRows(rows : ResponseRows) : Unit  = { 

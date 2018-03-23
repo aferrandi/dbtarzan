@@ -42,3 +42,5 @@ case class FollowKey(columns : List[Field], key : ForeignKey, rows : List[Row])
 case class ForeignKeysForTable(table : String, keys : ForeignKeys)
 /* all the foreign keys for all tables in the database */
 case class ForeignKeysForTableList(keys : List[ForeignKeysForTable])
+/* the fields used to sort the rows resulting from a query (order by) */
+case class OrderByFields(fields : List[Field])

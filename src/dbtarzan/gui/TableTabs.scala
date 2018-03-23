@@ -90,7 +90,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     val tab = buildTab(dbTable, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)
-    browsingTable.onTextEntered(newTable => addBrowsingTable(newTable))
+    browsingTable.onNewTable(newTable => addBrowsingTable(newTable))
     mapTable += browsingTable.getId -> BrowsingTableWIthTab(browsingTable, tab)
   }
 

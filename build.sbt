@@ -8,7 +8,7 @@ version := "1.09"
 
 maintainer := "Andrea Ferrandi"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.4"
 
 mainClass in Compile := Some("dbtarzan.gui.Main")
 

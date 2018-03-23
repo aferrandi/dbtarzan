@@ -12,7 +12,7 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributesApplie
 		val fkRows= follow.rows.map(row => buildKeyValuesForRow(row))
 		val keyCriteria = ForeignKeyCriteria(fkRows, newColumns.fields)
 		val description = TableDescription(follow.key.to.table, Option(follow.key.from.table), None)
-		Table.build(description, newColumns, Some(keyCriteria), None,  attributesApplier)		
+		Table.build(description, newColumns, Some(keyCriteria), None,  None, attributesApplier)		
 	}
 
 	/**

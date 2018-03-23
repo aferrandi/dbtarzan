@@ -15,23 +15,28 @@ class QueryLoader(connection : java.sql.Connection) {
 	   QueryRows gives the SQL query and tells how many rows must be read in total */
 	def query(qry : QueryRows, maxRows: Int, use : Rows => Unit) : Unit = {
 		println("SQL:"+qry.sql)
-  		using(connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) { statement => 
-	  		val rs = statement.executeQuery(qry.sql)
-	  		val meta = rs.getMetaData()
-	  		val columnCount = meta.getColumnCount()
-	  		println("Column count:"+columnCount+". Rows to read :"+maxRows)
-	  		var rows = Vector.empty[Row]
-	  		var i = 0
-	  		while(rs.next() && i < maxRows) {
-	  			rows = rows :+ nextRow(rs, columnCount)
-	  			if(rows.length >= 20) {
-	  				use(Rows(rows.toList))
-	  				rows = Vector.empty[Row]
-	  			}
-	  			i += 1
-	  		}
-	  		use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
-	  		println("Query terminated")
+  		using(connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) { statement =>
+		   try {
+				val rs = statement.executeQuery(qry.sql)
+				val meta = rs.getMetaData()
+				val columnCount = meta.getColumnCount()
+				println("Column count:"+columnCount+". Rows to read :"+maxRows)
+				var rows = Vector.empty[Row]
+				var i = 0
+				while(rs.next() && i < maxRows) {
+					rows = rows :+ nextRow(rs, columnCount)
+					if(rows.length >= 20) {
+						use(Rows(rows.toList))
+						rows = Vector.empty[Row]
+					}
+					i += 1
+				}
+				use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
+				println("Query terminated")
+			}
+			catch {
+				case ex : Throwable => throw new Exception("With query "+qry.sql+" got", ex)
+			}
 		}
 	}
 	/* converts the current row in the result set to a Row object, that can be sent to the GUI actor */
