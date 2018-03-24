@@ -9,6 +9,13 @@ object FieldType {
 }
 
 
+abstract sealed class OrderByDirection
+/* ascending or descending in the queries order by */
+object OrderByDirection {
+	object ASC extends OrderByDirection
+	object DESC extends OrderByDirection
+}
+
 /* a table: its name, the name of the original table if it comes from another table */
 case class TableDescription(name: String, origin : Option[String], notes: Option[String])
 /* the tables in a databases */
@@ -43,4 +50,5 @@ case class ForeignKeysForTable(table : String, keys : ForeignKeys)
 /* all the foreign keys for all tables in the database */
 case class ForeignKeysForTableList(keys : List[ForeignKeysForTable])
 /* the fields used to sort the rows resulting from a query (order by) */
-case class OrderByFields(fields : List[Field])
+case class OrderByField(field : Field, direction: OrderByDirection)
+case class OrderByFields(fields : List[OrderByField])

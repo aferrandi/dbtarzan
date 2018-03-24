@@ -24,8 +24,19 @@ class Table private (
 			else 
 				""
 		}
+
+
+		def directionText(direction : OrderByDirection) : String = direction match {
+			case OrderByDirection.ASC => "ASC"
+			case OrderByDirection.DESC => "DESC"
+			case _ => "<ERROR>" 
+		}  
+
+		def buildOrderByOne(orderByField: OrderByField) : String = 
+			orderByField.field.name + " " + directionText(orderByField.direction) 
+		
 		def buildOrderBy() : String = 
-			orderByFields.map(" ORDER BY " + _.fields.map(_.name).mkString(", ")).getOrElse("")	
+			orderByFields.map(" ORDER BY " + _.fields.map(buildOrderByOne).mkString(", ")).getOrElse("")	
 
 		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_, attributesApplier))
 		val filters = List(foreignClosure, genericFilter.map(_.text)).flatten

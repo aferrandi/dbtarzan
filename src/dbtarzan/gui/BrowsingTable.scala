@@ -4,7 +4,7 @@ import scalafx.scene.control.{ TableView, SplitPane, Button, MenuItem, Menu, Men
 import scalafx.scene.layout.BorderPane
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
-import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields, OrderByFields }
+import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields, OrderByField, OrderByFields, OrderByDirection }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages._
 import scalafx.Includes._
@@ -46,17 +46,18 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   private def buildTop() = new BorderPane {
 	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
 	    right =new MenuBar {
-		    menus = List( buildOrderByMenu())
-         }
+		    menus = List(buildOrderByMenu())
+        stylesheets += "orderByMenuBar.css"
+      }
 	}
 
-  private def buildOrderByMenu() = new Menu("Order By") {
+  private def buildOrderByMenu() = new Menu("Order by") {
       items = dbTable.columnNames.map(f => 
         new MenuItem(f.name) {
               onAction = {
                 e: ActionEvent => useNewTable(dbTable.withOrderByFields(
-                  OrderByFields(List(f))
-                  ))
+                  OrderByFields(List(OrderByField(f, OrderByDirection.ASC))
+                  )))
               }
         })
     }
