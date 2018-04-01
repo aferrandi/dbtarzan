@@ -1,4 +1,4 @@
-package dbtarzan.gui.config
+package dbtarzan.gui
 
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
@@ -6,27 +6,27 @@ import scalafx.Includes._
 import akka.actor.ActorRef
 
 import dbtarzan.types.ConfigPath
-import dbtarzan.db.{ Table, OrderByFields }
-/* to start the connection editor. It handles all the cancel/closing/save events */
+import dbtarzan.db.{  OrderByFields }
+/* to start the order by editor. It handles all the cancel/closing/save events */
 object OrderByEditorStarter
 {
- def openOrderByEditor(parentStage : Stage, table: Table, useTable : Table => Unit) : Unit = {
+ def openOrderByEditor(parentStage : Stage, table: dbtarzan.db.Table, useNewTable : dbtarzan.db.Table => Unit) : Unit = {
      val orderByStage = new Stage {
       title = "Choose OrderBy Columns"
-      width = 800
-      height = 600
+      width = 400
+      height = 400
       scene = new Scene {
         def onSave(orderByFields: OrderByFields) : Unit = {
-            useTable(table.withOrderByFields(orderByFields))
+            useNewTable(table.withOrderByFields(orderByFields))
             window().hide()
           }
 
-        def onCancel() : Unit = 
+        def onCancel() : Unit = {
+          println("cancel")
           window().hide()
+        }
 
-        val editor = new OrderByEditor(table.columnNames, table.orderBys)
-        editor.onSave(onSave(_))
-        editor.onCancel(() => onCancel())
+        val editor = new OrderByEditor(table.columnNames, table.orderBys, onSave(_), () => onCancel())
         onCloseRequest = (event : WindowEvent) => { 
           event.consume()
           onCancel()

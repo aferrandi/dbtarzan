@@ -1,4 +1,4 @@
-package dbtarzan.gui.config
+package dbtarzan.gui
 
 import scalafx.scene.control.{ ListView, ListCell, SplitPane, Button, Alert, ButtonType, ComboBox }
 import scalafx.scene.layout.{ BorderPane, VBox, HBox, Region, Priority }
@@ -8,74 +8,176 @@ import scalafx.scene.Parent
 import scalafx.geometry.{ Insets, Pos }
 import scalafx.collections.ObservableBuffer 
 import scalafx.Includes._
+import scalafx.beans.property.BooleanProperty
 
 import dbtarzan.config.ConnectionData
-import dbtarzan.gui.TControlBuilder 
-import dbtarzan.db.{ OrderByFields, Field }
+import dbtarzan.db.{ OrderByField, OrderByFields, Field, OrderByDirection, DBEnumsText }
+import dbtarzan.gui.util.JFXUtil
 
 /**
   to change the order by columns. A list of order by columns with a panel on the side to change it.
 */
-class OrderByEditor(possibleOrderByFields: List[Field], currentOrderBys : Option[OrderByFields]) extends TControlBuilder { 
+class OrderByEditor(
+  possibleOrderByFields: List[Field], 
+  currentOrderBys : Option[OrderByFields],
+  onSave : OrderByFields  => Unit,
+  onCancel : ()  => Unit
+) extends TControlBuilder { 
   private val currentOrderByFields = currentOrderBys.map(_.fields).getOrElse(List.empty[Field])
-  private val listBuffer = ObservableBuffer()
-  private val comboBuffer = ObservableBuffer(possibleOrderByFields.diff(currentOrderByFields))
+  private val listBuffer = ObservableBuffer[OrderByField]()
+  private val comboFieldsBuffer = ObservableBuffer(possibleOrderByFields.diff(currentOrderByFields))
+  private val comboOrderByDirectionsBuffer = ObservableBuffer(OrderByDirection.ASC, OrderByDirection.DESC)
+  private var chosenField : Option[Field] = None
+  private var chosenDirection : Option[OrderByDirection] = None
+  private var listFieldsCurrentIndex : Option[Int] = None
+  private var editButtonsDisabled = BooleanProperty(true)
 
   private val layout = new BorderPane {
-    center = buildListWithButtons()
-    bottom = buildSaveCancelButtons()
+    center = listWithButtons()
+    bottom = saveCancelButtons()
   }
 
-  private def buildListWithButtons() = new BorderPane {
-    center = buildList()
-    right = buildListButtons()
+  private def listWithButtons() = new BorderPane {
+    center = listFields
+    right = new BorderPane {
+      top =listCombos
+      bottom = listButtons
+    }
   }  
 
- private def buildSaveCancelButtons() = new HBox {
-    children = List(buttonSave, new Region() { hgrow = Priority.Always }, buttonCancel )
-  	padding = Insets(10)
-  	spacing = 10
+  private def listCombos() = new VBox {
+      children = List(comboFields, comboDirection)      
+      padding = Insets(10)
+      spacing = 10
+      alignment = Pos.BASELINE_CENTER
   }
 
-  private def buildList() = new ListView[Field](listBuffer) {
-	    cellFactory = { _ => buildCell() }
+  private def listButtons() = new VBox  {
+      children = List(buttonAdd, listEditButtons)      
+      alignment = Pos.CENTER
+  }
+
+  private def listEditButtons() = new VBox {
+      children = List(buttonUpdate, buttonMoveUp, buttonMoveDown, buttonDelete)      
+      padding = Insets(10)
+      spacing = 10
+      alignment = Pos.BOTTOM_CENTER
+      disable <==> editButtonsDisabled
+  }
+
+
+
+  private def listFields() = new ListView[OrderByField](listBuffer) {
+	    cellFactory = { _ => buildOrderByFieldsCell() }
+      selectionModel().selectedIndex.onChange {  (item, oldIndex, newIndex) => { 
+        listFieldsCurrentIndex = Some(newIndex.intValue())
+        editButtonsDisabled.value = false
+      }}
 	  }		
 
-  private def buildListButtons() = new VBox {
-      buildCombo()
-      
-  }
-
-  private def buildCombo() = new ComboBox[Field] {
-        items = comboBuffer
-        editable = false
-        cellFactory = { _ => buildCell() }
-    }
-
-	private def buildCell() = new ListCell[Field] {
-	        item.onChange { (_, _, _) => text.value = item.name
-	        }} 	      
-
-
-
-  val buttonCancel = new Button {
+  private def buttonCancel() = new Button {
     text = "Cancel"
     alignmentInParent = Pos.CENTER_RIGHT
+    onAction = (event: ActionEvent)  => onCancel()
   }
 
+  private def buttonAdd() = new Button {
+    text = "Add"
+    onAction = (event: ActionEvent)  => 
+      chosenField.foreach(f => 
+        chosenDirection.foreach(d => 
+          listBuffer.add(OrderByField(f, d))
+          )
+        )
+  }
+  private def buttonUpdate() = new Button {
+    text = "Update"
+    onAction = (event: ActionEvent)  => 
+      chosenField.foreach(f => 
+        chosenDirection.foreach(d =>
+          listFieldsCurrentIndex.foreach(i => 
+            listBuffer.update(i, OrderByField(f, d))
+            )
+          )
+        )
+    }
+  
+  private def buttonMoveUp() = new Button {
+    text = "Move Up"
+    onAction = (event: ActionEvent)  => 
+          listFieldsCurrentIndex.foreach(i => 
+            if(i > 0)
+              JFXUtil.swapListBuffer(listBuffer, i-1, i)
+            )          
+    }
 
-  val buttonSave = new Button {
+  private def buttonMoveDown() = new Button {
+    text = "Move Down"
+    onAction = (event: ActionEvent)  => 
+          listFieldsCurrentIndex.foreach(i => 
+            if(i < listBuffer.size() - 1)
+              JFXUtil.swapListBuffer(listBuffer, i, i+1)
+            )          
+    }
+
+  private def buttonDelete() = new Button {
+    text = "Delete"
+    onAction = (event: ActionEvent)  => 
+          listFieldsCurrentIndex.foreach(i => { 
+              listBuffer.remove(i)
+              editButtonsDisabled.value = listBuffer.isEmpty
+            })          
+    }
+
+  private def buttonSave() = new Button {
     text = "Save"
     alignmentInParent = Pos.CENTER_RIGHT
+    onAction = (event: ActionEvent)  => onSave(OrderByFields(listBuffer.toList))
+ }
+
+ private def saveCancelButtons() : HBox = {
+    new HBox {
+      children = List(buttonSave, new Region() { hgrow = Priority.Always }, buttonCancel )
+      padding = Insets(10)
+      spacing = 10
+    }
+ }
+
+  private def comboFields() = new ComboBox[Field] {
+      items = comboFieldsBuffer
+      editable = false
+      cellFactory = { _ => buildFieldsCell() }
+      buttonCell =  buildFieldsCell()
+      onAction = (event: ActionEvent)  => chosenField = Some(value()) 
   }
 
-   
 
-  def onSave(save : OrderByFields  => Unit): Unit =
-    buttonSave.onAction = (event: ActionEvent)  => save(OrderByFields(listBuffer.toList))
+  def buildOrderByFieldsCell() = new ListCell[OrderByField] {
+      item.onChange { 
+        (_, _, value) => text = Option(value).map(of => of.field.name+" "+DBEnumsText.orderByDirectionToText(of.direction)).getOrElse("") 
+        }
+  } 	     
 
-  def onCancel(cancel : ()  => Unit): Unit =
-    buttonCancel.onAction = (event: ActionEvent)  => cancel()
+
+  def buildDirectionCell() = new ListCell[OrderByDirection] {
+      item.onChange { 
+        (_, _, value) => text = Option(value).map(d => DBEnumsText.orderByDirectionToText(d)).getOrElse("") 
+        }
+  } 	     
+
+  def buildFieldsCell() = new ListCell[Field] {
+      item.onChange { 
+        (_, _, value) => text = Option(value).map( _.name).getOrElse("") 
+        }
+  } 	     
+        
+  private def comboDirection() = new ComboBox[OrderByDirection] {
+      items = comboOrderByDirectionsBuffer
+      cellFactory = { _ => buildDirectionCell() }
+      buttonCell =  buildDirectionCell()
+      editable = false
+      onAction = (event: ActionEvent)  => chosenDirection = Some(value())
+  }
 
   def control : Parent = layout
 }

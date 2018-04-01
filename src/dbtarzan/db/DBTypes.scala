@@ -1,21 +1,5 @@
 package dbtarzan.db
 
-abstract sealed class FieldType
-/* the fields types that are normally used in a foreign key */
-object FieldType {
-	object STRING extends FieldType
-	object INT extends FieldType
-	object FLOAT extends FieldType
-}
-
-
-abstract sealed class OrderByDirection
-/* ascending or descending in the queries order by */
-object OrderByDirection {
-	object ASC extends OrderByDirection
-	object DESC extends OrderByDirection
-}
-
 /* a table: its name, the name of the original table if it comes from another table */
 case class TableDescription(name: String, origin : Option[String], notes: Option[String])
 /* the tables in a databases */

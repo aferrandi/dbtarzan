@@ -25,15 +25,8 @@ class Table private (
 				""
 		}
 
-
-		def directionText(direction : OrderByDirection) : String = direction match {
-			case OrderByDirection.ASC => "ASC"
-			case OrderByDirection.DESC => "DESC"
-			case _ => "<ERROR>" 
-		}  
-
 		def buildOrderByOne(orderByField: OrderByField) : String = 
-			orderByField.field.name + " " + directionText(orderByField.direction) 
+			orderByField.field.name + " " + DBEnumsText.orderByDirectionToText(orderByField.direction) 
 		
 		def buildOrderBy() : String = 
 			orderByFields.map(" ORDER BY " + _.fields.map(buildOrderByOne).mkString(", ")).getOrElse("")	
@@ -63,8 +56,13 @@ class Table private (
 	def withAdditionalFilter(additionalFilter : Filter) =
 		new Table(description, columns, foreignFilter, Some(addFilterToExisting(additionalFilter)), orderByFields, attributesApplier)
 
-	def withOrderByFields(newOrderByFields : OrderByFields) =
-		new Table(description, columns, foreignFilter, genericFilter, Some(newOrderByFields), attributesApplier)	 
+	def withOrderByFields(newOrderByFields : OrderByFields) = {
+		def someIfSome() = if(newOrderByFields.fields.isEmpty) 
+							None 
+						  else 
+						  	Some(newOrderByFields)
+		new Table(description, columns, foreignFilter, genericFilter, someIfSome(), attributesApplier)
+		}	 
 }
 
 object Table {

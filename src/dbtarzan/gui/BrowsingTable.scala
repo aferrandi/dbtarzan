@@ -1,5 +1,6 @@
 package dbtarzan.gui
 
+import scalafx.stage.Stage
 import scalafx.scene.control.{ TableView, SplitPane, Button, MenuItem, Menu, MenuBar }
 import scalafx.scene.layout.BorderPane
 import scalafx.event.ActionEvent
@@ -43,7 +44,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
       }
   } 
 
-  private def buildTop() = new BorderPane {
+  private def buildTop() : BorderPane = new BorderPane {
 	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
 	    right =new MenuBar {
 		    menus = List(buildOrderByMenu())
@@ -59,7 +60,14 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
                   OrderByFields(List(OrderByField(f, OrderByDirection.ASC))
                   )))
               }
-        })
+        }) :+ new MenuItem("More...") {
+              onAction = {                
+                e: ActionEvent => {
+                    var stage = new Stage(layout.scene.window().asInstanceOf[javafx.stage.Stage])
+                    OrderByEditorStarter.openOrderByEditor(stage, dbTable, useNewTable)
+                  }
+              }
+        }
     }
 
   /* builds the split panel containing the table and the foreign keys list */

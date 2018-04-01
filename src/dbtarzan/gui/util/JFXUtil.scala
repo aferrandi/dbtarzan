@@ -8,6 +8,7 @@ import scalafx.geometry.Insets
 import scalafx.scene.input.{ MouseEvent, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._
 import scalafx.event.ActionEvent
+import scalafx.collections.ObservableBuffer 
 
 object JFXUtil {
 	def withTitle(graphic : Node, title : String) = new BorderPane {
@@ -48,4 +49,13 @@ object JFXUtil {
       content.putString(text)
       Clipboard.systemClipboard.setContent(content)		
 	}
+
+ 	def swapListBuffer[T](lb : ObservableBuffer[T], i : Int, j : Int) : Unit =
+	{
+		val vi = lb(i)
+		val vj = lb(j)
+		lb.update(i, vj)
+		lb.update(j, vi)
+	}
+	
 }

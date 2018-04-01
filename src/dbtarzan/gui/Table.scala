@@ -8,7 +8,7 @@ import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import scalafx.Includes._
-import dbtarzan.db.{Field, Row, Rows}
+import dbtarzan.db.{Field, Row, Rows, DBEnumsText}
 import dbtarzan.messages._
 import akka.actor.ActorRef
 
@@ -16,7 +16,7 @@ import akka.actor.ActorRef
 class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extends TControlBuilder {
 
   val names = dbTable.columnNames
-  println("ColumnNames: "+names)
+  println("ColumnNames: "+names.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
   /* the content of the table in terms of rows. Updated by the table itself */
   private val buffer = ObservableBuffer.empty[CheckedRow]
   /* keeps track of the rows that have the check box turned on */ 
