@@ -5,7 +5,7 @@ import scalafx.application.JFXApp
 import scalafx.collections.ObservableBuffer 
 import scalafx.stage.{ Screen, Stage, StageStyle, WindowEvent }
 import scalafx.scene.layout.GridPane
-import scalafx.beans.property.{StringProperty, ObjectProperty}
+import scalafx.beans.property.{StringProperty}
 import scalafx.Includes._
 import scala.util.{Try, Success, Failure}
 import dbtarzan.db.ConnectionBuilder

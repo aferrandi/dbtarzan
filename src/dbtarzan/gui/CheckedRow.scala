@@ -1,6 +1,6 @@
 package dbtarzan.gui
 
-import scalafx.beans.property.{StringProperty, ObjectProperty, BooleanProperty}
+import scalafx.beans.property.{StringProperty, BooleanProperty}
 import dbtarzan.db.{Row, Rows, Field}
 import scalafx.Includes._
 import scalafx.scene.control.MultipleSelectionModel

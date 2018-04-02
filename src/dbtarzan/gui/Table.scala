@@ -2,7 +2,7 @@ package dbtarzan.gui
 
 import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.{TableColumn, TableView, SelectionMode, ContextMenu, MenuItem}
-import scalafx.beans.property.{StringProperty, ObjectProperty, BooleanProperty}
+import scalafx.beans.property.{StringProperty, BooleanProperty}
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent

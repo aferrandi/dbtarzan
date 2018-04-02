@@ -8,7 +8,7 @@ import scalafx.scene.Parent
 import scalafx.geometry.{ Insets, Pos }
 import scalafx.collections.ObservableBuffer 
 import scalafx.Includes._
-import scalafx.beans.property.BooleanProperty
+import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 
 import dbtarzan.config.ConnectionData
 import dbtarzan.db.{ OrderByField, OrderByFields, Field, OrderByDirection, DBEnumsText }
@@ -23,12 +23,12 @@ class OrderByEditor(
   onSave : OrderByFields  => Unit,
   onCancel : ()  => Unit
 ) extends TControlBuilder { 
-  private val currentOrderByFields = currentOrderBys.map(_.fields).getOrElse(List.empty[Field])
-  private val listBuffer = ObservableBuffer[OrderByField]()
+  private val currentOrderByFields = currentOrderBys.map(_.fields).getOrElse(List.empty[OrderByField])
+  private val listBuffer = ObservableBuffer[OrderByField](currentOrderByFields)
   private val comboFieldsBuffer = ObservableBuffer(possibleOrderByFields.diff(currentOrderByFields))
   private val comboOrderByDirectionsBuffer = ObservableBuffer(OrderByDirection.ASC, OrderByDirection.DESC)
-  private var chosenField : Option[Field] = None
-  private var chosenDirection : Option[OrderByDirection] = None
+  private val chosenField =  new ObjectProperty[Field]()
+  private val chosenDirection = new ObjectProperty[OrderByDirection]()
   private var listFieldsCurrentIndex : Option[Int] = None
   private var editButtonsDisabled = BooleanProperty(true)
 
@@ -69,9 +69,13 @@ class OrderByEditor(
 
   private def listFields() = new ListView[OrderByField](listBuffer) {
 	    cellFactory = { _ => buildOrderByFieldsCell() }
-      selectionModel().selectedIndex.onChange {  (item, oldIndex, newIndex) => { 
-        listFieldsCurrentIndex = Some(newIndex.intValue())
+      selectionModel().selectedIndex.onChange {  (item, oldIndexNum, newIndexNum) => {
+        val newIndex =  newIndexNum.intValue()
+        listFieldsCurrentIndex = Some(newIndex)
         editButtonsDisabled.value = false
+        val selection = listBuffer(newIndex) 
+        chosenField.value = selection.field
+        chosenDirection.value = selection.direction 
       }}
 	  }		
 
@@ -84,8 +88,8 @@ class OrderByEditor(
   private def buttonAdd() = new Button {
     text = "Add"
     onAction = (event: ActionEvent)  => 
-      chosenField.foreach(f => 
-        chosenDirection.foreach(d => 
+      Option(chosenField()).foreach(f => 
+        Option(chosenDirection()).foreach(d => 
           listBuffer.add(OrderByField(f, d))
           )
         )
@@ -93,8 +97,8 @@ class OrderByEditor(
   private def buttonUpdate() = new Button {
     text = "Update"
     onAction = (event: ActionEvent)  => 
-      chosenField.foreach(f => 
-        chosenDirection.foreach(d =>
+      Option(chosenField()).foreach(f => 
+        Option(chosenDirection()).foreach(d =>
           listFieldsCurrentIndex.foreach(i => 
             listBuffer.update(i, OrderByField(f, d))
             )
@@ -148,7 +152,7 @@ class OrderByEditor(
       editable = false
       cellFactory = { _ => buildFieldsCell() }
       buttonCell =  buildFieldsCell()
-      onAction = (event: ActionEvent)  => chosenField = Some(value()) 
+      value <==> chosenField
   }
 
 
@@ -176,7 +180,7 @@ class OrderByEditor(
       cellFactory = { _ => buildDirectionCell() }
       buttonCell =  buildDirectionCell()
       editable = false
-      onAction = (event: ActionEvent)  => chosenDirection = Some(value())
+      value  <==> chosenDirection
   }
 
   def control : Parent = layout
