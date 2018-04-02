@@ -50,8 +50,7 @@ object JFXUtil {
       Clipboard.systemClipboard.setContent(content)		
 	}
 
- 	def swapListBuffer[T](lb : ObservableBuffer[T], i : Int, j : Int) : Unit =
-	{
+ 	def swapListBuffer[T](lb : ObservableBuffer[T], i : Int, j : Int) : Unit =	{
 		val vi = lb(i)
 		val vj = lb(j)
 		lb.update(i, vj)

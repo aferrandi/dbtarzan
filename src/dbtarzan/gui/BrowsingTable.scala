@@ -5,11 +5,13 @@ import scalafx.scene.control.{ TableView, SplitPane, Button, MenuItem, Menu, Men
 import scalafx.scene.layout.BorderPane
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
-import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields, OrderByField, OrderByFields, OrderByDirection }
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.messages._
 import scalafx.Includes._
 import akka.actor.ActorRef
+
+import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields, OrderByField, OrderByFields, OrderByDirection }
+import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.orderby.OrderByEditorStarter
+import dbtarzan.messages._
 
 /**
   table + constraint input box + foreign keys

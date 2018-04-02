@@ -1,4 +1,4 @@
-package dbtarzan.gui
+package dbtarzan.gui.orderby
 
 import scalafx.scene.control.{ ListView, ListCell, SplitPane, Button, Alert, ButtonType, ComboBox }
 import scalafx.scene.layout.{ BorderPane, VBox, HBox, Region, Priority }
@@ -13,7 +13,7 @@ import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import dbtarzan.config.ConnectionData
 import dbtarzan.db.{ OrderByField, OrderByFields, Field, OrderByDirection, DBEnumsText }
 import dbtarzan.gui.util.JFXUtil
-
+import dbtarzan.gui.TControlBuilder
 /**
   to change the order by columns. A list of order by columns with a panel on the side to change it.
 */
@@ -37,10 +37,19 @@ class OrderByEditor(
     bottom = saveCancelButtons()
   }
 
+ private def saveCancelButtons() : HBox = {
+    new HBox {
+      children = List(buttonSave, new Region() { hgrow = Priority.Always }, buttonCancel )
+      padding = Insets(10)
+      spacing = 10
+    }
+ }
+
+
   private def listWithButtons() = new BorderPane {
     center = listFields
     right = new BorderPane {
-      top =listCombos
+      top = listCombos
       bottom = listButtons
     }
   }  
@@ -65,17 +74,17 @@ class OrderByEditor(
       disable <==> editButtonsDisabled
   }
 
-
-
   private def listFields() = new ListView[OrderByField](listBuffer) {
 	    cellFactory = { _ => buildOrderByFieldsCell() }
       selectionModel().selectedIndex.onChange {  (item, oldIndexNum, newIndexNum) => {
         val newIndex =  newIndexNum.intValue()
-        listFieldsCurrentIndex = Some(newIndex)
-        editButtonsDisabled.value = false
-        val selection = listBuffer(newIndex) 
-        chosenField.value = selection.field
-        chosenDirection.value = selection.direction 
+        if(newIndex >= 0) {
+          listFieldsCurrentIndex = Some(newIndex)
+          editButtonsDisabled.value = false
+          val selection = listBuffer(newIndex) 
+          chosenField.value = selection.field
+          chosenDirection.value = selection.direction
+        } 
       }}
 	  }		
 
@@ -87,21 +96,15 @@ class OrderByEditor(
 
   private def buttonAdd() = new Button {
     text = "Add"
-    onAction = (event: ActionEvent)  => 
-      Option(chosenField()).foreach(f => 
-        Option(chosenDirection()).foreach(d => 
-          listBuffer.add(OrderByField(f, d))
-          )
-        )
+    onAction = (event: ActionEvent) => withChosenOrderByField(listBuffer.add(_)) 
   }
+  
   private def buttonUpdate() = new Button {
     text = "Update"
-    onAction = (event: ActionEvent)  => 
-      Option(chosenField()).foreach(f => 
-        Option(chosenDirection()).foreach(d =>
+    onAction = (event: ActionEvent)  =>  
+      withChosenOrderByField(of => 
           listFieldsCurrentIndex.foreach(i => 
-            listBuffer.update(i, OrderByField(f, d))
-            )
+            listBuffer.update(i, of)
           )
         )
     }
@@ -139,13 +142,6 @@ class OrderByEditor(
     onAction = (event: ActionEvent)  => onSave(OrderByFields(listBuffer.toList))
  }
 
- private def saveCancelButtons() : HBox = {
-    new HBox {
-      children = List(buttonSave, new Region() { hgrow = Priority.Always }, buttonCancel )
-      padding = Insets(10)
-      spacing = 10
-    }
- }
 
   private def comboFields() = new ComboBox[Field] {
       items = comboFieldsBuffer
@@ -155,26 +151,6 @@ class OrderByEditor(
       value <==> chosenField
   }
 
-
-  def buildOrderByFieldsCell() = new ListCell[OrderByField] {
-      item.onChange { 
-        (_, _, value) => text = Option(value).map(of => of.field.name+" "+DBEnumsText.orderByDirectionToText(of.direction)).getOrElse("") 
-        }
-  } 	     
-
-
-  def buildDirectionCell() = new ListCell[OrderByDirection] {
-      item.onChange { 
-        (_, _, value) => text = Option(value).map(d => DBEnumsText.orderByDirectionToText(d)).getOrElse("") 
-        }
-  } 	     
-
-  def buildFieldsCell() = new ListCell[Field] {
-      item.onChange { 
-        (_, _, value) => text = Option(value).map( _.name).getOrElse("") 
-        }
-  } 	     
-        
   private def comboDirection() = new ComboBox[OrderByDirection] {
       items = comboOrderByDirectionsBuffer
       cellFactory = { _ => buildDirectionCell() }
@@ -182,6 +158,29 @@ class OrderByEditor(
       editable = false
       value  <==> chosenDirection
   }
+
+  private def buildOrderByFieldsCell() =  buildCell[OrderByField](
+      of => of.field.name + " " + DBEnumsText.orderByDirectionToText(of.direction) 
+  )
+
+
+  private def buildDirectionCell() = buildCell[OrderByDirection]( 
+    DBEnumsText.orderByDirectionToText(_)
+  )   
+
+  private def buildFieldsCell() = buildCell[Field]( _.name)       
+    
+  private def withChosenOrderByField(action : OrderByField => Unit) : Unit =
+      Option(chosenField()).foreach(f => 
+        Option(chosenDirection()).foreach(d =>
+          action(OrderByField(f, d))
+        ))
+
+  private def buildCell[T](toText : T => String) = new ListCell[T] {
+      item.onChange { 
+        (_, _, value) => text = Option(value).map(v => toText(v)).getOrElse("") 
+        }
+  } 	     
 
   def control : Parent = layout
 }

@@ -1,4 +1,4 @@
-package dbtarzan.gui
+package dbtarzan.gui.orderby
 
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
