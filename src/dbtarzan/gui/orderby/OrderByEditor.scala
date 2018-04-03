@@ -1,6 +1,6 @@
 package dbtarzan.gui.orderby
 
-import scalafx.scene.control.{ ListView, ListCell, SplitPane, Button, Alert, ButtonType, ComboBox }
+import scalafx.scene.control.{ ListView, ListCell, SplitPane, Button, Alert, ButtonType, ComboBox, Label }
 import scalafx.scene.layout.{ BorderPane, VBox, HBox, Region, Priority }
 import scalafx.scene.control.Alert.AlertType
 import scalafx.event.ActionEvent
@@ -27,10 +27,15 @@ class OrderByEditor(
   private val listBuffer = ObservableBuffer[OrderByField](currentOrderByFields)
   private val comboFieldsBuffer = ObservableBuffer(possibleOrderByFields.diff(currentOrderByFields))
   private val comboOrderByDirectionsBuffer = ObservableBuffer(OrderByDirection.ASC, OrderByDirection.DESC)
-  private val chosenField =  new ObjectProperty[Field]()
-  private val chosenDirection = new ObjectProperty[OrderByDirection]()
+  private val chosenFieldProperty =  new ObjectProperty[Field]() {
+    onChange { updateAddButtonState() }
+  }
+  private val chosenDirectionProperty = new ObjectProperty[OrderByDirection]() {
+    onChange { updateAddButtonState() }
+  }
   private var listFieldsCurrentIndex : Option[Int] = None
   private var editButtonsDisabled = BooleanProperty(true)
+  private var addButtonsDisabled = BooleanProperty(true)
 
   private val layout = new BorderPane {
     center = listWithButtons()
@@ -44,7 +49,6 @@ class OrderByEditor(
       spacing = 10
     }
  }
-
 
   private def listWithButtons() = new BorderPane {
     center = listFields
@@ -82,8 +86,8 @@ class OrderByEditor(
           listFieldsCurrentIndex = Some(newIndex)
           editButtonsDisabled.value = false
           val selection = listBuffer(newIndex) 
-          chosenField.value = selection.field
-          chosenDirection.value = selection.direction
+          chosenFieldProperty.value = selection.field
+          chosenDirectionProperty.value = selection.direction
         } 
       }}
 	  }		
@@ -96,13 +100,14 @@ class OrderByEditor(
 
   private def buttonAdd() = new Button {
     text = "Add"
-    onAction = (event: ActionEvent) => withChosenOrderByField(listBuffer.add(_)) 
+    onAction = (event: ActionEvent) => chosenOrderByField().foreach(listBuffer.add(_)) 
+    disable <==> addButtonsDisabled
   }
   
   private def buttonUpdate() = new Button {
     text = "Update"
     onAction = (event: ActionEvent)  =>  
-      withChosenOrderByField(of => 
+      chosenOrderByField().foreach(of => 
           listFieldsCurrentIndex.foreach(i => 
             listBuffer.update(i, of)
           )
@@ -144,19 +149,21 @@ class OrderByEditor(
 
 
   private def comboFields() = new ComboBox[Field] {
+      promptText.value = "[Field]"
       items = comboFieldsBuffer
       editable = false
       cellFactory = { _ => buildFieldsCell() }
       buttonCell =  buildFieldsCell()
-      value <==> chosenField
+      value <==> chosenFieldProperty
   }
 
   private def comboDirection() = new ComboBox[OrderByDirection] {
+      promptText.value = "[Direction]"
       items = comboOrderByDirectionsBuffer
+      editable = false
       cellFactory = { _ => buildDirectionCell() }
       buttonCell =  buildDirectionCell()
-      editable = false
-      value  <==> chosenDirection
+      value  <==> chosenDirectionProperty
   }
 
   private def buildOrderByFieldsCell() =  buildCell[OrderByField](
@@ -168,13 +175,15 @@ class OrderByEditor(
     DBEnumsText.orderByDirectionToText(_)
   )   
 
-  private def buildFieldsCell() = buildCell[Field]( _.name)       
-    
-  private def withChosenOrderByField(action : OrderByField => Unit) : Unit =
-      Option(chosenField()).foreach(f => 
-        Option(chosenDirection()).foreach(d =>
-          action(OrderByField(f, d))
-        ))
+  private def buildFieldsCell() = buildCell[Field]( _.name)
+
+  private def chosenOrderByField( ): Option[OrderByField] = for{
+    f <- Option(chosenFieldProperty())
+    d <- Option(chosenDirectionProperty())
+  } yield OrderByField(f, d)
+
+  private def updateAddButtonState() : Unit = addButtonsDisabled.value = chosenOrderByField().isEmpty
+
 
   private def buildCell[T](toText : T => String) = new ListCell[T] {
       item.onChange { 

@@ -29,7 +29,7 @@ class Table private (
 			orderByField.field.name + " " + DBEnumsText.orderByDirectionToText(orderByField.direction) 
 		
 		def buildOrderBy() : String = 
-			orderByFields.map(" ORDER BY " + _.fields.map(buildOrderByOne).mkString(", ")).getOrElse("")	
+			orderByFields.filter(_.fields.nonEmpty).map(" ORDER BY " + _.fields.map(buildOrderByOne).mkString(", ")).getOrElse("")	
 
 		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_, attributesApplier))
 		val filters = List(foreignClosure, genericFilter.map(_.text)).flatten
@@ -57,11 +57,7 @@ class Table private (
 		new Table(description, columns, foreignFilter, Some(addFilterToExisting(additionalFilter)), orderByFields, attributesApplier)
 
 	def withOrderByFields(newOrderByFields : OrderByFields) = {
-		def someIfSome() = if(newOrderByFields.fields.isEmpty) 
-							None 
-						  else 
-						  	Some(newOrderByFields)
-		new Table(description, columns, foreignFilter, genericFilter, someIfSome(), attributesApplier)
+		new Table(description, columns, foreignFilter, genericFilter, Some(newOrderByFields), attributesApplier)
 		}	 
 }
 
