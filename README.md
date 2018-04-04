@@ -8,6 +8,7 @@ Database browser.
 Explore the tables of a relational database following the relations defined in their foreign keys.
 
 With DbTarzan you can find the information you need from the database in a fraction of the time, without writing queries.
+And if it is the first time you are looking into a database, use DbTarzan to explore it. 
 
 ![DbTarzan](doc/window.jpeg?raw=true)
 
