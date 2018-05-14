@@ -11,7 +11,7 @@ case class Fields(fields : List[Field])
 /* all fields in a table (with the table name)n*/
 case class FieldsOnTable(table : String, fields : List[String])
 /* a foreign key is a relation between two tables. It has a name and matches fields on the two tables (can clearly be more than one) */
-case class ForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable)
+case class ForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable, direction : ForeignKeyDirection)
 /* the foreign keys involving a table */
 case class ForeignKeys(keys : List[ForeignKey])
 /* a fields with its content in a row */

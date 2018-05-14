@@ -6,9 +6,8 @@ import scalafx.scene.layout.VBox
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer 
 import scalafx.Includes._
-import dbtarzan.db.{ForeignKey, FieldsOnTable, Field, ForeignKeys}
+import dbtarzan.db.{ForeignKey, FieldsOnTable, Field, ForeignKeys, ForeignKeyDirection}
 import dbtarzan.gui.util.JFXUtil
-
 
 /**	foreign keys list */
 class ForeignKeyList() extends TControlBuilder {
@@ -22,7 +21,7 @@ class ForeignKeyList() extends TControlBuilder {
 	        item.onChange { (_, _, _) => 
 	          Option(item.value).foreach(key => {
 		          tooltip.value = Tooltip(buildTooltip(key))
-		          text.value = key.to.table
+		          text.value = buildText(key)
 	      	  })
 	        }} 	      
 	  
@@ -30,6 +29,7 @@ class ForeignKeyList() extends TControlBuilder {
 		println("foreignKeys "+foreignKeys)
 		buffer ++= foreignKeys.keys
 	}
+	
 
 	/** the tooltip show the whole foreign key */
 	private def buildTooltip(key : ForeignKey) = {
@@ -38,6 +38,17 @@ class ForeignKeyList() extends TControlBuilder {
 		"\n- "+ buildSide(key.from)+
 		"\n- "+ buildSide(key.to)
 	}
+
+	/** the tooltip show the whole foreign key */
+	private def buildText(key : ForeignKey) = {
+		def directionText(direction : ForeignKeyDirection) = direction match {
+			case ForeignKeyDirection.STRAIGHT => ">"
+			case ForeignKeyDirection.TURNED => "<"
+			case _  => "<ERROR>"
+		}
+		directionText(key.direction) + " " + key.to.table
+	}
+	
 	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */
   	def onForeignKeySelected(useKey : ForeignKey => Unit) : Unit =
 	     JFXUtil.onAction(list, { selectedKey : ForeignKey =>

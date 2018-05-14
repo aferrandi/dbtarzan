@@ -2,7 +2,7 @@ package dbtarzan.db.actor
 
 import java.sql.{Connection, ResultSet}
 import scala.collection.mutable.ListBuffer
-import dbtarzan.db.{ ForeignKey, ForeignKeys, FieldsOnTable }
+import dbtarzan.db.{ ForeignKey, ForeignKeys, FieldsOnTable, ForeignKeyDirection }
 import dbtarzan.db.util.ResourceManagement.using
 
 
@@ -41,7 +41,8 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 	private def foreignKeyColumnsToForeignKey(key : ForeignKeyKey, from : List[String], to : List[String]) = 
 		ForeignKey(key.name, 
 			FieldsOnTable(key.fromTable, from),
-			FieldsOnTable(key.toTable, to)
+			FieldsOnTable(key.toTable, to),
+			ForeignKeyDirection.STRAIGHT
 			)
 
 
@@ -54,7 +55,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 	}
 
 	private def turnForeignKey(key : ForeignKey) =
-		ForeignKey(key.name, key.to, key.from)
+		ForeignKey(key.name, key.to, key.from, ForeignKeyDirection.turn(key.direction))
 
 	/**
 		All the foreign keys from the table and TO the table (used in reverse order)
