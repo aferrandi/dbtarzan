@@ -11,7 +11,7 @@ object FileReadWrite {
 
 	def writeFile(name : Path, content : String) : Unit = {
 		println("Creating:"+name)
-		Files.createDirectories(name.getParent())
+		Option(name.getParent()).foreach(Files.createDirectories(_)) 
 		using(new FileWriter(name.toFile())) { fw =>
 			fw.write(content)
 		}

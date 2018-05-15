@@ -47,7 +47,8 @@ class ForeignKeyList() extends TControlBuilder {
 		"\n- "+ buildSide(key.to)
 	}
 
-	/** the tooltip show the whole foreign key */
+	/** the text shows the table name, the direction ("<"" if the foreign key is straight, ">"" if it is turned) 
+	 * if there is more than one foreign key with the same "to" table, also the foreign key fields are displayed */
 	private def buildText(key : ForeignKeyWithSharingCheck) = {
 		def directionText(direction : ForeignKeyDirection) = direction match {
 			case ForeignKeyDirection.STRAIGHT => ">"
