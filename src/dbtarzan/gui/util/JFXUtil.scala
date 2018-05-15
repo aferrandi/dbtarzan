@@ -56,5 +56,9 @@ object JFXUtil {
 		lb.update(i, vj)
 		lb.update(j, vi)
 	}
-	
+	def bufferSet[T](b : ObservableBuffer[T], l: Traversable[T]) : ObservableBuffer[T] = {
+		b.clear() 
+		b ++= l
+	}
+
 }

@@ -9,52 +9,62 @@ import scalafx.Includes._
 import dbtarzan.db.{ForeignKey, FieldsOnTable, Field, ForeignKeys, ForeignKeyDirection}
 import dbtarzan.gui.util.JFXUtil
 
+/* if the table has 2 or more foreign keys to the same table, we want to give more information to the user, so that he can understand which one to use */ 
+case class ForeignKeyWithSharingCheck(key: ForeignKey, sharesToTable : Boolean)
+
 /**	foreign keys list */
 class ForeignKeyList() extends TControlBuilder {
-	private val buffer = ObservableBuffer.empty[ForeignKey]
-	private val list = new ListView[ForeignKey](buffer) {
+	private val buffer = ObservableBuffer.empty[ForeignKeyWithSharingCheck]
+	private val list = new ListView[ForeignKeyWithSharingCheck](buffer) {
 	    cellFactory = { _ => buildCell() }
 	  }		
 	
 	/** need to show only the "to table" as cell text. And a tooltip for each cell	*/
-	private def buildCell() = new ListCell[ForeignKey] {
+	private def buildCell() = new ListCell[ForeignKeyWithSharingCheck] {
 	        item.onChange { (_, _, _) => 
 	          Option(item.value).foreach(key => {
-		          tooltip.value = Tooltip(buildTooltip(key))
+		          tooltip.value = Tooltip(buildTooltip(key.key))
 		          text.value = buildText(key)
 	      	  })
 	        }} 	      
 	  
-	def addForeignKeys(foreignKeys : ForeignKeys) : Unit = {
-		println("foreignKeys "+foreignKeys)
-		buffer ++= foreignKeys.keys
+	def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
+		def moreThanOneItem(l : List[_]) = l.length > 1
+		println("newForeignKeyss "+newForeignKeys)
+		val allForeignKeys = buffer.toList.map(_.key) ++ newForeignKeys.keys
+		val groupedByToTableInsensitive = allForeignKeys.groupBy(_.to.table.toUpperCase()).values
+		val withSharingCheck = groupedByToTableInsensitive.flatMap(ks => ks.map(ForeignKeyWithSharingCheck(_, moreThanOneItem(ks))))
+		JFXUtil.bufferSet(buffer, withSharingCheck)
 	}
 	
+	private def fieldsToText(fields: List[String]) : String = fields.mkString("(", ",", ")")
 
 	/** the tooltip show the whole foreign key */
 	private def buildTooltip(key : ForeignKey) = {
-		def buildSide(fields : FieldsOnTable) = fields.table + fields.fields.mkString("(", ",", ")")
+		def buildSide(fields : FieldsOnTable) = fields.table + fieldsToText(fields.fields)
 		key.name + 
 		"\n- "+ buildSide(key.from)+
 		"\n- "+ buildSide(key.to)
 	}
 
 	/** the tooltip show the whole foreign key */
-	private def buildText(key : ForeignKey) = {
+	private def buildText(key : ForeignKeyWithSharingCheck) = {
 		def directionText(direction : ForeignKeyDirection) = direction match {
 			case ForeignKeyDirection.STRAIGHT => ">"
 			case ForeignKeyDirection.TURNED => "<"
 			case _  => "<ERROR>"
 		}
-		directionText(key.direction) + " " + key.to.table
+		def fieldsIfSharesTable() = Some(key).filter(_.sharesToTable).map(k => fieldsToText(k.key.from.fields)) 
+		directionText(key.key.direction) + " " + key.key.to.table + fieldsIfSharesTable().map(t => " "+t).getOrElse("")
 	}
 	
 	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */
   	def onForeignKeySelected(useKey : ForeignKey => Unit) : Unit =
-	     JFXUtil.onAction(list, { selectedKey : ForeignKey =>
+	     JFXUtil.onAction(list, { selectedKey : ForeignKeyWithSharingCheck =>
 	        println("Selected "+selectedKey)      
-	        useKey(selectedKey)
+	        useKey(selectedKey.key)
 	      })
+
 	def control : Parent = list
  }
 
