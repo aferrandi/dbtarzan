@@ -17,7 +17,7 @@ DbTarzan uses this information to traverse the tables of a database.
 
 The following video shows an example of database exploration:
 
-[![IMAGE dbtarzan video on youtube](http://img.youtube.com/vi/-hR9ZLf3bNY/0.jpg)](https://youtu.be/-hR9ZLf3bNY)
+[![IMAGE dbtarzan video on youtube](https://youtu.be/qLh5HnW0Rwc/0.jpg)]https://youtu.be/qLh5HnW0Rwc)
 
 More details in the [Wiki](https://github.com/aferrandi/dbtarzan/wiki).
 
