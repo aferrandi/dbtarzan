@@ -18,3 +18,7 @@ db
 !test/db
 sqllite
 .ensime*
+mksnap/prime
+mksnap/stage
+mksnap/parts
+mksnap/snap

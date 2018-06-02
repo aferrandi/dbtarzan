@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=DBTarzan
+Comment=Explore the tables of a relational database following the relations defined in their foreign keys.
+Exec=dbtarzan
+Icon=${SNAP}/meta/gui/icon.png
+Terminal=false
+Categories=Database;

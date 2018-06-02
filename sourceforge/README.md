@@ -14,8 +14,12 @@ DBTarzan changelog
 =================
 
 - Release 1.11
-Foreign keys list (right side): If the foreign key is of the original table, it is marked with "<", otherwise (it is of the destination table, turned) it is marked with ">".
-Foreign keys list (right side): If there are two or more foreign keys to the same table, the fields used by the foreign key are displayed together with the table to distinguish them.
+
+Foreign keys list (right side): 
+
+If the foreign key is of the original table, it is marked with "<", otherwise (it is of the destination table, turned) it is marked with ">".
+
+If there are two or more foreign keys to the same table, the fields used by the foreign key are displayed together with the table to distinguish them.
 
 - Release 1.10
 
