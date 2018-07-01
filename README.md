@@ -8,7 +8,7 @@ Database browser.
 Explore the tables of a relational database following the relations defined in their foreign keys.
 
 With DbTarzan you can find the information you need from the database in a fraction of the time, without writing queries.  
-And if it is the first time you are looking into a database, use DbTarzan to explore it. 
+If it is the first time you are looking into a database, with DbTarzan you get immediately a sense of the data in the tables and the relations among them.
 
 ![DbTarzan](doc/window.jpeg?raw=true)
 
@@ -26,9 +26,9 @@ More details in the [Wiki](https://github.com/aferrandi/dbtarzan/wiki).
 Examples
 --------
 
-Bank: find fast who is the owner of a contract, its coupons, its portfolio.
+Bank: with a few mouse clicks, from a single operation, get the source and destination account, the account owners, which other operations was made in the same day between the accounts. 
 
-Hospital: find fast all the people that got a special kind of sickness.
+Hospital: with a few mouse clicks, from a patient, find the reaason of the hospitalization, the insurance data, the clinical history, which other patients are in the hospital for the same reason.
 
 You can do the same with standard SQL queries or with views, but in this way it is much faster.
-This is for example the best tool to explore a database you never saw before.
+
