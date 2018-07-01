@@ -4,9 +4,9 @@ package dbtarzan.messages
 object LogText {
 	/* short description */
 	def extractLogMessage(msg : TLogMessage) : String = msg match {
-		case Error(text, ex) => text + ":" + ex.getMessage()
-		case Warning(text) => text  
-		case Info(text) => text  
+		case Error(_, text, ex) => text + ":" + ex.getMessage()
+		case Warning(_, text) => text  
+		case Info(_, text) => text  
 	}
 
 	/* to show in the log view if it is an error, warning or info message */
@@ -18,9 +18,9 @@ object LogText {
 	
 	/* long descrption, to show when the user examines the message */
 	def extractWholeLogText(msg : TLogMessage) : String =  msg match { 
-		case Error(text, ex) => text + ":" + ex.getMessage()+ " at:\n"+ extractStackTrace(ex)
-		case Warning(text) => text
-		case Info(text) => text
+		case Error(_, text, ex) => text + ":" + ex.getMessage()+ " at:\n"+ extractStackTrace(ex)
+		case Warning(_, text) => text
+		case Info(_, text) => text
 	}	 
 
 	/* in case of error, gets the stacktrace */

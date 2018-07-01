@@ -8,14 +8,16 @@ import scalafx.scene.layout.GridPane
 import scalafx.beans.property.{StringProperty}
 import scalafx.Includes._
 import scala.util.{Try, Success, Failure}
+import java.nio.file.{ Path, Paths }
+import akka.actor.{ ActorSystem, Props, ActorRef }
+import java.time.LocalDateTime
+
 import dbtarzan.db.ConnectionBuilder
 import dbtarzan.config.ConnectionDataReader
-import akka.actor.{ ActorSystem, Props, ActorRef }
 import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.config.actor.ConnectionsWorker
 import dbtarzan.types.ConfigPath
 import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas, Info }
-import java.nio.file.{ Path, Paths }
 
 /**
   Main class, starts the main gui, the actors, and connects them together
@@ -34,7 +36,7 @@ object Main extends JFXApp {
   val configActor = system.actorOf(Props(new ConnectionsWorker(ConnectionDatas(connections), guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   mainGUI.databaseList.setDatabases(DatabaseNames(connections.map(_.name)))
   mainGUI.onDatabaseSelected( { case databaseName => {
-    guiActor ! Info("Opening database "+databaseName)
+    guiActor ! Info(LocalDateTime.now, "Opening database "+databaseName)
     configActor ! QueryDatabase(databaseName) 
     }})
   mainGUI.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })

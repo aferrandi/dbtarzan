@@ -3,12 +3,14 @@ package dbtarzan.db.actor
 import java.sql.{Connection, ResultSet}
 import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
+import akka.actor.ActorRef
+import java.time.LocalDateTime
+import scala.collection.mutable.HashMap
+
 import dbtarzan.config.ConnectionData
 import dbtarzan.db.util.ResourceManagement.using
-import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.messages._
-import scala.collection.mutable.HashMap
 import dbtarzan.db.util.FileReadWrite
 import dbtarzan.db.ForeignKeysToFile
 
@@ -24,19 +26,19 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			new DatabaseWorkerCore(createConnection.getConnection(data), data.schema)
 		} 
 		catch { case e : Exception => { 
-			guiActor ! Error("Cronnecting to the database "+databaseName+" got", e) 
+			guiActor ! Error(LocalDateTime.now, "Cronnecting to the database "+databaseName+" got", e) 
 			throw e 
 		}}
 
 	private def loadForeignKeysFromFile() : Unit = 
 		if(ForeignKeysToFile.fileExist(databaseName)) {
-			guiActor ! Info("Loading foreign keys from the database file "+databaseName)
+			guiActor ! Info(LocalDateTime.now, "Loading foreign keys from the database file "+databaseName)
 			try
 			{
 				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
 				tablesKeys.keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
 			} 
-			catch { case e : Exception => guiActor ! Error("Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) }
+			catch { case e : Exception => guiActor ! Error(LocalDateTime.now, "Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) }
 		}
 
 	/* gets the columns of a table from the database metadata */
@@ -78,7 +80,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def handleErr[R](r: => R): Unit = 
 	    try { r } catch {
-	      case e : Exception => guiActor ! Error("dbWorker", e)
+	      case e : Exception => guiActor ! Error(LocalDateTime.now, "dbWorker", e)
 	    }
 	  
 

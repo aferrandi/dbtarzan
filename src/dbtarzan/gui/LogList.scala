@@ -8,11 +8,13 @@ import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.image.{ Image, ImageView }
 import scalafx.Includes._
 import scalafx.scene.Parent
+import scalafx.beans.property.{ StringProperty, ObjectProperty }
+import scalafx.event.ActionEvent
+import java.time.format.DateTimeFormatter
+
 import dbtarzan.messages.TLogMessage
 import dbtarzan.messages.LogText
-import scalafx.event.ActionEvent
 import dbtarzan.gui.util.{ JFXUtil, LogIcons }
-import scalafx.beans.property.{ StringProperty, ObjectProperty }
 
 /**
   A list of the errors happened in the application, last error first
@@ -21,12 +23,13 @@ class LogList extends TLogs with TControlBuilder {
   private val buffer = ObservableBuffer.empty[TLogMessage]
   private val logTable = buildTable()
   private val logIcons = new LogIcons()
+  private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
   JFXUtil.onAction(logTable, showMessageInDialogBox(_))
 
 /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
   private def buildTable() = new TableView[TLogMessage](buffer) {
-    columns ++= List ( iconColumn(), textColumn())
+    columns ++= List ( iconColumn(), producedColumn(), textColumn())
     editable = true
     placeholder = Label("") // prevent "no content in table" message to appear when the table is empty
     columnResizePolicy = TableView.ConstrainedResizePolicy
@@ -53,6 +56,15 @@ class LogList extends TLogs with TControlBuilder {
     cellValueFactory = { x => new StringProperty(LogText.extractLogMessage(x.value)) }
     resizable = true
   }
+
+  /* build the column on the center, that shows the date/time the message was produced */
+  private def producedColumn() = new TableColumn[TLogMessage, String] {
+    cellValueFactory = { x => new StringProperty(formatter.format(x.value.produced)) }
+    resizable = true
+    maxWidth = 96
+    minWidth = 96
+  }
+
 
   /* when you double-click on a line it shows the whole message in a dialog box */ 
   private def showMessageInDialogBox(selectedMessage : TLogMessage) : Unit = 

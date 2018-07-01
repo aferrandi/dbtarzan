@@ -22,3 +22,5 @@ mksnap/prime
 mksnap/stage
 mksnap/parts
 mksnap/snap
+mksnap
+!mksnap/snapcraft.yaml

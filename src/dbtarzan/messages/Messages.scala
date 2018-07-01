@@ -3,6 +3,7 @@ package dbtarzan.messages
 import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes}
 import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
+import java.time.LocalDateTime
 
 case class QueryRows(id : TableId, sql : String)
 
@@ -30,13 +31,13 @@ case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
 
 case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes)
 
-sealed trait TLogMessage
+sealed trait TLogMessage{ def produced : LocalDateTime; def text: String }
 
-case class Error(text: String, ex : Exception) extends TLogMessage
+case class Error(produced : LocalDateTime, text: String, ex : Exception) extends TLogMessage
 
-case class Warning(text : String) extends TLogMessage
+case class Warning(produced : LocalDateTime, text : String) extends TLogMessage
 
-case class Info(text : String) extends TLogMessage
+case class Info(produced : LocalDateTime, text : String) extends TLogMessage
 
 case class ErrorDatabaseAlreadyOpen(databaseName : String)
 

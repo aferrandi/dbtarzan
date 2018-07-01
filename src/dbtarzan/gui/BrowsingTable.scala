@@ -7,11 +7,13 @@ import scalafx.event.ActionEvent
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
+import java.time.LocalDateTime
 
 import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields, OrderByField, OrderByFields, OrderByDirection }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.messages._
+
 
 /**
   table + constraint input box + foreign keys
@@ -42,7 +44,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
         dbActor ! QueryColumnsFollow(databaseId, key.to.table, FollowKey(dbTable.columnNames, key, checkedRows))
       } else {
         dbActor ! QueryColumns(databaseId, key.to.table)
-        guiActor ! Warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
+        guiActor ! Warning(LocalDateTime.now, "No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
       }
   } 
 

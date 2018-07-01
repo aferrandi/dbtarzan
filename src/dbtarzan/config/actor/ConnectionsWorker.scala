@@ -3,10 +3,12 @@ package dbtarzan.config.actor
 import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.routing.Broadcast
+import java.time.LocalDateTime
+import scala.collection.mutable.HashMap
+
 import dbtarzan.messages._
 import dbtarzan.config.ConnectionsConfig
 import dbtarzan.db.ConnectionBuilder
-import scala.collection.mutable.HashMap
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
 class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Actor {
@@ -38,7 +40,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Ac
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseName)
 			} catch {
 				case e : Exception => {
-					guiActor ! Error("Querying the database "+databaseName+" got", e)
+					guiActor ! Error(LocalDateTime.now, "Querying the database "+databaseName+" got", e)
 					e.printStackTrace()
 				}	    	
 			}	 	
