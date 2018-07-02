@@ -20,25 +20,26 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	def databaseName = data.name
 	var core = buildCore()
 	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
+	val log = new Logger(guiActor)
 	loadForeignKeysFromFile()	
 
 	private def buildCore() : DatabaseWorkerCore = try {
 			new DatabaseWorkerCore(createConnection.getConnection(data), data.schema)
 		} 
 		catch { case e : Exception => { 
-			guiActor ! Error(LocalDateTime.now, "Cronnecting to the database "+databaseName+" got", e) 
+			log.error("Cronnecting to the database "+databaseName+" got", e) 
 			throw e 
 		}}
 
 	private def loadForeignKeysFromFile() : Unit = 
 		if(ForeignKeysToFile.fileExist(databaseName)) {
-			guiActor ! Info(LocalDateTime.now, "Loading foreign keys from the database file "+databaseName)
+			log.info("Loading foreign keys from the database file "+databaseName)
 			try
 			{
 				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
 				tablesKeys.keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
 			} 
-			catch { case e : Exception => guiActor ! Error(LocalDateTime.now, "Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) }
+			catch { case e : Exception => log.error("Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) }
 		}
 
 	/* gets the columns of a table from the database metadata */
@@ -99,6 +100,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		println("Reseting the connection of the worker for "+databaseName)
 		try { core.closeConnection() } catch { case e : Throwable => {} }
 		core = buildCore()
+		log.info("Connection to the database "+databaseName+" resetted")
 	})		
 
 	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = handleErr({

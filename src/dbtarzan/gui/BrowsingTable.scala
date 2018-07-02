@@ -23,6 +23,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   private val id = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
   private val table = new Table(dbActor, id, dbTable)
   private var useNewTable : dbtarzan.db.Table => Unit = table => {}
+  private val log = new Logger(guiActor)
   private val queryText = new QueryText() { 
     onEnter(text => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
@@ -44,7 +45,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
         dbActor ! QueryColumnsFollow(databaseId, key.to.table, FollowKey(dbTable.columnNames, key, checkedRows))
       } else {
         dbActor ! QueryColumns(databaseId, key.to.table)
-        guiActor ! Warning(LocalDateTime.now, "No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
+        log.warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
       }
   } 
 

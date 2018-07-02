@@ -14,6 +14,7 @@ import dbtarzan.db.ConnectionBuilder
 class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Actor {
 	 private val mapDBWorker = HashMap.empty[String, ActorRef]
 	 private var connectionsConfig = new ConnectionsConfig(datas.datas)
+	 private val log = new Logger(guiActor)
 
 	 /* creates the actors to serve the queries for a database */
 	 private def getDBWorker(databaseName : String) : ActorRef = {
@@ -40,7 +41,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Ac
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseName)
 			} catch {
 				case e : Exception => {
-					guiActor ! Error(LocalDateTime.now, "Querying the database "+databaseName+" got", e)
+					log.error("Querying the database "+databaseName+" got", e)
 					e.printStackTrace()
 				}	    	
 			}	 	
