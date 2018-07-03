@@ -100,8 +100,14 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def addRows(rows : ResponseRows) : Unit = 
      withTableId(rows.id, table => {
       table.table.addRows(rows)
-      table.tab.tooltip.value.text = table.table.sql +" ("+table.table.rowsNumber+" rows)"
+      table.tab.tooltip.value.text = shortenIfTooLong(table.table.sql, 500) +" ("+table.table.rowsNumber+" rows)"
     })
+
+  private def shortenIfTooLong(text: String, maxLength : Int) : String =
+    if(text.length <= maxLength)
+      text
+    else
+      text.take(maxLength)+"..."
   
   
   def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.id, table => table.table.addForeignKeys(keys)) 

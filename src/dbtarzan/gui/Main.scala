@@ -19,9 +19,7 @@ import dbtarzan.config.actor.ConnectionsWorker
 import dbtarzan.types.ConfigPath
 import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas, Info, Logger }
 
-/**
-  Main class, starts the main gui, the actors, and connects them together
-*/
+/** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp {
   println("Named commend line arguments:"+ parameters.named.mkString(","))
   val version = versionFromManifest()
@@ -66,12 +64,11 @@ object Main extends JFXApp {
   }
 
   private def openWeb(url : String) : Unit = try
-  {  hostServices.showDocument(url) }
-  catch {
-    case e: Throwable =>  new ProcessBuilder("x-www-browser", url).start()
-  }
+    {  hostServices.showDocument(url) }
+    catch {
+      case e: Throwable =>  new ProcessBuilder("x-www-browser", url).start()
+    }
   
-
   private def versionFromManifest() = Option(getClass().getPackage().getImplementationVersion()).getOrElse("")
 }
 
