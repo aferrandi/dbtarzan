@@ -78,6 +78,12 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   private def selectTab(tab : Tab) : Unit = 
     tabs.selectionModel().select(tab)
 
+  def requestRemovalTabsAfter(request : RequestRemovalTabsAfter) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalTabsAfter(request.tableId))
+
+  def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalTabsBefore(request.tableId))
+
+  def requestRemovalAllTabs(request : RequestRemovalAllTabs) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalAllTabs())
+
   /* removes the database tab and its content */
   def removeDatabase(databaseToClose : ResponseCloseDatabase) : Unit = {
     val databaseName = databaseToClose.databaseName 

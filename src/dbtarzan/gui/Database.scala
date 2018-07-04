@@ -1,14 +1,16 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.{ SplitPane, ContextMenu, MenuBar, Menu, MenuItem, Label, Button }
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.layout.{ BorderPane, FlowPane }
 import scalafx.scene.Parent
-import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields, IdentifierDelimiters }
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.messages._
 import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
+import scalafx.scene.text.TextAlignment
+
+import dbtarzan.messages._
+import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields, IdentifierDelimiters }
 
 /**
   A panel containing all the tabs related to a database
@@ -20,7 +22,9 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(id, tableName))
   private val pane = new SplitPane {
     val tableListWithTitle = new BorderPane {
-      top = buildMenu()
+      top = new FlowPane {
+        children = List(buildMenu(), new Label("Tables"))
+      }
       center = tableList.control
     }
     items.addAll(tableListWithTitle, tableTabs.control)
@@ -30,7 +34,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
 
 	private def buildMenu() = new MenuBar {
 		menus = List(
-		  new Menu("Tables") {
+		  new Menu("\u2630") {
 		    items = List(
 		      new MenuItem("Connection Reset") {
 		        onAction = {
@@ -40,6 +44,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
 		    )
 		  }
     )
+    stylesheets += "orderByMenuBar.css"
   }
 
   def getDatabaseName = databaseName
@@ -62,6 +67,13 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
 
   /* received the columns of a table, that are used to build the table coming from the selection of a foreign key, in a tab */
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= tableTabs.addColumnsFollow(columns)
+
+  def requestRemovalTabsAfter(tableId : TableId) : Unit =  tableTabs.requestRemovalTabsAfter(tableId)
+
+  def requestRemovalTabsBefore(tableId : TableId) : Unit = tableTabs.requestRemovalTabsBefore(tableId)
+ 
+  def requestRemovalAllTabs() : Unit = tableTabs.requestRemovalAllTabs()
+
 
   def getId = id
 

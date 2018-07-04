@@ -9,34 +9,40 @@ import scalafx.application.Platform
     Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf 
 */
 class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) extends Actor {
+  private var log = new Logger(self)  
   def receive = {
-    case rsp: ResponseRows => Platform.runLater { databases.addRows(rsp) }
+        case rsp: ResponseRows => Platform.runLater { databases.addRows(rsp) }
 
-    case rsp: ResponseTables => Platform.runLater { databases.addTables(rsp) }
+        case rsp: ResponseTables => Platform.runLater { databases.addTables(rsp) }
 
-    case rsp: ResponseColumns => Platform.runLater { databases.addColumns(rsp) }
+        case rsp: ResponseColumns => Platform.runLater { databases.addColumns(rsp) }
 
-    case rsp: ResponseForeignKeys => Platform.runLater { databases.addForeignKeys(rsp) }	
-	
-    case rsp: ResponseColumnsFollow => Platform.runLater { databases.addColumnsFollow(rsp) }
+        case rsp: ResponseForeignKeys => Platform.runLater { databases.addForeignKeys(rsp) }	
+        
+        case rsp: ResponseColumnsFollow => Platform.runLater { databases.addColumnsFollow(rsp) }
 
-    case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 
+        case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 
 
-    case rsp: ResponseCloseDatabase => Platform.runLater { databases.removeDatabase(rsp) } 
+        case rsp: ResponseCloseDatabase => Platform.runLater { databases.removeDatabase(rsp) } 
 
-    case rsp: ResponseCloseTables => Platform.runLater { databases.removeTables(rsp) }
+        case rsp: ResponseCloseTables => Platform.runLater { databases.removeTables(rsp) }
 
-    case msg: TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
+        case msg: RequestRemovalTabsAfter => Platform.runLater { databases.requestRemovalTabsAfter(msg) }
 
-    case msg: DatabaseNames => Platform.runLater { 
-        println("Delivery databases"+msg)
-        dbList.setDatabases(msg) 
-    }
+        case msg: RequestRemovalTabsBefore => Platform.runLater { databases.requestRemovalTabsBefore(msg) }
 
-    case err: ErrorDatabaseAlreadyOpen => Platform.runLater { 
-                databases.showDatabase(err.databaseName)
-                logs.addLogMessage(Warning("Database "+err.databaseName+" already open"))
-            }
+        case msg: RequestRemovalAllTabs => Platform.runLater { databases.requestRemovalAllTabs(msg) }
+
+        case msg: TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
+
+        case msg: DatabaseNames => Platform.runLater { 
+            println("Delivery databases"+msg)
+            dbList.setDatabases(msg) 
+        }
+
+        case err: ErrorDatabaseAlreadyOpen => Platform.runLater { 
+            databases.showDatabase(err.databaseName)
+            log.warning("Database "+err.databaseName+" already open")
+        }
 	}
-
 }

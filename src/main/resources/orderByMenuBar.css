@@ -1,4 +1,6 @@
 .menu-bar {
     -fx-padding: 0 1 0 1;
     -fx-spacing: 1;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;   
   };

@@ -18,7 +18,7 @@ case class QueryForeignKeys(id : TableId)
 case class QueryClose(databaseName : String)
 
 case class QueryReset(databaseName : String)
-
+      
 case class ResponseRows(id : TableId, rows: Rows)
 
 case class ResponseTables(id : DatabaseId, names: TableNames)
@@ -46,6 +46,12 @@ case class QueryDatabase(databaseName : String)
 case class ResponseDatabase(databaseName : String, dbActor : ActorRef)
 
 case class ResponseCloseDatabase(databaseName : String)
+
+case class RequestRemovalTabsAfter(databaseId : DatabaseId, tableId : TableId)
+
+case class RequestRemovalTabsBefore(databaseId : DatabaseId, tableId : TableId)
+
+case class RequestRemovalAllTabs(databaseId : DatabaseId)
 
 case class CopyToFile(databaseName : String)
 

@@ -21,4 +21,7 @@ trait TDatabases extends TTables {
 	def showDatabase(databaseName : String) : Unit
 	def removeDatabase(databaseToClose : ResponseCloseDatabase) : Unit
 	def removeTables(tables : ResponseCloseTables) : Unit 
+    def requestRemovalTabsAfter(request : RequestRemovalTabsAfter) : Unit
+	def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit
+  	def requestRemovalAllTabs(request : RequestRemovalAllTabs) : Unit
 }

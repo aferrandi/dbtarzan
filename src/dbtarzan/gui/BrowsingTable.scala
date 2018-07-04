@@ -20,8 +20,8 @@ import dbtarzan.messages._
 */
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.db.Table, databaseId : DatabaseId) extends TTable with TControlBuilder {
   private val foreignKeyList = new ForeignKeyList()
-  private val id = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
-  private val table = new Table(dbActor, id, dbTable)
+  private val tableId = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
+  private val table = new Table(dbActor, tableId, dbTable)
   private var useNewTable : dbtarzan.db.Table => Unit = table => {}
   private val log = new Logger(guiActor)
   private val queryText = new QueryText() { 
@@ -49,7 +49,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
       }
   } 
 
-  private def buildTop() : BorderPane = new BorderPane {
+  private def buildTop() : BorderPane = new BorderPane {        
+      stylesheets += "orderByMenuBar.css"
+      left = buildMainMenu()
 	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
 	    right =new MenuBar {
 		    menus = List(buildOrderByMenu())
@@ -57,6 +59,36 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
       }
 	}
 
+  	private def buildMainMenu() = new MenuBar {
+      menus = List(
+        new Menu("\u2630") {
+          items = List(
+              ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql),
+              buildRemoveBeforeMenu(),
+              buildRemoveAfterMenu(),
+              buildRemoveAllMenu()
+            )
+          }
+        )
+        stylesheets += "orderByMenuBar.css"
+      }
+
+
+  private def buildRemoveAfterMenu() = new MenuItem {
+      text = "Close tabs after this"
+      onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(databaseId, tableId)
+    }
+
+  private def buildRemoveBeforeMenu() = new MenuItem {
+      text = "Close tabs before this"
+      onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(databaseId, tableId)
+    }
+ 
+  private def buildRemoveAllMenu() = new MenuItem {
+      text = "Close all tabs"
+      onAction = (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(databaseId)
+    }
+  
   private def buildOrderByMenu() = new Menu("Order by") {
       items = dbTable.columnNames.map(f => 
         new MenuItem(f.name) {
@@ -103,7 +135,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
     progressBar.receivedForeignKeys()
   }
 
-  def getId = id
+  def getId : TableId = tableId
   def rowsNumber = table.rowsNumber
   def sql = dbTable.sql
   def control : Parent = layout
