@@ -61,34 +61,26 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
 
   	private def buildMainMenu() = new MenuBar {
       menus = List(
-        new Menu("\u2630") {
+        new Menu(JFXUtil.threeLines) {
           items = List(
               ClipboardMenuMaker.buildClipboardMenu("SQL", () => dbTable.sql),
-              buildRemoveBeforeMenu(),
-              buildRemoveAfterMenu(),
-              buildRemoveAllMenu()
+              new MenuItem("Close tabs after this") {
+                 onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(databaseId, tableId)
+              },
+              new MenuItem("Close tabs before this") {
+                onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(databaseId, tableId)
+              },
+              new MenuItem("Close all tabs") {                 
+                onAction = (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(databaseId)
+              },
+              new MenuItem("Check All")  { onAction = { ev: ActionEvent => table.checkAll(true) } },
+              new MenuItem("Uncheck All") { onAction = { ev: ActionEvent => table.checkAll(false) } }
             )
           }
         )
         stylesheets += "orderByMenuBar.css"
       }
 
-
-  private def buildRemoveAfterMenu() = new MenuItem {
-      text = "Close tabs after this"
-      onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(databaseId, tableId)
-    }
-
-  private def buildRemoveBeforeMenu() = new MenuItem {
-      text = "Close tabs before this"
-      onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(databaseId, tableId)
-    }
- 
-  private def buildRemoveAllMenu() = new MenuItem {
-      text = "Close all tabs"
-      onAction = (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(databaseId)
-    }
-  
   private def buildOrderByMenu() = new Menu("Order by") {
       items = dbTable.columnNames.map(f => 
         new MenuItem(f.name) {

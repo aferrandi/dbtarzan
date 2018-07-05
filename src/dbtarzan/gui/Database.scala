@@ -10,6 +10,7 @@ import scalafx.event.ActionEvent
 import scalafx.scene.text.TextAlignment
 
 import dbtarzan.messages._
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields, IdentifierDelimiters }
 
 /**
@@ -34,7 +35,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
 
 	private def buildMenu() = new MenuBar {
 		menus = List(
-		  new Menu("\u2630") {
+		  new Menu(JFXUtil.threeLines) {
 		    items = List(
 		      new MenuItem("Connection Reset") {
 		        onAction = {

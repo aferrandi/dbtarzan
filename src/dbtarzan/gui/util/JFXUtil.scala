@@ -11,6 +11,8 @@ import scalafx.event.ActionEvent
 import scalafx.collections.ObservableBuffer 
 
 object JFXUtil {
+	def threeLines : String = "\u2630"
+
 	def withTitle(graphic : Node, title : String) = new BorderPane {
 	    top = buildTitle(title)
 	    center = graphic

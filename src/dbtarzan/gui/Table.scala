@@ -45,12 +45,10 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
       checkAll(true)    
 
   private def buildContextMenu() = new ContextMenu(
-      ClipboardMenuMaker.buildClipboardMenu("Selection", () => selectionToString()),
-      new MenuItem("Check All")  { onAction = { e: ActionEvent => checkAll(true) } },
-      new MenuItem("Uncheck All") { onAction = { e: ActionEvent => checkAll(false) } }
+      ClipboardMenuMaker.buildClipboardMenu("Selection", () => selectionToString())
       ) 
 
-  private def checkAll(check : Boolean) : Unit = 
+  def checkAll(check : Boolean) : Unit = 
     buffer.foreach(row => row.checked.value = check)
 
  /* gets the nth column from the database row */
