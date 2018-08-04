@@ -1,11 +1,11 @@
 package dbtarzan.gui.config
 
-import scalafx.scene.control.{ TableView, SplitPane, Button, Alert, ButtonType }
+import scalafx.scene.control.{ TableView, SplitPane, Button }
 import scalafx.scene.layout.BorderPane
-import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.Parent
 import dbtarzan.config.ConnectionData
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.util.JFXUtil
 
 /**
   table + constraint input box + foreign keys
@@ -36,23 +36,16 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
   private def showConnection(data : ConnectionData) : Unit = try {
       connection.show(data)
     } catch {
-      case ex : Exception => showErrorAlert("Displaying connections got: ", ex.getMessage())
+      case ex : Exception => JFXUtil.showErrorAlert("Displaying connections got: ", ex.getMessage())
     } 
-
-  private def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
-      headerText = header
-    }.showAndWait() match {
-      case Some(ButtonType.Yes) => true
-      case _ => false
-    }
 
   private def saveIfPossible(save : List[ConnectionData]  => Unit) : Unit = {
     val errors = list.validate()
     if(errors.isEmpty) {
-      if(areYouSure("Are you sure you want to save the connections?", "Save connections"))
+      if(JFXUtil.areYouSure("Are you sure you want to save the connections?", "Save connections"))
         try { save(list.content()) }
         catch {
-          case ex : Exception => showErrorAlert("Saving the connections got: ", ex.getMessage())
+          case ex : Exception => JFXUtil.showErrorAlert("Saving the connections got: ", ex.getMessage())
         }
     }
     else 
@@ -60,19 +53,13 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
   }
 
   def cancelIfPossible(cancel : () => Unit) : Unit = {
-    if(areYouSure("Are you sure you want to close without saving?", "Cancel"))
+    if(JFXUtil.areYouSure("Are you sure you want to close without saving?", "Cancel"))
         cancel()
   }
 
-  private def showErrorAlert(header : String, error : String) : Unit = new Alert(AlertType.Error) { 
-       headerText= header
-       contentText= error
-       }.showAndWait()
- 
-
   private def showConnectionDataErrors(errors : List[ConnectionDataErrors]) : Unit = {
     val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
-    showErrorAlert("Saving the connections got: ", errorText)
+    JFXUtil.showErrorAlert("Saving the connections got: ", errorText)
   }
 
   def onSave(save : List[ConnectionData]  => Unit): Unit =

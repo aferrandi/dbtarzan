@@ -25,6 +25,7 @@ class OrderByEditor(
 ) extends TControlBuilder { 
   private val currentOrderByFields = currentOrderBys.map(_.fields).getOrElse(List.empty[OrderByField])
   private val listBuffer = ObservableBuffer[OrderByField](currentOrderByFields)
+  listBuffer.onChange((buffer, changes) => { saveButtonDisabled.value = false })
   private val comboFieldsBuffer = ObservableBuffer(possibleOrderByFields.diff(currentOrderByFields))
   private val comboOrderByDirectionsBuffer = ObservableBuffer(OrderByDirection.ASC, OrderByDirection.DESC)
   private val chosenFieldProperty =  new ObjectProperty[Field]() {
@@ -36,6 +37,8 @@ class OrderByEditor(
   private var listFieldsCurrentIndex : Option[Int] = None
   private var editButtonsDisabled = BooleanProperty(true)
   private var addButtonsDisabled = BooleanProperty(true)
+  private var saveButtonDisabled = BooleanProperty(true)
+
 
   private val layout = new BorderPane {
     center = listWithButtons()
@@ -144,9 +147,12 @@ class OrderByEditor(
   private def buttonSave() = new Button {
     text = "Save"
     alignmentInParent = Pos.CENTER_RIGHT
-    onAction = (event: ActionEvent)  => onSave(OrderByFields(listBuffer.toList))
+    disable <==> saveButtonDisabled
+    onAction = (event: ActionEvent)  => {
+      if(!listBuffer.isEmpty || JFXUtil.areYouSure("Unordered query results?", "Save Order"))
+        onSave(OrderByFields(listBuffer.toList))
+    }
  }
-
 
   private def comboFields() = new ComboBox[Field] {
       promptText.value = "[Field]"

@@ -1,13 +1,14 @@
 package dbtarzan.gui.util
 
 import scalafx.scene.Node
-import scalafx.scene.control.{ ListView, TableView, Label, MenuItem }
+import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, ButtonType }
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.text.TextAlignment
 import scalafx.geometry.Insets
 import scalafx.scene.input.{ MouseEvent, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._
 import scalafx.event.ActionEvent
+import scalafx.scene.control.Alert.AlertType
 import scalafx.collections.ObservableBuffer 
 
 object JFXUtil {
@@ -63,4 +64,15 @@ object JFXUtil {
 		b ++= l
 	}
 
-}
+   def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
+      headerText = header
+    }.showAndWait() match {
+      case Some(ButtonType.Yes) => true
+      case _ => false
+    }
+
+  	def showErrorAlert(header : String, error : String) : Unit = new Alert(AlertType.Error) { 
+       headerText= header
+       contentText= error
+       }.showAndWait()
+ }
