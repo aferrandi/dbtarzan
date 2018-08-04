@@ -1,5 +1,5 @@
 name: dbtarzan
-version: '1.11.0' 
+version: '1.12.0' 
 summary: Database browser
 description: Explore the tables of a relational database following the relations defined in their foreign keys.
 grade: stable
@@ -8,7 +8,7 @@ confinement: strict
 
 apps:
   dbtarzan:
-    command: java -jar $SNAP/dbtarzan-assembly-1.11.jar --configPath=$SNAP_USER_COMMON
+    command: java -jar $SNAP/dbtarzan-assembly-1.12.jar --configPath=$SNAP_USER_COMMON
     desktop: dbtarzan.desktop
     environment:
         # If it does not find the fonts configuration it gives an error.
