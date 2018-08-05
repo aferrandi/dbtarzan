@@ -33,7 +33,7 @@ class LogList extends TLogs with TControlBuilder {
     editable = true
     placeholder = Label("") // prevent "no content in table" message to appear when the table is empty
     columnResizePolicy = TableView.ConstrainedResizePolicy
-    contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("Message", () => selectionToString()))
+    contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("Copy Message To Clipboard", () => selectionToString()))
     stylesheets += "loglist.css"
   }
 

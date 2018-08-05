@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView, SelectionMode, ContextMenu, MenuItem}
+import scalafx.scene.control.{TableColumn, TableView, SelectionMode, ContextMenu, Menu, MenuItem}
 import scalafx.beans.property.{StringProperty, BooleanProperty}
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.control.cell.CheckBoxTableCell
@@ -45,8 +45,12 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
       checkAll(true)    
 
   private def buildContextMenu() = new ContextMenu(
-      ClipboardMenuMaker.buildClipboardMenu("Selection", () => selectionToString())
-      ) 
+      new Menu("Copy selection to clipboard") {
+        items = List(
+          ClipboardMenuMaker.buildClipboardMenu("Only cells", () => selectedRowsToString()),
+          ClipboardMenuMaker.buildClipboardMenu("Cells with headers", () => headersToString() + "\n" + selectedRowsToString())
+        )
+      }) 
 
   def checkAll(check : Boolean) : Unit = 
     buffer.foreach(row => row.checked.value = check)
@@ -72,11 +76,13 @@ class Table(dbActor: ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extend
   }
 
   /* converts the selected part of the table to a string that can be written to the clipboard */
-  private def selectionToString() : String = 
-  {
-      val rows = table.getSelectionModel().getSelectedItems()
-     rows.map(cellsInRow => cellsInRow.values.map(cell => cell()).mkString("\t") ).mkString("\n")
+  private def selectedRowsToString() : String = {
+    val rows = table.getSelectionModel().getSelectedItems()
+    rows.map(cellsInRow => cellsInRow.values.map(cell => cell()).mkString("\t") ).mkString("\n")
   }
+
+  private def headersToString() : String =
+    names.map(_.name).mkString("\t")
 
   /* adds the database rows to the table */
   def addRows(rows : Rows) : Unit = { 

@@ -9,12 +9,12 @@ import scalafx.Includes._
 object ClipboardMenuMaker
 {
 	/* the text is given by the result of the extractText function */
-	def buildClipboardMenu(whatToCopy : String, extractText : () => String) = new MenuItem {
-    	text = "Copy "+whatToCopy+" To Clipboard"
+	def buildClipboardMenu(title : String, extractText : () => String) = new MenuItem {
+    	text = title
     	onAction = (ev: ActionEvent) =>  try {
         	JFXUtil.copyTextToClipboard(extractText())
       	} catch {
-        	case ex : Exception => println("Copying "+whatToCopy+" to the clipboard got "+ex)
+        	case ex : Exception => println("Copying to the clipboard using the menu "+title+" got "+ex)
       	}
     }
 }
