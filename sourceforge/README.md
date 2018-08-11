@@ -13,20 +13,19 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.13
+
+Added view with vertical representation of a row.
+
+More checks in the order by dialog box.
+
+Copy to clipboard table rows with or without the table header 
+
+Accelerators for the menu items of the table menu
+
 - Release 1.12
 
 Converted the context menus on the top of the "Tables" and "Table" panel to standard menus.
 
 Added time to the log lines in the log panel.
-
-- Release 1.11
-
-Foreign keys list (right side): 
-
-If the foreign key is of the original table, it is marked with "<", otherwise (it is of the destination table, turned) it is marked with ">".
-
-If there are two or more foreign keys to the same table, the fields used by the foreign key are displayed together with the table to distinguish them.
-
-
-
 
