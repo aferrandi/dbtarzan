@@ -5,7 +5,7 @@ import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, Butt
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.text.TextAlignment
 import scalafx.geometry.Insets
-import scalafx.scene.input.{ MouseEvent, KeyEvent, KeyCode, Clipboard, ClipboardContent }
+import scalafx.scene.input.{ MouseEvent, MouseButton, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._
 import scalafx.event.ActionEvent
 import scalafx.scene.control.Alert.AlertType
@@ -30,7 +30,7 @@ object JFXUtil {
 
 	private def focusedItem[T](list : ListView[T]) = list.focusModel().focusedItem()    
 	def onAction[T](list : ListView[T] , action : T => Unit) = {
-		list.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2) 
+		list.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.PRIMARY) 
 			action(focusedItem(list))
 		list.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 			action(focusedItem(list))
@@ -38,7 +38,7 @@ object JFXUtil {
 
 	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()    
 	def onAction[T](table : TableView[T] , action : T => Unit) = {
-		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2) 
+		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.PRIMARY) 
 			action(focusedItem(table))
 		table.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 			action(focusedItem(table))

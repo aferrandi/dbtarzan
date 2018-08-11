@@ -3,7 +3,7 @@ package dbtarzan.gui
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.layout.Priority
 import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView, TableCell, SelectionMode, ContextMenu, Alert, TextArea, Label}
+import scalafx.scene.control.{TableColumn, TableView, TableCell, SelectionMode, ContextMenu, MenuItem, Alert, TextArea, Label}
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.image.{ Image, ImageView }
 import scalafx.Includes._
@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter
 
 import dbtarzan.messages.TLogMessage
 import dbtarzan.messages.LogText
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.util.{ JFXUtil, LogIcons }
 
 /**
@@ -33,7 +34,14 @@ class LogList extends TLogs with TControlBuilder {
     editable = true
     placeholder = Label("") // prevent "no content in table" message to appear when the table is empty
     columnResizePolicy = TableView.ConstrainedResizePolicy
-    contextMenu = new ContextMenu(ClipboardMenuMaker.buildClipboardMenu("Copy Message To Clipboard", () => selectionToString()))
+    contextMenu = new ContextMenu(new MenuItem("Copy Message To Clipboard") {
+            onAction = (ev: ActionEvent) =>  try {
+              JFXUtil.copyTextToClipboard(selectionToString())
+              println("Message copied")
+            } catch {
+              case ex : Exception => println("Copying message to the clipboard got ", ex)
+            }
+          })
     stylesheets += "loglist.css"
   }
 

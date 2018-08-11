@@ -1,10 +1,12 @@
 package dbtarzan.gui
 
 import scalafx.stage.Stage
-import scalafx.scene.control.{ TableView, SplitPane, Button, MenuItem, Menu, MenuBar }
+import scalafx.scene.control.{ TableView, SplitPane, Button, MenuItem, Menu, MenuBar, CheckMenuItem }
 import scalafx.scene.layout.BorderPane
+import scalafx.scene.input.KeyCombination
 import scalafx.event.ActionEvent
-import scalafx.scene.Parent
+import scalafx.scene.{ Parent, Node }
+import scalafx.collections.ObservableBuffer 
 import scalafx.Includes._
 import akka.actor.ActorRef
 import java.time.LocalDateTime
@@ -20,9 +22,12 @@ import dbtarzan.messages._
 */
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.db.Table, databaseId : DatabaseId) extends TTable with TControlBuilder {
   private val foreignKeyList = new ForeignKeyList()
+  private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
   private val tableId = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
-  private val table = new Table(dbActor, tableId, dbTable)
+  private val table = new Table(dbActor, guiActor, tableId, dbTable)
   private var useNewTable : dbtarzan.db.Table => Unit = table => {}
+  private var rowDetails : Option[RowDetailsView] = None
+  table.setRowClickListener(row => rowDetails.foreach(details => details.displayRow(row)))
   private val log = new Logger(guiActor)
   private val queryText = new QueryText() { 
     onEnter(text => {
@@ -30,10 +35,12 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
         useNewTable(tableWithFilters)
     })
   }
+  private val splitCenter = buildCenter()
+  fillSplitPanel()
   private val progressBar = new TableProgressBar()
   private val layout = new BorderPane {
     top = buildTop()
-    center = buildCenter()
+    center = splitCenter
     bottom = progressBar.control
   }
   foreignKeyList.onForeignKeySelected(key => openTableConnectedByForeignKey(key))
@@ -63,23 +70,66 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
     menus = List(
       new Menu(JFXUtil.threeLines) {
         items = List(
-            ClipboardMenuMaker.buildClipboardMenu("Copy SQL To Clipboard", () => dbTable.sql),
+            new MenuItem("Copy SQL To Clipboard") {
+              onAction = (ev: ActionEvent) =>  try {
+                JFXUtil.copyTextToClipboard(dbTable.sql)
+                log.info("SQL copied")
+              } catch {
+                case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)
+              }
+            },
             new MenuItem("Close tabs after this") {
                 onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(databaseId, tableId)
+                accelerator = KeyCombination("Ctrl+ALT+A")
             },
             new MenuItem("Close tabs before this") {
               onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(databaseId, tableId)
+                accelerator = KeyCombination("Ctrl+ALT+B")
             },
             new MenuItem("Close all tabs") {                 
               onAction = (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(databaseId)
             },
-            new MenuItem("Check All")  { onAction = { ev: ActionEvent => table.checkAll(true) } },
-            new MenuItem("Uncheck All") { onAction = { ev: ActionEvent => table.checkAll(false) } }
+            new MenuItem("Check All")  { 
+              onAction = { ev: ActionEvent => table.checkAll(true) }
+              accelerator = KeyCombination("Ctrl+SHIFT+A") 
+              },
+            new MenuItem("Uncheck All") { 
+              onAction = { ev: ActionEvent => table.checkAll(false) } 
+              accelerator = KeyCombination("Ctrl+SHIFT+N") 
+              },
+            new CheckMenuItem("Row Details") { 
+              onAction = { ev: ActionEvent => switchRowDetails() }
+              accelerator = KeyCombination("Ctrl+R")
+              }
           )
         }
       )
       stylesheets += "orderByMenuBar.css"
     }
+
+  private def switchRowDetails() : Unit = {
+    rowDetails= rowDetails match {
+      case None => Some(new RowDetailsView(dbTable))
+      case Some(_) => None
+    }
+    fillSplitPanel()  
+  }
+
+  private def setSplitCenterItems(items : List[javafx.scene.Node]) : Unit = {
+    splitCenter.items.clear()
+    splitCenter.items ++= items
+  }
+
+  private def fillSplitPanel() : Unit = rowDetails match { 
+    case Some(details) => {
+        setSplitCenterItems(List(table.control, details.control, foreignKeyListWithTitle))
+        splitCenter.dividerPositions_=(0.6, 0.8)      
+    }
+    case None => {
+        setSplitCenterItems(List(table.control,  foreignKeyListWithTitle))
+        splitCenter.dividerPositions = 0.8            
+    }
+  }
 
   private def buildOrderByMenu() = new Menu("Order by") {
       items = dbTable.columnNames.map(f => 
@@ -101,12 +151,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
 
   /* builds the split panel containing the table and the foreign keys list */
   private def buildCenter() = new SplitPane {
-        maxHeight = Double.MaxValue
-        maxWidth = Double.MaxValue
-        val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
-        items.addAll(table.control, foreignKeyListWithTitle)
-        dividerPositions = 0.8
-        SplitPane.setResizableWithParent(foreignKeyListWithTitle, false)
+    maxHeight = Double.MaxValue
+    maxWidth = Double.MaxValue
+    dividerPositions = 0.8
+    SplitPane.setResizableWithParent(foreignKeyListWithTitle, false)
   }
 
   /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */
