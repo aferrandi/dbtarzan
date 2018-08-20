@@ -6,7 +6,8 @@ import dbtarzan.messages.{QueryRows, QueryForeignKeys, TableId}
 	Represents the table of a database 
 */
 class Table private (
-	description : TableDescription, columns : Fields, 
+	description : TableDescription, 
+	columns : Fields, 
 	foreignFilter : Option[ForeignKeyCriteria], 
 	genericFilter : Option[Filter], 
 	orderByFields : Option[OrderByFields],

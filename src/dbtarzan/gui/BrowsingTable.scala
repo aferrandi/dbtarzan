@@ -175,6 +175,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
     progressBar.receivedForeignKeys()
   }
 
+  def copySelectionToClipboard(includeHeaders : Boolean) : Unit = table.copySelectionToClipboard(includeHeaders) 
+
+
   def getId : TableId = tableId
   def rowsNumber = table.rowsNumber
   def sql = dbTable.sql

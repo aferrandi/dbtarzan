@@ -7,15 +7,15 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.input.{ MouseEvent, MouseButton } 
 import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
-import scalafx.event.ActionEvent
 import scalafx.Includes._
-import dbtarzan.gui.util.JFXUtil
+import akka.actor.ActorRef
 import dbtarzan.db.{Field, Row, Rows, DBEnumsText}
 import dbtarzan.messages._
-import akka.actor.ActorRef
+import dbtarzan.gui.util.JFXUtil
+import dbtarzan.messages.Logger
 
 /** The GUI table control showing the content of a database table in a GUI table*/
-class Table(dbActor: ActorRef, guiActor : ActorRef, id : TableId, dbTable : dbtarzan.db.Table) extends TControlBuilder {
+class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable : dbtarzan.db.Table) extends TControlBuilder {
   private val log = new Logger(guiActor)
   val names = dbTable.columnNames
   println("ColumnNames: "+names.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
@@ -31,51 +31,31 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, id : TableId, dbTable : dbta
   private val fromRow = new CheckedRowFromRow(checkedRows, table.selectionModel()) 
 
   /* requests the rows for the table to the database actor. They come back using the addRows function */
-  dbActor ! QueryRows(id, dbTable.sql) 
+  dbActor ! QueryRows(tableId, dbTable.sql) 
   /* requests the foreign keys for this table. */
-  dbActor ! QueryForeignKeys(id)
+  dbActor ! QueryForeignKeys(tableId)
  
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
-  def buildTable() = new TableView[CheckedRow](buffer) {
+  def buildTable() = new TableView[CheckedRow](buffer) {s
     columns += buildCheckColumn()
     columns ++= names.zipWithIndex.map({ case (field, i) => buildColumn(field, i) })
     editable = true
     selectionModel().selectionMode() = SelectionMode.MULTIPLE
     selectionModel().selectedItem.onChange(
       (_, _, row) => {
-        val rowValues = row.row
-        rowClickListener.foreach(listener => listener(rowValues))
+        Option(row).map(_.row).foreach(rowValues =>
+          rowClickListener.foreach(listener => listener(rowValues))
+        )
       } 
     )
-    contextMenu = buildContextMenu()
+    contextMenu = new TableContextMenu(tableId, guiActor).buildContextMenu()
   }
 
   private def checkedIfOnlyOne() =
     if(buffer.length == 1)
       checkAll(true)    
 
-  private def buildContextMenu() = new ContextMenu(
-      new Menu("Copy selection to clipboard") {
-        items = List(
-          new MenuItem("Only cells") {
-            onAction = (ev: ActionEvent) =>  try {
-              JFXUtil.copyTextToClipboard(selectedRowsToString())
-              log.info("Cells copied")
-            } catch {
-              case ex : Exception => log.error("Copying cells to the clipboard got ", ex)
-            }
-          },
-          new MenuItem("Cells with headers") {
-            onAction = (ev: ActionEvent) =>  try {
-              JFXUtil.copyTextToClipboard(headersToString() + "\n" + selectedRowsToString())
-              log.info("Cells and headers copied")
-            } catch {
-              case ex : Exception => log.error("Copying cells and headers to the clipboard got ", ex)
-            }
-          }
-        )
-      }) 
-
+  /* check the check box of all the loaded rows */
   def checkAll(check : Boolean) : Unit = 
     buffer.foreach(row => row.checked.value = check)
 
@@ -99,14 +79,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, id : TableId, dbTable : dbta
     checkColumn
   }
 
-  /* converts the selected part of the table to a string that can be written to the clipboard */
-  private def selectedRowsToString() : String = {
-    val rows = table.getSelectionModel().getSelectedItems()
-    rows.map(cellsInRow => cellsInRow.values.map(cell => cell()).mkString("\t") ).mkString("\n")
-  }
-
-  private def headersToString() : String =
-    names.map(_.name).mkString("\t")
+  private def selectedRows() : ObservableBuffer[CheckedRow]  = table.selectionModel().selectedItems
 
   /* adds the database rows to the table */
   def addRows(rows : Rows) : Unit = { 
@@ -119,11 +92,30 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, id : TableId, dbTable : dbta
   }
 
   /* the unique id for the table */
-  def getId = id
+  def getId = tableId
 
   def getCheckedRows = checkedRows.rows
 
   def rowsNumber = buffer.length
+
+  /* converts the selected part of the table to a string that can be written to the clipboard */
+  private def selectedRowsToString() : String = {
+    selectedRows().map(cellsInRow => cellsInRow.values.map(cell => cell()).mkString("\t") ).mkString("\n")
+  }
+
+  private def headersToString() : String =
+    names.map(_.name).mkString("\t")
+
+  def copySelectionToClipboard(includeHeaders : Boolean) : Unit = 
+    try {
+      includeHeaders match {
+        case true => JFXUtil.copyTextToClipboard(headersToString()+ "\n" + selectedRowsToString()) 
+        case false => JFXUtil.copyTextToClipboard(selectedRowsToString())
+      } 
+      log.info("Selection copied")
+    } catch {
+      case ex : Exception => log.error("Copying selection to the clipboard got ", ex)
+    }
 
   def control : Parent = table
 }

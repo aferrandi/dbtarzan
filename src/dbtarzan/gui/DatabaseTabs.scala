@@ -2,12 +2,12 @@ package dbtarzan.gui
 
 import scalafx.scene.control.{ TabPane, Tab }
 import scalafx.scene.Parent
-import dbtarzan.messages._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.HashMap
 import scalafx.Includes._
 import scalafx.event.Event
 import akka.actor.{ ActorRef, ActorSystem }
+import dbtarzan.messages._
 
 /** All the tabs with one database for each*/
 class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) extends TDatabases with TControlBuilder {
@@ -83,6 +83,8 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalTabsBefore(request.tableId))
 
   def requestRemovalAllTabs(request : RequestRemovalAllTabs) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalAllTabs())
+
+  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.id, database => database.copySelectionToClipboard(copy))
 
   /* removes the database tab and its content */
   def removeDatabase(databaseToClose : ResponseCloseDatabase) : Unit = {

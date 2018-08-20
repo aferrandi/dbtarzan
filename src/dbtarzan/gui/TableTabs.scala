@@ -101,6 +101,11 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
   
+  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.id, table => 
+      table.table.copySelectionToClipboard(copy.includeHeaders)
+  )
+
+
   def removeTables(ids : List[TableId]) : Unit = {
       val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)
       mapTable --= ids

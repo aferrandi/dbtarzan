@@ -58,3 +58,5 @@ case class CopyToFile(databaseName : String)
 case class ConnectionDatas(datas : List[ConnectionData])
 
 case class DatabaseNames(names : List[String])
+
+case class CopySelectionToClipboard(id : TableId, includeHeaders : Boolean)

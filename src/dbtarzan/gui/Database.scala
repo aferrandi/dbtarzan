@@ -75,6 +75,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
  
   def requestRemovalAllTabs() : Unit = tableTabs.requestRemovalAllTabs()
 
+  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = tableTabs.copySelectionToClipboard(copy)
 
   def getId = id
 

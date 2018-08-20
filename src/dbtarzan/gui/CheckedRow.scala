@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.beans.property.{StringProperty, BooleanProperty}
-import dbtarzan.db.{Row, Rows, Field}
+import dbtarzan.db.{Row, Rows, Field, FieldType}
 import scalafx.Includes._
 import scalafx.scene.control.MultipleSelectionModel
 /**
@@ -49,8 +49,21 @@ class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSel
 		row.values.zipWithIndex.map({ case (value, i) => valueToProperty(columnNames(i), value)})
 	}
 	/* creates the cell in the row */
-	private def valueToProperty(field : Field, value : String) = 
-		new StringProperty(this, field.name, value)
+	private def valueToProperty(field : Field, value : String) =
+		new StringProperty(this, field.name, toDisplayOnlyOneLine(field, value))
+	
+	/* text with multiple lines make tables unusable. Keep one line. The other lines are displayed in the RowDetailsView */
+	private def toDisplayOnlyOneLine(field : Field, value : String) : String = field.fieldType match {
+		case FieldType.STRING => Option(value).map(s => truncateToFirstLine(s)).getOrElse("")
+		case _ => value
+	}
+
+	/* if there are multiple lines returns only the first line followed by "...". */
+	private def truncateToFirstLine(s : String) : String = 
+		if(s.contains('\n'))
+			s.takeWhile(c => c != '\n' && c != '\r')+"..."
+		else
+			s 
 
 	/* the checkbox field property */
 	private def checkedProperty() =
