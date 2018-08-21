@@ -63,12 +63,16 @@ class RowDetailsCell(field: Field) {
 }
 
 /* displays one single line of the table, as a vertical list of the fields */
-class RowDetailsView(dbTable : dbtarzan.db.Table) extends TControlBuilder {
+class RowDetailsView(dbTable : dbtarzan.db.Table, initialRow: Option[Row]) extends TControlBuilder {
     private val names = dbTable.columnNames
     /* the cell components */
     private val cells : List[RowDetailsCell] = names.map({ case (field) => new RowDetailsCell(field)})
 
-    private val cellsContainer = new ScrollPane {
+    private val cellsContainer = buildCellsContainer()
+
+    initialRow.foreach(displayRow)
+
+    private def buildCellsContainer() = new ScrollPane {
         content = new VBox {
             padding = Insets(5)
             spacing = 5
@@ -81,6 +85,7 @@ class RowDetailsView(dbTable : dbtarzan.db.Table) extends TControlBuilder {
         vbarPolicy = ScrollPane.ScrollBarPolicy.AsNeeded
         fitToWidth = true
     }
+
     
     def displayRow(row : Row) : Unit = {
         row.values.zip(cells).foreach({ case (value, cell) => cell.showText(value)})

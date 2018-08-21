@@ -36,17 +36,16 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
   dbActor ! QueryForeignKeys(tableId)
  
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
-  def buildTable() = new TableView[CheckedRow](buffer) {s
+  def buildTable() = new TableView[CheckedRow](buffer) {
     columns += buildCheckColumn()
     columns ++= names.zipWithIndex.map({ case (field, i) => buildColumn(field, i) })
     editable = true
     selectionModel().selectionMode() = SelectionMode.MULTIPLE
     selectionModel().selectedItem.onChange(
-      (_, _, row) => {
+      (_, _, row) => 
         Option(row).map(_.row).foreach(rowValues =>
           rowClickListener.foreach(listener => listener(rowValues))
         )
-      } 
     )
     contextMenu = new TableContextMenu(tableId, guiActor).buildContextMenu()
   }
@@ -80,6 +79,9 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
   }
 
   private def selectedRows() : ObservableBuffer[CheckedRow]  = table.selectionModel().selectedItems
+  
+  /* the first row in the selection (if any), the row you want to display in the RowDetailsView */
+  def firstSelectedRow() : Option[Row] = selectedRows().headOption.map(_.row) 
 
   /* adds the database rows to the table */
   def addRows(rows : Rows) : Unit = { 

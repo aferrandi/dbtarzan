@@ -109,7 +109,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
 
   private def switchRowDetails() : Unit = {
     rowDetails= rowDetails match {
-      case None => Some(new RowDetailsView(dbTable))
+      case None => Some(new RowDetailsView(dbTable, table.firstSelectedRow()))
       case Some(_) => None
     }
     fillSplitPanel()  
