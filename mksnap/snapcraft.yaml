@@ -28,5 +28,5 @@ parts:
     # without libcamberra... it complains that canberra-gtk is not available. 
     stage-packages: [libc6, openjdk-8-jre, openjfx,  zlib1g, fonts-ubuntu, libcanberra-gtk-module, libcanberra-gtk3-module]
   dbtarzan:
-    source: source
+    source: source/
     plugin: dump

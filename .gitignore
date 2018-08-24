@@ -13,9 +13,7 @@ target
 *.~
 *.fgk
 togit
-db
-!src/db
-!test/db
+db_example
 sqllite
 .ensime*
 mksnap/prime
