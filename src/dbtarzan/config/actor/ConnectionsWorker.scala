@@ -35,8 +35,10 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Ac
 	 private def queryDatabase(databaseName : String) : Unit = {
 	    	println("Querying the database "+databaseName)
 	    	try {
-	    		if(!mapDBWorker.isDefinedAt(databaseName))
-	    			guiActor ! ResponseDatabase(databaseName, getDBWorker(databaseName))
+	    		if(!mapDBWorker.isDefinedAt(databaseName)) {
+					val dbWorker = getDBWorker(databaseName)
+	    			guiActor ! ResponseDatabase(databaseName, dbWorker)
+				}
 	    		else
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseName)
 			} catch {

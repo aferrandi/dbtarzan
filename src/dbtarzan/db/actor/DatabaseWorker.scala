@@ -1,6 +1,6 @@
 package dbtarzan.db.actor
 
-import java.sql.{Connection, ResultSet}
+import java.sql.{Connection, ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
 import akka.actor.ActorRef
@@ -18,22 +18,30 @@ import dbtarzan.db.ForeignKeysToFile
 /* The actor that reads data from the database */
 class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionData, guiActor : ActorRef) extends Actor {
 	def databaseName = data.name
-	var core = buildCore()
-	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
 	val log = new Logger(guiActor)
+	var optCore :Option[DatabaseWorkerCore] = buildCore()
+	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
 	loadForeignKeysFromFile()	
 
-	private def buildCore() : DatabaseWorkerCore = try {
-			new DatabaseWorkerCore(createConnection.getConnection(data), data.schema)
+	private def buildCore() : Option[DatabaseWorkerCore] = try {
+			val connection = createConnection.getConnection(data)
+			log.info("Connected to "+databaseName) 
+			Some(new DatabaseWorkerCore(connection, data.schema))
 		} 
-		catch { case e : Exception => { 
-			log.error("Cronnecting to the database "+databaseName+" got", e) 
-			throw e 
-		}}
+		catch { 
+			case se : SQLException => { 
+				log.error("Cronnecting to the database "+databaseName+" got sql exception with state "+se.getSQLState()+" and error code "+se.getErrorCode(), se) 
+				None
+			}
+			case e : Exception => { 
+				log.error("Cronnecting to the database "+databaseName+" got", e) 
+				None
+			}
+		}
 
 	private def loadForeignKeysFromFile() : Unit = 
 		if(ForeignKeysToFile.fileExist(databaseName)) {
-			log.info("Loading foreign keys from the database file "+databaseName)
+			log.info("Loadruning foreign keys from the database file "+databaseName)
 			try
 			{
 				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
@@ -43,7 +51,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		}
 
 	/* gets the columns of a table from the database metadata */
-	private def columnNames(tableName : String) : Fields = {
+	private def columnNames(core : DatabaseWorkerCore, tableName : String) : Fields = {
 		var meta = core.metadata()
 		using(meta.getColumns(null, data.schema.orNull, tableName, "%")) { rs =>
 			val list = new ListBuffer[Field]()			
@@ -57,7 +65,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	}
 
 	/* gets all the tables in the database/schema from the database metadata */
-	private def tableNames() : TableNames = {
+	private def tableNames(core : DatabaseWorkerCore) : TableNames = {
 		var meta = core.metadata()
 		using(meta.getTables(null, data.schema.orNull, "%", Array("TABLE"))) { rs =>
 			val list = new ListBuffer[String]()
@@ -77,13 +85,19 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			case _ => Some(FieldType.STRING)
 		}
 
-
-
-	private def handleErr[R](r: => R): Unit = 
-	    try { r } catch {
+	/* handles the exceptions sending the exception messages to the GUI */
+	private def handleErr[R](operation: => R): Unit = 
+	    try { operation } catch {
 	      case e : Exception => guiActor ! Error(LocalDateTime.now, "dbWorker", e)
 	    }
-	  
+
+	/* if conneced execure the operation, otherwise send an error to the GUI */
+	private def withCore[R](operation: DatabaseWorkerCore => R): Unit =
+		optCore match {
+			case Some(core) =>  handleErr( operation(core) )
+			case None => guiActor ! Error(LocalDateTime.now, "dbWorker", new Exception("Database not connected"))
+		}
+
 
 	override def  postStop() : Unit = {
 		println("Actor for "+databaseName+" stopped")
@@ -92,39 +106,43 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	private def close() : Unit = handleErr({
 		println("Closing the worker for "+databaseName)
 		guiActor ! ResponseCloseDatabase(databaseName)
-		core.closeConnection()
+		optCore.foreach(core =>
+			core.closeConnection()
+		)
 		context.stop(self)
 	})
 
 	private def reset() : Unit = handleErr({
 		println("Reseting the connection of the worker for "+databaseName)
-		try { core.closeConnection() } catch { case e : Throwable => {} }
-		core = buildCore()
+		optCore.foreach(core =>
+			try { core.closeConnection() } catch { case e : Throwable => {} }
+			)
+		optCore = buildCore()
 		log.info("Connection to the database "+databaseName+" resetted")
 	})		
 
-	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = handleErr({
+	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(core => {
 		val tableName = qry.id.tableName
 		val foreignKeys = foreignKeysCache.getOrElseUpdate(tableName, core.foreignKeyLoader.foreignKeys(tableName))
 		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)
 	})
 
-	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = handleErr(
+	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(core => 
 		core.queryLoader.query(qry, maxRows.getOrElse(500),  rows => 
 			guiActor ! ResponseRows(qry.id, rows)
 			))
 
-	private def queryTables(qry: QueryTables) : Unit = handleErr(
-    		guiActor ! ResponseTables(qry.id, tableNames())
+	private def queryTables(qry: QueryTables) : Unit = withCore(core => 
+    		guiActor ! ResponseTables(qry.id, tableNames(core))
 		)
 
 
-	private def queryColumns(qry: QueryColumns) : Unit = handleErr( 
-    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(qry.tableName), queryAttributes())
+	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => 
+    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(core, qry.tableName), queryAttributes())
     	)
 
-	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  handleErr(
-    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(qry.tableName), queryAttributes())
+	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => 
+    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(core, qry.tableName), queryAttributes())
     	)		
 
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)
