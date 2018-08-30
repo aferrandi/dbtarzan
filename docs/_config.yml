@@ -17,10 +17,10 @@ title: DBTarzan
 email: ferrandi.andrea@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   The database browser
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/dbtarzan" # the subpath of your site, e.g. /blog
+url: "http://aferrandi.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
-github_username:  jekyll
+github_username:  aferrandi
 
 # Build settings
 markdown: kramdown
