@@ -9,7 +9,7 @@ categories: [Other]
 
 ## Internal structure
 
-![Internal](/images/internal.png)
+![Internal](images/internal.png)
 
 DbTarzan is modeled to avoid synchronous calls to the database. Everything is done **asynchronously**, with messaging among Akka actors.
 DbTarzan does not user futures, but simple Akka actors.

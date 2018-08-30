@@ -15,13 +15,13 @@ In this case applying ORDER BY clauses can help exploring the data in the table.
 
 To apply an ORDER BY clause to the existing tab use the **Order By** menu on the right:
 
-![order by menu](/images/orderbymenu.png)
+![order by menu](images/orderbymenu.png)
 
 Choosing one column name from the menu the new tab will be ordered by that column in ascending order.
 This can be enough in most cases.
 If instead you need to sort the table using multiple columns or in descending order, clicking on the menu's **More...** option, a dialog opens:
 
-![order by dialog](/images/orderbydialog.png)
+![order by dialog](images/orderbydialog.png)
 
 The dialog contains a list of order by columns, in the order in which they get applied in the final order by clause.
 To add a new column, choose column/field name and direction (ASC for ascending, DESC for descending) and press the **Add** button. 

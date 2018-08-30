@@ -31,7 +31,7 @@ The schema is absolutely needed for Oracle, otherwise DbTarzan will show all tab
 
 From version 0.97 the file can be created or edited directly inside DbTarzan, clicking on the <b>Edit Connections</b> context menu of the databases list:
 
-![Edit Connections](/images/buildForeignKeysFile.jpeg)
+![Edit Connections](images/buildForeignKeysFile.jpeg)
 
 and then using the [connections editor](Connections-editor):
 

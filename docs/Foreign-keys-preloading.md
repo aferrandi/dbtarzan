@@ -14,7 +14,7 @@ This can make the exploration of the database slow without an apparent reason, a
 
 From version 0.94 there is a context menu in the lists of the databases. 
 
-![Foreign keys preloading menu](/images/buildForeignKeysFile.jpeg)
+![Foreign keys preloading menu](images/buildForeignKeysFile.jpeg)
 
 Right clicking on the name of the database and clicking on _Build foreign keys file_ all the foreign keys of the tables in the database get written in a file.
 

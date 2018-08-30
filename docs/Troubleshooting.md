@@ -21,4 +21,4 @@ If opening tabs is very slow it can be that reading the foreign keys from the da
 
 A special case is when the database closes automatically the connection after a certain period to free resources (e.g. Azure SQL Server). To reopen the connection, click with the right mouse button on the **Tables** label and click the **Reset database connection** context menu. The connection will be reopened.
 
-![Reset connection](/images/resetConnection.jpeg)
+![Reset connection](images/resetConnection.jpeg)

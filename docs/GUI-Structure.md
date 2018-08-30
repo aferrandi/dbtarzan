@@ -9,7 +9,7 @@ categories: [GUI]
 
 ## GUI structure
 
-![Window Commented](/images/windowCommented.jpeg)
+![Window Commented](images/windowCommented.jpeg)
 
 1. The **databases** list, as read from the configuration. When you open a database, a new database tab is added.
 2. The **tables** list for the selected database. When you open a table, a new [table tab](Table-tab-tag) is added.
