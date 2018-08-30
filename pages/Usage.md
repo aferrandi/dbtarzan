@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Usage
+resource: true
+categories: [GUI]
 
 ---
 

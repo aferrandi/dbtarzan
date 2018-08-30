@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Internal structure
+resource: true
+categories: [Other]
 
 ---
 

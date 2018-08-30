@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Foreign keys preloading
+resource: true
+categories: [GUI]
 
 ---
 

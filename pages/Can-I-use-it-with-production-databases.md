@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Is it safe?
+resource: true
+categories: [Other]
 
 ---
 

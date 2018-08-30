@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Install and connect
+resource: true
+categories: [Other]
 
 ---
 

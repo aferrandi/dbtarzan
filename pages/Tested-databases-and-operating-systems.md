@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Tested DB and OS
+resource: true
+categories: [Other]
 
 ---
 

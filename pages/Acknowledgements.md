@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Acknowledgments
+resource: true
+
 
 ---
 

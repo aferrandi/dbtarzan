@@ -1,7 +1,10 @@
 ---
-layout: page
+layout: default
 title: About
 permalink: /about/
+resource: true
+categories: [Other]
+
 ---
 
 ## About

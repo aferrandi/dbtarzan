@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Troubleshooting
+resource: true
+categories: [Other]
 
 ---
 

@@ -1,10 +1,13 @@
 ---
 
 layout: default
+title: Copy data
+resource: true
+categories: [GUI]
 
 ---
 
-## Copy Data
+## Copy data
 
 DBTarzan can be used together with SQL script editors, by copying the query it generates.
 To copy the SQL query of a table tab to the clipboard, right click on the tab text and click on the menu "Copy SQL to clipboard":

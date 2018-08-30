@@ -1,6 +1,9 @@
 ---
 
 layout: default
+title: Table tab tag 
+resource: true
+categories: [GUI]
 
 ---
 
