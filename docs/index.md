@@ -11,7 +11,7 @@ categories: [Other]
 
 ## Welcome to DbTarzan.
 
-![DBTarzan](images/window.jpeg)
+![DBTarzan]({{site.url}}/images/window.jpeg)
 
 With DBTarzan you can browse the tables of a database using the relations in their **foreign keys**.
 
