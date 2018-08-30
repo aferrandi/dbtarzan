@@ -4,17 +4,19 @@ import scalafx.scene.control.{ SplitPane, MenuItem, Menu, MenuBar }
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
 import scalafx.scene.image.Image
-import scalafx.stage.{ Screen}
+import scalafx.stage.Screen
 import scalafx.Includes._
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.messages.ConnectionDatas
-import scalafx.scene.layout.BorderPane
-import dbtarzan.gui.config.ConnectionEditorStarter
-import dbtarzan.types.ConfigPath
 import scalafx.event.ActionEvent
 import scalafx.geometry.Orientation
 import scalafx.scene.web.WebView
+import scalafx.scene.layout.BorderPane
 import akka.actor.ActorRef
+import dbtarzan.gui.util.JFXUtil
+import dbtarzan.messages.ConnectionDatas
+import dbtarzan.gui.config.ConnectionEditorStarter
+import dbtarzan.types.ConfigPath
+import dbtarzan.messages.Logger
+
 
 
 
@@ -36,9 +38,9 @@ class MainGUI(
 	/* the database/connection list on the left side */
 	val databaseList = new DatabaseList()
 	/* how big is the screen */
-	val screenBounds = Screen.primary.visualBounds
+	private val screenBounds = Screen.primary.visualBounds
 	/* the gui */
-	val stage = buildStage()
+	private val stage = buildStage()
 
 	def onDatabaseSelected(use : String => Unit) : Unit = databaseList.onDatabaseSelected(use)
 
@@ -62,7 +64,10 @@ class MainGUI(
 		    items = List(
 		      new MenuItem("Edit Connections") {
 		        onAction = {
-		          e: ActionEvent => ConnectionEditorStarter.openConnectionsEditor(stage, configActor, connectonsConfigPath)
+		          e: ActionEvent => {
+									new Logger(guiWorker).info("Editing connections configuration file "+connectonsConfigPath.path)
+								ConnectionEditorStarter.openConnectionsEditor(stage, configActor, connectonsConfigPath)
+							}
 		        }
 		      }
 		    )

@@ -24,10 +24,10 @@ object Main extends JFXApp {
   println("Named commend line arguments:"+ parameters.named.mkString(","))
   val version = versionFromManifest()
   val system = ActorSystem("Sys")
-  var configsPath = parameters.named.getOrElse("configPath", ".")
+  var configsPath = parameters.named.getOrElse("configPath", configPathFromFile().getOrElse(".") )
   val generalConfigPath = ConfigPath(Paths.get(configsPath, "general.config"))
   val connectionsConfigPath = ConfigPath(Paths.get(configsPath, "connections.config"))
-  println("generalConfigPath:"+generalConfigPath+" connectionsConfigPath:"+connectionsConfigPath.path)
+  println("Current directory: "+System.getProperty("user.dir")+" generalConfigPath:"+generalConfigPath+" connectionsConfigPath:"+connectionsConfigPath.path)
   val connections = ConnectionDataReader.read(connectionsConfigPath)
   val mainGUI = new MainGUI(_guiActor, _configActor, connectionsConfigPath, version, openWeb, closeApp)
   val guiActor = system.actorOf(Props(new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
@@ -70,5 +70,23 @@ object Main extends JFXApp {
     }
   
   private def versionFromManifest() = Option(getClass().getPackage().getImplementationVersion()).getOrElse("")
+
+  /* Only way to get the path of a writable directory in an app under MacOSX, but still generic */
+  private def configPathFromFile() : Option[String] = {
+    import java.nio.file.{Paths, Files}
+    val fileName = "dbtarzanConfigPath.cfg"
+    try {
+      Files.exists(Paths.get(fileName)) match {
+        case true => Some(scala.io.Source.fromFile(fileName).mkString)
+        case false => None
+      }
+    }
+    catch {
+      case e: Throwable =>  {
+        println("Error reading the file "+fileName+" "+e.getMessage())
+        None
+      }
+    }    
+  }
 }
 
