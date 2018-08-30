@@ -47,7 +47,9 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
 				tablesKeys.keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
 			} 
-			catch { case e : Exception => log.error("Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) }
+			catch { 
+				case e : Exception => log.error("Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) 
+			}
 		}
 
 	/* gets the columns of a table from the database metadata */
