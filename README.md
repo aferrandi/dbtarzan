@@ -21,7 +21,7 @@ The following videos show examples of database exploration, the first one is a s
 
 [![IMAGE dbtarzan detailed video on youtube](https://img.youtube.com/vi/CezsF9vME6U/default.jpg)](https://youtu.be/CezsF9vME6U)
 
-More details in the [Wiki](https://aferrandi.github.io/dbtarzan).
+More details in the [Documentation](https://aferrandi.github.io/dbtarzan).
 
 Examples
 --------
