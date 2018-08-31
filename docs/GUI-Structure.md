@@ -19,4 +19,6 @@ categories: [GUI]
 6. The **order by** in a table tab. Choosing the [order-by](Order-By) column or columns, a new table tab is added with the result of sorting the rows of the original table with the order by clause.
 7. The **errors** that are displayed when something goes wrong, together with other log: wrong where clause, problems connecting to a database. 
 
+Using the table tab menu the [Vertical row view](Vertical-row-vIew) can be displayed on the rigth side of a table.
+
 Under the table tab there is a **progress bar**. It progresses when table rows have been loaded and when foreign keys have been loaded.
