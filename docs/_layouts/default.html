@@ -53,7 +53,7 @@
           {% endif %}
 
           {% for cat in site.category-list %}
-          ### {{ cat }}
+          <h3>{{ cat }}</h3>
           <ul>
             {% for page in site.pages %}
               {% if page.resource == true %}
