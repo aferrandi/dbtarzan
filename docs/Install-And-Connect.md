@@ -23,4 +23,4 @@ To connect to a database:
 * Use the [connection editor](Connections-editor) to describe how DBTarzan can connect to the database.Here you need to specify the [standard JDBC configuration](https://vladmihalcea.com/jdbc-driver-connection-url-strings/): location of the driver on the disk, url, userid, password.
 * Connect to your database and start to [explore it](Usage)
 
-In case of problems connecting to the database, read the [troubleshooting guide](troubleshooting).
+In case of problems connecting to the database, read the [troubleshooting guide](Troubleshooting).
