@@ -43,8 +43,16 @@ packageMacOS := {
   "macosx/package.sh "+macOsDir+" "+version.value !
 }
 
+lazy val packageWin = taskKey[Unit]("Packages Windows app")
+packageWin := {
+  val rootDir = baseDirectory.value
+  "mkwin/packageexe.sh "+rootDir+" "+version.value !
+}
+
+
 addCommandAlias("packageAll", 
 	"; assembly " + 
 	"; debian:packageBin" +
+  "; packageWin" +
   "; packageMacOS"
 )
