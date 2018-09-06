@@ -1,10 +1,12 @@
+import scala.sys.process._
+
 enablePlugins(DebianPlugin,JavaAppPackaging)
 
 // scalacOptions += "-Ylog-classpath"
 
 name := "dbtarzan"
 
-version := "1.13"
+version := "1.14"
 
 maintainer := "Andrea Ferrandi"
 
@@ -34,7 +36,15 @@ packageDescription := "DBTarzan, the database browser"
 debianPackageDependencies in Debian ++= Seq("openjdk-8-jre")
 bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
 
+
+lazy val packageMacOS = taskKey[Unit]("Packages MacOS app")
+packageMacOS := {
+  val macOsDir = baseDirectory.value / "macosx"
+  "macosx/package.sh "+macOsDir+" "+version.value !
+}
+
 addCommandAlias("packageAll", 
 	"; assembly " + 
-	"; debian:packageBin"
+	"; debian:packageBin" +
+  "; packageMacOS"
 )
