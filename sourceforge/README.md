@@ -15,9 +15,9 @@ DBTarzan changelog
 
 - Release 1.13
 
-Added view with vertical representation of a row.
+Added view with vertical representation of a row (Ctrl-R).
 
-More checks in the order by dialog box.
+More checks in the "order by" dialog box.
 
 Copy to clipboard table rows with or without the table header 
 

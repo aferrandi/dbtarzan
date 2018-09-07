@@ -1,14 +1,12 @@
 package dbtarzan.db.actor
 
 import java.sql.{Connection, ResultSet, SQLException}
-import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
 import akka.actor.ActorRef
 import java.time.LocalDateTime
 import scala.collection.mutable.HashMap
 
 import dbtarzan.config.ConnectionData
-import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
 import dbtarzan.messages._
 import dbtarzan.db.util.FileReadWrite
@@ -30,7 +28,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		} 
 		catch { 
 			case se : SQLException => { 
-				log.error("Cronnecting to the database "+databaseName+" got sql exception with state "+se.getSQLState()+" and error code "+se.getErrorCode(), se) 
+				log.error("Cronnecting to the database "+databaseName+" got sql exception "+se.getMessage()+" with state "+se.getSQLState()+" and error code "+se.getErrorCode(), se) 
 				None
 			}
 			case e : Exception => { 
@@ -50,41 +48,6 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			catch { 
 				case e : Exception => log.error("Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) 
 			}
-		}
-
-	/* gets the columns of a table from the database metadata */
-	private def columnNames(core : DatabaseWorkerCore, tableName : String) : Fields = {
-		var meta = core.metadata()
-		using(meta.getColumns(null, data.schema.orNull, tableName, "%")) { rs =>
-			val list = new ListBuffer[Field]()			
-			while(rs.next) {
-				var fieldName = rs.getString("COLUMN_NAME")
-				toType(rs.getInt("DATA_TYPE")).map(fieldType => list += Field(fieldName, fieldType))
-			}
-			println("Columns loaded")
-			Fields(list.toList)
-		}
-	}
-
-	/* gets all the tables in the database/schema from the database metadata */
-	private def tableNames(core : DatabaseWorkerCore) : TableNames = {
-		var meta = core.metadata()
-		using(meta.getTables(null, data.schema.orNull, "%", Array("TABLE"))) { rs =>
-			val list = new ListBuffer[String]()
-			while(rs.next) {
-				list += rs.getString("TABLE_NAME")			
-			}
-			TableNames(list.toList)
-		}
-	}
-
-	/* converts the database column type to a DBTarzan internal type */
-	private def toType(sqlType : Int) : Option[FieldType] = 
-		sqlType match {
-			case java.sql.Types.CHAR => Some(FieldType.STRING)
-			case java.sql.Types.INTEGER => Some(FieldType.INT)
-			case java.sql.Types.FLOAT | java.sql.Types.DOUBLE => Some(FieldType.FLOAT)	
-			case _ => Some(FieldType.STRING)
 		}
 
 	/* handles the exceptions sending the exception messages to the GUI */
@@ -135,20 +98,18 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			))
 
 	private def queryTables(qry: QueryTables) : Unit = withCore(core => 
-    		guiActor ! ResponseTables(qry.id, tableNames(core))
+    		guiActor ! ResponseTables(qry.id, core.metadataLoader.tableNames())
 		)
 
-
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => 
-    		guiActor ! ResponseColumns(qry.id, qry.tableName, columnNames(core, qry.tableName), queryAttributes())
+    		guiActor ! ResponseColumns(qry.id, qry.tableName, core.metadataLoader.columnNames(qry.tableName), queryAttributes())
     	)
 
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => 
-    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, columnNames(core, qry.tableName), queryAttributes())
+    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, core.metadataLoader.columnNames(qry.tableName), queryAttributes())
     	)		
 
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)
-
 
   	def receive = {
 	    case qry : QueryRows => queryRows(qry, data.maxRows)

@@ -1,9 +1,8 @@
-package dbtarzan.db.actor
+package dbtarzan.db
 
 import java.sql.{Connection, ResultSet, SQLException}
 import scala.collection.immutable.Vector
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ Row, Rows}
 import dbtarzan.messages.QueryRows
 
 
@@ -35,7 +34,7 @@ class QueryLoader(connection : java.sql.Connection) {
 				println("Query terminated")
 			}			
 			catch {
-				case se : SQLException  => throw new Exception("With query "+qry.sql+" got sql exception with state "+se.getSQLState()+" and error code "+se.getErrorCode(), se)
+				case se : SQLException  => throw new Exception("With query "+qry.sql+" got sql exception "+se.getMessage()+" with state "+se.getSQLState()+" and error code "+se.getErrorCode(), se)
 				case ex : Throwable => throw new Exception("With query "+qry.sql+" got", ex)
 			}
 		}

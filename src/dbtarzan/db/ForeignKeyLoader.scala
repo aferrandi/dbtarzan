@@ -1,8 +1,7 @@
-package dbtarzan.db.actor
+package dbtarzan.db
 
 import java.sql.{Connection, ResultSet}
 import scala.collection.mutable.ListBuffer
-import dbtarzan.db.{ ForeignKey, ForeignKeys, FieldsOnTable, ForeignKeyDirection }
 import dbtarzan.db.util.ResourceManagement.using
 
 
