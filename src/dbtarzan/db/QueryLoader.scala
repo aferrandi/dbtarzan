@@ -2,13 +2,12 @@ package dbtarzan.db
 
 import java.sql.{Connection, ResultSet, SQLException}
 import scala.collection.immutable.Vector
+
+import dbtarzan.db.util.ExceptionToText
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.messages.QueryRows
 
-
-/**
-	The part of the database actor that runs the table queries
-*/
+/** The part of the database actor that runs the table queries */
 class QueryLoader(connection : java.sql.Connection) {
 	/* does the queries in the database. Sends them back to the GUI in packets of 20 lines 
 	   QueryRows gives the SQL query and tells how many rows must be read in total */
@@ -34,7 +33,7 @@ class QueryLoader(connection : java.sql.Connection) {
 				println("Query terminated")
 			}			
 			catch {
-				case se : SQLException  => throw new Exception("With query "+qry.sql+" got sql exception "+se.getMessage()+" with state "+se.getSQLState()+" and error code "+se.getErrorCode(), se)
+				case se : SQLException  => throw new Exception("With query "+qry.sql+" got "+ExceptionToText.sqlExceptionText(se), se)
 				case ex : Throwable => throw new Exception("With query "+qry.sql+" got", ex)
 			}
 		}

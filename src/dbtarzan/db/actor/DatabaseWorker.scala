@@ -6,6 +6,7 @@ import akka.actor.ActorRef
 import java.time.LocalDateTime
 import scala.collection.mutable.HashMap
 
+import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.ConnectionData
 import dbtarzan.db._
 import dbtarzan.messages._
@@ -28,7 +29,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		} 
 		catch { 
 			case se : SQLException => { 
-				log.error("Cronnecting to the database "+databaseName+" got sql exception "+se.getMessage()+" with state "+se.getSQLState()+" and error code "+se.getErrorCode(), se) 
+				log.error("Cronnecting to the database "+databaseName+" got "+ExceptionToText.sqlExceptionText(se), se) 
 				None
 			}
 			case e : Exception => { 

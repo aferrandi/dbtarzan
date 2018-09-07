@@ -1,8 +1,10 @@
 package dbtarzan.db
 
-import java.sql.{Connection, ResultSet}
+import java.sql.{Connection, ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
+
 import dbtarzan.db.util.ResourceManagement.using
+import dbtarzan.db.util.ExceptionToText
 
 
 /**
@@ -26,6 +28,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 				rs.getString("FKCOLUMN_NAME"), 				
 				rs.getString("PKCOLUMN_NAME")
 			)
+
 	/* converts the foreign columns of a foreign key to the foreign key itself */
 	private def foreignColumnsToForeignKeys(list : List[ForeignKeyColumn]) : List[ForeignKey] = {
 		val mapByKey = list.groupBy(column => column.key)
@@ -59,18 +62,23 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 	/**
 		All the foreign keys from the table and TO the table (used in reverse order)
 	*/
-	def foreignKeys(tableName : String) : ForeignKeys = {
-		var meta = connection.getMetaData()
-		using(meta.getImportedKeys(null, schema.orNull, tableName)) { rs =>
-			val keysImported = rsToForeignKeys(rs) 
-			using(meta.getExportedKeys(null, schema.orNull, tableName)) { rs =>
-				val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
-				println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
-				val keys = keysImported ++ keysExported
-				val keysSorted = keys.sortBy(key => (key.to.table, key.name) )
-				ForeignKeys(keysSorted)
-			} 
+	def foreignKeys(tableName : String) : ForeignKeys = try {
+			var meta = connection.getMetaData()
+			using(meta.getImportedKeys(null, schema.orNull, tableName)) { rs =>
+				val keysImported = rsToForeignKeys(rs) 
+				using(meta.getExportedKeys(null, schema.orNull, tableName)) { rs =>
+					val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
+					println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
+					val keys = keysImported ++ keysExported
+					val keysSorted = keys.sortBy(key => (key.to.table, key.name) )
+					ForeignKeys(keysSorted)
+				} 
+			}
 		}
-	}
+		catch {
+			case se : SQLException  => throw new Exception("Reading the foreign keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
+			case ex : Throwable => throw new Exception("Reading the foreign keyss of the "+tableName +" table got", ex)
+		}
+
 
 }
