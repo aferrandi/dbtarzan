@@ -11,7 +11,7 @@ import dbtarzan.types.ConfigPath
 /* to start the connection editor. It handles all the cancel/closing/save events */
 object ConnectionEditorStarter
 {
- def openConnectionsEditor(parentStage : Stage, connectionsWorker : ActorRef, connectionsConfigPath: ConfigPath) : Unit = {
+ def openConnectionsEditor(parentStage : Stage, connectionsWorker : ActorRef, connectionsConfigPath: ConfigPath, openWeb : String => Unit) : Unit = {
 
     println("open connections editor")  
      val connectionStage = new Stage {
@@ -28,7 +28,7 @@ object ConnectionEditorStarter
         def onCancel() : Unit = 
           window().hide()
 
-        val editor = new ConnectionEditor(ConnectionDataReader.read(connectionsConfigPath))
+        val editor = new ConnectionEditor(ConnectionDataReader.read(connectionsConfigPath), openWeb)
         editor.onSave(onSave(_))
         editor.onCancel(() => onCancel())
         onCloseRequest = (event : WindowEvent) => { 

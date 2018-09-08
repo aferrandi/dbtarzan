@@ -64,7 +64,7 @@ class MainGUI(
 		        onAction = {
 		          e: ActionEvent => {
 									new Logger(guiWorker).info("Editing connections configuration file "+connectonsConfigPath.path)
-								ConnectionEditorStarter.openConnectionsEditor(stage, configActor, connectonsConfigPath)
+								ConnectionEditorStarter.openConnectionsEditor(stage, configActor, connectonsConfigPath, openWeb)
 							}
 		        }
 		      }

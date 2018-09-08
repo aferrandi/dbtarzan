@@ -10,9 +10,12 @@ import dbtarzan.gui.util.JFXUtil
 /**
   table + constraint input box + foreign keys
 */
-class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlBuilder {
+class ConnectionEditor(
+  connectionDatas : List[ConnectionData],
+  openWeb : String => Unit
+  ) extends TControlBuilder {
   private val list = new ConnectionList(connectionDatas)
-  private val connection = new Connection()
+  private val connection = new Connection(openWeb)
   private val buttons = new ConnectionButtons() 
   private val layout = new BorderPane {
     center = buildSplitPane()
@@ -43,7 +46,7 @@ class ConnectionEditor(connectionDatas : List[ConnectionData]) extends TControlB
     val errors = list.validate()
     if(errors.isEmpty) {
       if(JFXUtil.areYouSure("Are you sure you want to save the connections?", "Save connections"))
-        try { save(list.content()) }
+        try { save(list.content()) } 
         catch {
           case ex : Exception => JFXUtil.showErrorAlert("Saving the connections got: ", ex.getMessage())
         }

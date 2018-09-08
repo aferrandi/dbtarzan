@@ -1,9 +1,10 @@
 package dbtarzan.gui.config
 
-import scalafx.scene.control.{ TextField, Label, PasswordField }
+import scalafx.scene.control.{ TextField, Label, PasswordField, Hyperlink }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
-import scalafx.geometry.Insets
+import scalafx.event.ActionEvent
+import scalafx.geometry.{ Insets, HPos }
 import scalafx.Includes._
 import dbtarzan.gui.util.OnChangeSafe
 import dbtarzan.gui.TControlBuilder
@@ -12,7 +13,7 @@ import dbtarzan.config.{ ConnectionData, PasswordEncryption }
 /**
   The list of database to choose from
 */
-class Connection() extends TControlBuilder {
+class Connection(openWeb : String => Unit) extends TControlBuilder {
   val safe = new OnChangeSafe()
   val txtName = new TextField {
     text = ""
@@ -44,7 +45,10 @@ class Connection() extends TControlBuilder {
             text = oldValue
       }}
    }
-
+  val linkToJdbcUrls = new Hyperlink {
+    text = "Jdbc connections url strings"
+    onAction = (event: ActionEvent)  => openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
+  }
     def isAllDigits(x: String) = x forall Character.isDigit
 
   private val grid =  new GridPane {
@@ -71,6 +75,8 @@ class Connection() extends TControlBuilder {
     add(cmbDelimiters.control, 1, 7)
     add(new Label { text = "Max Rows:" }, 0, 8)
     add(txtMaxRows, 1, 8)
+    add(linkToJdbcUrls, 1, 9)
+    GridPane.setHalignment(linkToJdbcUrls, HPos.RIGHT) 
     padding = Insets(10)
     vgap = 10
     hgap = 10
