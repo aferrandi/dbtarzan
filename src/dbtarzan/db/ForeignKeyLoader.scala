@@ -1,6 +1,6 @@
 package dbtarzan.db
 
-import java.sql.{Connection, ResultSet, SQLException}
+import java.sql.{ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
 
 import dbtarzan.db.util.ResourceManagement.using

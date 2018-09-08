@@ -1,6 +1,6 @@
 package dbtarzan.db.actor
 
-import java.sql.{Connection, ResultSet, SQLException}
+import java.sql.SQLException
 import akka.actor.Actor
 import akka.actor.ActorRef
 import java.time.LocalDateTime
@@ -10,7 +10,6 @@ import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.ConnectionData
 import dbtarzan.db._
 import dbtarzan.messages._
-import dbtarzan.db.util.FileReadWrite
 import dbtarzan.db.ForeignKeysToFile
 
 

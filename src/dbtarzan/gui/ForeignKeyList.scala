@@ -1,12 +1,9 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.{ ListView, ListCell, Tooltip}
-import scalafx.scene.input.MouseEvent
-import scalafx.scene.layout.VBox
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer 
-import scalafx.Includes._
-import dbtarzan.db.{ForeignKey, FieldsOnTable, Field, ForeignKeys, ForeignKeyDirection}
+import dbtarzan.db.{ForeignKey, FieldsOnTable, ForeignKeys, ForeignKeyDirection}
 import dbtarzan.gui.util.JFXUtil
 
 /* if the table has 2 or more foreign keys to the same table, we want to give more information to the user, so that he can understand which one to use */ 

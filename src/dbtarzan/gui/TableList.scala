@@ -2,7 +2,6 @@ package dbtarzan.gui
 
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.control.ListView
-import scalafx.Includes._
 import dbtarzan.db.TableNames
 import dbtarzan.gui.util.JFXUtil
 import scalafx.scene.Parent

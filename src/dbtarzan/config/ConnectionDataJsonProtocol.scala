@@ -5,7 +5,6 @@ import spray.json._
 
 object IdentifierDelimitersJsonProtocol extends DefaultJsonProtocol {
 import dbtarzan.db.IdentifierDelimiters
-import DefaultJsonProtocol._
   implicit val identifierDelimitersFormat = jsonFormat(IdentifierDelimiters, 
   	"start", 
   	"end"
@@ -14,7 +13,6 @@ import DefaultJsonProtocol._
 
 
 object ConnectionDataJsonProtocol extends DefaultJsonProtocol {
-import DefaultJsonProtocol._
 import IdentifierDelimitersJsonProtocol._
   implicit val connectionDataFormat = jsonFormat(ConnectionData, 
   	"jar", 

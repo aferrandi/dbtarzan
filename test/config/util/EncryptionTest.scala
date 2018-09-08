@@ -1,7 +1,6 @@
 package dbtarzan.config.util
 
 import org.scalatest.FlatSpec
-import spray.json._
 
 
 class EncyrptionTest extends FlatSpec {

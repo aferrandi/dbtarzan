@@ -3,7 +3,6 @@ package dbtarzan.gui.util
 import scalafx.scene.Node
 import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, ButtonType }
 import scalafx.scene.layout.BorderPane
-import scalafx.scene.text.TextAlignment
 import scalafx.geometry.Insets
 import scalafx.scene.input.{ MouseEvent, MouseButton, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._

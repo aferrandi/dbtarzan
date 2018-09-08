@@ -15,7 +15,6 @@ import java.nio.file.{Path, Paths}
   }
 
 object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
-  import DefaultJsonProtocol._
   implicit val foreignKeyDirectionFormat = new ForeignKeyDirectionFormat()  
   implicit val fieldsOnTableFormat = jsonFormat(FieldsOnTable, "table", "fields" )	
   implicit val foreignKeyFormat = jsonFormat(ForeignKey, "name", "from", "to", "direction")

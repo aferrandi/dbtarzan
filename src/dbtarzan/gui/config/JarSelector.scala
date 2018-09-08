@@ -5,7 +5,6 @@ import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
 import scalafx.stage.FileChooser
 import scalafx.stage.FileChooser._
-import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import java.io.File

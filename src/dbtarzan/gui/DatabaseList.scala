@@ -3,10 +3,8 @@ package dbtarzan.gui
 import scalafx.scene.control.{ ListView, SplitPane, ContextMenu, MenuItem }
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer 
-import scalafx.Includes._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.DatabaseNames
-import scalafx.event.ActionEvent
 
 /**
 	The list of database to choose from

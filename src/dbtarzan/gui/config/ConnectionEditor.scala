@@ -1,6 +1,6 @@
 package dbtarzan.gui.config
 
-import scalafx.scene.control.{ TableView, SplitPane, Button }
+import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.Parent
 import dbtarzan.config.ConnectionData

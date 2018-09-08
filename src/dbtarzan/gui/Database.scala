@@ -1,17 +1,15 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ SplitPane, ContextMenu, MenuBar, Menu, MenuItem, Label, Button }
+import scalafx.scene.control.{ SplitPane, MenuBar, Menu, MenuItem, Label }
 import scalafx.scene.layout.{ BorderPane, FlowPane }
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
-import scalafx.scene.text.TextAlignment
 
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.db.{ ForeignKeyMapper, TableDescription, TableNames, Fields, IdentifierDelimiters }
+import dbtarzan.db.TableNames
 
 /**
   A panel containing all the tabs related to a database

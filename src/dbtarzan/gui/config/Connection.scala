@@ -1,6 +1,6 @@
 package dbtarzan.gui.config
 
-import scalafx.scene.control.{ TextField, Label, Spinner, PasswordField }
+import scalafx.scene.control.{ TextField, Label, PasswordField }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
 import scalafx.geometry.Insets

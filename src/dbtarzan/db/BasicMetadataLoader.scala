@@ -6,6 +6,7 @@ import scala.collection.mutable.ListBuffer
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.db.util.ResourceManagement.using
 
+/* to read the basic methadata (tables and columns) from the dataase */
 class BasicMetadataLoader(schema: Option[String], meta : DatabaseMetaData) {
 
 	/* gets the columns of a table from the database metadata */

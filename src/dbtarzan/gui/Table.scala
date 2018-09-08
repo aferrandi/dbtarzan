@@ -1,10 +1,8 @@
 package dbtarzan.gui
 
 import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableRow, TableView, SelectionMode, ContextMenu, Menu, MenuItem}
-import scalafx.beans.property.{StringProperty, BooleanProperty}
+import scalafx.scene.control.{TableColumn, TableView, SelectionMode}
 import scalafx.collections.ObservableBuffer
-import scalafx.scene.input.{ MouseEvent, MouseButton } 
 import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
 import scalafx.Includes._

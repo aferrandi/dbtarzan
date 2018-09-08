@@ -1,22 +1,14 @@
 package dbtarzan.gui
 
-import java.io.File
 import scalafx.application.JFXApp
-import scalafx.collections.ObservableBuffer 
-import scalafx.stage.{ Screen, Stage, StageStyle, WindowEvent }
-import scalafx.scene.layout.GridPane
-import scalafx.beans.property.{StringProperty}
-import scalafx.Includes._
-import java.nio.file.{ Path, Paths }
+import java.nio.file.Paths
 import akka.actor.{ ActorSystem, Props, ActorRef }
-import java.time.LocalDateTime
 
-import dbtarzan.db.ConnectionBuilder
 import dbtarzan.config.ConnectionDataReader
 import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.config.actor.ConnectionsWorker
 import dbtarzan.types.ConfigPath
-import dbtarzan.messages.{ QueryTables, QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas, Info, Logger }
+import dbtarzan.messages.{QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas, Logger }
 
 /** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp {

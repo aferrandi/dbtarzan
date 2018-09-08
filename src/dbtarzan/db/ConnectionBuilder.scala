@@ -4,7 +4,7 @@ import akka.actor.{ ActorRef, Props, ActorContext }
 import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
 import akka.routing.{ RoundRobinPool}
 import dbtarzan.config.ConnectionData
-import java.sql.{DriverManager, Driver, Connection}
+import java.sql.{DriverManager, Driver}
 import java.net.{ URL, URLClassLoader }
 
 /**

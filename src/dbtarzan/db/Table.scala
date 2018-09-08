@@ -1,6 +1,5 @@
 package dbtarzan.db
 
-import dbtarzan.messages.{QueryRows, QueryForeignKeys, TableId}
 
 /**
 	Represents the table of a database 

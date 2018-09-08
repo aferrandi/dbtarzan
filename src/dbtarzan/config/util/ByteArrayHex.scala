@@ -1,6 +1,5 @@
 package dbtarzan.config.util
 
-import java.math.BigInteger
 
 object ByteArrayHex {
 	def toHex(bytes : Array[Byte]) : String =

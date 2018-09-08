@@ -1,8 +1,7 @@
 package dbtarzan.gui.orderby
 
-import scalafx.scene.control.{ ListView, ListCell, SplitPane, Button, Alert, ButtonType, ComboBox, Label }
+import scalafx.scene.control.{ ListView, ListCell, Button, ComboBox }
 import scalafx.scene.layout.{ BorderPane, VBox, HBox, Region, Priority }
-import scalafx.scene.control.Alert.AlertType
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
 import scalafx.geometry.{ Insets, Pos }
@@ -10,7 +9,6 @@ import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 
-import dbtarzan.config.ConnectionData
 import dbtarzan.db.{ OrderByField, OrderByFields, Field, OrderByDirection, DBEnumsText }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.TControlBuilder

@@ -8,11 +8,9 @@ import scalafx.stage.Screen
 import scalafx.Includes._
 import scalafx.event.ActionEvent
 import scalafx.geometry.Orientation
-import scalafx.scene.web.WebView
 import scalafx.scene.layout.BorderPane
 import akka.actor.ActorRef
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.messages.ConnectionDatas
 import dbtarzan.gui.config.ConnectionEditorStarter
 import dbtarzan.types.ConfigPath
 import dbtarzan.messages.Logger

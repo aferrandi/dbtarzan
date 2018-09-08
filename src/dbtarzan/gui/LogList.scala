@@ -1,9 +1,8 @@
 package dbtarzan.gui
 
 import scalafx.collections.ObservableBuffer 
-import scalafx.scene.layout.Priority
 import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView, TableCell, SelectionMode, ContextMenu, MenuItem, Alert, TextArea, Label}
+import scalafx.scene.control.{TableColumn, TableView, TableCell, ContextMenu, MenuItem, Alert, TextArea, Label}
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.image.{ Image, ImageView }
 import scalafx.Includes._

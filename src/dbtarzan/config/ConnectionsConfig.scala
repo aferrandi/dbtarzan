@@ -1,6 +1,5 @@
 package dbtarzan.config
 
-import scala.util.{Try, Success, Failure}
 
 /* the database configuration file content as a map databaseName => database JDBC configuration */
 class ConnectionsConfig(connectionDatas : List[ConnectionData]) {

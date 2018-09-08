@@ -2,11 +2,10 @@ package dbtarzan.gui
 
 import scalafx.scene.control.{ TabPane, Tab }
 import scalafx.scene.Parent
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.HashMap
 import scalafx.Includes._
 import scalafx.event.Event
-import akka.actor.{ ActorRef, ActorSystem }
+import akka.actor.ActorRef
 import dbtarzan.messages._
 
 /** All the tabs with one database for each*/

@@ -3,7 +3,6 @@ package dbtarzan.config.actor
 import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.routing.Broadcast
-import java.time.LocalDateTime
 import scala.collection.mutable.HashMap
 
 import dbtarzan.messages._

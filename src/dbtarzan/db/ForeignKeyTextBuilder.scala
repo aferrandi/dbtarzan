@@ -1,6 +1,5 @@
 package dbtarzan.db
 
-import scala.util.{Try, Success, Failure}
 
 case class FKRow(values : List[FieldWithValue])
 

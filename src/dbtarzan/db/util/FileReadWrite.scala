@@ -1,9 +1,9 @@
 package dbtarzan.db.util
 
 import ResourceManagement._
-import java.io.{ FileWriter, File }
+import java.io.FileWriter
 import scala.io.Source
-import java.nio.file.{Paths, Files, Path}
+import java.nio.file.{Files, Path}
 
 /* simple functions to read, write and check the existance of a small (configuration) file */
 object FileReadWrite {

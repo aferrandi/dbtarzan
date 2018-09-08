@@ -1,6 +1,5 @@
 package dbtarzan.db.actor
 
-import java.sql.{Connection, ResultSet, DriverManager}
 import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
 import dbtarzan.config.ConnectionData

@@ -1,12 +1,10 @@
 package dbtarzan.gui
 
-import scalafx.scene.layout.{ BorderPane, VBox, Priority }
+import scalafx.scene.layout.VBox
 import scalafx.scene.Parent
 import scalafx.scene.control.{ Label, TextArea, ScrollPane, TextField, TextInputControl }
 import scalafx.geometry.{ Insets, Pos }
-import scalafx.collections.ObservableBuffer
-import scalafx.scene.text.TextAlignment 
-import dbtarzan.db.{Field, FieldType, Row, DBEnumsText}
+import dbtarzan.db.{Field, FieldType, Row}
 
 
 /* 

@@ -1,7 +1,6 @@
 package dbtarzan.config
 
 import spray.json._
-import java.io.File
 import dbtarzan.db.util.FileReadWrite
 import dbtarzan.types.ConfigPath
 

@@ -1,13 +1,11 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ TabPane, Tab, Tooltip, ContextMenu, MenuItem}
+import scalafx.scene.control.{ TabPane, Tab, Tooltip}
 import scalafx.scene.Parent
-import scalafx.event.ActionEvent
 import dbtarzan.messages._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
-import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier, QueryAttributes}
-import scalafx.beans.property.StringProperty
+import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier}
 import scalafx.Includes._
 
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)

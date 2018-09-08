@@ -3,9 +3,7 @@ package dbtarzan.gui.orderby
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
 import scalafx.Includes._
-import akka.actor.ActorRef
 
-import dbtarzan.types.ConfigPath
 import dbtarzan.db.{  OrderByFields }
 /* to start the order by editor. It handles all the cancel/closing/save events */
 object OrderByEditorStarter

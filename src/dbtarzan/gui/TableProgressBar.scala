@@ -2,7 +2,6 @@ package dbtarzan.gui
 
 import scalafx.scene.control.ProgressBar
 import scala.collection.mutable.HashSet
-import scalafx.scene.layout.Priority
 import scalafx.scene.Parent
 
 /**

@@ -1,17 +1,15 @@
 package dbtarzan.gui
 
 import scalafx.stage.Stage
-import scalafx.scene.control.{ TableView, SplitPane, Button, MenuItem, Menu, MenuBar, CheckMenuItem }
+import scalafx.scene.control.{SplitPane, MenuItem, Menu, MenuBar, CheckMenuItem }
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.input.KeyCombination
 import scalafx.event.ActionEvent
-import scalafx.scene.{ Parent, Node }
-import scalafx.collections.ObservableBuffer 
+import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import java.time.LocalDateTime
 
-import dbtarzan.db.{ ForeignKey, ForeignKeyMapper, Filter, FollowKey, Fields, OrderByField, OrderByFields, OrderByDirection }
+import dbtarzan.db.{ ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.messages._

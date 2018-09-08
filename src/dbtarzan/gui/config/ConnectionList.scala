@@ -4,7 +4,6 @@ import scalafx.scene.control.{ ListView, ListCell, SplitPane, ContextMenu, MenuI
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
-import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.ConnectionData
 

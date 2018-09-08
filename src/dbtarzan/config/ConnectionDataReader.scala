@@ -1,7 +1,7 @@
 package dbtarzan.config
 
 import spray.json._
-import java.io.{ File, FileNotFoundException }
+import java.io.FileNotFoundException
 import dbtarzan.db.util.FileReadWrite
 import dbtarzan.types.ConfigPath
 

@@ -18,6 +18,8 @@ scalaSource in Compile := baseDirectory.value / "src"
 
 scalaSource in Test := baseDirectory.value / "test"
 
+scalacOptions in Compile ++= Seq("-Ywarn-unused:imports")
+scalacOptions in Compile --= Seq("-Xfatal-warnings")
 libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.3.4",
   "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test",
