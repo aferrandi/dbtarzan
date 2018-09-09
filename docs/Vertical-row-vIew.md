@@ -24,3 +24,5 @@ The vertical view shows vertically all the fields of the selected row. This is b
 - The table contains very **large text fields**, for example LOBs. For a field of this kind only a part of it is visible in the table (normally the first line),  but the entire field is visible in the vertical row view, with the help of  scrollbars. 
 
 The vertical row view can be shown or hidden very easily (it is just needed to press Ctrl-R) and is supposed to help only when there is a need for it, without being annoying.
+
+Additionally it is possible to copy the content of individual fields from the vertical row, differently from the [copy menu](Copy-Data) of the table.
