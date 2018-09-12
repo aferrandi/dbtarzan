@@ -13,6 +13,16 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.14
+
+Installation file for MacOS (DBTarzanxxx.app.zip).
+
+When connecting to the database, in case of failure the error is displayed correctly.
+
+Complete error messages in case of SQL errors.
+
+Show a link to a "JDBC connection strings" page in the connection editor.
+
 - Release 1.13
 
 Added view with vertical representation of a row (Ctrl-R).
@@ -23,9 +33,4 @@ Copy to clipboard table rows with or without the table header
 
 Accelerators for the menu items of the table menu
 
-- Release 1.12
-
-Converted the context menus on the top of the "Tables" and "Table" panel to standard menus.
-
-Added time to the log lines in the log panel.
 

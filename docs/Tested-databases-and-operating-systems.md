@@ -24,5 +24,6 @@ This a list of the operating systems on which DbTarzan has been tested:
 
 * Windows
 * Ubuntu
+* MacOS
 
-(I would be very grateful to someone testing it on a [Mac](https://github.com/aferrandi/dbtarzan/issues/3) ).
+There is an [installer](Install-And-Connect) for each system.

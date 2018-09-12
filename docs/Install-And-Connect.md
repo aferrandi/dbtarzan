@@ -14,7 +14,7 @@ Download
 - **dbTarzan_XXX.exe** for Windows. Create a directory and move the downloaded file to it. 
 - **dbTarzan_X.XX_all.deb** for debian based Linuxes. 
 - **dbtarzan-XXX-assembly.jar** file for the other OSes. Create a directory and move the downloaded file to it. 
-- **DBTarzan-xxx.app.zip** for MacOS. The file is not signed, therefore you need to confirm you want to open it. Move the downloaded file to the directory where it is supposed to be executed; in the finder open the context menu with the right mouse button and press **Open**. In the dialog that appears confirm that you want to open the file. After this it will be possible to open it just by double-clicking on it.
+- **DBTarzan-xxx.app.zip** for MacOS. The file is not signed, therefore you need to confirm you want to open it. Move the downloaded file to the directory where it is supposed to be executed; in the finder open the context menu with the right mouse button and press **Open**. In the dialog that appears confirm that you want to open the file. After this it will be possible to open it just by double-clicking on it. This installation does not include a Java runtime, therefore you need to [install](https://www.java.com/en/download/manual.jsp) it yourself,
 
 It is also possible to install it as a [snap](https://snapcraft.io/dbtarzan).
 
