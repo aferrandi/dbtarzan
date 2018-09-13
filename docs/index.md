@@ -20,7 +20,7 @@ Please check the [GUI structure](GUI-Structure) to know how to use it.
 
 If things are too slow (databases with complex structures) try to [preload the foreign keys](Foreign-keys-preloading).
 
-DBTarzan can't harm your database (it never writes) and has been used with production databases.
+DBTarzan [can't harm your database](Can-I-use-it-with-production-databases) (it never writes) and has been used with production databases.
 
 This [video](https://youtu.be/-hR9ZLf3bNY) shows an example of database exploration.
 
