@@ -32,7 +32,8 @@ The installation file is a simple zip file containing the DBtarzan app directory
 
 ### **dbtarzan-XXX-assembly.jar** file for the other OSes. 
 
-Create a directory and move the downloaded file to it. In this case you need to [install](https://www.java.com/en/download/manual.jsp) Java yourself if it is not installed. 
+Create a directory and move the downloaded file to it. In this case you need to [install](https://www.java.com/en/download/manual.jsp) Java yourself if it is not installed. Being this a simple jar file, it should be just a matter of double-clicking on it to let it start.
+It can also be used to [solve problems](Troubleshooting) connecting to databases.
 
 ### Snap 
 
