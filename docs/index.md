@@ -15,8 +15,8 @@ categories: [Other]
 
 With DBTarzan you can browse the tables of a database using the relations in their **foreign keys**.
 
-[install and start](Install-And-Connect) DbTarzan and [connect to a database](Usage). It's easy!
-Please check the [GUI structure](GUI-Structure) to know how to use it.
+[Install](Installation) and start DbTarzan and [connect to a database](Connect-to-database). It's easy!
+Please check the [GUI structure](GUI-Structure) to know how to [use it](Usage).
 
 If things are too slow (databases with complex structures) try to [preload the foreign keys](Foreign-keys-preloading).
 

@@ -26,4 +26,4 @@ This a list of the operating systems on which DbTarzan has been tested:
 * Ubuntu
 * MacOS
 
-There is an [installer](Install-And-Connect) for each system.
+There is an [installer](Installation) for each system.
