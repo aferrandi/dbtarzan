@@ -33,7 +33,7 @@ class BasicMetadataLoader(schema: Option[String], meta : DatabaseMetaData) {
 				while(rs.next) {
 					list += rs.getString("TABLE_NAME")			
 				}
-				TableNames(list.toList)
+				TableNames(list.toList.sorted)
 			}
 		}			
 		catch {

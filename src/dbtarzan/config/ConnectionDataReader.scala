@@ -20,6 +20,6 @@ object ConnectionDataReader {
 	
 	def parseText(text : String) : List[ConnectionData] = {
 		val result = text.parseJson
- 		result.convertTo[Seq[ConnectionData]].toList
+ 		result.convertTo[Seq[ConnectionData]].toList.sortBy(_.name)
 	}
 }

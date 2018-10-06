@@ -15,7 +15,7 @@ object ConnectionDataWriter {
 	}
 	
 	def toText(connections : List[ConnectionData]) : String = {
-		val result = connections.toJson
+		val result = connections.sortBy(_.name).toJson
  		result.prettyPrint
 	}
 }
