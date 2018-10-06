@@ -97,9 +97,15 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			guiActor ! ResponseRows(qry.id, rows)
 			))
 
-	private def queryTables(qry: QueryTables) : Unit = withCore(core => 
-    		guiActor ! ResponseTables(qry.id, core.metadataLoader.tableNames())
-		)
+	private def queryTables(qry: QueryTables) : Unit = withCore(core => { 
+			log.info("Querying the tables of the database "+databaseName)
+			val names = core.metadataLoader.tableNames()
+			if(!names.tableNames.isEmpty)
+				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
+			else
+				log.warning("No tables read from database "+databaseName+". Wrong schema?")
+    		guiActor ! ResponseTables(qry.id, names)
+		})
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => 
     		guiActor ! ResponseColumns(qry.id, qry.tableName, core.metadataLoader.columnNames(qry.tableName), queryAttributes())
