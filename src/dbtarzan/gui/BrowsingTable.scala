@@ -173,6 +173,13 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
     progressBar.receivedForeignKeys()
   }
 
+  /* adds the foreign keys to the foreign key list */
+  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit = {
+    table.addPrimaryKeys(keys.keys)
+    progressBar.receivedPrimaryKeys()
+  }
+
+
   def copySelectionToClipboard(includeHeaders : Boolean) : Unit = table.copySelectionToClipboard(includeHeaders) 
 
 

@@ -7,7 +7,7 @@ import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.db.{Field, Row, Rows, DBEnumsText}
+import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKey}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.Logger
@@ -15,7 +15,7 @@ import dbtarzan.messages.Logger
 /** The GUI table control showing the content of a database table in a GUI table*/
 class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable : dbtarzan.db.Table) extends TControlBuilder {
   private val log = new Logger(guiActor)
-  val names = dbTable.columnNames
+  val names : List[Field] = dbTable.columnNames
   println("ColumnNames: "+names.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
   /* the content of the table in terms of rows. Updated by the table itself */
   private val buffer = ObservableBuffer.empty[CheckedRow]
@@ -32,7 +32,10 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
   dbActor ! QueryRows(tableId, dbTable.sql) 
   /* requests the foreign keys for this table. */
   dbActor ! QueryForeignKeys(tableId)
- 
+  /* requests the primary keys for this table. */
+  dbActor ! QueryPrimaryKeys(tableId)
+
+
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
   def buildTable() = new TableView[CheckedRow](buffer) {
     columns += buildCheckColumn()
@@ -90,6 +93,16 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
   def setRowClickListener(listener : Row => Unit) : Unit = {
     rowClickListener = Some(listener)
   }
+
+  /* adds the database rows to the table */
+  def addPrimaryKeys(keys : List[PrimaryKey]) : Unit = { 
+    val primaryKeyFields : Set[String] = keys.flatMap(_.fields).map(_.toLowerCase).toSet
+    val columns = table.columns
+    val columnsToChange = names.zipWithIndex.filter({ case (field, i) => primaryKeyFields.contains(field.name.toLowerCase()) })
+    columnsToChange.foreach({ case (field, i) => {
+        columns(i+1).text = "\uD83D\uDD11 "+field.name
+      }})  
+    } 
 
   /* the unique id for the table */
   def getId = tableId

@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes}
+import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes, PrimaryKey}
 import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
 import java.time.LocalDateTime
@@ -12,6 +12,8 @@ case class QueryTables(id : DatabaseId)
 case class QueryColumns(id : DatabaseId, tableName : String)
 
 case class QueryColumnsFollow(id : DatabaseId, tableName : String, follow : FollowKey)
+
+case class QueryPrimaryKeys(id : TableId)
 
 case class QueryForeignKeys(id : TableId)
 
@@ -26,6 +28,8 @@ case class ResponseTables(id : DatabaseId, names: TableNames)
 case class ResponseCloseTables(id : DatabaseId, ids : List[TableId])
 
 case class ResponseColumns(id: DatabaseId, tableName : String, columns : Fields, queryAttributes : QueryAttributes)
+
+case class ResponsePrimaryKeys(id : TableId, keys : List[PrimaryKey])
 
 case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
 

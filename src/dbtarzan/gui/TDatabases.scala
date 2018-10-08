@@ -8,6 +8,7 @@ import dbtarzan.messages._
 trait TTable {
 	def addRows(rows : ResponseRows) : Unit
 	def addForeignKeys(keys : ResponseForeignKeys) : Unit 
+	def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit
 }
 
 trait TTables extends TTable {

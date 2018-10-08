@@ -60,6 +60,9 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   /* received the columns of a table, that are used to build the table coming from the selection of a foreign key, in a tab */
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= withDatabaseId(columns.id, database => database.addColumnsFollow(columns))
 
+  /* received the primary keys of a table, that are used to mark columns as primary keys on a table */
+  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit= withTableId(keys.id, database => database.addPrimaryKeys(keys))
+
   /* received the list of the tables in the database, to show in the list on the left side */
   def addTables(tables : ResponseTables) : Unit = withDatabaseId(tables.id, database => database.addTableNames(tables.names))
 

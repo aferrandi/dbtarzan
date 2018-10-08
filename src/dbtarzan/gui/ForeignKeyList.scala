@@ -27,7 +27,7 @@ class ForeignKeyList() extends TControlBuilder {
 	  
 	def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
 		def moreThanOneItem(l : List[_]) = l.length > 1
-		println("newForeignKeyss "+newForeignKeys)
+		println("newForeignKeys "+newForeignKeys)
 		val allForeignKeys = buffer.toList.map(_.key) ++ newForeignKeys.keys
 		val groupedByToTableInsensitive = allForeignKeys.groupBy(_.to.table.toUpperCase()).values
 		val withSharingCheck = groupedByToTableInsensitive.flatMap(ks => ks.map(ForeignKeyWithSharingCheck(_, moreThanOneItem(ks))))

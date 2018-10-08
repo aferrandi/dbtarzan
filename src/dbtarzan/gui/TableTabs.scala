@@ -99,6 +99,8 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
   
+  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit =  withTableId(keys.id, table => table.table.addPrimaryKeys(keys)) 
+
   def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.id, table => 
       table.table.copySelectionToClipboard(copy.includeHeaders)
   )

@@ -115,6 +115,10 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
     		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, core.metadataLoader.columnNames(qry.tableName), queryAttributes())
     	)		
 
+	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => 
+    		guiActor ! ResponsePrimaryKeys(qry.id, core.metadataLoader.primaryKeys(qry.id.tableName))
+    	)
+
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)
 
   	def receive = {
@@ -125,5 +129,6 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	    case qry : QueryColumns => queryColumns(qry)
 	    case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
 	    case qry : QueryForeignKeys => queryForeignKeys(qry)    	
+		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
   	}
 }

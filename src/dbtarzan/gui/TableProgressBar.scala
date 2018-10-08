@@ -14,7 +14,12 @@ class TableProgressBar extends TControlBuilder {
 	private val setReceived = new HashSet[String]()
 
 	private def updateProgressBar() : Unit = 
-		bar.progress() = setReceived.size * .5
+		bar.progress() = setReceived.size * .333
+
+	def receivedPrimaryKeys() : Unit = {
+		setReceived += "PRIMARYKEYS"
+		updateProgressBar()
+	}
 
 	def receivedForeignKeys() : Unit = {
 		setReceived += "FOREIGNKEYS"

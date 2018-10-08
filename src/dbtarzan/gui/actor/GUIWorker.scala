@@ -19,6 +19,8 @@ class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) ex
 
         case rsp: ResponseForeignKeys => Platform.runLater { databases.addForeignKeys(rsp) }	
         
+        case rsp: ResponsePrimaryKeys => Platform.runLater { databases.addPrimaryKeys(rsp) }	
+
         case rsp: ResponseColumnsFollow => Platform.runLater { databases.addColumnsFollow(rsp) }
 
         case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 

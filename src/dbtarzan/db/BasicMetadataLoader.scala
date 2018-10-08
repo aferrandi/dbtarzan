@@ -14,7 +14,7 @@ class BasicMetadataLoader(schema: Option[String], meta : DatabaseMetaData) {
 			using(meta.getColumns(null, schema.orNull, tableName, "%")) { rs =>
 				val list = new ListBuffer[Field]()			
 				while(rs.next) {
-					var fieldName = rs.getString("COLUMN_NAME")
+					val fieldName = rs.getString("COLUMN_NAME")
 					toType(rs.getInt("DATA_TYPE")).map(fieldType => list += Field(fieldName, fieldType))
 				}
 				println("Columns loaded")
@@ -49,4 +49,27 @@ class BasicMetadataLoader(schema: Option[String], meta : DatabaseMetaData) {
 			case java.sql.Types.FLOAT | java.sql.Types.DOUBLE => Some(FieldType.FLOAT)	
 			case _ => Some(FieldType.STRING)
 		}
+
+	def primaryKeys(tableName : String) : List[PrimaryKey] = try {
+		def cleanFieldName(fieldNameRaw: String) : String = fieldNameRaw.trim.stripPrefix("[").stripSuffix("]")
+		case class PrimaryKeyField(keyName : String, fieldName : String)
+			using(meta.getPrimaryKeys(null, schema.orNull, tableName)) { rs =>
+				val list = new ListBuffer[PrimaryKeyField]()			
+				while(rs.next) {
+					val keyName = rs.getString("PK_NAME")
+					val fieldNameRaw = rs.getString("COLUMN_NAME")
+					val fieldName = cleanFieldName(fieldNameRaw)
+					list += PrimaryKeyField(keyName, fieldName)
+				}
+				println("Primary keys ("+list.size+") loaded")
+				list.groupBy(_.keyName).map({ 
+					case (keyName, fields) => PrimaryKey(keyName, fields.toList.map(_.fieldName))
+				}).toList
+			} 
+		}
+		catch {
+			case se : SQLException  => throw new Exception("Reading the primary keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
+			case ex : Throwable => throw new Exception("Reading the primary keys of the "+tableName +" table got", ex)
+		}
+
 }

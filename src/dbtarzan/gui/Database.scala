@@ -61,7 +61,10 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
   /* received some foreign keys, that have to be shown within a table tab  */
   def addForeignKeys(keys : ResponseForeignKeys) : Unit = tableTabs.addForeignKeys(keys) 
 
-  /* received the columns of a table, that are used to build the table in a tab  */
+  /* received the primary keys of a table, that are used to mark columns as primary keys on a table */
+  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit= tableTabs.addPrimaryKeys(keys) 
+  
+    /* received the columns of a table, that are used to build the table in a tab  */
   def addColumns(columns : ResponseColumns) : Unit= tableTabs.addColumns(columns)
 
   /* received the columns of a table, that are used to build the table coming from the selection of a foreign key, in a tab */
