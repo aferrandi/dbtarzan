@@ -7,7 +7,7 @@ import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKey}
+import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKey, ForeignKeys, ForeignKeyDirection}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.Logger
@@ -94,15 +94,23 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
     rowClickListener = Some(listener)
   }
 
-  /* adds the database rows to the table */
-  def addPrimaryKeys(keys : List[PrimaryKey]) : Unit = { 
-    val primaryKeyFields : Set[String] = keys.flatMap(_.fields).map(_.toLowerCase).toSet
+  private def displayKeyForFields(fields : List[String], symbolChar : String) : Unit = {
+    val fieldsSet = fields.map(_.toLowerCase).toSet
     val columns = table.columns
-    val columnsToChange = names.zipWithIndex.filter({ case (field, i) => primaryKeyFields.contains(field.name.toLowerCase()) })
+    val columnsToChange = names.zipWithIndex.filter({ case (field, i) => fieldsSet.contains(field.name.toLowerCase()) })
     columnsToChange.foreach({ case (field, i) => {
-        columns(i+1).text = "\uD83D\uDD11 "+field.name
+        columns(i+1).text = symbolChar+" "+field.name
       }})  
-    } 
+  }
+
+  /* adds the database rows to the table */
+  def addPrimaryKeys(keys : List[PrimaryKey]) : Unit = 
+    displayKeyForFields(keys.flatMap(_.fields), "\uD83D\uDD11")
+
+  def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
+    val fields = newForeignKeys.keys.filter(_.direction == ForeignKeyDirection.STRAIGHT).flatMap(_.from.fields)
+    displayKeyForFields(fields, "\u26bf")
+  }
 
   /* the unique id for the table */
   def getId = tableId

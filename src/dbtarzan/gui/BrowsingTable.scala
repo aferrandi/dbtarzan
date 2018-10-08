@@ -170,6 +170,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   /* adds the foreign keys to the foreign key list */
   def addForeignKeys(keys : ResponseForeignKeys) : Unit = {
     foreignKeyList.addForeignKeys(keys.keys)
+    table.addForeignKeys(keys.keys)
     progressBar.receivedForeignKeys()
   }
 
