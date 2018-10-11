@@ -12,6 +12,7 @@ import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.Logger
 
+
 /** The GUI table control showing the content of a database table in a GUI table*/
 class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable : dbtarzan.db.Table) extends TControlBuilder {
   private val log = new Logger(guiActor)
@@ -27,6 +28,8 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
   private var rowClickListener : Option[Row => Unit] = None
    /* converts rows to structures usable from the table */
   private val fromRow = new CheckedRowFromRow(checkedRows, table.selectionModel()) 
+  /* to build automatically the headings of the table colums */
+  private val headings = new TableColumnssHeadings(names)
 
   /* requests the rows for the table to the database actor. They come back using the addRows function */
   dbActor ! QueryRows(tableId, dbTable.sql) 
@@ -94,22 +97,17 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
     rowClickListener = Some(listener)
   }
 
-  private def displayKeyForFields(fields : List[String], symbolChar : String) : Unit = {
-    val fieldsSet = fields.map(_.toLowerCase).toSet
-    val columns = table.columns
-    val columnsToChange = names.zipWithIndex.filter({ case (field, i) => fieldsSet.contains(field.name.toLowerCase()) })
-    columnsToChange.foreach({ case (field, i) => {
-        columns(i+1).text = symbolChar+" "+field.name
-      }})  
-  }
+  private def displayKeyForFields(headingsTexts : List[HeadingText]) : Unit = 
+    headingsTexts.foreach(ht => {
+        table.columns(ht.index+1).text = ht.text
+      })  
 
   /* adds the database rows to the table */
-  def addPrimaryKeys(keys : List[PrimaryKey]) : Unit = 
-    displayKeyForFields(keys.flatMap(_.fields), "\uD83D\uDD11")
+  def addPrimaryKeys(keys : List[PrimaryKey]) : Unit =     
+    displayKeyForFields(headings.addPrimaryKeys(keys))
 
-  def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
-    val fields = newForeignKeys.keys.filter(_.direction == ForeignKeyDirection.STRAIGHT).flatMap(_.from.fields)
-    displayKeyForFields(fields, "\u26bf")
+  def addForeignKeys(keys : ForeignKeys) : Unit = {
+    displayKeyForFields(headings.addForeignKeys(keys))
   }
 
   /* the unique id for the table */

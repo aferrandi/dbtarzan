@@ -19,6 +19,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	val log = new Logger(guiActor)
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
 	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
+	val cache = new DatabaseWorkerCache()
 	loadForeignKeysFromFile()	
 
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
@@ -88,7 +89,9 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(core => {
 		val tableName = qry.id.tableName
-		val foreignKeys = foreignKeysCache.getOrElseUpdate(tableName, core.foreignKeyLoader.foreignKeys(tableName))
+		val foreignKeys = foreignKeysCache.getOrElseUpdate(tableName, 
+			cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
+		)
 		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)
 	})
 
@@ -98,7 +101,6 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			))
 
 	private def queryTables(qry: QueryTables) : Unit = withCore(core => { 
-			log.info("Querying the tables of the database "+databaseName)
 			val names = core.metadataLoader.tableNames()
 			if(!names.tableNames.isEmpty)
 				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
@@ -107,17 +109,23 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
     		guiActor ! ResponseTables(qry.id, names)
 		})
 
-	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => 
-    		guiActor ! ResponseColumns(qry.id, qry.tableName, core.metadataLoader.columnNames(qry.tableName), queryAttributes())
-    	)
+	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
+			val tableName = qry.tableName
+			val columns = cache.cachedColumns(tableName, core.metadataLoader.columnNames(tableName))
+    		guiActor ! ResponseColumns(qry.id, tableName, columns, queryAttributes())
+		})
 
-	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => 
-    		guiActor ! ResponseColumnsFollow(qry.id, qry.tableName, qry.follow, core.metadataLoader.columnNames(qry.tableName), queryAttributes())
-    	)		
+	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
+			val tableName = qry.tableName
+			val columnsFollow = cache.cachedColumns(tableName, core.metadataLoader.columnNames(qry.tableName))
+    		guiActor ! ResponseColumnsFollow(qry.id, tableName, qry.follow, columnsFollow, queryAttributes())
+    	})		
 
-	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => 
-    		guiActor ! ResponsePrimaryKeys(qry.id, core.metadataLoader.primaryKeys(qry.id.tableName))
-    	)
+	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {
+			val tableName = qry.id.tableName
+			val primaryKeys = cache.cachedPrimaryKeys(tableName, core.metadataLoader.primaryKeys(tableName))
+    		guiActor ! ResponsePrimaryKeys(qry.id, primaryKeys)
+    	})
 
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)
 

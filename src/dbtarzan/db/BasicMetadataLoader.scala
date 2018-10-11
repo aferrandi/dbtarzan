@@ -50,7 +50,7 @@ class BasicMetadataLoader(schema: Option[String], meta : DatabaseMetaData) {
 			case _ => Some(FieldType.STRING)
 		}
 
-	def primaryKeys(tableName : String) : List[PrimaryKey] = try {
+	def primaryKeys(tableName : String) : PrimaryKeys = try {
 		def cleanFieldName(fieldNameRaw: String) : String = fieldNameRaw.trim.stripPrefix("[").stripSuffix("]")
 		case class PrimaryKeyField(keyName : String, fieldName : String)
 			using(meta.getPrimaryKeys(null, schema.orNull, tableName)) { rs =>
@@ -62,9 +62,10 @@ class BasicMetadataLoader(schema: Option[String], meta : DatabaseMetaData) {
 					list += PrimaryKeyField(keyName, fieldName)
 				}
 				println("Primary keys ("+list.size+") loaded")
-				list.groupBy(_.keyName).map({ 
+				val keys =list.groupBy(_.keyName).map({ 
 					case (keyName, fields) => PrimaryKey(keyName, fields.toList.map(_.fieldName))
 				}).toList
+				PrimaryKeys(keys)
 			} 
 		}
 		catch {

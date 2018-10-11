@@ -38,3 +38,4 @@ case class OrderByField(field : Field, direction: OrderByDirection)
 case class OrderByFields(fields : List[OrderByField])
 /* the primary keys of a table) */
 case class PrimaryKey(keyName: String, fields : List[String])
+case class PrimaryKeys(keys : List[PrimaryKey])
