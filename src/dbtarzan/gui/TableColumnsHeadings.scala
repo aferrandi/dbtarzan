@@ -19,8 +19,8 @@ class TableColumnsHeadings(columnNames : List[Field]) {
   private val indexByKey = columnNamesLowerCase.zipWithIndex.toMap
   private val keysAttributes = Map(columnNamesLowerCase.map(n => (n, BitSet.empty)) : _*)
     
-  def addPrimaryKeys(keys : List[PrimaryKey]) : List[HeadingText] = {
-    val fieldNames = keys.flatMap(_.fields)
+  def addPrimaryKeys(keys : PrimaryKeys) : List[HeadingText] = {
+    val fieldNames = keys.keys.flatMap(_.fields)
     addKeys(fieldNames, TableColumnsHeadings.PRIMARYKEY_STATE)
   }
 

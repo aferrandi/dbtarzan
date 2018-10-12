@@ -16,6 +16,6 @@ class ConnectionDataReaderTest extends FlatSpec {
   	val json = values.toJson.prettyPrint
   	println(json)
   	val extracted = ConnectionDataReader.parseText(json)
-  	assert(extracted === values)
+  	assert(extracted === values.reverse)
   }
 }

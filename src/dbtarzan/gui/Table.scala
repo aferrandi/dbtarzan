@@ -7,7 +7,7 @@ import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKey, ForeignKeys, ForeignKeyDirection}
+import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, ForeignKeyDirection}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.Logger
@@ -103,7 +103,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
       })  
 
   /* adds the database rows to the table */
-  def addPrimaryKeys(keys : List[PrimaryKey]) : Unit =     
+  def addPrimaryKeys(keys : PrimaryKeys) : Unit =     
     displayKeyForFields(headings.addPrimaryKeys(keys))
 
   def addForeignKeys(keys : ForeignKeys) : Unit = {
