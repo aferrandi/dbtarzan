@@ -18,7 +18,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	def databaseName = data.name
 	val log = new Logger(guiActor)
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
-	val foreignKeysCache = HashMap.empty[String, ForeignKeys]
+	val foreignKeysFromFile = HashMap.empty[String, ForeignKeys]
 	val cache = new DatabaseWorkerCache()
 	loadForeignKeysFromFile()	
 
@@ -40,11 +40,11 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def loadForeignKeysFromFile() : Unit = 
 		if(ForeignKeysToFile.fileExist(databaseName)) {
-			log.info("Loadruning foreign keys from the database file "+databaseName)
+			log.info("Loading foreign keys from the database file "+databaseName)
 			try
 			{
 				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
-				tablesKeys.keys.foreach(tableKeys => foreignKeysCache += tableKeys.table -> tableKeys.keys)
+				tablesKeys.keys.foreach(tableKeys => foreignKeysFromFile += tableKeys.table -> tableKeys.keys)
 			} 
 			catch { 
 				case e : Exception => log.error("Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) 
@@ -89,7 +89,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(core => {
 		val tableName = qry.id.tableName
-		val foreignKeys = foreignKeysCache.getOrElseUpdate(tableName, 
+		val foreignKeys = foreignKeysFromFile.getOrElseUpdate(tableName, 
 			cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
 		)
 		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)

@@ -29,7 +29,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
    /* converts rows to structures usable from the table */
   private val fromRow = new CheckedRowFromRow(checkedRows, table.selectionModel()) 
   /* to build automatically the headings of the table colums */
-  private val headings = new TableColumnssHeadings(names)
+  private val headings = new TableColumnsHeadings(names)
 
   /* requests the rows for the table to the database actor. They come back using the addRows function */
   dbActor ! QueryRows(tableId, dbTable.sql) 

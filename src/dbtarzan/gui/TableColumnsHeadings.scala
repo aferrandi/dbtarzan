@@ -4,7 +4,7 @@ import scala.collection.mutable.Map
 import scala.collection.immutable.BitSet
 import dbtarzan.db._
 
-object TableColumnssHeadings {
+object TableColumnsHeadings {
   val PRIMARYKEY_SYMBOL = "\uD83D\uDD11"
   val FOREIGNKEY_SYMBOL = "\u26bf"
   val PRIMARYKEY_STATE = 1
@@ -13,32 +13,39 @@ object TableColumnssHeadings {
 
 case class HeadingText(index: Int, text: String)
 
-class TableColumnssHeadings(columnNames : List[Field]) {
+/* produces headings for the UI table depending by the primary and foreign keys of which the columns are part */ 
+class TableColumnsHeadings(columnNames : List[Field]) {
   private val columnNamesLowerCase = columnNames.map(_.name.toLowerCase)
   private val indexByKey = columnNamesLowerCase.zipWithIndex.toMap
   private val keysAttributes = Map(columnNamesLowerCase.map(n => (n, BitSet.empty)) : _*)
     
   def addPrimaryKeys(keys : List[PrimaryKey]) : List[HeadingText] = {
     val fieldNames = keys.flatMap(_.fields)
-    addKeys(fieldNames, TableColumnssHeadings.PRIMARYKEY_STATE)
+    addKeys(fieldNames, TableColumnsHeadings.PRIMARYKEY_STATE)
   }
 
   def addForeignKeys(newForeignKeys : ForeignKeys) : List[HeadingText] = {
     val fieldNames = newForeignKeys.keys.filter(_.direction == ForeignKeyDirection.STRAIGHT).flatMap(_.from.fields)
-    addKeys(fieldNames, TableColumnssHeadings.FOREIGNKEY_STATE)
+    addKeys(fieldNames, TableColumnsHeadings.FOREIGNKEY_STATE)
   }
 
+  case class KeyAndLabel(key : String, label: String)
+
   private def addKeys(fieldNames : List[String], state : Int) : List[HeadingText] = {
-    fieldNames.map(_.toLowerCase).foreach(lowerCaseName => {
-        keysAttributes.update(lowerCaseName, keysAttributes.get(lowerCaseName).get + state)
-    })
-    fieldNames.map({ case name => HeadingText(indexByKey.get(name.toLowerCase).get, bitsetToText(name.toLowerCase) + " " + name) })
+    def addKeyAttribute(key : String) : Unit = 
+      keysAttributes.update(key, keysAttributes.get(key).get + state)
+    def toHeadingText(kl : KeyAndLabel) = 
+      HeadingText(indexByKey.get(kl.key).get, bitsetToText(kl.key) + " " + kl.label)
+
+    val keysAndLabels = fieldNames.map(n => KeyAndLabel(n.toLowerCase, n))
+    keysAndLabels.foreach(kl => addKeyAttribute(kl.key))
+    keysAndLabels.map(toHeadingText)
   }
 
   private def bitsetToText(fieldName: String) : String = {
     def toText(bit : Int) : String = bit match {
-        case TableColumnssHeadings.PRIMARYKEY_STATE => TableColumnssHeadings.PRIMARYKEY_SYMBOL
-        case TableColumnssHeadings.FOREIGNKEY_STATE => TableColumnssHeadings.FOREIGNKEY_SYMBOL
+        case TableColumnsHeadings.PRIMARYKEY_STATE => TableColumnsHeadings.PRIMARYKEY_SYMBOL
+        case TableColumnsHeadings.FOREIGNKEY_STATE => TableColumnsHeadings.FOREIGNKEY_SYMBOL
     }
     keysAttributes.get(fieldName.toLowerCase).get.toList.map(toText).mkString("")
   }

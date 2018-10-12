@@ -1,9 +1,7 @@
 package dbtarzan.db
 
 
-/**
-	builds the table that is the result of using a foreign key of another table
-*/
+/* builds the table that is the result of using a foreign key of another table*/
 class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributesApplier : QueryAttributesApplier) {
 	val mapNameToIndex = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
 
@@ -15,9 +13,7 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributesApplie
 		Table.build(description, newColumns, Some(keyCriteria), None,  None, attributesApplier)		
 	}
 
-	/**
-		has a foreignkey FK(keyfrom, keyto), the columns from 
-	*/
+	/* has a foreignkey FK(keyfrom, keyto), the columns from */
 	private def buildKeyValuesForRow(row : Row) : FKRow = {
 		val fromFields = follow.key.from.fields
 		val toFields = follow.key.to.fields
