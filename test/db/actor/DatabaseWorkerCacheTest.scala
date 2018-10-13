@@ -12,19 +12,26 @@ class DatabaseWorkerCacheTest extends FlatSpec {
 	assert("key1" === keys.keys.head.keyName)
   }
 
- "the cache" should "contain the columns " in {
+ "the cache" should "contain the columns" in {
     val cache = new DatabaseWorkerCache()
     val fields = cache.cachedFields("user", new Fields(List(Field("lastName", FieldType.STRING))))
 	assert("lastName" === fields.fields.head.name)
   }
 
+ "the cache" should "contain the foreign keys" in {
+    val cache = new DatabaseWorkerCache()
+    val keys = cache.cachedForeignKeys("user", ForeignKeys(List(
+      ForeignKey("lastNameKey", FieldsOnTable("user", List("lastName")), FieldsOnTable("class", List("lastName")), ForeignKeyDirection.STRAIGHT)
+      )))
+	assert("lastNameKey" === keys.keys.head.name)
+  }
+ "the cache" should "have different keys for different tables" in {
+    val cache = new DatabaseWorkerCache()
+    cache.cachedPrimaryKeys("user", new PrimaryKeys(List(PrimaryKey("key1", List("lastName")))))
+    cache.cachedPrimaryKeys("city", new PrimaryKeys(List(PrimaryKey("key2", List("name")))))
+    val keysUser = cache.cachedPrimaryKeys("user", new PrimaryKeys(List.empty))
+    val keysCity = cache.cachedPrimaryKeys("city", new PrimaryKeys(List.empty))
+	assert("key1" === keysUser.keys.head.keyName)
+	assert("key2" === keysCity.keys.head.keyName)
+  }
 }
-
-/*
-    def cachedPrimaryKeys(tableName : String, extract : => PrimaryKeys) : PrimaryKeys = 
-        primaryKeys.getOrElseUpdate(tableName, extract)
-    def cachedColumns(tableName : String, extract : => Fields) : Fields = 
-        columns.getOrElseUpdate(tableName, extract)
-    def cachedForeignKeys(tableName : String, extract : => ForeignKeys) : ForeignKeys = 
-        foreignKeys.getOrElseUpdate(tableName, extract)
-*/
