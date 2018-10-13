@@ -2,9 +2,9 @@ package dbtarzan.db
 
 import org.scalatest.FlatSpec
 
-class TableTest extends FlatSpec {
+class DBTableTest extends FlatSpec {
   "a simple table" should "give a simple query" in {
-    val table = Table.build(
+    val table = DBTable.build(
         buildDescription(),
         Fields(buildColumns()),
         None,
@@ -18,7 +18,7 @@ class TableTest extends FlatSpec {
 
   "a simple table with delimiters" should "give a query with delimiters" in {
       val applier = QueryAttributesApplier.from(QueryAttributes(Some(IdentifierDelimiters('[', ']')), Some("TST")))
-    val table = Table.build(
+    val table = DBTable.build(
         buildDescription(),
         Fields(buildColumns()),
         None,
@@ -31,7 +31,7 @@ class TableTest extends FlatSpec {
   }
 
   "a table with foreign criteria" should "give a query with a where clause" in {
-    val table = Table.build(
+    val table = DBTable.build(
         buildDescription(),
         Fields(buildColumns()),
         Some(buildForeignKeyCriteria()),
@@ -44,7 +44,7 @@ class TableTest extends FlatSpec {
   }
 
   "a table with additional filter" should "give a query with a where clause" in {
-    val table = Table.build(
+    val table = DBTable.build(
         buildDescription(),
         Fields(buildColumns()),
         None,
@@ -57,7 +57,7 @@ class TableTest extends FlatSpec {
   }
 
   "a table with additional order by columns" should "give a query with an order by clause" in {
-    val table = Table.build(
+    val table = DBTable.build(
         buildDescription(),
         Fields(buildColumns()),
         None,
@@ -73,7 +73,7 @@ class TableTest extends FlatSpec {
   }
 
   "a table with empty order by columns list" should "give a simple query" in {
-    val table = Table.build(
+    val table = DBTable.build(
         buildDescription(),
         Fields(buildColumns()),
         None,

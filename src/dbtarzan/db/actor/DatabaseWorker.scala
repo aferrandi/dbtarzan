@@ -111,13 +111,13 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
 			val tableName = qry.tableName
-			val columns = cache.cachedColumns(tableName, core.metadataLoader.columnNames(tableName))
+			val columns = cache.cachedFields(tableName, core.metadataLoader.columnNames(tableName))
     		guiActor ! ResponseColumns(qry.id, tableName, columns, queryAttributes())
 		})
 
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
 			val tableName = qry.tableName
-			val columnsFollow = cache.cachedColumns(tableName, core.metadataLoader.columnNames(qry.tableName))
+			val columnsFollow = cache.cachedFields(tableName, core.metadataLoader.columnNames(qry.tableName))
     		guiActor ! ResponseColumnsFollow(qry.id, tableName, qry.follow, columnsFollow, queryAttributes())
     	})		
 
