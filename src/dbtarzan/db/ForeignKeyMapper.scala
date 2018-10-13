@@ -6,11 +6,11 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributesApplie
 	val mapNameToIndex = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
 
 
-	private def toFollowTable() : Table = {
+	private def toFollowTable() : DBTable = {
 		val fkRows= follow.rows.map(row => buildKeyValuesForRow(row))
 		val keyCriteria = ForeignKeyCriteria(fkRows, newColumns.fields)
 		val description = TableDescription(follow.key.to.table, Option(follow.key.from.table), None)
-		Table.build(description, newColumns, Some(keyCriteria), None,  None, attributesApplier)		
+		DBTable.build(description, newColumns, Some(keyCriteria), None,  None, attributesApplier)		
 	}
 
 	/* has a foreignkey FK(keyfrom, keyto), the columns from */
@@ -29,6 +29,6 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributesApplie
 }
 
 object ForeignKeyMapper {
-	def toFollowTable(follow : FollowKey, newColumns : Fields, attributesApplier : QueryAttributesApplier) : Table = 
+	def toFollowTable(follow : FollowKey, newColumns : Fields, attributesApplier : QueryAttributesApplier) : DBTable = 
 		new ForeignKeyMapper(follow, newColumns, attributesApplier).toFollowTable()
 }

@@ -4,7 +4,7 @@ package dbtarzan.db
 /**
 	Represents the table of a database 
 */
-class Table private (
+class DBTable private (
 	description : TableDescription, 
 	columns : Fields, 
 	foreignFilter : Option[ForeignKeyCriteria], 
@@ -54,14 +54,13 @@ class Table private (
 			.getOrElse(additionalFilter)
 
 	def withAdditionalFilter(additionalFilter : Filter) =
-		new Table(description, columns, foreignFilter, Some(addFilterToExisting(additionalFilter)), orderByFields, attributesApplier)
+		new DBTable(description, columns, foreignFilter, Some(addFilterToExisting(additionalFilter)), orderByFields, attributesApplier)
 
-	def withOrderByFields(newOrderByFields : OrderByFields) = {
-		new Table(description, columns, foreignFilter, genericFilter, Some(newOrderByFields), attributesApplier)
-		}	 
+	def withOrderByFields(newOrderByFields : OrderByFields) = 
+		new DBTable(description, columns, foreignFilter, genericFilter, Some(newOrderByFields), attributesApplier)
 }
 
-object Table {
+object DBTable {
 	def build(
 		description : TableDescription, 
 		columns : Fields, 
@@ -69,9 +68,9 @@ object Table {
 		genericFilter : Option[Filter], 
 		orderByFields : Option[OrderByFields],
 		attributesApplier : QueryAttributesApplier
-		) : Table =
-		new Table(description, columns, foreignFilter, genericFilter, orderByFields, attributesApplier)  
+		) : DBTable =
+		new DBTable(description, columns, foreignFilter, genericFilter, orderByFields, attributesApplier)  
 
-	def build(description : TableDescription, columns : Fields, attributesApplier : QueryAttributesApplier) : Table =
+	def build(description : TableDescription, columns : Fields, attributesApplier : QueryAttributesApplier) : DBTable =
 		build(description, columns, None, None, None, attributesApplier)
 }

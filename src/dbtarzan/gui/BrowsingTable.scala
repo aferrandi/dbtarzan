@@ -9,7 +9,7 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection }
+import dbtarzan.db.{ DBTable, ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.messages._
@@ -18,12 +18,12 @@ import dbtarzan.messages._
 /**
   table + constraint input box + foreign keys
 */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.db.Table, databaseId : DatabaseId) extends TTable with TControlBuilder {
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TTable with TControlBuilder {
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
   private val tableId = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
   private val table = new Table(dbActor, guiActor, tableId, dbTable)
-  private var useNewTable : dbtarzan.db.Table => Unit = table => {}
+  private var useNewTable : DBTable => Unit = table => {}
   private var rowDetails : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetails.foreach(details => details.displayRow(row)))
   private val log = new Logger(guiActor)
@@ -76,13 +76,13 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
                 case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)
               }
             },
-            new MenuItem("Close tabs after this") {
-                onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(databaseId, tableId)
-                accelerator = KeyCombination("Ctrl+ALT+A")
-            },
             new MenuItem("Close tabs before this") {
               onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(databaseId, tableId)
-                accelerator = KeyCombination("Ctrl+ALT+B")
+                accelerator = KeyCombination("Ctrl+SHIFT+B")
+            },
+            new MenuItem("Close tabs after this") {
+                onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(databaseId, tableId)
+                accelerator = KeyCombination("Ctrl+SHIFT+F")
             },
             new MenuItem("Close all tabs") {                 
               onAction = (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(databaseId)
@@ -156,7 +156,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : dbtarzan.
   }
 
   /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */
-  def onNewTable(useTable : dbtarzan.db.Table => Unit) : Unit = {
+  def onNewTable(useTable : DBTable => Unit) : Unit = {
     useNewTable = useTable
   }
 

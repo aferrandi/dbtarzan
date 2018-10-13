@@ -7,14 +7,14 @@ import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, ForeignKeyDirection}
+import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, DBTable}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.Logger
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/
-class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable : dbtarzan.db.Table) extends TControlBuilder {
+class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable : DBTable) extends TControlBuilder {
   private val log = new Logger(guiActor)
   val names : List[Field] = dbTable.columnNames
   println("ColumnNames: "+names.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))

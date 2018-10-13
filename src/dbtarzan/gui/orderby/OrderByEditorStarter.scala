@@ -4,11 +4,11 @@ import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
 import scalafx.Includes._
 
-import dbtarzan.db.{  OrderByFields }
+import dbtarzan.db.{  DBTable, OrderByFields }
 /* to start the order by editor. It handles all the cancel/closing/save events */
 object OrderByEditorStarter
 {
- def openOrderByEditor(parentStage : Stage, table: dbtarzan.db.Table, useNewTable : dbtarzan.db.Table => Unit) : Unit = {
+ def openOrderByEditor(parentStage : Stage, table: DBTable, useNewTable : DBTable => Unit) : Unit = {
      val orderByStage = new Stage {
       title = "Choose OrderBy Columns"
       width = 400

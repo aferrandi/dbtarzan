@@ -4,7 +4,7 @@ import scalafx.scene.layout.VBox
 import scalafx.scene.Parent
 import scalafx.scene.control.{ Label, TextArea, ScrollPane, TextField, TextInputControl }
 import scalafx.geometry.{ Insets, Pos }
-import dbtarzan.db.{Field, FieldType, Row}
+import dbtarzan.db.{DBTable, Field, FieldType, Row}
 
 
 /* 
@@ -61,7 +61,7 @@ class RowDetailsCell(field: Field) {
 }
 
 /* displays one single line of the table, as a vertical list of the fields */
-class RowDetailsView(dbTable : dbtarzan.db.Table, initialRow: Option[Row]) extends TControlBuilder {
+class RowDetailsView(dbTable : DBTable, initialRow: Option[Row]) extends TControlBuilder {
     private val names = dbTable.columnNames
     /* the cell components */
     private val cells : List[RowDetailsCell] = names.map({ case (field) => new RowDetailsCell(field)})

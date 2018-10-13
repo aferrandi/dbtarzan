@@ -5,7 +5,7 @@ import scalafx.scene.Parent
 import dbtarzan.messages._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
-import dbtarzan.db.{Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier}
+import dbtarzan.db.{DBTable, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier}
 import scalafx.Includes._
 
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)
@@ -16,16 +16,16 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val mapTable = HashMap.empty[TableId, BrowsingTableWIthTab]
 
   /* creates a table from scratch */
-  private def createTable(tableName : String, columns : Fields, applier : QueryAttributesApplier) : dbtarzan.db.Table = 
-    dbtarzan.db.Table.build(TableDescription(tableName, None, None), columns, applier)
+  private def createTable(tableName : String, columns : Fields, applier : QueryAttributesApplier) : DBTable = 
+    DBTable.build(TableDescription(tableName, None, None), columns, applier)
 
   /* create a table that is given by following a foreign key of a table */  
-  private def createTableFollow(tableName : String, columns : Fields, follow : FollowKey, applier : QueryAttributesApplier) : dbtarzan.db.Table = {
+  private def createTableFollow(tableName : String, columns : Fields, follow : FollowKey, applier : QueryAttributesApplier) : DBTable = {
     println("table follow created "+columns)
     ForeignKeyMapper.toFollowTable(follow, columns, applier) 
   }
 
-  private def buildTab(dbTable : dbtarzan.db.Table, browsingTable :  BrowsingTable) = new Tab() {      
+  private def buildTab(dbTable : DBTable, browsingTable :  BrowsingTable) = new Tab() {      
       text = buildTabText(dbTable)
       content = browsingTable.control     
       tooltip.value = Tooltip("")
@@ -62,14 +62,14 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
     If a filter (where) has been applied, a star (*) character is shown at the end of the text 
   */
-  private def buildTabText(dbTable : dbtarzan.db.Table) : String = {
-    def starForFilter(dbTable : dbtarzan.db.Table) = if(dbTable.hasFilter) " *" else ""
+  private def buildTabText(dbTable : DBTable) : String = {
+    def starForFilter(dbTable : DBTable) = if(dbTable.hasFilter) " *" else ""
 
     val description = dbTable.tableDescription
     description.name + description.origin.map("<"+_).getOrElse("") + starForFilter(dbTable)
   } 
 
-  def addBrowsingTable(dbTable : dbtarzan.db.Table) : Unit = {
+  def addBrowsingTable(dbTable : DBTable) : Unit = {
     val browsingTable = new BrowsingTable(dbActor, guiActor, dbTable, databaseId)
     val tab = buildTab(dbTable, browsingTable)
     tabs += tab
