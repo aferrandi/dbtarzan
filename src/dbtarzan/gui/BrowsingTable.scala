@@ -1,9 +1,8 @@
 package dbtarzan.gui
 
 import scalafx.stage.Stage
-import scalafx.scene.control.{SplitPane, MenuItem, Menu, MenuBar, CheckMenuItem }
+import scalafx.scene.control.{SplitPane, MenuItem, Menu, MenuBar }
 import scalafx.scene.layout.BorderPane
-import scalafx.scene.input.KeyCombination
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
 import scalafx.Includes._
@@ -56,56 +55,15 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
 
   private def buildTop() : BorderPane = new BorderPane {        
       stylesheets += "orderByMenuBar.css"
-      left = buildMainMenu()
+      left = TableMenu.buildMainMenu(guiActor, tableId)
 	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
 	    right =new MenuBar {
 		    menus = List(buildOrderByMenu())
         stylesheets += "orderByMenuBar.css"
       }
 	}
-
-  private def buildMainMenu() = new MenuBar {
-    menus = List(
-      new Menu(JFXUtil.threeLines) {
-        items = List(
-            new MenuItem("Copy SQL To Clipboard") {
-              onAction = (ev: ActionEvent) =>  try {
-                JFXUtil.copyTextToClipboard(dbTable.sql)
-                log.info("SQL copied")
-              } catch {
-                case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)
-              }
-            },
-            new MenuItem("Close tabs before this") {
-              onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(databaseId, tableId)
-                accelerator = KeyCombination("Ctrl+SHIFT+B")
-            },
-            new MenuItem("Close tabs after this") {
-                onAction = (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(databaseId, tableId)
-                accelerator = KeyCombination("Ctrl+SHIFT+F")
-            },
-            new MenuItem("Close all tabs") {                 
-              onAction = (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(databaseId)
-            },
-            new MenuItem("Check All")  { 
-              onAction = { ev: ActionEvent => table.checkAll(true) }
-              accelerator = KeyCombination("Ctrl+SHIFT+A") 
-              },
-            new MenuItem("Uncheck All") { 
-              onAction = { ev: ActionEvent => table.checkAll(false) } 
-              accelerator = KeyCombination("Ctrl+SHIFT+N") 
-              },
-            new CheckMenuItem("Row Details") { 
-              onAction = { ev: ActionEvent => switchRowDetails() }
-              accelerator = KeyCombination("Ctrl+R")
-              }
-          )
-        }
-      )
-      stylesheets += "orderByMenuBar.css"
-    }
-
-  private def switchRowDetails() : Unit = {
+              
+  def switchRowDetails() : Unit = {
     rowDetails= rowDetails match {
       case None => Some(new RowDetailsView(dbTable, table.firstSelectedRow()))
       case Some(_) => None
@@ -160,7 +118,6 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
     useNewTable = useTable
   }
 
-
   /* adds the following rows to the table */
   def addRows(rows : ResponseRows) : Unit  = { 
     table.addRows(rows.rows)
@@ -180,12 +137,27 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
     progressBar.receivedPrimaryKeys()
   }
 
+  def copySelectionToClipboard(includeHeaders : Boolean) : Unit = 
+    table.copySelectionToClipboard(includeHeaders) 
 
-  def copySelectionToClipboard(includeHeaders : Boolean) : Unit = table.copySelectionToClipboard(includeHeaders) 
+  def copySQLToClipboard() : Unit = try {
+    JFXUtil.copyTextToClipboard(dbTable.sql)
+    log.info("SQL copied")
+  } catch {
+    case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)
+  }
 
+  def checkAllTableRows() : Unit = 
+    table.checkAll(true) 
 
+  def checkNoTableRows() : Unit = 
+    table.checkAll(false) 
+    
   def getId : TableId = tableId
+
   def rowsNumber = table.rowsNumber
+
   def sql = dbTable.sql
+  
   def control : Parent = layout
 }

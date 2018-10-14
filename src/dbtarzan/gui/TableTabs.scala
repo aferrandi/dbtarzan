@@ -105,6 +105,21 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
       table.table.copySelectionToClipboard(copy.includeHeaders)
   )
 
+  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = withTableId(copy.id, table => 
+      table.table.copySQLToClipboard()
+  )
+
+	def checkAllTableRows(check : CheckAllTableRows) : Unit = withTableId(check.id, table => 
+      table.table.checkAllTableRows()
+  )
+
+	def checkNoTableRows(check :  CheckNoTableRows) : Unit = withTableId(check.id, table => 
+      table.table.checkNoTableRows()
+  )
+
+	def switchRowDetails(switch: SwitchRowDetails) : Unit = withTableId(switch.id, table => 
+      table.table.switchRowDetails()
+  )
 
   def removeTables(ids : List[TableId]) : Unit = {
       val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)
@@ -113,5 +128,10 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     }
 
   def control : Parent = tabs
+
+  def currentTableId : Option[TableId] = {
+    val currentTab = tabs.selectionModel().selectedItem()
+    mapTable.values.find(_.tab == currentTab).map(_.table.getId)   
+  }
 }
 

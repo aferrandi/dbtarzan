@@ -39,6 +39,13 @@ class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) ex
 
         case msg: CopySelectionToClipboard => Platform.runLater { databases.copySelectionToClipboard(msg) }
 
+        case msg: CopySQLToClipboard => Platform.runLater { databases.copySQLToClipboard(msg) }
+
+        case msg: CheckAllTableRows => Platform.runLater { databases.checkAllTableRows(msg) }
+
+        case msg: CheckNoTableRows => Platform.runLater { databases.checkNoTableRows(msg) }
+
+        case msg: SwitchRowDetails => Platform.runLater { databases.switchRowDetails(msg) }
 
         case msg: DatabaseNames => Platform.runLater { 
             println("Delivery databases"+msg)

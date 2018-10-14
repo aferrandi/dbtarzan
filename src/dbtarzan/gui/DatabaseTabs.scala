@@ -11,7 +11,7 @@ import dbtarzan.messages._
 /** All the tabs with one database for each*/
 class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
-  private val mapDatabase = HashMap.empty[String, Database]
+  private val databaseByName = HashMap.empty[String, Database]
 
   private def addDatabaseTab(dbActor : ActorRef, databaseName : String) : Database = {
     println("add database tab for "+databaseName)
@@ -19,7 +19,7 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
     val tab = buildTab(database)
     tabs += tab
     selectTab(tab)
-    mapDatabase += databaseName -> database
+    databaseByName += databaseName -> database
     database
   }
 
@@ -36,11 +36,11 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
 
   /* requests to close all the database connections */
   def sendCloseToAllOpen() : Unit = 
-      mapDatabase.keys.foreach(databaseName => sendClose(databaseName))
+    databaseByName.keys.foreach(databaseName => sendClose(databaseName))
 
   /* utility method to do something (given by a closure) to a database */
   private def withDatabaseName(databaseName : String, doWith : Database => Unit) : Unit =
-    mapDatabase.get(databaseName).foreach(database => doWith(database))
+    databaseByName.get(databaseName).foreach(database => doWith(database))
 
   /* utility method to do something (given by a closure) to a database */
   private def withDatabaseId(id : DatabaseId, doWith : Database => Unit) : Unit = withDatabaseName(id.databaseName, doWith)
@@ -80,18 +80,26 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   private def selectTab(tab : Tab) : Unit = 
     tabs.selectionModel().select(tab)
 
-  def requestRemovalTabsAfter(request : RequestRemovalTabsAfter) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalTabsAfter(request.tableId))
+  def requestRemovalTabsAfter(request : RequestRemovalTabsAfter) : Unit = withTableId(request.id, database => database.requestRemovalTabsAfter(request.id))
 
-  def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalTabsBefore(request.tableId))
+  def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit = withTableId(request.id, database => database.requestRemovalTabsBefore(request.id))
 
   def requestRemovalAllTabs(request : RequestRemovalAllTabs) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalAllTabs())
 
   def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.id, database => database.copySelectionToClipboard(copy))
 
+  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = withTableId(copy.id, database => database.copySQLToClipboard(copy))
+
+  def checkAllTableRows(check : CheckAllTableRows) : Unit = withTableId(check.id, database => database.checkAllTableRows(check))
+
+  def checkNoTableRows(check :  CheckNoTableRows) : Unit = withTableId(check.id, database => database.checkNoTableRows(check))
+
+  def switchRowDetails(switch: SwitchRowDetails) : Unit = withTableId(switch.id, database => database.switchRowDetails(switch))
+
   /* removes the database tab and its content */
   def removeDatabase(databaseToClose : ResponseCloseDatabase) : Unit = {
     val databaseName = databaseToClose.databaseName 
-    mapDatabase -= databaseName
+    databaseByName -= databaseName
      val optTab = getTabByDatabaseName(databaseName)
      optTab.foreach(tab => tabs.tabs -= tab)
    }
@@ -106,4 +114,9 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   }
 
   def control : Parent = tabs
+
+  def currentTableId : Option[TableId] = {
+    val databaseName = tabs.selectionModel().selectedItem().text()
+    databaseByName.get(databaseName).map(database => database.currentTableId).flatten
+  }
 }

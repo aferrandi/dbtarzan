@@ -78,6 +78,16 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
 
   def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = tableTabs.copySelectionToClipboard(copy)
 
+  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = tableTabs.copySQLToClipboard(copy)
+
+  def checkAllTableRows(check : CheckAllTableRows) : Unit = tableTabs.checkAllTableRows(check)
+
+  def checkNoTableRows(check: CheckNoTableRows) : Unit = tableTabs.checkNoTableRows(check)
+
+  def switchRowDetails(switch: SwitchRowDetails) : Unit = tableTabs.switchRowDetails(switch)
+
   def getId = id
 
+  def currentTableId : Option[TableId] = 
+    tableTabs.currentTableId  
 }

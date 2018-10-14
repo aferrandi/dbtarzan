@@ -26,4 +26,8 @@ trait TDatabases extends TTables {
 	def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit
   	def requestRemovalAllTabs(request : RequestRemovalAllTabs) : Unit
 	def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit
+	def copySQLToClipboard(copy : CopySQLToClipboard) : Unit
+	def checkAllTableRows(check : CheckAllTableRows) : Unit
+	def checkNoTableRows(check :  CheckNoTableRows) : Unit
+	def switchRowDetails(switch: SwitchRowDetails) : Unit
 }

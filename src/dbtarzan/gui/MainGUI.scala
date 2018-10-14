@@ -3,6 +3,7 @@ package dbtarzan.gui
 import scalafx.scene.control.{ SplitPane, MenuItem, Menu, MenuBar }
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
+import scalafx.scene.input.KeyEvent
 import scalafx.scene.image.Image
 import scalafx.stage.Screen
 import scalafx.Includes._
@@ -39,6 +40,8 @@ class MainGUI(
 	private val screenBounds = Screen.primary.visualBounds
 	/* the gui */
 	private val stage = buildStage()
+	
+	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
 	def onDatabaseSelected(use : String => Unit) : Unit = databaseList.onDatabaseSelected(use)
 
@@ -56,6 +59,9 @@ class MainGUI(
 		}
 	}
 
+	private def handleShortcut(ev : KeyEvent) : Unit = 
+		databaseTabs.currentTableId.foreach(id => TableMenu.handleKeyCombination(guiWorker, id, ev))
+	
 	private def buildMenu() = new MenuBar {
 		menus = List(
 		  new Menu("Connections") {

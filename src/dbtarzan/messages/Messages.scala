@@ -51,9 +51,9 @@ case class ResponseDatabase(databaseName : String, dbActor : ActorRef)
 
 case class ResponseCloseDatabase(databaseName : String)
 
-case class RequestRemovalTabsAfter(databaseId : DatabaseId, tableId : TableId)
+case class RequestRemovalTabsAfter(id : TableId)
 
-case class RequestRemovalTabsBefore(databaseId : DatabaseId, tableId : TableId)
+case class RequestRemovalTabsBefore(id : TableId)
 
 case class RequestRemovalAllTabs(databaseId : DatabaseId)
 
@@ -64,3 +64,13 @@ case class ConnectionDatas(datas : List[ConnectionData])
 case class DatabaseNames(names : List[String])
 
 case class CopySelectionToClipboard(id : TableId, includeHeaders : Boolean)
+
+case class CopySQLToClipboard(id : TableId)
+
+case class CheckAllTableRows(id : TableId)
+
+case class CheckNoTableRows(id : TableId)
+
+case class SwitchRowDetails(id : TableId)
+
+
