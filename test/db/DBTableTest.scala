@@ -27,7 +27,7 @@ class DBTableTest extends FlatSpec {
         applier
       )
     val sql = table.buildSql()
-    assert("SELECT * FROM TST.[customer]" === sql)
+    assert("SELECT * FROM [TST].[customer]" === sql)
   }
 
   "a table with foreign criteria" should "give a query with a where clause" in {
