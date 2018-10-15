@@ -60,7 +60,7 @@ class MainGUI(
 	}
 
 	private def handleShortcut(ev : KeyEvent) : Unit = 
-		databaseTabs.currentTableId.foreach(id => TableMenu.handleKeyCombination(guiWorker, id, ev))
+		TableMenu.handleKeyCombination(guiWorker, ev, () => databaseTabs.currentTableId)
 	
 	private def buildMenu() = new MenuBar {
 		menus = List(

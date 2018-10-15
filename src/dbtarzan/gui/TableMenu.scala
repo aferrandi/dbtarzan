@@ -47,13 +47,13 @@ object TableMenu {
         )
         stylesheets += "orderByMenuBar.css"
     }  
-
-    def handleKeyCombination(guiActor: ActorRef, tableId : TableId, ev: KeyEvent) : Unit =
+    /* to get the tableid is an expensive operation, therefore we use it as a closure */
+    def handleKeyCombination(guiActor: ActorRef, ev: KeyEvent, tableId : () => Option[TableId]) : Unit =
         if(ev.controlDown) {
-            if(CLOSE_TAB_BEFORE_KEY.`match`(ev)) guiActor ! RequestRemovalTabsBefore(tableId)
-            else if(CLOSE_TAB_AFTER_KEY.`match`(ev)) guiActor ! RequestRemovalTabsAfter(tableId)
-            else if(CHECK_ALL_KEY.`match`(ev)) guiActor ! CheckAllTableRows(tableId)
-            else if(CHECK_NONE_KEY.`match`(ev)) guiActor ! CheckNoTableRows(tableId)
-            else if(ROW_DETAILS_KEY.`match`(ev)) guiActor ! SwitchRowDetails(tableId)
+            if(CLOSE_TAB_BEFORE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsBefore(id))
+            else if(CLOSE_TAB_AFTER_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsAfter(id))
+            else if(CHECK_ALL_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CheckAllTableRows(id))
+            else if(CHECK_NONE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CheckNoTableRows(id))
+            else if(ROW_DETAILS_KEY.`match`(ev)) tableId().foreach(id => guiActor ! SwitchRowDetails(id))
         }
 }
