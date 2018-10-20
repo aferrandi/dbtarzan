@@ -1,0 +1,9 @@
+ROOTDIR=$1
+VERSION=$2
+SNAPDIR=$ROOTDIR/mksnap
+cd $SNAPDIR
+snap remove dbtarzan
+snap install dbtarzan_$VERSION.0_amd64.snap --devmode
+mkdir ~/snap/dbtarzan/common
+cp $ROOTDIR/connections.config ~/snap/dbtarzan/common/
+cd -
