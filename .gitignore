@@ -21,4 +21,5 @@ mksnap/stage
 mksnap/parts
 mksnap/snap
 mksnap
-!mksnap/snapcraft.yaml
+!mksnap/snapcraft.mod
+!mksnap/*.sh
