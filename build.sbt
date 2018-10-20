@@ -51,10 +51,17 @@ packageWin := {
   "mkwin/packageexe.sh "+rootDir+" "+version.value !
 }
 
+lazy val packageSnap = taskKey[Unit]("Packages Snap")
+packageSnap := {
+  val rootDir = baseDirectory.value
+  "mksnap/create.sh "+rootDir+" "+version.value !
+}
+
 
 addCommandAlias("packageAll", 
 	"; assembly " + 
 	"; debian:packageBin" +
   "; packageWin" +
-  "; packageMacOS"
+  "; packageMacOS" +
+  "; packageSnap"
 )

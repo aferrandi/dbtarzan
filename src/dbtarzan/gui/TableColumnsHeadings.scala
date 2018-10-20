@@ -2,16 +2,20 @@ package dbtarzan.gui
 
 import scala.collection.mutable.Map
 import scala.collection.immutable.BitSet
+import dbtarzan.gui.util.JFXUtil
+import scalafx.scene.image.Image
 import dbtarzan.db._
 
 object TableColumnsHeadings {
-  val PRIMARYKEY_SYMBOL = "\uD83D\uDD11"
-  val FOREIGNKEY_SYMBOL = "\u26bf"
   val PRIMARYKEY_STATE = 1
   val FOREIGNKEY_STATE = 2
+  val BOTHKEYS_STATE = PRIMARYKEY_STATE + FOREIGNKEY_STATE 
+  val PRIMARYKEY_ICON = JFXUtil.loadIcon("primaryKey.png")
+  val FOREIGNKEY_ICON = JFXUtil.loadIcon("foreignKey.png")
+  val BOTHKEYS_ICON = JFXUtil.loadIcon("bothKeys.png")
 }
 
-case class HeadingText(index: Int, text: String)
+case class HeadingText(index: Int, text: String, icon : Option[Image])
 
 /* produces headings for the UI table depending by the primary and foreign keys of which the columns are part */ 
 class TableColumnsHeadings(columnNames : List[Field]) {
@@ -35,18 +39,21 @@ class TableColumnsHeadings(columnNames : List[Field]) {
     def addKeyAttribute(key : String) : Unit = 
       keysAttributes.update(key, keysAttributes.get(key).get + state)
     def toHeadingText(kl : KeyAndLabel) = 
-      HeadingText(indexByKey.get(kl.key).get, bitsetToText(kl.key) + " " + kl.label)
+      HeadingText(indexByKey.get(kl.key).get, kl.label, bitsetToIcon(kl.key))
 
     val keysAndLabels = fieldNames.map(n => KeyAndLabel(n.toLowerCase, n))
     keysAndLabels.foreach(kl => addKeyAttribute(kl.key))
     keysAndLabels.map(toHeadingText)
   }
 
-  private def bitsetToText(fieldName: String) : String = {
-    def toText(bit : Int) : String = bit match {
-        case TableColumnsHeadings.PRIMARYKEY_STATE => TableColumnsHeadings.PRIMARYKEY_SYMBOL
-        case TableColumnsHeadings.FOREIGNKEY_STATE => TableColumnsHeadings.FOREIGNKEY_SYMBOL
+  private def bitsetToIcon(fieldName: String) : Option[Image] = {
+    def toIcon(total : Int) : Option[Image] = total match {
+        case TableColumnsHeadings.PRIMARYKEY_STATE => Some(TableColumnsHeadings.PRIMARYKEY_ICON)
+        case TableColumnsHeadings.FOREIGNKEY_STATE => Some(TableColumnsHeadings.FOREIGNKEY_ICON)
+        case TableColumnsHeadings.BOTHKEYS_STATE => Some(TableColumnsHeadings.BOTHKEYS_ICON)
+        case _ => None
     }
-    keysAttributes.get(fieldName.toLowerCase).get.toList.map(toText).mkString("")
+    val bitset = keysAttributes.get(fieldName.toLowerCase).get
+    toIcon(bitset.sum) 
   }
 }

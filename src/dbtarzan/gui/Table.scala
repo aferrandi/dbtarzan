@@ -4,6 +4,7 @@ import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.{TableColumn, TableView, SelectionMode}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.cell.CheckBoxTableCell
+import scalafx.scene.image.{ Image, ImageView }
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
@@ -99,7 +100,9 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
 
   private def displayKeyForFields(headingsTexts : List[HeadingText]) : Unit = 
     headingsTexts.foreach(ht => {
-        table.columns(ht.index+1).text = ht.text
+        val column = table.columns(ht.index+1)
+        column.text = ht.text
+        ht.icon.foreach(icon => column.graphic = new ImageView(icon))
       })  
 
   /* adds the database rows to the table */

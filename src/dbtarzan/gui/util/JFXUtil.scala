@@ -3,6 +3,7 @@ package dbtarzan.gui.util
 import scalafx.scene.Node
 import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, ButtonType }
 import scalafx.scene.layout.BorderPane
+import scalafx.scene.image.Image
 import scalafx.geometry.Insets
 import scalafx.scene.input.{ MouseEvent, MouseButton, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._
@@ -74,4 +75,9 @@ object JFXUtil {
        headerText= header
        contentText= error
        }.showAndWait()
+
+	def loadIcon(fileName: String) : Image = 
+		// println(this.getClass().getResource("").getPath())
+	    new Image(getClass().getResourceAsStream(fileName))
+   
  }

@@ -22,7 +22,6 @@ import dbtarzan.gui.util.{ JFXUtil, LogIcons }
 class LogList extends TLogs with TControlBuilder {
   private val buffer = ObservableBuffer.empty[TLogMessage]
   private val logTable = buildTable()
-  private val logIcons = new LogIcons()
   private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
   JFXUtil.onAction(logTable, showMessageInDialogBox(_))
@@ -46,7 +45,7 @@ class LogList extends TLogs with TControlBuilder {
 
   /* build the column on the left, that shows the icon (error, warn, info) */
   private def iconColumn() = new TableColumn[TLogMessage, Image] {
-    cellValueFactory = { msg => ObjectProperty(logIcons.iconForMessage(msg.value)) }
+    cellValueFactory = { msg => ObjectProperty(LogIcons.iconForMessage(msg.value)) }
     cellFactory = {
       _ : TableColumn[TLogMessage, Image] => new TableCell[TLogMessage, Image] {
         item.onChange {
