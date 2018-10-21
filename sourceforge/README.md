@@ -13,6 +13,17 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.15
+
+show if the columns are part of primary or foreign keys with icons of keys.
+
+centralized the handling of combination keys (e.g. Ctrl+Shift+...) because the accelerators did not work for menus under tabs
+
+when the table names are loaded after the connection to a database, show it so that if none was found the user knows it and can decide what to do 
+about it
+
+sort of the table names list so that it is easier to find them when there are many
+
 - Release 1.14
 
 Installation file for MacOS (DBTarzanxxx.app.zip).
@@ -22,15 +33,4 @@ When connecting to the database, in case of failure the error is displayed corre
 Complete error messages in case of SQL errors.
 
 Show a link to a "JDBC connection strings" page in the connection editor.
-
-- Release 1.13
-
-Added view with vertical representation of a row (Ctrl-R).
-
-More checks in the "order by" dialog box.
-
-Copy to clipboard table rows with or without the table header 
-
-Accelerators for the menu items of the table menu
-
 
