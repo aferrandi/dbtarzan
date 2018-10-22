@@ -23,6 +23,8 @@ The following videos show examples of database exploration, the first one is a s
 
 More details in the [Documentation](https://aferrandi.github.io/dbtarzan).
 
+If you have any problem or questions about the project please use the [DBTarzan gitter channel](https://gitter.im/aferrandi/dbtarzan) or add an [issue](https://github.com/aferrandi/dbtarzan/issues). 
+
 Examples
 --------
 
