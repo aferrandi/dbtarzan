@@ -15,7 +15,6 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableNames)
   }
   
-
   "columnNames of LAPTOP" should "give a sorted list of the table names" in {
     val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
     val columnNames = metadataLoader.columnNames("LAPTOP")
@@ -29,6 +28,34 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
         Field("PRICE", FieldType.FLOAT), 
         Field("SCREEN",FieldType.INT)
         ) === columnNames.fields)
+  }
+
+  "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
+    val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
+    val primaryKeys = metadataLoader.primaryKeys("LAPTOP")
+  	assert(List(PrimaryKey("PK_LAPTOP", List("CODE"))) === primaryKeys.keys)
+  }
+
+ "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
+    val foreignKeyLoader = new ForeignKeyLoader(connection, None)
+    val foreignKeys = foreignKeyLoader.foreignKeys("LAPTOP")
+  	assert(
+      List(
+        ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable("LAPTOP", List("MODEL")), FieldsOnTable("PRODUCT", List("MODEL")), ForeignKeyDirection.STRAIGHT)
+      ) 
+      === foreignKeys.keys)
+  }
+
+   "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
+    val foreignKeyLoader = new ForeignKeyLoader(connection, None)
+    val foreignKeys = foreignKeyLoader.foreignKeys("PRODUCT")
+  	assert(
+      List(
+        ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable("PRODUCT", List("MODEL")), FieldsOnTable("LAPTOP", List("MODEL")), ForeignKeyDirection.TURNED),
+        ForeignKey("FK_PC_PRODUCT", FieldsOnTable("PRODUCT", List("MODEL")), FieldsOnTable("PC", List("MODEL")), ForeignKeyDirection.TURNED),
+        ForeignKey("FK_PRINTER_PRODUCT", FieldsOnTable("PRODUCT", List("MODEL")), FieldsOnTable("PRINTER", List("MODEL")), ForeignKeyDirection.TURNED)
+      ) 
+      === foreignKeys.keys)
   }
 
   before {

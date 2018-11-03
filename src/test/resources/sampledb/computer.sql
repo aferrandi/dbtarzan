@@ -1,13 +1,14 @@
 -- from http://www.sqlbooks.ru
 
 CREATE TABLE Laptop (
-	code int NOT NULL PRIMARY KEY,
+	code int NOT NULL,
 	model varchar (50) NOT NULL ,
 	speed int NOT NULL ,
 	ram int NOT NULL ,
 	hd float NOT NULL ,
 	price float NULL ,
-	screen int NOT NULL 
+	screen int NOT NULL,
+	CONSTRAINT PK_Laptop PRIMARY KEY (code ASC)
 ) ;
 
 CREATE TABLE PC (
@@ -17,7 +18,7 @@ CREATE TABLE PC (
 	ram int NOT NULL ,
 	hd float NOT NULL ,
 	cd varchar (10) NOT NULL ,
-	price float NULL 
+	price float NULL
 ) ;
 
 CREATE TABLE Product (
@@ -50,7 +51,7 @@ ALTER TABLE PC ADD
 		model
 	);
 
-ALTER TABLE Printer ADD 
+ALTER TABLE Printer ADD
 	CONSTRAINT FK_printer_product FOREIGN KEY 
 	(
 		model
