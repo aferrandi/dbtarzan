@@ -17,8 +17,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   
   before {
     Class.forName("org.h2.Driver")
-    val path = getClass.getClassLoader.getResource(".").getPath()
-    connection = DriverManager.getConnection( "jdbc:h2:mem:;INIT=runscript from 'classpath:sampledb/northwind.sql';", "sa", "" )
+    connection = DriverManager.getConnection( "jdbc:h2:mem:;INIT=runscript from 'classpath:sampledb/computer.sql';", "sa", "" )
   }
 
   after {

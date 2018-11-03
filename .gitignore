@@ -10,6 +10,7 @@ target
 project
 target
 *.sql
+!src/test/resources/sampledb/**/*.sql
 *.~
 *.fgk
 togit
