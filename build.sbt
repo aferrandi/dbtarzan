@@ -24,12 +24,13 @@ libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.3.4",
   "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test",
   "org.scalafx" %% "scalafx" % "8.+",
-  "com.typesafe.akka" %% "akka-actor" % "2.5.11"
+  "com.typesafe.akka" %% "akka-actor" % "2.5.11",
+  "com.h2database" % "h2" % "1.4.197"
 )
 
 unmanagedJars in Compile += Attributed.blank(
     file(scala.util.Properties.javaHome) / "lib" / "ext" / "jfxrt.jar")
-
+    
 fork := true
 
 /* debian package */
