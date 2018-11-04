@@ -12,30 +12,7 @@ class DBTable private (
 	orderByFields : Option[OrderByFields],
 	attributesApplier : QueryAttributesApplier
 	) {
-	val sql = buildSql()
-
-	/* builds the SQL to query the table from the (potential) original foreign key (to know which rows it has to show), the potential where filter and the table name */
-	def buildSql() : String = {
-		def buildFilters(filters : List[String]) : String = { 
-			if(!filters.isEmpty)   
-				filters.mkString(" WHERE (\n", 
-									") AND (\n"
-									, ")")
-			else 
-				""
-		}
-
-		def buildOrderByOne(orderByField: OrderByField) : String = 
-			orderByField.field.name + " " + DBEnumsText.orderByDirectionToText(orderByField.direction) 
-		
-		def buildOrderBy() : String = 
-			orderByFields.filter(_.fields.nonEmpty).map(" ORDER BY " + _.fields.map(buildOrderByOne).mkString(", ")).getOrElse("")	
-
-		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_, attributesApplier))
-		val filters = List(foreignClosure, genericFilter.map(_.text)).flatten
-		var delimitedTableNameWithSchema = attributesApplier.applyBoth(description.name)
-		"SELECT * FROM " + delimitedTableNameWithSchema + buildFilters(filters) + buildOrderBy()
-	}
+	val sql = SqlBuilder.buildSql(description, foreignFilter, genericFilter, orderByFields, attributesApplier)
 
 	def tableDescription = description
 
