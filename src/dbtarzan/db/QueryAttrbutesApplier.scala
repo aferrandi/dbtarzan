@@ -15,5 +15,7 @@ class QueryAttributesApplier(queryAttributes: QueryAttributes) {
 
 object QueryAttributesApplier {
 	def from(queryAttributes: QueryAttributes) = new QueryAttributesApplier(queryAttributes)
+
+	def none() = from(QueryAttributes(None, None))
 } 
 

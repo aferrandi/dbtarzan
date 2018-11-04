@@ -4,7 +4,7 @@ import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.{TableColumn, TableView, SelectionMode}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.cell.CheckBoxTableCell
-import scalafx.scene.image.{ Image, ImageView }
+import scalafx.scene.image.ImageView
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef

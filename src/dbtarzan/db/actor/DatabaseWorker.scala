@@ -96,7 +96,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	})
 
 	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(core => 
-		core.queryLoader.query(qry, maxRows.getOrElse(500),  rows => 
+		core.queryLoader.query(qry.sql, maxRows.getOrElse(500),  rows => 
 			guiActor ! ResponseRows(qry.id, rows)
 			))
 

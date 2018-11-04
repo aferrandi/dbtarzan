@@ -1,11 +1,11 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys}
+import dbtarzan.db.{QuerySql, Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys}
 import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
 import java.time.LocalDateTime
 
-case class QueryRows(id : TableId, sql : String)
+case class QueryRows(id : TableId, sql : QuerySql)
 
 case class QueryTables(id : DatabaseId)
 

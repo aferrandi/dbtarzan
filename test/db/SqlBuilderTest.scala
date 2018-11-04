@@ -9,9 +9,9 @@ class SqlBuilderTest extends FlatSpec {
         None,
         None,
         None,
-        noneApplier()
+        QueryAttributesApplier.none()
       )
-  	assert("SELECT * FROM customer" === sql)
+  	assert("SELECT * FROM customer" === sql.sql)
   }
 
   "a simple table with delimiters" should "give a query with delimiters" in {
@@ -23,7 +23,7 @@ class SqlBuilderTest extends FlatSpec {
         None,
         applier
       )
-    assert("SELECT * FROM [TST].[customer]" === sql)
+    assert("SELECT * FROM [TST].[customer]" === sql.sql)
   }
 
   "a table with foreign criteria" should "give a query with a where clause" in {
@@ -32,9 +32,9 @@ class SqlBuilderTest extends FlatSpec {
         Some(buildForeignKeyCriteria()),
         None,
         None,
-        noneApplier()
+        QueryAttributesApplier.none()
       )
-    assert("SELECT * FROM customer WHERE (\n(name='John' AND age=23))" === sql)
+    assert("SELECT * FROM customer WHERE (\n(name='John' AND age=23))" === sql.sql)
   }
 
   "a table with additional filter" should "give a query with a where clause" in {
@@ -43,9 +43,9 @@ class SqlBuilderTest extends FlatSpec {
         None,
         Some(Filter("name = 'john'")),
         None,
-        noneApplier()
+        QueryAttributesApplier.none()
       )
-    assert("SELECT * FROM customer WHERE (\nname = 'john')" === sql)
+    assert("SELECT * FROM customer WHERE (\nname = 'john')" === sql.sql)
   }
 
   "a table with additional order by columns" should "give a query with an order by clause" in {
@@ -57,9 +57,9 @@ class SqlBuilderTest extends FlatSpec {
           OrderByField(buildNameColumn(), OrderByDirection.ASC),
           OrderByField(buildAgeColumn(), OrderByDirection.DESC)
           ))),
-        noneApplier()
+        QueryAttributesApplier.none()
       )
-    assert("SELECT * FROM customer ORDER BY name ASC, age DESC" === sql)
+    assert("SELECT * FROM customer ORDER BY name ASC, age DESC" === sql.sql)
   }
 
   "a table with empty order by columns list" should "give a simple query" in {
@@ -68,11 +68,10 @@ class SqlBuilderTest extends FlatSpec {
         None,
         None,
         Some(OrderByFields(List.empty[OrderByField])),
-        noneApplier()
+        QueryAttributesApplier.none()
       )
-    assert("SELECT * FROM customer" === sql)
+    assert("SELECT * FROM customer" === sql.sql)
   }
-
 
   private def buildForeignKeyCriteria() = {
     val rows = List(buildRow("John", "23"))
@@ -97,5 +96,4 @@ class SqlBuilderTest extends FlatSpec {
       FieldWithValue("age", age)
     ))
 
-  private def noneApplier() = QueryAttributesApplier.from(QueryAttributes(None, None))
 }

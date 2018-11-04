@@ -141,7 +141,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
     table.copySelectionToClipboard(includeHeaders) 
 
   def copySQLToClipboard() : Unit = try {
-    JFXUtil.copyTextToClipboard(dbTable.sql)
+    JFXUtil.copyTextToClipboard(dbTable.sql.sql)
     log.info("SQL copied")
   } catch {
     case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)

@@ -1,5 +1,7 @@
 package dbtarzan.db
 
+/* an sql expression */
+case class QuerySql(sql: String)
 /* a table: its name, the name of the original table if it comes from another table */
 case class TableDescription(name: String, origin : Option[String], notes: Option[String])
 /* the tables in a databases */

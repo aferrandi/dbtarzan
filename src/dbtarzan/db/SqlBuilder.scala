@@ -24,11 +24,11 @@ class SqlBuilder(
 
 
 	/* builds the SQL to query the table from the (potential) original foreign key (to know which rows it has to show), the potential where filter and the table name */
-	def buildSql() : String = {
+	def buildSql() : QuerySql = {
 		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_, attributesApplier))
 		val filters = List(foreignClosure, genericFilter.map(_.text)).flatten
 		var delimitedTableNameWithSchema = attributesApplier.applyBoth(description.name)
-		"SELECT * FROM " + delimitedTableNameWithSchema + buildFilters(filters) + buildOrderBy()
+		QuerySql("SELECT * FROM " + delimitedTableNameWithSchema + buildFilters(filters) + buildOrderBy())
 	}
 }
 
@@ -39,5 +39,5 @@ object SqlBuilder {
         genericFilter : Option[Filter], 
         orderByFields : Option[OrderByFields],
         attributesApplier : QueryAttributesApplier
-    ) : String = new SqlBuilder(description, foreignFilter, genericFilter, orderByFields, attributesApplier).buildSql()
+    ) : QuerySql = new SqlBuilder(description, foreignFilter, genericFilter, orderByFields, attributesApplier).buildSql()
 }
