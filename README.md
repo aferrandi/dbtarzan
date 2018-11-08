@@ -10,7 +10,7 @@ Explore the tables of a relational database following the relations defined in t
 With DbTarzan you can find the information you need from the database in a fraction of the time, without writing queries.  
 If it is the first time you are looking into a database, with DbTarzan you get immediately a sense of the data in the tables and the relations among them.
 
-![DbTarzan](docs/images/window.jpeg?raw=true)
+![DbTarzan](docs/images/window.png?raw=true)
 
 Foreign keys are  used as constraints, but they contain information about the relationships among tables. 
 DbTarzan uses this information to traverse the tables of a database.
