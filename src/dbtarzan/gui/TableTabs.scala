@@ -82,7 +82,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab))
 
   def addRows(rows : ResponseRows) : Unit = 
-     withTableId(rows.id, table => {
+     withTableId(rows.tableId, table => {
       table.table.addRows(rows)
       table.tab.tooltip.value.text = shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
     })
@@ -93,31 +93,31 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     else
       text.take(maxLength)+"..."
   
-  def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.id, table => table.table.addForeignKeys(keys)) 
+  def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.tableId, table => table.table.addForeignKeys(keys)) 
 
   def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableName,columns.columns, QueryAttributesApplier.from(columns.queryAttributes)))
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
   
-  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit =  withTableId(keys.id, table => table.table.addPrimaryKeys(keys)) 
+  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit =  withTableId(keys.tableId, table => table.table.addPrimaryKeys(keys)) 
 
-  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.id, table => 
+  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.tableId, table => 
       table.table.copySelectionToClipboard(copy.includeHeaders)
   )
 
-  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = withTableId(copy.id, table => 
+  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = withTableId(copy.tableId, table => 
       table.table.copySQLToClipboard()
   )
 
-	def checkAllTableRows(check : CheckAllTableRows) : Unit = withTableId(check.id, table => 
+	def checkAllTableRows(check : CheckAllTableRows) : Unit = withTableId(check.tableId, table => 
       table.table.checkAllTableRows()
   )
 
-	def checkNoTableRows(check :  CheckNoTableRows) : Unit = withTableId(check.id, table => 
+	def checkNoTableRows(check :  CheckNoTableRows) : Unit = withTableId(check.tableId, table => 
       table.table.checkNoTableRows()
   )
 
-	def switchRowDetails(switch: SwitchRowDetails) : Unit = withTableId(switch.id, table => 
+	def switchRowDetails(switch: SwitchRowDetails) : Unit = withTableId(switch.tableId, table => 
       table.table.switchRowDetails()
   )
 

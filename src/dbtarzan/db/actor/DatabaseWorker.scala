@@ -89,16 +89,16 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	})		
 
 	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(core => {
-		val tableName = qry.id.tableName
+		val tableName = qry.tableId.tableName
 		val foreignKeys = foreignKeysFromFile.getOrElseUpdate(tableName, 
 			cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
 		)
-		guiActor ! ResponseForeignKeys(qry.id, foreignKeys)
+		guiActor ! ResponseForeignKeys(qry.tableId, foreignKeys)
 	})
 
 	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(core => 
 		core.queryLoader.query(qry.sql, maxRows.getOrElse(500),  rows => 
-			guiActor ! ResponseRows(qry.id, rows)
+			guiActor ! ResponseRows(qry.tableId, rows)
 			))
 
 	private def queryTables(qry: QueryTables) : Unit = withCore(core => { 
@@ -123,9 +123,9 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
     	})		
 
 	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {
-			val tableName = qry.id.tableName
+			val tableName = qry.tableId.tableName
 			val primaryKeys = cache.cachedPrimaryKeys(tableName, core.metadataLoader.primaryKeys(tableName))
-    		guiActor ! ResponsePrimaryKeys(qry.id, primaryKeys)
+    		guiActor ! ResponsePrimaryKeys(qry.tableId, primaryKeys)
     	})
 
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)

@@ -5,7 +5,7 @@ import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
 import java.time.LocalDateTime
 
-case class QueryRows(id : TableId, sql : QuerySql)
+case class QueryRows(tableId : TableId, sql : QuerySql)
 
 case class QueryTables(databaseId : DatabaseId)
 
@@ -13,15 +13,15 @@ case class QueryColumns(databaseId : DatabaseId, tableName : String)
 
 case class QueryColumnsFollow(databaseId : DatabaseId, tableName : String, follow : FollowKey)
 
-case class QueryPrimaryKeys(id : TableId)
+case class QueryPrimaryKeys(tableId : TableId)
 
-case class QueryForeignKeys(id : TableId)
+case class QueryForeignKeys(tableId : TableId)
 
 case class QueryClose(databaseId : DatabaseId)
 
 case class QueryReset(databaseId : DatabaseId)
       
-case class ResponseRows(id : TableId, rows: Rows)
+case class ResponseRows(tableId : TableId, rows: Rows)
 
 case class ResponseTables(databaseId : DatabaseId, names: TableNames)
 
@@ -29,9 +29,9 @@ case class ResponseCloseTables(databaseId : DatabaseId, ids : List[TableId])
 
 case class ResponseColumns(databaseId: DatabaseId, tableName : String, columns : Fields, queryAttributes : QueryAttributes)
 
-case class ResponsePrimaryKeys(id : TableId, keys : PrimaryKeys)
+case class ResponsePrimaryKeys(tableId : TableId, keys : PrimaryKeys)
 
-case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
+case class ResponseForeignKeys(tableId : TableId, keys : ForeignKeys)
 
 case class ResponseColumnsFollow(databaseId: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes)
 
@@ -51,9 +51,9 @@ case class ResponseDatabase(databaseId : DatabaseId, dbActor : ActorRef)
 
 case class ResponseCloseDatabase(databaseId : DatabaseId)
 
-case class RequestRemovalTabsAfter(id : TableId)
+case class RequestRemovalTabsAfter(tableId : TableId)
 
-case class RequestRemovalTabsBefore(id : TableId)
+case class RequestRemovalTabsBefore(tableId : TableId)
 
 case class RequestRemovalAllTabs(databaseId : DatabaseId)
 
@@ -63,14 +63,14 @@ case class ConnectionDatas(datas : List[ConnectionData])
 
 case class DatabaseIds(names : List[DatabaseId])
 
-case class CopySelectionToClipboard(id : TableId, includeHeaders : Boolean)
+case class CopySelectionToClipboard(tableId : TableId, includeHeaders : Boolean)
 
-case class CopySQLToClipboard(id : TableId)
+case class CopySQLToClipboard(tableId : TableId)
 
-case class CheckAllTableRows(id : TableId)
+case class CheckAllTableRows(tableId : TableId)
 
-case class CheckNoTableRows(id : TableId)
+case class CheckNoTableRows(tableId : TableId)
 
-case class SwitchRowDetails(id : TableId)
+case class SwitchRowDetails(tableId : TableId)
 
 

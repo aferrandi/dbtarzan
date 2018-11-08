@@ -48,10 +48,10 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   private def withTableId(id : TableId, doWith : Database => Unit) : Unit = withDatabaseId(id.databaseId, doWith)
 
   /* received some rows coming as a result of a query, that have to be shown within a table tab */
-  def addRows(rows : ResponseRows) : Unit = withTableId(rows.id, database => database.addRows(rows))
+  def addRows(rows : ResponseRows) : Unit = withTableId(rows.tableId, database => database.addRows(rows))
 
   /* received some foreign keys, that have to be shown within a table tab  */
-  def addForeignKeys(keys : ResponseForeignKeys) : Unit = withTableId(keys.id, database => database.addForeignKeys(keys)) 
+  def addForeignKeys(keys : ResponseForeignKeys) : Unit = withTableId(keys.tableId, database => database.addForeignKeys(keys)) 
 
   /* received the columns of a table, that are used to build the table in a tab  */
   def addColumns(columns : ResponseColumns) : Unit= withDatabaseId(columns.databaseId, database => database.addColumns(columns))
@@ -60,7 +60,7 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= withDatabaseId(columns.databaseId, database => database.addColumnsFollow(columns))
 
   /* received the primary keys of a table, that are used to mark columns as primary keys on a table */
-  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit= withTableId(keys.id, database => database.addPrimaryKeys(keys))
+  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit= withTableId(keys.tableId, database => database.addPrimaryKeys(keys))
 
   /* received the list of the tables in the database, to show in the list on the left side */
   def addTables(tables : ResponseTables) : Unit = withDatabaseId(tables.databaseId, database => database.addTableNames(tables.names))
@@ -79,21 +79,21 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   private def selectTab(tab : Tab) : Unit = 
     tabs.selectionModel().select(tab)
 
-  def requestRemovalTabsAfter(request : RequestRemovalTabsAfter) : Unit = withTableId(request.id, database => database.requestRemovalTabsAfter(request.id))
+  def requestRemovalTabsAfter(request : RequestRemovalTabsAfter) : Unit = withTableId(request.tableId, database => database.requestRemovalTabsAfter(request.tableId))
 
-  def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit = withTableId(request.id, database => database.requestRemovalTabsBefore(request.id))
+  def requestRemovalTabsBefore(request : RequestRemovalTabsBefore) : Unit = withTableId(request.tableId, database => database.requestRemovalTabsBefore(request.tableId))
 
   def requestRemovalAllTabs(request : RequestRemovalAllTabs) : Unit = withDatabaseId(request.databaseId, database => database.requestRemovalAllTabs())
 
-  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.id, database => database.copySelectionToClipboard(copy))
+  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.tableId, database => database.copySelectionToClipboard(copy))
 
-  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = withTableId(copy.id, database => database.copySQLToClipboard(copy))
+  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = withTableId(copy.tableId, database => database.copySQLToClipboard(copy))
 
-  def checkAllTableRows(check : CheckAllTableRows) : Unit = withTableId(check.id, database => database.checkAllTableRows(check))
+  def checkAllTableRows(check : CheckAllTableRows) : Unit = withTableId(check.tableId, database => database.checkAllTableRows(check))
 
-  def checkNoTableRows(check :  CheckNoTableRows) : Unit = withTableId(check.id, database => database.checkNoTableRows(check))
+  def checkNoTableRows(check :  CheckNoTableRows) : Unit = withTableId(check.tableId, database => database.checkNoTableRows(check))
 
-  def switchRowDetails(switch: SwitchRowDetails) : Unit = withTableId(switch.id, database => database.switchRowDetails(switch))
+  def switchRowDetails(switch: SwitchRowDetails) : Unit = withTableId(switch.tableId, database => database.switchRowDetails(switch))
 
   /* removes the database tab and its content */
   def removeDatabase(databaseToClose : ResponseCloseDatabase) : Unit = {
