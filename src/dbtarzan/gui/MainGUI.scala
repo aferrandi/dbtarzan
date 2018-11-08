@@ -14,7 +14,7 @@ import akka.actor.ActorRef
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.config.ConnectionEditorStarter
 import dbtarzan.types.ConfigPath
-import dbtarzan.messages.Logger
+import dbtarzan.messages.{ DatabaseId, Logger }
 
 
 
@@ -43,9 +43,9 @@ class MainGUI(
 	
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
-	def onDatabaseSelected(use : String => Unit) : Unit = databaseList.onDatabaseSelected(use)
+	def onDatabaseSelected(use : DatabaseId => Unit) : Unit = databaseList.onDatabaseSelected(use)
 
-	def onForeignKeyToFile(use : String => Unit) : Unit = databaseList.onForeignKeyToFile(use)
+	def onForeignKeyToFile(use : DatabaseId => Unit) : Unit = databaseList.onForeignKeyToFile(use)
 
 	private def buildStage() : PrimaryStage = new PrimaryStage {
 	    title = "DbTarzan "+version

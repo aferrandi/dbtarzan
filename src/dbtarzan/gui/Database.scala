@@ -11,14 +11,11 @@ import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.db.TableNames
 
-/**
-  A panel containing all the tabs related to a database
-*/
-class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) extends TControlBuilder {
+/* A panel containing all the tabs related to a database */
+class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
   private val tableList = new TableList()
-  private val id = IDGenerator.databaseId(databaseName)
-  private val tableTabs = new TableTabs(dbActor, guiActor, id)  
-  tableList.onTableSelected(tableName => dbActor ! QueryColumns(id, tableName))
+  private val tableTabs = new TableTabs(dbActor, guiActor, databaseId)  
+  tableList.onTableSelected(tableName => dbActor ! QueryColumns(databaseId, tableName))
   private val pane = new SplitPane {
     val tableListWithTitle = new BorderPane {
       top = new FlowPane {
@@ -37,7 +34,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
 		    items = List(
 		      new MenuItem("Connection Reset") {
 		        onAction = {
-		          e: ActionEvent => dbActor ! QueryReset(databaseName)
+		          e: ActionEvent => dbActor ! QueryReset(databaseId)
 		        }
 		      }
 		    )
@@ -46,8 +43,6 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
     stylesheets += "orderByMenuBar.css"
   }
 
-  def getDatabaseName = databaseName
-  
   def addTableNames(names : TableNames) : Unit = 
     tableList.addTableNames(names)    
   
@@ -86,7 +81,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseName : String) 
 
   def switchRowDetails(switch: SwitchRowDetails) : Unit = tableTabs.switchRowDetails(switch)
 
-  def getId = id
+  def getId : DatabaseId = databaseId
 
   def currentTableId : Option[TableId] = 
     tableTabs.currentTableId  

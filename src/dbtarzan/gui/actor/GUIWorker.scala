@@ -47,14 +47,14 @@ class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) ex
 
         case msg: SwitchRowDetails => Platform.runLater { databases.switchRowDetails(msg) }
 
-        case msg: DatabaseNames => Platform.runLater { 
+        case msg: DatabaseIds => Platform.runLater { 
             println("Delivery databases"+msg)
-            dbList.setDatabases(msg) 
+            dbList.setDatabaseIds(msg) 
         }
 
         case err: ErrorDatabaseAlreadyOpen => Platform.runLater { 
-            databases.showDatabase(err.databaseName)
-            log.warning("Database "+err.databaseName+" already open")
+            databases.showDatabase(err.databaseId)
+            log.warning("Database "+err.databaseId.databaseName+" already open")
         }
 	}
 }

@@ -7,33 +7,33 @@ import java.time.LocalDateTime
 
 case class QueryRows(id : TableId, sql : QuerySql)
 
-case class QueryTables(id : DatabaseId)
+case class QueryTables(databaseId : DatabaseId)
 
-case class QueryColumns(id : DatabaseId, tableName : String)
+case class QueryColumns(databaseId : DatabaseId, tableName : String)
 
-case class QueryColumnsFollow(id : DatabaseId, tableName : String, follow : FollowKey)
+case class QueryColumnsFollow(databaseId : DatabaseId, tableName : String, follow : FollowKey)
 
 case class QueryPrimaryKeys(id : TableId)
 
 case class QueryForeignKeys(id : TableId)
 
-case class QueryClose(databaseName : String)
+case class QueryClose(databaseId : DatabaseId)
 
-case class QueryReset(databaseName : String)
+case class QueryReset(databaseId : DatabaseId)
       
 case class ResponseRows(id : TableId, rows: Rows)
 
-case class ResponseTables(id : DatabaseId, names: TableNames)
+case class ResponseTables(databaseId : DatabaseId, names: TableNames)
 
-case class ResponseCloseTables(id : DatabaseId, ids : List[TableId])
+case class ResponseCloseTables(databaseId : DatabaseId, ids : List[TableId])
 
-case class ResponseColumns(id: DatabaseId, tableName : String, columns : Fields, queryAttributes : QueryAttributes)
+case class ResponseColumns(databaseId: DatabaseId, tableName : String, columns : Fields, queryAttributes : QueryAttributes)
 
 case class ResponsePrimaryKeys(id : TableId, keys : PrimaryKeys)
 
 case class ResponseForeignKeys(id : TableId, keys : ForeignKeys)
 
-case class ResponseColumnsFollow(id: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes)
+case class ResponseColumnsFollow(databaseId: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes)
 
 sealed trait TLogMessage{ def produced : LocalDateTime; def text: String }
 
@@ -43,13 +43,13 @@ case class Warning(produced : LocalDateTime, text : String) extends TLogMessage
 
 case class Info(produced : LocalDateTime, text : String) extends TLogMessage
 
-case class ErrorDatabaseAlreadyOpen(databaseName : String)
+case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
-case class QueryDatabase(databaseName : String)
+case class QueryDatabase(databaseId : DatabaseId)
 
-case class ResponseDatabase(databaseName : String, dbActor : ActorRef)
+case class ResponseDatabase(databaseId : DatabaseId, dbActor : ActorRef)
 
-case class ResponseCloseDatabase(databaseName : String)
+case class ResponseCloseDatabase(databaseId : DatabaseId)
 
 case class RequestRemovalTabsAfter(id : TableId)
 
@@ -57,11 +57,11 @@ case class RequestRemovalTabsBefore(id : TableId)
 
 case class RequestRemovalAllTabs(databaseId : DatabaseId)
 
-case class CopyToFile(databaseName : String)
+case class CopyToFile(databaseId : DatabaseId)
 
 case class ConnectionDatas(datas : List[ConnectionData])
 
-case class DatabaseNames(names : List[String])
+case class DatabaseIds(names : List[DatabaseId])
 
 case class CopySelectionToClipboard(id : TableId, includeHeaders : Boolean)
 

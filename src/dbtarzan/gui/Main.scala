@@ -8,7 +8,7 @@ import dbtarzan.config.ConnectionDataReader
 import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.config.actor.ConnectionsWorker
 import dbtarzan.types.ConfigPath
-import dbtarzan.messages.{QueryDatabase, CopyToFile, DatabaseNames, ConnectionDatas, Logger }
+import dbtarzan.messages.{QueryDatabase, CopyToFile, DatabaseIds, ConnectionDatas, Logger, IDGenerator }
 
 /** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp {
@@ -23,12 +23,12 @@ object Main extends JFXApp {
   val guiActor = system.actorOf(Props(new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList)).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val configActor = system.actorOf(Props(new ConnectionsWorker(ConnectionDatas(connections), guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
   val log = new Logger(guiActor)
-  mainGUI.databaseList.setDatabases(DatabaseNames(connections.map(_.name)))
-  mainGUI.onDatabaseSelected( { case databaseName => {
-    log.info("Opening database "+databaseName)
-    configActor ! QueryDatabase(databaseName) 
+  mainGUI.databaseList.setDatabaseIds(DatabaseIds(connections.map(c => IDGenerator.databaseId(c.name))))
+  mainGUI.onDatabaseSelected( { case databaseId => {
+    log.info("Opening database "+databaseId.databaseName)
+    configActor ! QueryDatabase(databaseId) 
     }})
-  mainGUI.onForeignKeyToFile( { case databaseName => configActor ! CopyToFile(databaseName) })
+  mainGUI.onForeignKeyToFile( { case databaseId => configActor ! CopyToFile(databaseId) })
 
   def _guiActor() : ActorRef = guiActor
   def _configActor()  : ActorRef = configActor

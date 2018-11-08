@@ -16,6 +16,7 @@ import dbtarzan.db.ForeignKeysToFile
 /* The actor that reads data from the database */
 class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionData, guiActor : ActorRef) extends Actor {
 	def databaseName = data.name
+	def databaseId = DatabaseId(data.name)	
 	val log = new Logger(guiActor)
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
 	val foreignKeysFromFile = HashMap.empty[String, ForeignKeys]
@@ -71,7 +72,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def close() : Unit = handleErr({
 		println("Closing the worker for "+databaseName)
-		guiActor ! ResponseCloseDatabase(databaseName)
+		guiActor ! ResponseCloseDatabase(databaseId)
 		optCore.foreach(core =>
 			core.closeConnection()
 		)
@@ -106,19 +107,19 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
 			else
 				log.warning("No tables read from database "+databaseName+". Wrong schema?")
-    		guiActor ! ResponseTables(qry.id, names)
+    		guiActor ! ResponseTables(qry.databaseId, names)
 		})
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
 			val tableName = qry.tableName
 			val columns = cache.cachedFields(tableName, core.metadataLoader.columnNames(tableName))
-    		guiActor ! ResponseColumns(qry.id, tableName, columns, queryAttributes())
+    		guiActor ! ResponseColumns(qry.databaseId, tableName, columns, queryAttributes())
 		})
 
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
 			val tableName = qry.tableName
 			val columnsFollow = cache.cachedFields(tableName, core.metadataLoader.columnNames(qry.tableName))
-    		guiActor ! ResponseColumnsFollow(qry.id, tableName, qry.follow, columnsFollow, queryAttributes())
+    		guiActor ! ResponseColumnsFollow(qry.databaseId, tableName, qry.follow, columnsFollow, queryAttributes())
     	})		
 
 	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {

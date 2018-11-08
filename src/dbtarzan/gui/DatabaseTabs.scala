@@ -8,42 +8,41 @@ import scalafx.event.Event
 import akka.actor.ActorRef
 import dbtarzan.messages._
 
+case class DatabaseWithTab(database : Database, tab : Tab)
+
 /** All the tabs with one database for each*/
 class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
-  private val databaseByName = HashMap.empty[String, Database]
+  private val databaseById = HashMap.empty[DatabaseId, DatabaseWithTab]
 
-  private def addDatabaseTab(dbActor : ActorRef, databaseName : String) : Database = {
-    println("add database tab for "+databaseName)
-    val database = new Database(dbActor, guiWorker, databaseName)
+  private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId) : Database = {
+    println("add database tab for "+databaseId.databaseName)
+    val database = new Database(dbActor, guiWorker, databaseId)
     val tab = buildTab(database)
     tabs += tab
     selectTab(tab)
-    databaseByName += databaseName -> database
+    databaseById += databaseId -> DatabaseWithTab(database, tab)
     database
   }
 
   /* requests to close the connection to the database to the central database actor */
-  private def sendClose(databaseName : String) : Unit = {
-    connectionsActor ! QueryClose(databaseName)     
+  private def sendClose(databaseId : DatabaseId) : Unit = {
+    connectionsActor ! QueryClose(databaseId)     
   }
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {
-    text = database.getDatabaseName
+    text = database.getId.databaseName
     content = database.control
-    onCloseRequest = (e : Event) => { sendClose(database.getDatabaseName) }
+    onCloseRequest = (e : Event) => { sendClose(database.getId ) }
   }      
 
   /* requests to close all the database connections */
   def sendCloseToAllOpen() : Unit = 
-    databaseByName.keys.foreach(databaseName => sendClose(databaseName))
+    databaseById.keys.foreach(databaseId => sendClose(databaseId))
 
   /* utility method to do something (given by a closure) to a database */
-  private def withDatabaseName(databaseName : String, doWith : Database => Unit) : Unit =
-    databaseByName.get(databaseName).foreach(database => doWith(database))
-
-  /* utility method to do something (given by a closure) to a database */
-  private def withDatabaseId(id : DatabaseId, doWith : Database => Unit) : Unit = withDatabaseName(id.databaseName, doWith)
+  private def withDatabaseId(databaseId : DatabaseId, doWith : Database => Unit) : Unit =
+    databaseById.get(databaseId).foreach(databaseWithTab => doWith(databaseWithTab.database))
 
   /* utility method to do something (given by a closure) to a table */
   private def withTableId(id : TableId, doWith : Database => Unit) : Unit = withDatabaseId(id.databaseId, doWith)
@@ -55,26 +54,26 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
   def addForeignKeys(keys : ResponseForeignKeys) : Unit = withTableId(keys.id, database => database.addForeignKeys(keys)) 
 
   /* received the columns of a table, that are used to build the table in a tab  */
-  def addColumns(columns : ResponseColumns) : Unit= withDatabaseId(columns.id, database => database.addColumns(columns))
+  def addColumns(columns : ResponseColumns) : Unit= withDatabaseId(columns.databaseId, database => database.addColumns(columns))
 
   /* received the columns of a table, that are used to build the table coming from the selection of a foreign key, in a tab */
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= withDatabaseId(columns.id, database => database.addColumnsFollow(columns))
+  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= withDatabaseId(columns.databaseId, database => database.addColumnsFollow(columns))
 
   /* received the primary keys of a table, that are used to mark columns as primary keys on a table */
   def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit= withTableId(keys.id, database => database.addPrimaryKeys(keys))
 
   /* received the list of the tables in the database, to show in the list on the left side */
-  def addTables(tables : ResponseTables) : Unit = withDatabaseId(tables.id, database => database.addTableNames(tables.names))
+  def addTables(tables : ResponseTables) : Unit = withDatabaseId(tables.databaseId, database => database.addTableNames(tables.names))
 
   /* received the data of a database, to open a database tab */
   def addDatabase(databaseData : ResponseDatabase) : Unit = {
-    val database = addDatabaseTab(databaseData.dbActor, databaseData.databaseName)
+    val database = addDatabaseTab(databaseData.dbActor, databaseData.databaseId)
     databaseData.dbActor ! QueryTables(database.getId)
   }
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
-  private def getTabByDatabaseName(databaseName : String) = 
-    tabs.tabs.filter(_.text == databaseName).headOption
+  private def getTabByDatabaseId(databaseId : DatabaseId) = 
+    tabs.tabs.filter(_.text == databaseId.databaseName).headOption
 
   /* selects and shows the content of a database tab */
   private def selectTab(tab : Tab) : Unit = 
@@ -98,25 +97,25 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
 
   /* removes the database tab and its content */
   def removeDatabase(databaseToClose : ResponseCloseDatabase) : Unit = {
-    val databaseName = databaseToClose.databaseName 
-    databaseByName -= databaseName
-     val optTab = getTabByDatabaseName(databaseName)
+    val databaseId = databaseToClose.databaseId 
+    databaseById -= databaseId
+     val optTab = getTabByDatabaseId(databaseId)
      optTab.foreach(tab => tabs.tabs -= tab)
    }
 
   def removeTables(tablesToClose : ResponseCloseTables) : Unit = 
-    withDatabaseId(tablesToClose.id, database => database.removeTables(tablesToClose.ids))
+    withDatabaseId(tablesToClose.databaseId, database => database.removeTables(tablesToClose.ids))
   
   /* shows the tab of a database */
-  def showDatabase(databaseName : String) : Unit = {
-    val optTab = getTabByDatabaseName(databaseName)
+  def showDatabase(databaseId : DatabaseId) : Unit = {
+    val optTab = getTabByDatabaseId(databaseId)
      optTab.foreach(tab => selectTab(tab))
   }
 
   def control : Parent = tabs
 
   def currentTableId : Option[TableId] = {
-    val databaseName = tabs.selectionModel().selectedItem().text()
-    databaseByName.get(databaseName).map(database => database.currentTableId).flatten
+    val currentTab = tabs.selectionModel().selectedItem()
+    databaseById.values.find(_.tab == currentTab).map(_.database.currentTableId).flatten  
   }
 }
