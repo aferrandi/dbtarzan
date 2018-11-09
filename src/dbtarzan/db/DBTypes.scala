@@ -1,5 +1,7 @@
 package dbtarzan.db
 
+
+case class DatabaseId(databaseName : String)
 /* an sql expression */
 case class QuerySql(sql: String)
 /* a table: its name, the name of the original table if it comes from another table */

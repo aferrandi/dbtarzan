@@ -5,9 +5,7 @@ import dbtarzan.gui.{ TDatabases, TLogs, TDatabaseList}
 import dbtarzan.messages._
 import scalafx.application.Platform
 
-/*
-    Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf 
-*/
+/* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */
 class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) extends Actor {
   private var log = new Logger(self)  
   def receive = {

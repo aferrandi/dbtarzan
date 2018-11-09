@@ -5,7 +5,7 @@ import scalafx.scene.Parent
 import dbtarzan.messages._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
-import dbtarzan.db.{DBTable, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier}
+import dbtarzan.db.{DBTable, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier, DatabaseId}
 import scalafx.Includes._
 
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)

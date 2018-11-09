@@ -8,7 +8,7 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ DBTable, ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection }
+import dbtarzan.db.{ DBTable, ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.messages._

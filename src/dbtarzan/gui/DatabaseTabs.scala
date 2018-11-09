@@ -7,6 +7,7 @@ import scalafx.Includes._
 import scalafx.event.Event
 import akka.actor.ActorRef
 import dbtarzan.messages._
+import dbtarzan.db.DatabaseId
 
 case class DatabaseWithTab(database : Database, tab : Tab)
 

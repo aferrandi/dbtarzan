@@ -4,10 +4,10 @@ import scalafx.scene.control.{ ListView, ListCell, SplitPane, ContextMenu, MenuI
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer 
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.messages.{ DatabaseId, DatabaseIds }
-/**
-	The list of database to choose from
-*/
+import dbtarzan.messages.DatabaseIds
+import dbtarzan.db.DatabaseId
+
+/*	The list of database to choose from*/
 class DatabaseList() extends TControlBuilder with TDatabaseList {
   private val menuForeignKeyToFile = new MenuItem("Build foreign keys file")
   private val buffer = ObservableBuffer.empty[DatabaseId]

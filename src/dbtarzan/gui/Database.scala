@@ -9,7 +9,7 @@ import scalafx.event.ActionEvent
 
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.db.TableNames
+import dbtarzan.db.{ DatabaseId, TableNames }
 
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {

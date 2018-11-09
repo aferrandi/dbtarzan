@@ -14,7 +14,8 @@ import akka.actor.ActorRef
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.config.ConnectionEditorStarter
 import dbtarzan.types.ConfigPath
-import dbtarzan.messages.{ DatabaseId, Logger }
+import dbtarzan.messages.Logger
+import dbtarzan.db.DatabaseId
 
 
 

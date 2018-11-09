@@ -7,7 +7,7 @@ import scala.collection.mutable.HashMap
 
 import dbtarzan.messages._
 import dbtarzan.config.ConnectionsConfig
-import dbtarzan.db.ConnectionBuilder
+import dbtarzan.db.{ConnectionBuilder, DatabaseId }
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
 class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Actor {
@@ -59,7 +59,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Ac
 	 private def newConnections(datas: ConnectionDatas) : Unit =
 	 {
 	 	connectionsConfig = new ConnectionsConfig(datas.datas)
-	 	guiActor ! DatabaseIds(connectionsConfig.connections.map(IDGenerator.databaseId(_)))
+	 	guiActor ! DatabaseIds(connectionsConfig.connections.map(DatabaseId(_)))
 	 }
 
 	 def receive = {

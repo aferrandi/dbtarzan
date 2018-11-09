@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{QuerySql, Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys}
+import dbtarzan.db.{QuerySql, Rows, TableNames, Fields, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys, DatabaseId}
 import dbtarzan.config.ConnectionData
 import akka.actor.ActorRef
 import java.time.LocalDateTime
