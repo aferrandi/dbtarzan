@@ -20,8 +20,8 @@ import dbtarzan.messages._
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TControlBuilder {
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
-  private val tableId = IDGenerator.tableId(TableId(databaseId, dbTable.tableDescription.name))
-  private val table = new Table(dbActor, guiActor, tableId, dbTable)
+  private val queryId = IDGenerator.queryId(TableId(databaseId, dbTable.tableDescription.name))
+  private val table = new Table(dbActor, guiActor, queryId, dbTable)
   private var useNewTable : DBTable => Unit = table => {}
   private var rowDetails : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetails.foreach(details => details.displayRow(row)))
@@ -56,7 +56,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
 
   private def buildTop() : BorderPane = new BorderPane {        
       stylesheets += "orderByMenuBar.css"
-      left = TableMenu.buildMainMenu(guiActor, tableId)
+      left = TableMenu.buildMainMenu(guiActor, queryId)
 	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
 	    right =new MenuBar {
 		    menus = List(buildOrderByMenu())
@@ -154,7 +154,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
   def checkNoTableRows() : Unit = 
     table.checkAll(false) 
     
-  def getId : QueryId = tableId
+  def getId : QueryId = queryId
 
   def rowsNumber = table.rowsNumber
 

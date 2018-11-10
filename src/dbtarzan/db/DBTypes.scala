@@ -1,8 +1,8 @@
 package dbtarzan.db
 
-
+/* The name given by the user to the database identifies it */
 case class DatabaseId(databaseName : String)
-
+/* The database id + the table name identifies a table */
 case class TableId(databaseId : DatabaseId, tableName : String)
 /* an sql expression */
 case class QuerySql(sql: String)
