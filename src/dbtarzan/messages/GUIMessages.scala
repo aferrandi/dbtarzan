@@ -6,7 +6,6 @@ import akka.actor.ActorRef
 trait TWithDatabaseId { def databaseId : DatabaseId }
 
 trait TWithTableId { def tableId : TableId }
-
       
 case class ResponseRows(tableId : TableId, rows: Rows) 
     extends TWithTableId
@@ -29,28 +28,36 @@ case class ResponseForeignKeys(tableId : TableId, keys : ForeignKeys)
 case class ResponseColumnsFollow(databaseId: DatabaseId, tableName : String,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithDatabaseId
 
-case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId) extends TWithDatabaseId
+case class ResponseDatabase(databaseId : DatabaseId, dbActor : ActorRef) 
+    extends TWithDatabaseId
 
-case class ResponseDatabase(databaseId : DatabaseId, dbActor : ActorRef) extends TWithDatabaseId
+case class ResponseCloseDatabase(databaseId : DatabaseId) 
+    extends TWithDatabaseId
 
-case class ResponseCloseDatabase(databaseId : DatabaseId) extends TWithDatabaseId
+case class RequestRemovalTabsAfter(tableId : TableId) 
+    extends TWithTableId
 
-case class RequestRemovalTabsAfter(tableId : TableId) extends TWithTableId
+case class RequestRemovalTabsBefore(tableId : TableId) 
+    extends TWithTableId
 
-case class RequestRemovalTabsBefore(tableId : TableId) extends TWithTableId
+case class RequestRemovalAllTabs(databaseId : DatabaseId) 
+    extends TWithDatabaseId
 
-case class RequestRemovalAllTabs(databaseId : DatabaseId) extends TWithDatabaseId
+case class CopySelectionToClipboard(tableId : TableId, includeHeaders : Boolean) 
+    extends TWithTableId
+
+case class CopySQLToClipboard(tableId : TableId) 
+    extends TWithTableId
+
+case class CheckAllTableRows(tableId : TableId) 
+    extends TWithTableId
+
+case class CheckNoTableRows(tableId : TableId) 
+    extends TWithTableId
+
+case class SwitchRowDetails(tableId : TableId) 
+    extends TWithTableId
+
+case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
 case class DatabaseIds(names : List[DatabaseId])
-
-case class CopySelectionToClipboard(tableId : TableId, includeHeaders : Boolean) extends TWithTableId
-
-case class CopySQLToClipboard(tableId : TableId) extends TWithTableId
-
-case class CheckAllTableRows(tableId : TableId) extends TWithTableId
-
-case class CheckNoTableRows(tableId : TableId) extends TWithTableId
-
-case class SwitchRowDetails(tableId : TableId) extends TWithTableId
-
-
