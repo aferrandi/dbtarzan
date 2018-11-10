@@ -17,7 +17,7 @@ import dbtarzan.messages._
 /**
   table + constraint input box + foreign keys
 */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TTable with TControlBuilder {
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TControlBuilder {
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
   private val tableId = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)

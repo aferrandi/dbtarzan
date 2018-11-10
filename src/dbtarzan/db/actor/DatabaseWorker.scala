@@ -55,14 +55,14 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	/* handles the exceptions sending the exception messages to the GUI */
 	private def handleErr[R](operation: => R): Unit = 
 	    try { operation } catch {
-	      case e : Exception => guiActor ! Error(LocalDateTime.now, "dbWorker", e)
+	      case e : Exception => guiActor ! Error(LocalDateTime.now, "dbWorker", Some(e))
 	    }
 
 	/* if conneced execure the operation, otherwise send an error to the GUI */
 	private def withCore[R](operation: DatabaseWorkerCore => R): Unit =
 		optCore match {
 			case Some(core) =>  handleErr( operation(core) )
-			case None => guiActor ! Error(LocalDateTime.now, "dbWorker", new Exception("Database not connected"))
+			case None => guiActor ! Error(LocalDateTime.now, "Database not connected", None)
 		}
 
 

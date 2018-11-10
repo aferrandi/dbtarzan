@@ -11,7 +11,8 @@ import scalafx.Includes._
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TTables with TControlBuilder {
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
+  private val log = new Logger(guiActor)
   private val tabs = new TabPane()
   private val mapTable = HashMap.empty[TableId, BrowsingTableWIthTab]
 
@@ -34,14 +35,14 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) = 
         mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
 
-  def requestRemovalTabsAfter(tableId : TableId) : Unit = 
+  private def requestRemovalTabsAfter(tableId : TableId) : Unit = 
     withTableId(tableId, table => {
         val toCloseTabs = tabs.tabs.reverse.takeWhile(_ != table.tab.delegate).toList // need to check the javafx class
         val toCloseIds = idsFromTabs(toCloseTabs)
         guiActor ! ResponseCloseTables(databaseId, toCloseIds)
     })
 
-  def requestRemovalTabsBefore(tableId : TableId) : Unit =
+  private def requestRemovalTabsBefore(tableId : TableId) : Unit =
     withTableId(tableId, table => {
       val toCloseTabs = tabs.tabs.takeWhile(_ != table.tab.delegate).toList // need to check the javafx class
       val toCloseIds = idsFromTabs(toCloseTabs)
@@ -69,7 +70,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     description.name + description.origin.map("<"+_).getOrElse("") + starForFilter(dbTable)
   } 
 
-  def addBrowsingTable(dbTable : DBTable) : Unit = {
+  private def addBrowsingTable(dbTable : DBTable) : Unit = {
     val browsingTable = new BrowsingTable(dbActor, guiActor, dbTable, databaseId)
     val tab = buildTab(dbTable, browsingTable)
     tabs += tab
@@ -81,57 +82,47 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def withTableId(id : TableId, doWith : BrowsingTableWIthTab => Unit) : Unit =
     mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab))
 
-  def addRows(rows : ResponseRows) : Unit = 
+  private def addRows(rows : ResponseRows) : Unit = 
      withTableId(rows.tableId, table => {
       table.table.addRows(rows)
       table.tab.tooltip.value.text = shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
     })
 
-  private def shortenIfTooLong(text: String, maxLength : Int) : String =
-    if(text.length <= maxLength)
-      text
-    else
-      text.take(maxLength)+"..."
-  
-  def addForeignKeys(keys : ResponseForeignKeys) : Unit =  withTableId(keys.tableId, table => table.table.addForeignKeys(keys)) 
-
   def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableName,columns.columns, QueryAttributesApplier.from(columns.queryAttributes)))
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.tableName,columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
-  
-  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit =  withTableId(keys.tableId, table => table.table.addPrimaryKeys(keys)) 
-
-  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = withTableId(copy.tableId, table => 
-      table.table.copySelectionToClipboard(copy.includeHeaders)
-  )
-
-  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = withTableId(copy.tableId, table => 
-      table.table.copySQLToClipboard()
-  )
-
-	def checkAllTableRows(check : CheckAllTableRows) : Unit = withTableId(check.tableId, table => 
-      table.table.checkAllTableRows()
-  )
-
-	def checkNoTableRows(check :  CheckNoTableRows) : Unit = withTableId(check.tableId, table => 
-      table.table.checkNoTableRows()
-  )
-
-	def switchRowDetails(switch: SwitchRowDetails) : Unit = withTableId(switch.tableId, table => 
-      table.table.switchRowDetails()
-  )
-
+ 
   def removeTables(ids : List[TableId]) : Unit = {
       val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)
       mapTable --= ids
       tabs.tabs --= tabsToClose
     }
 
+  def handleMessage(msg: TWithTableId) : Unit = msg match {
+    case copy : CopySQLToClipboard => withTableId(copy.tableId, table => table.table.copySQLToClipboard())
+    case copy : CopySelectionToClipboard => withTableId(copy.tableId, table => table.table.copySelectionToClipboard(copy.includeHeaders))
+    case check : CheckAllTableRows => withTableId(check.tableId, table => table.table.checkAllTableRows())
+    case check :  CheckNoTableRows => withTableId(check.tableId, table => table.table.checkNoTableRows())
+    case keys : ResponsePrimaryKeys => withTableId(keys.tableId, table => table.table.addPrimaryKeys(keys)) 
+    case keys : ResponseForeignKeys => withTableId(keys.tableId, table => table.table.addForeignKeys(keys))
+    case switch: SwitchRowDetails => withTableId(switch.tableId, table => table.table.switchRowDetails())
+    case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.tableId)
+    case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.tableId)
+    case rows : ResponseRows => addRows(rows) 
+    case _ => log.error("Table message "+msg+" not recognized")
+  }    
+  
   def control : Parent = tabs
 
   def currentTableId : Option[TableId] = {
     val currentTab = tabs.selectionModel().selectedItem()
     mapTable.values.find(_.tab == currentTab).map(_.table.getId)   
   }
+
+   private def shortenIfTooLong(text: String, maxLength : Int) : String =
+    if(text.length <= maxLength)
+      text
+    else
+      text.take(maxLength)+"..."
 }
 

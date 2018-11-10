@@ -9,47 +9,13 @@ import scalafx.application.Platform
 class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) extends Actor {
   private var log = new Logger(self)  
   def receive = {
-        case rsp: ResponseRows => Platform.runLater { databases.addRows(rsp) }
-
-        case rsp: ResponseTables => Platform.runLater { databases.addTables(rsp) }
-
-        case rsp: ResponseColumns => Platform.runLater { databases.addColumns(rsp) }
-
-        case rsp: ResponseForeignKeys => Platform.runLater { databases.addForeignKeys(rsp) }	
-        
-        case rsp: ResponsePrimaryKeys => Platform.runLater { databases.addPrimaryKeys(rsp) }	
-
-        case rsp: ResponseColumnsFollow => Platform.runLater { databases.addColumnsFollow(rsp) }
-
-        case rsp: ResponseDatabase => Platform.runLater { databases.addDatabase(rsp) } 
-
-        case rsp: ResponseCloseDatabase => Platform.runLater { databases.removeDatabase(rsp) } 
-
-        case rsp: ResponseCloseTables => Platform.runLater { databases.removeTables(rsp) }
-
-        case msg: RequestRemovalTabsAfter => Platform.runLater { databases.requestRemovalTabsAfter(msg) }
-
-        case msg: RequestRemovalTabsBefore => Platform.runLater { databases.requestRemovalTabsBefore(msg) }
-
-        case msg: RequestRemovalAllTabs => Platform.runLater { databases.requestRemovalAllTabs(msg) }
-
+        case rsp: TWithTableId => Platform.runLater { databases.handleMessage(rsp) }
+        case rsp: TWithDatabaseId => Platform.runLater { databases.handleMessage(rsp) }
         case msg: TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
-
-        case msg: CopySelectionToClipboard => Platform.runLater { databases.copySelectionToClipboard(msg) }
-
-        case msg: CopySQLToClipboard => Platform.runLater { databases.copySQLToClipboard(msg) }
-
-        case msg: CheckAllTableRows => Platform.runLater { databases.checkAllTableRows(msg) }
-
-        case msg: CheckNoTableRows => Platform.runLater { databases.checkNoTableRows(msg) }
-
-        case msg: SwitchRowDetails => Platform.runLater { databases.switchRowDetails(msg) }
-
         case msg: DatabaseIds => Platform.runLater { 
             println("Delivery databases"+msg)
             dbList.setDatabaseIds(msg) 
         }
-
         case err: ErrorDatabaseAlreadyOpen => Platform.runLater { 
             databases.showDatabase(err.databaseId)
             log.warning("Database "+err.databaseId.databaseName+" already open")

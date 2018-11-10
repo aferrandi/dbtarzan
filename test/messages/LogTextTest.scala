@@ -6,10 +6,16 @@ import java.time.LocalDateTime
 
 
 class LogTextTest extends FlatSpec {
-  "An error message" should "be parseable" in {
-    val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", new Exception("ex"))
+  "An error message with exception" should "be parseable" in {
+    val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", Some(new Exception("ex")))
     var text = LogText.extractLogMessage(error)
   	assert("error:ex" === text)
+  }
+
+  "An error message without exception" should "be parseable" in {
+    val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", None)
+    var text = LogText.extractLogMessage(error)
+  	assert("error" === text)
   }
 
   "A warning message" should "be parseable" in {
@@ -26,7 +32,7 @@ class LogTextTest extends FlatSpec {
 
 
   "An error message" should "have prefix E" in {
-    val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", new Exception("ex"))
+    val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", Some(new Exception("ex")))
     var prefix = LogText.extractLogPrefix(error)
     assert("E" === prefix)
   }

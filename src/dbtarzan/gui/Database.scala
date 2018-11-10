@@ -9,10 +9,11 @@ import scalafx.event.ActionEvent
 
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.db.{ DatabaseId, TableNames }
+import dbtarzan.db.DatabaseId
 
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
+  private val log = new Logger(guiActor)
   private val tableList = new TableList()
   private val tableTabs = new TableTabs(dbActor, guiActor, databaseId)  
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(databaseId, tableName))
@@ -43,44 +44,20 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     stylesheets += "orderByMenuBar.css"
   }
 
-  def addTableNames(names : TableNames) : Unit = 
-    tableList.addTableNames(names)    
-  
-  def removeTables(ids : List[TableId]) : Unit = 
-    tableTabs.removeTables(ids)
-
   def control : Parent = pane
 
-  def addRows(rows : ResponseRows) : Unit = tableTabs.addRows(rows)
+  def handleMessage(msg: TWithTableId) : Unit = 
+    tableTabs.handleMessage(msg)
 
-  /* received some foreign keys, that have to be shown within a table tab  */
-  def addForeignKeys(keys : ResponseForeignKeys) : Unit = tableTabs.addForeignKeys(keys) 
-
-  /* received the primary keys of a table, that are used to mark columns as primary keys on a table */
-  def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit= tableTabs.addPrimaryKeys(keys) 
-  
-    /* received the columns of a table, that are used to build the table in a tab  */
-  def addColumns(columns : ResponseColumns) : Unit= tableTabs.addColumns(columns)
-
-  /* received the columns of a table, that are used to build the table coming from the selection of a foreign key, in a tab */
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit= tableTabs.addColumnsFollow(columns)
-
-  def requestRemovalTabsAfter(tableId : TableId) : Unit =  tableTabs.requestRemovalTabsAfter(tableId)
-
-  def requestRemovalTabsBefore(tableId : TableId) : Unit = tableTabs.requestRemovalTabsBefore(tableId)
+  def handleMessage(msg: TWithDatabaseId) : Unit = msg match {
+    case tables : ResponseTables => tableList.addTableNames(tables.names)
+    case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
+    case columns : ResponseColumns => tableTabs.addColumns(columns)
+    case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
+    case request : RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
+    case _ => log.error("Database message "+msg+" not recognized")
+  }  
  
-  def requestRemovalAllTabs() : Unit = tableTabs.requestRemovalAllTabs()
-
-  def copySelectionToClipboard(copy : CopySelectionToClipboard) : Unit = tableTabs.copySelectionToClipboard(copy)
-
-  def copySQLToClipboard(copy : CopySQLToClipboard) : Unit = tableTabs.copySQLToClipboard(copy)
-
-  def checkAllTableRows(check : CheckAllTableRows) : Unit = tableTabs.checkAllTableRows(check)
-
-  def checkNoTableRows(check: CheckNoTableRows) : Unit = tableTabs.checkNoTableRows(check)
-
-  def switchRowDetails(switch: SwitchRowDetails) : Unit = tableTabs.switchRowDetails(switch)
-
   def getId : DatabaseId = databaseId
 
   def currentTableId : Option[TableId] = 
