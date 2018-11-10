@@ -31,24 +31,24 @@ object TableMenu {
             onAction = ev
         }
 
-    def buildMainMenu(guiActor: ActorRef, tableId : TableId) = new MenuBar {
+    def buildMainMenu(guiActor: ActorRef, queryId : QueryId) = new MenuBar {
         menus = List(
             new Menu(JFXUtil.threeLines) {
                 items = List(
-                    menuItem("Copy SQL To Clipboard",  (ev: ActionEvent) =>  guiActor ! CopySQLToClipboard(tableId)),
-                    menuItem("Close tabs before this", CLOSE_TAB_BEFORE_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(tableId)),
-                    menuItem("Close tabs after this", CLOSE_TAB_AFTER_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(tableId)),
-                    menuItem("Close all tabs", (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(tableId.databaseId)),
-                    menuItem("Check All", CHECK_ALL_KEY, (ev: ActionEvent) => guiActor ! CheckAllTableRows(tableId)),
-                    menuItem("Uncheck All", CHECK_NONE_KEY, (ev: ActionEvent) => guiActor ! CheckNoTableRows(tableId)),
-                    checkMenuItem("Row Details", ROW_DETAILS_KEY, (ev: ActionEvent) => guiActor ! SwitchRowDetails(tableId)),
+                    menuItem("Copy SQL To Clipboard",  (ev: ActionEvent) =>  guiActor ! CopySQLToClipboard(queryId)),
+                    menuItem("Close tabs before this", CLOSE_TAB_BEFORE_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
+                    menuItem("Close tabs after this", CLOSE_TAB_AFTER_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
+                    menuItem("Close all tabs", (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
+                    menuItem("Check All", CHECK_ALL_KEY, (ev: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
+                    menuItem("Uncheck All", CHECK_NONE_KEY, (ev: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
+                    checkMenuItem("Row Details", ROW_DETAILS_KEY, (ev: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
                 )
             }
         )
         stylesheets += "orderByMenuBar.css"
     }  
     /* to get the tableid is an expensive operation, therefore we use it as a closure */
-    def handleKeyCombination(guiActor: ActorRef, ev: KeyEvent, tableId : () => Option[TableId]) : Unit =
+    def handleKeyCombination(guiActor: ActorRef, ev: KeyEvent, tableId : () => Option[QueryId]) : Unit =
         if(ev.controlDown) {
             if(CLOSE_TAB_BEFORE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsBefore(id))
             else if(CLOSE_TAB_AFTER_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsAfter(id))

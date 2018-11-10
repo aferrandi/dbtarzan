@@ -4,7 +4,8 @@ import dbtarzan.messages._
 import dbtarzan.db.DatabaseId
 
 trait TDatabases {
-	def handleMessage(msg: TWithDatabaseId) : Unit
-	def handleMessage(msg: TWithTableId) : Unit
+	def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit
+	def handleQueryIdMessage(msg: TWithQueryId) : Unit
+	def handleTableIdMessage(msg: TWithTableId) : Unit
 	def showDatabase(databaseId : DatabaseId) : Unit 
 }

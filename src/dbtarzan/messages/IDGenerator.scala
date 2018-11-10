@@ -1,9 +1,9 @@
 package dbtarzan.messages
 
-import dbtarzan.db.DatabaseId
+import dbtarzan.db.TableId
 
-case class TableId(databaseId : DatabaseId, tableName : String, uuid : String)
+case class QueryId(tableId : TableId, uuid : String)
 
 object IDGenerator {
-	def tableId(databaseId : DatabaseId, tableName : String) = TableId(databaseId, tableName, java.util.UUID.randomUUID.toString) 
+	def tableId(tableId : TableId) = QueryId(tableId, java.util.UUID.randomUUID.toString) 
 }

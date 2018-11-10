@@ -9,8 +9,9 @@ import scalafx.application.Platform
 class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) extends Actor {
   private var log = new Logger(self)  
   def receive = {
-        case rsp: TWithTableId => Platform.runLater { databases.handleMessage(rsp) }
-        case rsp: TWithDatabaseId => Platform.runLater { databases.handleMessage(rsp) }
+        case rsp: TWithQueryId => Platform.runLater { databases.handleQueryIdMessage(rsp) }
+        case rsp: TWithDatabaseId => Platform.runLater { databases.handleDatabaseIdMessage(rsp) }
+        case rsp: TWithTableId => Platform.runLater { databases.handleTableIdMessage(rsp) }
         case msg: TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
         case msg: DatabaseIds => Platform.runLater { 
             println("Delivery databases"+msg)

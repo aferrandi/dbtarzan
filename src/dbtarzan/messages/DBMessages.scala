@@ -1,18 +1,18 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{ FollowKey, DatabaseId, QuerySql}
+import dbtarzan.db.{ FollowKey, DatabaseId, TableId, QuerySql}
 
-case class QueryRows(tableId : TableId, sql : QuerySql) 
+case class QueryRows(queryId : QueryId, sql : QuerySql) 
 
 case class QueryTables(databaseId : DatabaseId) 
 
-case class QueryColumns(databaseId : DatabaseId, tableName : String) 
+case class QueryColumns(tableId: TableId) 
 
-case class QueryColumnsFollow(databaseId : DatabaseId, tableName : String, follow : FollowKey) 
+case class QueryColumnsFollow(tableId: TableId, follow : FollowKey) 
 
-case class QueryPrimaryKeys(tableId : TableId) 
+case class QueryPrimaryKeys(queryId : QueryId) 
 
-case class QueryForeignKeys(tableId : TableId) 
+case class QueryForeignKeys(queryId : QueryId) 
 
 case class QueryReset(databaseId : DatabaseId) 
 

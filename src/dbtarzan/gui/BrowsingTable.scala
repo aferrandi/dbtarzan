@@ -8,7 +8,7 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ DBTable, ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId }
+import dbtarzan.db.{ DBTable, ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.messages._
@@ -20,7 +20,7 @@ import dbtarzan.messages._
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TControlBuilder {
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
-  private val tableId = IDGenerator.tableId(databaseId, dbTable.tableDescription.name)
+  private val tableId = IDGenerator.tableId(TableId(databaseId, dbTable.tableDescription.name))
   private val table = new Table(dbActor, guiActor, tableId, dbTable)
   private var useNewTable : DBTable => Unit = table => {}
   private var rowDetails : Option[RowDetailsView] = None
@@ -45,10 +45,11 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
   private def openTableConnectedByForeignKey(key : ForeignKey) : Unit = {
       println("Selected "+key)
       val checkedRows = table.getCheckedRows
+      val foreignTableId = TableId(databaseId, key.to.table)
       if(!checkedRows.isEmpty) {
-        dbActor ! QueryColumnsFollow(databaseId, key.to.table, FollowKey(dbTable.columnNames, key, checkedRows))
+        dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.columnNames, key, checkedRows))
       } else {
-        dbActor ! QueryColumns(databaseId, key.to.table)
+        dbActor ! QueryColumns(foreignTableId)
         log.warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
       }
   } 
@@ -153,7 +154,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
   def checkNoTableRows() : Unit = 
     table.checkAll(false) 
     
-  def getId : TableId = tableId
+  def getId : QueryId = tableId
 
   def rowsNumber = table.rowsNumber
 

@@ -15,7 +15,7 @@ import dbtarzan.messages.Logger
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/
-class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable : DBTable) extends TControlBuilder {
+class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable : DBTable) extends TControlBuilder {
   private val log = new Logger(guiActor)
   val names : List[Field] = dbTable.columnNames
   println("ColumnNames: "+names.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
@@ -33,11 +33,11 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
   private val headings = new TableColumnsHeadings(names)
 
   /* requests the rows for the table to the database actor. They come back using the addRows function */
-  dbActor ! QueryRows(tableId, dbTable.sql) 
+  dbActor ! QueryRows(queryId, dbTable.sql) 
   /* requests the foreign keys for this table. */
-  dbActor ! QueryForeignKeys(tableId)
+  dbActor ! QueryForeignKeys(queryId)
   /* requests the primary keys for this table. */
-  dbActor ! QueryPrimaryKeys(tableId)
+  dbActor ! QueryPrimaryKeys(queryId)
 
 
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
@@ -52,7 +52,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
           rowClickListener.foreach(listener => listener(rowValues))
         )
     )
-    contextMenu = new TableContextMenu(tableId, guiActor).buildContextMenu()
+    contextMenu = new TableContextMenu(queryId, guiActor).buildContextMenu()
   }
 
   private def checkedIfOnlyOne() =
@@ -114,7 +114,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, tableId : TableId, dbTable :
   }
 
   /* the unique id for the table */
-  def getId = tableId
+  def getId = queryId
 
   def getCheckedRows = checkedRows.rows
 

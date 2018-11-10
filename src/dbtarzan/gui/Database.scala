@@ -9,14 +9,14 @@ import scalafx.event.ActionEvent
 
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.db.DatabaseId
+import dbtarzan.db.{ DatabaseId, TableId }
 
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tableList = new TableList()
   private val tableTabs = new TableTabs(dbActor, guiActor, databaseId)  
-  tableList.onTableSelected(tableName => dbActor ! QueryColumns(databaseId, tableName))
+  tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
   private val pane = new SplitPane {
     val tableListWithTitle = new BorderPane {
       top = new FlowPane {
@@ -46,20 +46,25 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   def control : Parent = pane
 
-  def handleMessage(msg: TWithTableId) : Unit = 
-    tableTabs.handleMessage(msg)
+  def handleQueryIdMessage(msg: TWithQueryId) : Unit = 
+    tableTabs.handleQueryIdMessage(msg)
 
-  def handleMessage(msg: TWithDatabaseId) : Unit = msg match {
+  def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTables => tableList.addTableNames(tables.names)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
-    case columns : ResponseColumns => tableTabs.addColumns(columns)
-    case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
     case request : RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
     case _ => log.error("Database message "+msg+" not recognized")
   }  
- 
+
+  def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
+    case columns : ResponseColumns => tableTabs.addColumns(columns)
+    case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
+    case _ => log.error("Table message "+msg+" not recognized")
+  }  
+
+
   def getId : DatabaseId = databaseId
 
-  def currentTableId : Option[TableId] = 
+  def currentTableId : Option[QueryId] = 
     tableTabs.currentTableId  
 }

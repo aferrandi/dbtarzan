@@ -7,7 +7,7 @@ import scalafx.Includes._
 import scalafx.event.Event
 import akka.actor.ActorRef
 import dbtarzan.messages._
-import dbtarzan.db.DatabaseId
+import dbtarzan.db.{DatabaseId, TableId}
 
 case class DatabaseWithTab(database : Database, tab : Tab)
 
@@ -46,17 +46,27 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
     databaseById.get(databaseId).foreach(databaseWithTab => doWith(databaseWithTab.database))
 
   /* utility method to do something (given by a closure) to a table */
-  private def withTableId(id : TableId, doWith : Database => Unit) : Unit = withDatabaseId(id.databaseId, doWith)
+  private def withQueryId(queryId : QueryId, doWith : Database => Unit) : Unit = 
+    withDatabaseId(queryId.tableId.databaseId, doWith)
 
-  def handleMessage(msg: TWithTableId) : Unit = 
-    withTableId(msg.tableId, database => database.handleMessage(msg))
+  /* utility method to do something (given by a closure) to a table */
+  private def withTableId(tableId : TableId, doWith : Database => Unit) : Unit = 
+    withDatabaseId(tableId.databaseId, doWith)
 
-  def handleMessage(msg: TWithDatabaseId) : Unit = msg match {
+
+  def handleQueryIdMessage(msg: TWithQueryId) : Unit = 
+    withQueryId(msg.queryId, database => database.handleQueryIdMessage(msg))
+
+  def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case rsp : ResponseCloseDatabase => removeDatabase(rsp.databaseId)
     case rsp : ResponseDatabase => addDatabase(rsp.dbActor, rsp.databaseId) 
-    case _ => withDatabaseId(msg.databaseId, database => database.handleMessage(msg))
+    case _ => withDatabaseId(msg.databaseId, database => database.handleDatabaseIdMessage(msg))
   }
-  
+
+  def handleTableIdMessage(msg: TWithTableId) : Unit = 
+    withTableId(msg.tableId, database => database.handleTableIdMessage(msg))
+
+
   /* received the data of a database, to open a database tab */
   def addDatabase(dbActor : ActorRef, databaseId : DatabaseId) : Unit = {
     val database = addDatabaseTab(dbActor, databaseId)
@@ -86,7 +96,7 @@ class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) exten
 
   def control : Parent = tabs
 
-  def currentTableId : Option[TableId] = {
+  def currentTableId : Option[QueryId] = {
     val currentTab = tabs.selectionModel().selectedItem()
     databaseById.values.find(_.tab == currentTab).map(_.database.currentTableId).flatten  
   }
