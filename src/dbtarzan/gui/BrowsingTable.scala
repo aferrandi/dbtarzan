@@ -8,16 +8,18 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ DBTable, ForeignKey, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
+import dbtarzan.db.{ DBTable, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.messages._
+
 
 
 /**
   table + constraint input box + foreign keys
 */
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TControlBuilder {
+  private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
   private val queryId = IDGenerator.queryId(TableId(databaseId, dbTable.tableDescription.name))
@@ -25,7 +27,6 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
   private var useNewTable : DBTable => Unit = table => {}
   private var rowDetails : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetails.foreach(details => details.displayRow(row)))
-  private val log = new Logger(guiActor)
   private val queryText = new QueryText() { 
     onEnter(text => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
@@ -41,6 +42,28 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
     bottom = progressBar.control
   }
   foreignKeyList.onForeignKeySelected(key => openTableConnectedByForeignKey(key))
+
+
+  def orderByField(field : Field) : Unit = 
+    useNewTable(dbTable.withOrderByFields(
+      OrderByFields(List(OrderByField(field, OrderByDirection.ASC))
+      )))
+
+  def startOrderByEditor() : Unit = {
+    OrderByEditorStarter.openOrderByEditor(stage(), dbTable, useNewTable)
+  }
+
+  private def stage() : Stage = 
+    new Stage(layout.scene.window().asInstanceOf[javafx.stage.Stage])
+
+  private def buildOrderByMenu() = new Menu("Order by") {
+      items = dbTable.columnNames.map(f => 
+        new MenuItem(f.name) {
+            onAction = { e: ActionEvent => guiActor ! RequestOrderByField(queryId, f) }
+        }) :+ new MenuItem("More...") {
+            onAction = { e: ActionEvent => guiActor ! RequestOrderByEditor(queryId) }
+        }
+    }
 
   private def openTableConnectedByForeignKey(key : ForeignKey) : Unit = {
       println("Selected "+key)
@@ -88,24 +111,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
     }
   }
 
-  private def buildOrderByMenu() = new Menu("Order by") {
-      items = dbTable.columnNames.map(f => 
-        new MenuItem(f.name) {
-              onAction = {
-                e: ActionEvent => useNewTable(dbTable.withOrderByFields(
-                  OrderByFields(List(OrderByField(f, OrderByDirection.ASC))
-                  )))
-              }
-        }) :+ new MenuItem("More...") {
-              onAction = {                
-                e: ActionEvent => {
-                    var stage = new Stage(layout.scene.window().asInstanceOf[javafx.stage.Stage])
-                    OrderByEditorStarter.openOrderByEditor(stage, dbTable, useNewTable)
-                  }
-              }
-        }
-    }
-
+ 
   /* builds the split panel containing the table and the foreign keys list */
   private def buildCenter() = new SplitPane {
     maxHeight = Double.MaxValue

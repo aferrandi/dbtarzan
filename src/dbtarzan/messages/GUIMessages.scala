@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{Rows, Fields, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys, DatabaseId, TableId, TableNames }
+import dbtarzan.db.{Rows, Fields, Field, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys, DatabaseId, TableId, TableNames }
 import akka.actor.ActorRef
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
@@ -58,6 +58,12 @@ case class CheckNoTableRows(queryId : QueryId)
     extends TWithQueryId
 
 case class SwitchRowDetails(queryId : QueryId) 
+    extends TWithQueryId
+
+case class RequestOrderByField(queryId : QueryId, field : Field) 
+    extends TWithQueryId
+
+case class RequestOrderByEditor(queryId : QueryId) 
     extends TWithQueryId
 
 case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)

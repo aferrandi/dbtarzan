@@ -2,11 +2,12 @@ package dbtarzan.gui
 
 import scalafx.scene.control.{ TabPane, Tab, Tooltip}
 import scalafx.scene.Parent
-import dbtarzan.messages._
+import scalafx.Includes._
 import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
 import dbtarzan.db.{DBTable, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier, DatabaseId, TableId}
-import scalafx.Includes._
+import dbtarzan.messages._
+import dbtarzan.gui.util.StringUtil
 
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)
 
@@ -27,32 +28,33 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   }
 
   private def buildTab(dbTable : DBTable, browsingTable :  BrowsingTable) = new Tab() {      
-      text = buildTabText(dbTable)
-      content = browsingTable.control     
-      tooltip.value = Tooltip("")
+    text = buildTabText(dbTable)
+    content = browsingTable.control     
+    tooltip.value = Tooltip("")
   }
 
-  private def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) = 
-        mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
+  private def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) : List[QueryId] = 
+    mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
 
-  private def requestRemovalTabsAfter(queryId : QueryId) : Unit = 
+  private def removeTabs(toCloseTabs : List[javafx.scene.control.Tab]) : Unit = {
+    val toCloseIds = idsFromTabs(toCloseTabs)
+    guiActor ! ResponseCloseTables(databaseId, toCloseIds)
+  }
+
+  private def removeTabsBefore(queryId : QueryId, allTabsInOrder : List[javafx.scene.control.Tab]) : Unit = 
     withQueryId(queryId, table => {
-        val toCloseTabs = tabs.tabs.reverse.takeWhile(_ != table.tab.delegate).toList // need to check the javafx class
-        val toCloseIds = idsFromTabs(toCloseTabs)
-        guiActor ! ResponseCloseTables(databaseId, toCloseIds)
+      val toCloseTabs = allTabsInOrder.takeWhile(_ != table.tab.delegate) // need to check the javafx class
+      removeTabs(toCloseTabs)
     })
+
+  private def requestRemovalTabsAfter(queryId : QueryId) : Unit =
+    removeTabsBefore(queryId, tabs.tabs.reverse.toList) 
 
   private def requestRemovalTabsBefore(queryId : QueryId) : Unit =
-    withQueryId(queryId, table => {
-      val toCloseTabs = tabs.tabs.takeWhile(_ != table.tab.delegate).toList // need to check the javafx class
-      val toCloseIds = idsFromTabs(toCloseTabs)
-      guiActor ! ResponseCloseTables(databaseId, toCloseIds)
-    })
- 
-  def requestRemovalAllTabs() : Unit = {
-      val toCloseIds = idsFromTabs(tabs.tabs.toList)
-      guiActor ! ResponseCloseTables(databaseId, toCloseIds)
-  }   
+    removeTabsBefore(queryId, tabs.tabs.toList) 
+
+  def requestRemovalAllTabs() : Unit =
+      removeTabs(tabs.tabs.toList)
 
   /*
     Normally it shows the name of the table.
@@ -85,12 +87,14 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def addRows(rows : ResponseRows) : Unit = 
      withQueryId(rows.queryId, table => {
       table.table.addRows(rows)
-      table.tab.tooltip.value.text = shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
+      table.tab.tooltip.value.text = StringUtil.shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
     })
 
-  def addColumns(columns : ResponseColumns) : Unit =  addBrowsingTable(createTable(columns.tableId, columns.columns, QueryAttributesApplier.from(columns.queryAttributes)))
+  def addColumns(columns : ResponseColumns) : Unit =  
+    addBrowsingTable(createTable(columns.tableId, columns.columns, QueryAttributesApplier.from(columns.queryAttributes)))
 
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  addBrowsingTable(createTableFollow(columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
+  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  
+    addBrowsingTable(createTableFollow(columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
  
   def removeTables(ids : List[QueryId]) : Unit = {
       val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)
@@ -108,6 +112,8 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case switch: SwitchRowDetails => withQueryId(switch.queryId, table => table.table.switchRowDetails())
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
     case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
+    case order : RequestOrderByField => withQueryId(order.queryId, table => table.table.orderByField(order.field))
+    case order : RequestOrderByEditor => withQueryId(order.queryId, table => table.table.startOrderByEditor())
     case rows : ResponseRows => addRows(rows) 
     case _ => log.error("Table message "+msg+" not recognized")
   }    
@@ -118,11 +124,5 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     val currentTab = tabs.selectionModel().selectedItem()
     mapTable.values.find(_.tab == currentTab).map(_.table.getId)   
   }
-
-   private def shortenIfTooLong(text: String, maxLength : Int) : String =
-    if(text.length <= maxLength)
-      text
-    else
-      text.take(maxLength)+"..."
 }
 

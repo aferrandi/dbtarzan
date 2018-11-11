@@ -1,9 +1,6 @@
 package dbtarzan.db
 
-
-/**
-	Represents the table of a database 
-*/
+/* Represents the table of a database */
 class DBTable private (
 	description : TableDescription, 
 	columns : Fields, 
@@ -14,16 +11,15 @@ class DBTable private (
 	) {
 	val sql = SqlBuilder.buildSql(description, foreignFilter, genericFilter, orderByFields, attributesApplier)
 
-	def tableDescription = description
+	def tableDescription : TableDescription= description
 
-	def columnNames = columns.fields
+	def columnNames : List[Field] = columns.fields
 
-	def hasFilter = genericFilter.isDefined
+	def hasFilter : Boolean = genericFilter.isDefined
 
-	def hasOrderBy = orderByFields.isDefined
+	def hasOrderBy : Boolean = orderByFields.isDefined
 
-	def orderBys = orderByFields
-
+	def orderBys  : Option[OrderByFields] = orderByFields
 
 	/* to accumulate the existing filter + the new filter in the table that gets created with the new filter */
 	private def addFilterToExisting(additionalFilter : Filter) : Filter = 
