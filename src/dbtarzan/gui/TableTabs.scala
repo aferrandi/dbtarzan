@@ -3,19 +3,16 @@ package dbtarzan.gui
 import scalafx.scene.control.{ TabPane, Tab, Tooltip}
 import scalafx.scene.Parent
 import scalafx.Includes._
-import scala.collection.mutable.HashMap
 import akka.actor.ActorRef
 import dbtarzan.db.{DBTable, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier, DatabaseId, TableId}
 import dbtarzan.messages._
 import dbtarzan.gui.util.StringUtil
 
-case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)
-
 /* One tab for each table */
 class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tabs = new TabPane()
-  private val mapTable = HashMap.empty[QueryId, BrowsingTableWIthTab]
+  private val tables = new TableTabsMap()
 
   /* creates a table from scratch */
   private def createTable(tableId : TableId, columns : Fields, applier : QueryAttributesApplier) : DBTable = 
@@ -33,16 +30,13 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     tooltip.value = Tooltip("")
   }
 
-  private def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) : List[QueryId] = 
-    mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
-
   private def removeTabs(toCloseTabs : List[javafx.scene.control.Tab]) : Unit = {
-    val toCloseIds = idsFromTabs(toCloseTabs)
+    val toCloseIds = tables.idsFromTabs(toCloseTabs)
     guiActor ! ResponseCloseTables(databaseId, toCloseIds)
   }
 
   private def removeTabsBefore(queryId : QueryId, allTabsInOrder : List[javafx.scene.control.Tab]) : Unit = 
-    withQueryId(queryId, table => {
+    tables.withQueryId(queryId, table => {
       val toCloseTabs = allTabsInOrder.takeWhile(_ != table.tab.delegate) // need to check the javafx class
       removeTabs(toCloseTabs)
     })
@@ -78,14 +72,11 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     tabs += tab
     tabs.selectionModel().select(tab)
     browsingTable.onNewTable(newTable => addBrowsingTable(newTable))
-    mapTable += browsingTable.getId -> BrowsingTableWIthTab(browsingTable, tab)
+    tables.addBrowsingTable(browsingTable, tab)
   }
 
-  private def withQueryId(id : QueryId, doWith : BrowsingTableWIthTab => Unit) : Unit =
-    mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab))
-
   private def addRows(rows : ResponseRows) : Unit = 
-     withQueryId(rows.queryId, table => {
+     tables.withQueryId(rows.queryId, table => {
       table.table.addRows(rows)
       table.tab.tooltip.value.text = StringUtil.shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
     })
@@ -97,23 +88,23 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     addBrowsingTable(createTableFollow(columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
  
   def removeTables(ids : List[QueryId]) : Unit = {
-      val tabsToClose = mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate)
-      mapTable --= ids
-      tabs.tabs --= tabsToClose
-    }
+    val tabsToClose = tables.tabsWithIds(ids)
+    tables.removeTablesWithIds(ids)
+    tabs.tabs --= tabsToClose
+  }
 
   def handleQueryIdMessage(msg: TWithQueryId) : Unit = msg match {
-    case copy : CopySQLToClipboard => withQueryId(copy.queryId, table => table.table.copySQLToClipboard())
-    case copy : CopySelectionToClipboard => withQueryId(copy.queryId, table => table.table.copySelectionToClipboard(copy.includeHeaders))
-    case check : CheckAllTableRows => withQueryId(check.queryId, table => table.table.checkAllTableRows())
-    case check :  CheckNoTableRows => withQueryId(check.queryId, table => table.table.checkNoTableRows())
-    case keys : ResponsePrimaryKeys => withQueryId(keys.queryId, table => table.table.addPrimaryKeys(keys)) 
-    case keys : ResponseForeignKeys => withQueryId(keys.queryId, table => table.table.addForeignKeys(keys))
-    case switch: SwitchRowDetails => withQueryId(switch.queryId, table => table.table.switchRowDetails())
+    case copy : CopySQLToClipboard => tables.tableWithQueryId(copy.queryId, _.copySQLToClipboard())
+    case copy : CopySelectionToClipboard => tables.tableWithQueryId(copy.queryId, _.copySelectionToClipboard(copy.includeHeaders))
+    case check : CheckAllTableRows => tables.tableWithQueryId(check.queryId, _.checkAllTableRows())
+    case check :  CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
+    case keys : ResponsePrimaryKeys => tables.tableWithQueryId(keys.queryId, _.addPrimaryKeys(keys)) 
+    case keys : ResponseForeignKeys => tables.tableWithQueryId(keys.queryId, _.addForeignKeys(keys))
+    case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetails())
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
     case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
-    case order : RequestOrderByField => withQueryId(order.queryId, table => table.table.orderByField(order.field))
-    case order : RequestOrderByEditor => withQueryId(order.queryId, table => table.table.startOrderByEditor())
+    case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
+    case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
     case rows : ResponseRows => addRows(rows) 
     case _ => log.error("Table message "+msg+" not recognized")
   }    
@@ -122,7 +113,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   def currentTableId : Option[QueryId] = {
     val currentTab = tabs.selectionModel().selectedItem()
-    mapTable.values.find(_.tab == currentTab).map(_.table.getId)   
+    tables.tableIdForTab(currentTab)   
   }
 }
 
