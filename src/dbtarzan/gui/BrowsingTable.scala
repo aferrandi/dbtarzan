@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.stage.Stage
-import scalafx.scene.control.{SplitPane, MenuItem, Menu, MenuBar }
+import scalafx.scene.control.{MenuItem, Menu, MenuBar }
 import scalafx.scene.layout.BorderPane
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
@@ -13,32 +13,28 @@ import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.messages._
 
-
-
-/**
-  table + constraint input box + foreign keys
-*/
+/* table + constraint input box + foreign keys */
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
   private val queryId = IDGenerator.queryId(TableId(databaseId, dbTable.tableDescription.name))
   private val table = new Table(dbActor, guiActor, queryId, dbTable)
+  private val splitter = new BrowsingTableSplitter(table, foreignKeyListWithTitle)
   private var useNewTable : DBTable => Unit = table => {}
-  private var rowDetails : Option[RowDetailsView] = None
-  table.setRowClickListener(row => rowDetails.foreach(details => details.displayRow(row)))
+  private var rowDetailsView : Option[RowDetailsView] = None
+  table.setRowClickListener(row => rowDetailsView.foreach(details => details.displayRow(row)))
   private val queryText = new QueryText() { 
     onEnter(text => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
         useNewTable(tableWithFilters)
     })
   }
-  private val splitCenter = buildCenter()
-  fillSplitPanel()
+  splitter.fillSplitPanel(rowDetailsView)
   private val progressBar = new TableProgressBar()
   private val layout = new BorderPane {
     top = buildTop()
-    center = splitCenter
+    center = splitter.splitCenter
     bottom = progressBar.control
   }
   foreignKeyList.onForeignKeySelected(key => openTableConnectedByForeignKey(key))
@@ -87,37 +83,12 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
       }
 	}
               
-  def switchRowDetails() : Unit = {
-    rowDetails= rowDetails match {
+  def switchRowDetailsView() : Unit = {
+    rowDetailsView = rowDetailsView match {
       case None => Some(new RowDetailsView(dbTable, table.firstSelectedRow()))
       case Some(_) => None
     }
-    fillSplitPanel()  
-  }
-
-  private def setSplitCenterItems(items : List[javafx.scene.Node]) : Unit = {
-    splitCenter.items.clear()
-    splitCenter.items ++= items
-  }
-
-  private def fillSplitPanel() : Unit = rowDetails match { 
-    case Some(details) => {
-        setSplitCenterItems(List(table.control, details.control, foreignKeyListWithTitle))
-        splitCenter.dividerPositions_=(0.6, 0.8)      
-    }
-    case None => {
-        setSplitCenterItems(List(table.control,  foreignKeyListWithTitle))
-        splitCenter.dividerPositions = 0.8            
-    }
-  }
-
- 
-  /* builds the split panel containing the table and the foreign keys list */
-  private def buildCenter() = new SplitPane {
-    maxHeight = Double.MaxValue
-    maxWidth = Double.MaxValue
-    dividerPositions = 0.8
-    SplitPane.setResizableWithParent(foreignKeyListWithTitle, false)
+    splitter.fillSplitPanel(rowDetailsView)  
   }
 
   /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */

@@ -100,7 +100,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case check :  CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
     case keys : ResponsePrimaryKeys => tables.tableWithQueryId(keys.queryId, _.addPrimaryKeys(keys)) 
     case keys : ResponseForeignKeys => tables.tableWithQueryId(keys.queryId, _.addForeignKeys(keys))
-    case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetails())
+    case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
     case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
