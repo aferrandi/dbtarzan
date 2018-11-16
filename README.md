@@ -34,3 +34,6 @@ Hospital: with a few mouse clicks, from a patient, find the reaason of the hospi
 
 You can do the same with standard SQL queries or with views, but in this way it is much faster.
 
+<a href="https://snapcraft.io/dbtarzan" title="Get it from the Snap Store">
+  <img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="" />
+</a>
