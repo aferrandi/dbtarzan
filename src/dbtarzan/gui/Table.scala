@@ -11,6 +11,7 @@ import akka.actor.ActorRef
 import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, DBTable}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, TableColumnsHeadings, TableContextMenu, HeadingText}
 import dbtarzan.messages.Logger
 
 

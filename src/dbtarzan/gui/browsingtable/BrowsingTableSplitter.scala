@@ -1,10 +1,11 @@
-package dbtarzan.gui
+package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
 import scalafx.Includes._
 
 import dbtarzan.messages._
+import dbtarzan.gui.Table
 
 /* splitter that seåareater table, details and potentially reoDetailsView  */
 class BrowsingTableSplitter(table : Table, foreignKeyListWithTitle: BorderPane) {

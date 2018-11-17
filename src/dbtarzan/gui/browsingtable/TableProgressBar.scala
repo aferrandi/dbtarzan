@@ -1,8 +1,9 @@
-package dbtarzan.gui
+package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.ProgressBar
 import scala.collection.mutable.HashSet
 import scalafx.scene.Parent
+import dbtarzan.gui.TControlBuilder
 
 /**
 	Progress bar that signals when we got (at least one row of) the query result and the foreign keys

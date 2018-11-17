@@ -7,6 +7,7 @@ import akka.actor.ActorRef
 import dbtarzan.db.{DBTable, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier, DatabaseId, TableId}
 import dbtarzan.messages._
 import dbtarzan.gui.util.StringUtil
+import dbtarzan.gui.tabletabs.TableTabsMap
 
 /* One tab for each table */
 class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {

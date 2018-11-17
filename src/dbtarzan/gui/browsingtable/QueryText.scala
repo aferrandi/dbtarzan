@@ -1,4 +1,4 @@
-package dbtarzan.gui
+package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.TextField
 import scalafx.event.ActionEvent

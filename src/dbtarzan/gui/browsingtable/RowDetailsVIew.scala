@@ -1,10 +1,11 @@
-package dbtarzan.gui
+package dbtarzan.gui.browsingtable
 
 import scalafx.scene.layout.VBox
 import scalafx.scene.Parent
 import scalafx.scene.control.{ Label, TextArea, ScrollPane, TextField, TextInputControl }
 import scalafx.geometry.{ Insets, Pos }
 import dbtarzan.db.{DBTable, Field, FieldType, Row}
+import dbtarzan.gui.TControlBuilder
 
 
 /* 

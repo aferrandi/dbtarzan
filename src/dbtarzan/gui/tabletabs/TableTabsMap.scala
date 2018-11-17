@@ -1,8 +1,9 @@
-package dbtarzan.gui
+package dbtarzan.gui.tabletabs
 
 import scalafx.scene.control.Tab
 import scalafx.Includes._
 import scala.collection.mutable.HashMap
+import dbtarzan.gui.BrowsingTable
 import dbtarzan.messages._
 
 case class BrowsingTableWIthTab(table : BrowsingTable, tab : Tab)

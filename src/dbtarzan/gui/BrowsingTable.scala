@@ -11,6 +11,7 @@ import akka.actor.ActorRef
 import dbtarzan.db.{ DBTable, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
+import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, QueryText, RowDetailsView, TableProgressBar}
 import dbtarzan.messages._
 
 /* table + constraint input box + foreign keys */
