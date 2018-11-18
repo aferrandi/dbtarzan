@@ -6,6 +6,8 @@ case class QueryRows(queryId : QueryId, sql : QuerySql)
 
 case class QueryTables(databaseId : DatabaseId) 
 
+case class QueryTablesByPattern(databaseId : DatabaseId, pattern: String) 
+
 case class QueryColumns(tableId: TableId) 
 
 case class QueryColumnsFollow(tableId: TableId, follow : FollowKey) 

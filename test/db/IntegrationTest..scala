@@ -14,7 +14,8 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
     val tableNames = metadataLoader.tableNames()
   	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableNames)
   }
-  
+
+
   "columnNames of LAPTOP" should "give a sorted list of the table names" in {
     val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
     val columnNames = metadataLoader.columnNames("LAPTOP")
@@ -29,6 +30,13 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
         Field("SCREEN",FieldType.INT)
         ) === columnNames.fields)
   }
+
+  "tablesByPattern" should "give a sorted list of the table names" in {
+    val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
+    val tableNames = metadataLoader.tablesByPattern("PRI")
+  	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.tableNames)
+  }
+
 
   "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
     val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())

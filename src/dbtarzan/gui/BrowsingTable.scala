@@ -9,9 +9,9 @@ import scalafx.Includes._
 import akka.actor.ActorRef
 
 import dbtarzan.db.{ DBTable, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
-import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.util.{ JFXUtil, ActionText }
 import dbtarzan.gui.orderby.OrderByEditorStarter
-import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, QueryText, RowDetailsView, TableProgressBar}
+import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar}
 import dbtarzan.messages._
 
 /* table + constraint input box + foreign keys */
@@ -25,7 +25,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
   private var useNewTable : DBTable => Unit = table => {}
   private var rowDetailsView : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetailsView.foreach(details => details.displayRow(row)))
-  private val queryText = new QueryText() { 
+  private val queryText = new ActionText() { 
     onEnter(text => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
         useNewTable(tableWithFilters)

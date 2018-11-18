@@ -110,6 +110,11 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
     		guiActor ! ResponseTables(qry.databaseId, names)
 		})
 
+	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(core => { 
+			val names = core.metadataLoader.tablesByPattern(qry.pattern)
+    		guiActor ! ResponseTables(qry.databaseId, names)
+		})
+
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
 			val tableName = qry.tableId.tableName
 			val columns = cache.cachedFields(tableName, core.metadataLoader.columnNames(tableName))
@@ -135,6 +140,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	    case qry : QueryClose => close() 	    
 	    case qry : QueryReset => reset() 	    
 	    case qry : QueryTables => queryTables(qry) 
+	    case qry : QueryTablesByPattern => queryTablesByPattern(qry) 
 	    case qry : QueryColumns => queryColumns(qry)
 	    case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
 	    case qry : QueryForeignKeys => queryForeignKeys(qry)    	
