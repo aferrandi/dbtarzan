@@ -3,7 +3,7 @@ DbTarzan
 
 [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](https://aferrandi.github.io/dbtarzan)[![Join the chat at https://gitter.im/aferrandi/dbtarzan](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aferrandi/dbtarzan?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Database browser.
+[Cross platform](https://aferrandi.github.io/dbtarzan/Installation.html) database browser.
 
 Explore the tables of a relational database following the relations defined in their foreign keys.
 
@@ -17,9 +17,7 @@ DbTarzan uses this information to traverse the tables of a database.
 
 The following videos show examples of database exploration, the first one is a simple exploration, the second uses queries and order by:
 
-[![IMAGE dbtarzan simple video on youtube](https://img.youtube.com/vi/qLh5HnW0Rwc/default.jpg)](https://youtu.be/qLh5HnW0Rwc)
-
-[![IMAGE dbtarzan detailed video on youtube](https://img.youtube.com/vi/CezsF9vME6U/default.jpg)](https://youtu.be/CezsF9vME6U)
+|[![IMAGE dbtarzan simple video on youtube](https://img.youtube.com/vi/qLh5HnW0Rwc/default.jpg)](https://youtu.be/qLh5HnW0Rwc)|[![IMAGE dbtarzan detailed video on youtube](https://img.youtube.com/vi/CezsF9vME6U/default.jpg)](https://youtu.be/CezsF9vME6U)|
 
 More details in the [Documentation](https://aferrandi.github.io/dbtarzan).
 
