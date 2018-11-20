@@ -4,20 +4,21 @@ import org.scalatest.FlatSpec
 import org.scalatest.BeforeAndAfter
 import java.sql.Connection
 import java.sql.DriverManager
+import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader} 
 
 class IntegrationTest extends FlatSpec with BeforeAndAfter {
   var connection: Connection = _
 
 
   "tablenames" should "give a sorted list of the table names" in {
-    val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
+    val metadataLoader = new MetadataTablesLoader(None, connection.getMetaData())
     val tableNames = metadataLoader.tableNames()
   	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableNames)
   }
 
 
   "columnNames of LAPTOP" should "give a sorted list of the table names" in {
-    val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
+    val metadataLoader = new MetadataColumnsLoader(None, connection.getMetaData())
     val columnNames = metadataLoader.columnNames("LAPTOP")
   	assert(
       List(
@@ -32,14 +33,14 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   }
 
   "tablesByPattern" should "give a sorted list of the table names" in {
-    val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
+    val metadataLoader = new MetadataTablesLoader(None, connection.getMetaData())
     val tableNames = metadataLoader.tablesByPattern("PRI")
   	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.tableNames)
   }
 
 
   "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
-    val metadataLoader = new BasicMetadataLoader(None, connection.getMetaData())
+    val metadataLoader = new MetadataPrimaryKeysLoader(None, connection.getMetaData())
     val primaryKeys = metadataLoader.primaryKeys("LAPTOP")
   	assert(List(PrimaryKey("PK_LAPTOP", List("CODE"))) === primaryKeys.keys)
   }

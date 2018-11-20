@@ -102,7 +102,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			))
 
 	private def queryTables(qry: QueryTables) : Unit = withCore(core => { 
-			val names = core.metadataLoader.tableNames()
+			val names = core.tablesLoader.tableNames()
 			if(!names.tableNames.isEmpty)
 				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
 			else
@@ -111,25 +111,25 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		})
 
 	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(core => { 
-			val names = core.metadataLoader.tablesByPattern(qry.pattern)
+			val names = core.tablesLoader.tablesByPattern(qry.pattern)
     		guiActor ! ResponseTables(qry.databaseId, names)
 		})
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
 			val tableName = qry.tableId.tableName
-			val columns = cache.cachedFields(tableName, core.metadataLoader.columnNames(tableName))
+			val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
     		guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
 		})
 
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
 			val tableName = qry.tableId.tableName
-			val columnsFollow = cache.cachedFields(tableName, core.metadataLoader.columnNames(tableName))
+			val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
     		guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, queryAttributes())
     	})		
 
 	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {
 			val tableName = qry.queryId.tableId.tableName
-			val primaryKeys = cache.cachedPrimaryKeys(tableName, core.metadataLoader.primaryKeys(tableName))
+			val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
     		guiActor ! ResponsePrimaryKeys(qry.queryId, primaryKeys)
     	})
 

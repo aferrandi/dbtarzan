@@ -4,7 +4,6 @@ import scalafx.beans.property.{StringProperty, BooleanProperty}
 import dbtarzan.db.{Row, Rows, Field, FieldType}
 import scalafx.Includes._
 import scalafx.scene.control.MultipleSelectionModel
-import dbtarzan.gui.table.CheckedRowsBuffer
 
 
 /**
