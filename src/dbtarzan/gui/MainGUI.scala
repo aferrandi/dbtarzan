@@ -24,15 +24,13 @@ import dbtarzan.db.DatabaseId
 	the actors are still not been created when calling the constructor, therefore they are passed as functions.
  */
 class MainGUI(
-	guiWorker: => ActorRef,
-	configActor : => ActorRef, 
 	connectonsConfigPath: ConfigPath, 
 	version: String, 
 	openWeb : String => Unit, 
 	closeApp : () => Unit)
 {
 	/* the database tabs on the middle-right side */
-	val databaseTabs = new DatabaseTabs(guiWorker, configActor)
+	val databaseTabs = new DatabaseTabs()
 	/* the log/error list on the bottom */
 	val logList = new LogList()
 	/* the database/connection list on the left side */
@@ -40,9 +38,17 @@ class MainGUI(
 	/* how big is the screen */
 	private val screenBounds = Screen.primary.visualBounds
 	/* the gui */
-	private val stage = buildStage()
+	private var stage = buildStage() 
+	private var guiActor: Option[ActorRef]  = None
+	private var connectionsActor: Option[ActorRef] = None 
 	
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
+
+  def setActors(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
+		this.guiActor = Some(guiActor)
+		this.connectionsActor = Some(connectionsActor)
+		databaseTabs.setActors(guiActor, connectionsActor)
+  } 
 
 	def onDatabaseSelected(use : DatabaseId => Unit) : Unit = databaseList.onDatabaseSelected(use)
 
@@ -61,23 +67,38 @@ class MainGUI(
 	}
 
 	private def handleShortcut(ev : KeyEvent) : Unit = 
-		TableMenu.handleKeyCombination(guiWorker, ev, () => databaseTabs.currentTableId)
+		guiActor match {
+			case Some(ga) => TableMenu.handleKeyCombination(ga, ev, () => databaseTabs.currentTableId)
+			case None => println("MainGUI: guiActor not defined")
+		}
 	
 	private def buildMenu() = new MenuBar {
 		menus = List(
-		  new Menu("Connections") {
+			buildConnectionsMenu(),
+		  buildHelpMenu()
+		)
+	}
+
+	private def buildConnectionsMenu() = new Menu("Connections") {
 		    items = List(
 		      new MenuItem("Edit Connections") {
 		        onAction = {
 		          e: ActionEvent => {
-									new Logger(guiWorker).info("Editing connections configuration file "+connectonsConfigPath.path)
-								ConnectionEditorStarter.openConnectionsEditor(stage, configActor, connectonsConfigPath, openWeb)
+								guiActor match {
+									case Some(ga) => new Logger(ga).info("Editing connections configuration file "+connectonsConfigPath.path)
+									case None => println("MainGUI: guiActor not defined")
+								}
+								connectionsActor match {
+									case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, connectonsConfigPath, openWeb)
+									case None => println("MainGUI: connectionsActor not defined") 
+								}
 							}
 		        }
 		      }
 		    )
-		  },
-		  new Menu("Help") {
+		  }
+
+	private def buildHelpMenu() = new Menu("Help") {
 		    items = List(
 		      new MenuItem("Documentation") {
 		        onAction = {		        	
@@ -86,15 +107,13 @@ class MainGUI(
 		      }
 		    )
 		  }
-		)
-	}
 
 	private def buildMainView() = new BorderPane {
 		top = buildMenu() 
 		center = mainSplitPane()
 	}
 
-    private def buildDatabaseSplitPane() = new SplitPane {
+  private def buildDatabaseSplitPane() = new SplitPane {
 		val databaseListWithTitle = JFXUtil.withTitle(databaseList.control, "Databases")
 		items.addAll(databaseListWithTitle, databaseTabs.control)
 		dividerPositions = 0.2

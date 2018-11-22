@@ -12,23 +12,35 @@ import dbtarzan.db.{DatabaseId, TableId}
 case class DatabaseWithTab(database : Database, tab : Tab)
 
 /** All the tabs with one database for each*/
-class DatabaseTabs(guiWorker: => ActorRef, connectionsActor : => ActorRef) extends TDatabases with TControlBuilder {
+class DatabaseTabs() extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
   private val databaseById = HashMap.empty[DatabaseId, DatabaseWithTab]
+  private var guiActor: Option[ActorRef]  = None
+  private var connectionsActor: Option[ActorRef] = None 
+
+  def setActors(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
+      this.guiActor = Some(guiActor)
+      this.connectionsActor = Some(connectionsActor)
+  } 
 
   private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId) : Database = {
     println("add database tab for "+databaseId.databaseName)
-    val database = new Database(dbActor, guiWorker, databaseId)
-    val tab = buildTab(database)
-    tabs += tab
-    selectTab(tab)
-    databaseById += databaseId -> DatabaseWithTab(database, tab)
-    database
+    guiActor match {
+      case Some(ga) => {
+        val database = new Database(dbActor, ga, databaseId)
+        val tab = buildTab(database)
+        tabs += tab
+        selectTab(tab)
+        databaseById += databaseId -> DatabaseWithTab(database, tab)
+        database
+      }
+      case None => throw new Exception("guiActor is not defined")
+    }
   }
 
   /* requests to close the connection to the database to the central database actor */
   private def sendClose(databaseId : DatabaseId) : Unit = {
-    connectionsActor ! QueryClose(databaseId)     
+    connectionsActor.foreach(_ ! QueryClose(databaseId))     
   }
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {
