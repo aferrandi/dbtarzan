@@ -12,6 +12,9 @@ trait TWithTableId { def tableId : TableId }
 case class ResponseRows(queryId : QueryId, rows: Rows) 
     extends TWithQueryId
 
+case class ErrorRows(queryId : QueryId,  ex: Exception) 
+    extends TWithQueryId
+
 case class ResponseTables(databaseId : DatabaseId, names: TableNames) 
     extends TWithDatabaseId
 

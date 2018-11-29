@@ -4,10 +4,10 @@ import scalafx.scene.control.{ TabPane, Tab, Tooltip}
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.db.{DBTable, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributesApplier, DatabaseId, TableId}
+import dbtarzan.db.{DBTableStructure, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributes, DatabaseId, TableId}
 import dbtarzan.messages._
 import dbtarzan.gui.util.StringUtil
-import dbtarzan.gui.tabletabs.TableTabsMap
+import dbtarzan.gui.tabletabs.{ TableTabsMap, BrowsingTableWithTab }
 
 /* One tab for each table */
 class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
@@ -16,16 +16,16 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val tables = new TableTabsMap()
 
   /* creates a table from scratch */
-  private def createTable(tableId : TableId, columns : Fields, applier : QueryAttributesApplier) : DBTable = 
-    DBTable.build(TableDescription(tableId.tableName, None, None), columns, applier)
+  private def createTable(tableId : TableId, columns : Fields, attributes : QueryAttributes) : DBTableStructure = 
+    DBTableStructure.build(TableDescription(tableId.tableName, None, None), columns, attributes)
 
   /* create a table that is given by following a foreign key of a table */  
-  private def createTableFollow(columns : Fields, follow : FollowKey, applier : QueryAttributesApplier) : DBTable = {
+  private def createTableFollow(columns : Fields, follow : FollowKey, attributes : QueryAttributes) : DBTableStructure = {
     println("table follow created "+columns)
-    ForeignKeyMapper.toFollowTable(follow, columns, applier) 
+    ForeignKeyMapper.toFollowTable(follow, columns, attributes) 
   }
 
-  private def buildTab(dbTable : DBTable, browsingTable :  BrowsingTable) = new Tab() {      
+  private def buildTab(dbTable : DBTableStructure, browsingTable :  BrowsingTable) = new Tab() {      
     text = buildTabText(dbTable)
     content = browsingTable.control     
     tooltip.value = Tooltip("")
@@ -60,33 +60,37 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
     If a filter (where) has been applied, a star (*) character is shown at the end of the text 
   */
-  private def buildTabText(dbTable : DBTable) : String = {
-    def starForFilter(dbTable : DBTable) = if(dbTable.hasFilter) " *" else ""
+  private def buildTabText(structure : DBTableStructure) : String = {
+    def starForFilter(structure : DBTableStructure) = if(DBTableStructure.hasFilter(structure)) " *" else ""
 
-    val description = dbTable.tableDescription
-    description.name + description.origin.map("<"+_).getOrElse("") + starForFilter(dbTable)
+    val description = structure.description
+    description.name + description.origin.map("<"+_).getOrElse("") + starForFilter(structure)
   } 
 
-  private def addBrowsingTable(dbTable : DBTable) : Unit = {
-    val browsingTable = new BrowsingTable(dbActor, guiActor, dbTable, databaseId)
-    val tab = buildTab(dbTable, browsingTable)
+  private def addBrowsingTable(structure : DBTableStructure) : Unit = {
+    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, databaseId)
+    val tab = buildTab(structure, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)
     browsingTable.onNewTable(newTable => addBrowsingTable(newTable))
     tables.addBrowsingTable(browsingTable, tab)
   }
 
-  private def addRows(rows : ResponseRows) : Unit = 
-     tables.withQueryId(rows.queryId, table => {
+  private def addRows(table: BrowsingTableWithTab, rows : ResponseRows) : Unit = {
       table.table.addRows(rows)
       table.tab.tooltip.value.text = StringUtil.shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
-    })
+    }
+
+  private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
+    table.rowsError(error.ex)
+    log.error("Requesting the rows for the tab "+error.queryId+" got", error.ex)
+  }
 
   def addColumns(columns : ResponseColumns) : Unit =  
-    addBrowsingTable(createTable(columns.tableId, columns.columns, QueryAttributesApplier.from(columns.queryAttributes)))
+    addBrowsingTable(createTable(columns.tableId, columns.columns, columns.queryAttributes))
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  
-    addBrowsingTable(createTableFollow(columns.columns, columns.follow, QueryAttributesApplier.from(columns.queryAttributes)))
+    addBrowsingTable(createTableFollow(columns.columns, columns.follow, columns.queryAttributes))
  
   def removeTables(ids : List[QueryId]) : Unit = {
     val tabsToClose = tables.tabsWithIds(ids)
@@ -106,7 +110,8 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
-    case rows : ResponseRows => addRows(rows) 
+    case rows : ResponseRows => tables.withQueryId(rows.queryId, addRows(_, rows))
+    case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case _ => log.error("Table message "+msg+" not recognized")
   }    
   

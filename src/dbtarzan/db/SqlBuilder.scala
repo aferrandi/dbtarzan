@@ -1,11 +1,7 @@
 package dbtarzan.db
 
 class SqlBuilder(
-	description : TableDescription, 
-    foreignFilter : Option[ForeignKeyCriteria], 
-    genericFilter : Option[Filter], 
-    orderByFields : Option[OrderByFields],
-    attributesApplier : QueryAttributesApplier
+    structure: DBTableStructure
 ) {
     private def buildFilters(filters : List[String]) : String = { 
         if(!filters.isEmpty)   
@@ -20,24 +16,20 @@ class SqlBuilder(
         orderByField.field.name + " " + DBEnumsText.orderByDirectionToText(orderByField.direction) 
 
     private def buildOrderBy() : String = 
-        orderByFields.filter(_.fields.nonEmpty).map(" ORDER BY " + _.fields.map(buildOrderByOne).mkString(", ")).getOrElse("")	
+        structure.orderByFields.filter(_.fields.nonEmpty).map(" ORDER BY " + _.fields.map(buildOrderByOne).mkString(", ")).getOrElse("")	
 
 
 	/* builds the SQL to query the table from the (potential) original foreign key (to know which rows it has to show), the potential where filter and the table name */
 	def buildSql() : QuerySql = {
-		var foreignClosure = foreignFilter.map(ForeignKeyTextBuilder.buildClause(_, attributesApplier))
-		val filters = List(foreignClosure, genericFilter.map(_.text)).flatten
-		var delimitedTableNameWithSchema = attributesApplier.applyBoth(description.name)
+		var foreignClosure = structure.foreignFilter.map(ForeignKeyTextBuilder.buildClause(_, structure.attributes))
+		val filters = List(foreignClosure, structure.genericFilter.map(_.text)).flatten
+		var delimitedTableNameWithSchema = QueryAttributesApplier.from(structure.attributes).applyBoth(structure.description.name)
 		QuerySql("SELECT * FROM " + delimitedTableNameWithSchema + buildFilters(filters) + buildOrderBy())
 	}
 }
 
 object SqlBuilder {
     def buildSql(	
-    	description : TableDescription, 
-        foreignFilter : Option[ForeignKeyCriteria], 
-        genericFilter : Option[Filter], 
-        orderByFields : Option[OrderByFields],
-        attributesApplier : QueryAttributesApplier
-    ) : QuerySql = new SqlBuilder(description, foreignFilter, genericFilter, orderByFields, attributesApplier).buildSql()
+        dbTableStructure: DBTableStructure
+    ) : QuerySql = new SqlBuilder(dbTableStructure).buildSql()
 }

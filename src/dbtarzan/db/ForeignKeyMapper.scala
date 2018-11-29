@@ -2,15 +2,14 @@ package dbtarzan.db
 
 
 /* builds the table that is the result of using a foreign key of another table*/
-class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributesApplier : QueryAttributesApplier) {
+class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : QueryAttributes) {
 	val mapNameToIndex = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
 
-
-	private def toFollowTable() : DBTable = {
+	private def toFollowTable() : DBTableStructure = {
 		val fkRows= follow.rows.map(row => buildKeyValuesForRow(row))
 		val keyCriteria = ForeignKeyCriteria(fkRows, newColumns.fields)
 		val description = TableDescription(follow.key.to.table, Option(follow.key.from.table), None)
-		DBTable.build(description, newColumns, Some(keyCriteria), None,  None, attributesApplier)		
+		DBTableStructure(description, newColumns, Some(keyCriteria), None,  None, attributes)		
 	}
 
 	/* has a foreignkey FK(keyfrom, keyto), the columns from */
@@ -29,6 +28,6 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributesApplie
 }
 
 object ForeignKeyMapper {
-	def toFollowTable(follow : FollowKey, newColumns : Fields, attributesApplier : QueryAttributesApplier) : DBTable = 
-		new ForeignKeyMapper(follow, newColumns, attributesApplier).toFollowTable()
+	def toFollowTable(follow : FollowKey, newColumns : Fields, attributes : QueryAttributes) : DBTableStructure = 
+		new ForeignKeyMapper(follow, newColumns, attributes).toFollowTable()
 }

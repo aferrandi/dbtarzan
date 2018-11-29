@@ -53,24 +53,26 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		}
 
 	/* handles the exceptions sending the exception messages to the GUI */
-	private def handleErr[R](operation: => R): Unit = 
+	private def handleErr[R](errHandler : Exception => Unit, operation: => R): Unit = 
 	    try { operation } catch {
-	      case e : Exception => guiActor ! Error(LocalDateTime.now, "dbWorker", Some(e))
+	      case e : Exception => errHandler(e)
 	    }
 
 	/* if conneced execure the operation, otherwise send an error to the GUI */
-	private def withCore[R](operation: DatabaseWorkerCore => R): Unit =
+	private def withCore[R](errHandler : Exception => Unit, operation: DatabaseWorkerCore => R): Unit =
 		optCore match {
-			case Some(core) =>  handleErr( operation(core) )
+			case Some(core) => handleErr(errHandler, operation(core))
 			case None => guiActor ! Error(LocalDateTime.now, "Database not connected", None)
 		}
 
+	private def logError(e: Exception) : Unit = log.error("dbWorker", e)
+	
 
 	override def  postStop() : Unit = {
 		println("Actor for "+databaseName+" stopped")
 	}
 
-	private def close() : Unit = handleErr({
+	private def close() : Unit = handleErr(logError, {
 		println("Closing the worker for "+databaseName)
 		guiActor ! ResponseCloseDatabase(databaseId)
 		optCore.foreach(core =>
@@ -79,7 +81,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		context.stop(self)
 	})
 
-	private def reset() : Unit = handleErr({
+	private def reset() : Unit = handleErr(logError, {
 		println("Reseting the connection of the worker for "+databaseName)
 		optCore.foreach(core =>
 			try { core.closeConnection() } catch { case e : Throwable => {} }
@@ -88,7 +90,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		log.info("Connection to the database "+databaseName+" resetted")
 	})		
 
-	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(core => {
+	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(logError, core => {
 		val tableName = qry.queryId.tableId.tableName
 		val foreignKeys = foreignKeysFromFile.getOrElseUpdate(tableName, 
 			cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
@@ -96,12 +98,15 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 		guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
 	})
 
-	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(core => 
-		core.queryLoader.query(qry.sql, maxRows.getOrElse(500),  rows => 
+	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(
+		e => guiActor ! ErrorRows(qry.queryId, e), 
+		core => core.queryLoader.query(qry.sql, maxRows.getOrElse(500),  rows => 
 			guiActor ! ResponseRows(qry.queryId, rows)
-			))
+		)
+	)
 
-	private def queryTables(qry: QueryTables) : Unit = withCore(core => { 
+
+	private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => { 
 			val names = core.tablesLoader.tableNames()
 			if(!names.tableNames.isEmpty)
 				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
@@ -110,24 +115,24 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
     		guiActor ! ResponseTables(qry.databaseId, names)
 		})
 
-	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(core => { 
+	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(logError, core => { 
 			val names = core.tablesLoader.tablesByPattern(qry.pattern)
     		guiActor ! ResponseTables(qry.databaseId, names)
 		})
 
-	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
+	private def queryColumns(qry: QueryColumns) : Unit = withCore(logError, core => {
 			val tableName = qry.tableId.tableName
 			val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
     		guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
 		})
 
-	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
+	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(logError, core => {
 			val tableName = qry.tableId.tableName
 			val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
     		guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, queryAttributes())
     	})		
 
-	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {
+	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(logError, core => {
 			val tableName = qry.queryId.tableId.tableName
 			val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
     		guiActor ! ResponsePrimaryKeys(qry.queryId, primaryKeys)

@@ -13,9 +13,11 @@ class ConnectionButtons() extends TControlBuilder {
   val buttonNew = new Button {
     text = "New"
   }
+  
   val buttonRemove = new Button {
     text = "Remove"
   }
+
   val buttonDuplicate = new Button {
     text = "Duplicate"
   }

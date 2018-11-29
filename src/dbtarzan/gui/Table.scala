@@ -8,7 +8,7 @@ import scalafx.scene.image.ImageView
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, DBTable}
+import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, DBTable, SqlBuilder}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, TableColumnsHeadings, TableContextMenu, HeadingText}
@@ -34,7 +34,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   private val headings = new TableColumnsHeadings(names)
 
   /* requests the rows for the table to the database actor. They come back using the addRows function */
-  dbActor ! QueryRows(queryId, dbTable.sql) 
+  dbActor ! QueryRows(queryId, dbTable.buildSql()) 
   /* requests the foreign keys for this table. */
   dbActor ! QueryForeignKeys(queryId)
   /* requests the primary keys for this table. */

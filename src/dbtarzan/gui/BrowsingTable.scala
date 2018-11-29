@@ -8,24 +8,25 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ DBTable, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
-import dbtarzan.gui.util.{ JFXUtil, ActionText }
+import dbtarzan.db.{ DBTable, DBTableStructure, SqlBuilder, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
-import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar}
+import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText}
 import dbtarzan.messages._
 
 /* table + constraint input box + foreign keys */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, databaseId : DatabaseId) extends TControlBuilder {
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, databaseId : DatabaseId) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
+  private val dbTable = new DBTable(structure)
   private val queryId = IDGenerator.queryId(TableId(databaseId, dbTable.tableDescription.name))
   private val table = new Table(dbActor, guiActor, queryId, dbTable)
   private val splitter = new BrowsingTableSplitter(table, foreignKeyListWithTitle)
-  private var useNewTable : DBTable => Unit = table => {}
+  private var useNewTable : DBTableStructure => Unit = table => {}
   private var rowDetailsView : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetailsView.foreach(details => details.displayRow(row)))
-  private val queryText = new ActionText() { 
+  private val queryText = new QueryText() { 
     onEnter(text => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
         useNewTable(tableWithFilters)
@@ -93,7 +94,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
   }
 
   /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */
-  def onNewTable(useTable : DBTable => Unit) : Unit = {
+  def onNewTable(useTable : DBTableStructure => Unit) : Unit = {
     useNewTable = useTable
   }
 
@@ -102,6 +103,8 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
     table.addRows(rows.rows)
     progressBar.receivedRows()
   }
+
+  def rowsError(ex : Exception) : Unit = queryText.showError()
 
   /* adds the foreign keys to the foreign key list */
   def addForeignKeys(keys : ResponseForeignKeys) : Unit = {
@@ -120,7 +123,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
     table.copySelectionToClipboard(includeHeaders) 
 
   def copySQLToClipboard() : Unit = try {
-    JFXUtil.copyTextToClipboard(dbTable.sql.sql)
+    JFXUtil.copyTextToClipboard(SqlBuilder.buildSql(structure).sql)
     log.info("SQL copied")
   } catch {
     case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)
@@ -136,7 +139,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, dbTable : DBTable, 
 
   def rowsNumber = table.rowsNumber
 
-  def sql = dbTable.sql
+  def sql = SqlBuilder.buildSql(structure)
   
   def control : Parent = layout
 }

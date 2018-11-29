@@ -8,7 +8,7 @@ case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field])
 /**
 	Builds the query clause related to the selected foreign key
 */
-class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, applier :  QueryAttributesApplier) {
+class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes :  QueryAttributes) {
 	val mapColumnTypes = criteria.columns.map(field => (field.name.toUpperCase, field.fieldType)).toMap
 	 def buildClause() : String = {
 		val filter = buildFilter(criteria.fkRows)
@@ -26,7 +26,7 @@ class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, applier :  QueryAttri
 
 	private def buildFieldValueText(fieldWithValue : FieldWithValue, fieldType : FieldType) = {
 		var fieldRaw = fieldWithValue.field
-		val field = applier.applyDelimiters(fieldRaw) 
+		val field = QueryAttributesApplier.from(attributes).applyDelimiters(fieldRaw)
 		val fieldValue = fieldWithValue.value
 		if(fieldValue == null)
 			field + " IS NULL"
@@ -46,6 +46,6 @@ class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, applier :  QueryAttri
 }
 
 object ForeignKeyTextBuilder {
-	def buildClause(criteria : ForeignKeyCriteria, applier :  QueryAttributesApplier) : String = 
-		new ForeignKeyTextBuilder(criteria, applier).buildClause()
+	def buildClause(criteria : ForeignKeyCriteria, attributes :  QueryAttributes) : String = 
+		new ForeignKeyTextBuilder(criteria, attributes).buildClause()
 }
