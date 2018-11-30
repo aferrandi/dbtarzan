@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{Rows, Fields, Field, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys, DatabaseId, TableId, TableNames }
+import dbtarzan.db.{Rows, Fields, Field, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys, DatabaseId, TableId, TableNames, DBTableStructure }
 import akka.actor.ActorRef
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
@@ -9,7 +9,7 @@ trait TWithQueryId { def queryId : QueryId }
 
 trait TWithTableId { def tableId : TableId }
       
-case class ResponseRows(queryId : QueryId, rows: Rows) 
+case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : Rows) 
     extends TWithQueryId
 
 case class ErrorRows(queryId : QueryId,  ex: Exception) 

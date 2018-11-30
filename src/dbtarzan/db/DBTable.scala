@@ -2,9 +2,6 @@ package dbtarzan.db
 
 /* Represents the table of a database */
 class DBTable (structure : DBTableStructure) {
-	
-	def buildSql() =  SqlBuilder.buildSql(structure)
-
 	def tableDescription : TableDescription = structure.description
 
 	def columnNames : List[Field] = structure.columns.fields

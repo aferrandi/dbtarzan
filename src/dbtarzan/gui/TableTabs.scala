@@ -49,7 +49,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     removeTabsBefore(queryId, tabs.tabs.toList) 
 
   def requestRemovalAllTabs() : Unit =
-      removeTabs(tabs.tabs.toList)
+    removeTabs(tabs.tabs.toList)
 
   /*
     Normally it shows the name of the table.
@@ -67,31 +67,40 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     description.name + description.origin.map("<"+_).getOrElse("") + starForFilter(structure)
   } 
 
-  private def addBrowsingTable(structure : DBTableStructure) : Unit = {
-    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, databaseId)
+  private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : BrowsingTableWithTab = {
+    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId)
     val tab = buildTab(structure, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)
-    browsingTable.onNewTable(newTable => addBrowsingTable(newTable))
-    tables.addBrowsingTable(browsingTable, tab)
+    browsingTable.onNewTable(newStructure => queryRows(Some(queryId), newStructure))
+    BrowsingTableWithTab(browsingTable, tab)
   }
 
   private def addRows(table: BrowsingTableWithTab, rows : ResponseRows) : Unit = {
-      table.table.addRows(rows)
-      table.tab.tooltip.value.text = StringUtil.shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
-    }
+    table.table.addRows(rows)
+    table.tab.tooltip.value.text = StringUtil.shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
+  }
 
   private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
     table.rowsError(error.ex)
     log.error("Requesting the rows for the tab "+error.queryId+" got", error.ex)
   }
 
-  def addColumns(columns : ResponseColumns) : Unit =  
-    addBrowsingTable(createTable(columns.tableId, columns.columns, columns.queryAttributes))
+  def addColumns(columns : ResponseColumns) : Unit =  {
+    val structure = createTable(columns.tableId, columns.columns, columns.queryAttributes)
+    queryRows(None, structure) 
+  }
 
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  
-    addBrowsingTable(createTableFollow(columns.columns, columns.follow, columns.queryAttributes))
- 
+  private def queryRows(originalQueryId : Option[QueryId], structure : DBTableStructure) : Unit = {
+    val queryId = IDGenerator.queryId(TableId(databaseId, structure.description.name))
+    dbActor ! QueryRows(queryId, originalQueryId, structure)
+  }
+
+  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
+    val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
+    queryRows(None, structure) 
+  }
+
   def removeTables(ids : List[QueryId]) : Unit = {
     val tabsToClose = tables.tabsWithIds(ids)
     tables.removeTablesWithIds(ids)
@@ -102,7 +111,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case copy : CopySQLToClipboard => tables.tableWithQueryId(copy.queryId, _.copySQLToClipboard())
     case copy : CopySelectionToClipboard => tables.tableWithQueryId(copy.queryId, _.copySelectionToClipboard(copy.includeHeaders))
     case check : CheckAllTableRows => tables.tableWithQueryId(check.queryId, _.checkAllTableRows())
-    case check :  CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
+    case check : CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
     case keys : ResponsePrimaryKeys => tables.tableWithQueryId(keys.queryId, _.addPrimaryKeys(keys)) 
     case keys : ResponseForeignKeys => tables.tableWithQueryId(keys.queryId, _.addForeignKeys(keys))
     case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
@@ -110,7 +119,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
-    case rows : ResponseRows => tables.withQueryId(rows.queryId, addRows(_, rows))
+    case rows : ResponseRows => tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case _ => log.error("Table message "+msg+" not recognized")
   }    

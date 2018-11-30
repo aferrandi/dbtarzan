@@ -8,19 +8,18 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ DBTable, DBTableStructure, SqlBuilder, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, DatabaseId, TableId }
+import dbtarzan.db.{ DBTable, DBTableStructure, SqlBuilder, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, TableId }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText}
 import dbtarzan.messages._
 
 /* table + constraint input box + foreign keys */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, databaseId : DatabaseId) extends TControlBuilder {
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
   private val dbTable = new DBTable(structure)
-  private val queryId = IDGenerator.queryId(TableId(databaseId, dbTable.tableDescription.name))
   private val table = new Table(dbActor, guiActor, queryId, dbTable)
   private val splitter = new BrowsingTableSplitter(table, foreignKeyListWithTitle)
   private var useNewTable : DBTableStructure => Unit = table => {}
@@ -42,10 +41,11 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   foreignKeyList.onForeignKeySelected(key => openTableConnectedByForeignKey(key))
 
 
-  def orderByField(field : Field) : Unit = 
-    useNewTable(dbTable.withOrderByFields(
-      OrderByFields(List(OrderByField(field, OrderByDirection.ASC))
-      )))
+  def orderByField(field : Field) : Unit = {
+    val orderByFields = OrderByFields(List(OrderByField(field, OrderByDirection.ASC)))
+    val newStructure = dbTable.withOrderByFields(orderByFields)
+    useNewTable(newStructure)
+  }
 
   def startOrderByEditor() : Unit = {
     OrderByEditorStarter.openOrderByEditor(stage(), dbTable, useNewTable)
@@ -66,7 +66,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private def openTableConnectedByForeignKey(key : ForeignKey) : Unit = {
       println("Selected "+key)
       val checkedRows = table.getCheckedRows
-      val foreignTableId = TableId(databaseId, key.to.table)
+      val foreignTableId = TableId(queryId.tableId.databaseId, key.to.table)
       if(!checkedRows.isEmpty) {
         dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.columnNames, key, checkedRows))
       } else {

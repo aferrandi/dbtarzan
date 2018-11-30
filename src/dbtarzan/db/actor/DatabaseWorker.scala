@@ -67,7 +67,6 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def logError(e: Exception) : Unit = log.error("dbWorker", e)
 	
-
 	override def  postStop() : Unit = {
 		println("Actor for "+databaseName+" stopped")
 	}
@@ -99,12 +98,11 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	})
 
 	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(
-		e => guiActor ! ErrorRows(qry.queryId, e), 
-		core => core.queryLoader.query(qry.sql, maxRows.getOrElse(500),  rows => 
-			guiActor ! ResponseRows(qry.queryId, rows)
+		e => qry.originalQueryId.foreach(originalQueryId => guiActor ! ErrorRows(originalQueryId, e)), 
+		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500),  rows => 
+			guiActor ! ResponseRows(qry.queryId, qry.structure, rows)
 		)
 	)
-
 
 	private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => { 
 			val names = core.tablesLoader.tableNames()

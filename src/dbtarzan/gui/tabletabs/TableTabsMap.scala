@@ -21,6 +21,11 @@ class TableTabsMap() {
   def withQueryId(id : QueryId, doWith : BrowsingTableWithTab => Unit) : Unit =
     mapTable.get(id).foreach(tableAndTab => doWith(tableAndTab))
 
+  def withQueryIdForce(id : QueryId, doWith : BrowsingTableWithTab => Unit, create: => BrowsingTableWithTab) : Unit = {
+    val tableAndTab  = mapTable.getOrElseUpdate(id, create) 
+    doWith(tableAndTab)
+  }
+
   def tableWithQueryId(id : QueryId, doWith : BrowsingTable => Unit) : Unit = 
     withQueryId(id , table => doWith(table.table))
 
@@ -28,7 +33,7 @@ class TableTabsMap() {
     mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate).toList
 
   def removeTablesWithIds(ids : List[QueryId]) : Unit =
-      mapTable --= ids
+    mapTable --= ids
 
   def tableIdForTab(tab : Tab) : Option[QueryId] = 
     mapTable.values.find(_.tab == tab).map(_.table.getId)   

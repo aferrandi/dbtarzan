@@ -13,23 +13,10 @@ object OrderByEditorStarter
       title = "Choose OrderBy Columns"
       width = 400
       height = 400
-      scene = new Scene {
-        def onSave(orderByFields: OrderByFields) : Unit = {
-            useNewTable(dbTable.withOrderByFields(orderByFields))
-            window().hide()
-          }
-
-        def onCancel() : Unit = {
-          println("cancel")
-          window().hide()
-        }
-
-        val editor = new OrderByEditor(dbTable.columnNames, dbTable.orderBys, onSave(_), () => onCancel())
-        onCloseRequest = (event : WindowEvent) => { 
-          event.consume()
-          onCancel()
-          }
-        root = editor.control
+      scene = buildScene(dbTable, useNewTable) 
+      onCloseRequest = (event : WindowEvent) => { 
+        event.consume()
+        scene.window().hide()
       }
     }
     orderByStage.initOwner(parentStage)    
@@ -37,4 +24,19 @@ object OrderByEditorStarter
     orderByStage.show()
   }
 
+  private def buildScene(dbTable: DBTable, useNewTable : DBTableStructure => Unit) = new Scene {
+      def onSave(orderByFields: OrderByFields) : Unit = {
+        useNewTable(dbTable.withOrderByFields(orderByFields))
+        window().hide()
+      }
+
+      def onCancel() : Unit = {
+        println("cancel")
+        window().hide()
+      }
+
+      val editor = new OrderByEditor(dbTable.columnNames, dbTable.orderBys, onSave(_), () => onCancel())
+
+      root = editor.control
+  }
 }
