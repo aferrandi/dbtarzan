@@ -108,8 +108,11 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 			val names = core.tablesLoader.tableNames()
 			if(!names.tableNames.isEmpty)
 				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
-			else
-				log.warning("No tables read from database "+databaseName+". Wrong schema?")
+			else {
+				val schemas = core.schemasLoader.schemasNames()
+				val schemasText = schemas.schemas.map(_.name).mkString(",")
+				log.warning("No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText)
+			}
     		guiActor ! ResponseTables(qry.databaseId, names)
 		})
 
@@ -137,6 +140,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
     	})
 
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)
+
 
   	def receive = {
 	    case qry : QueryRows => queryRows(qry, data.maxRows)

@@ -19,8 +19,7 @@ class MetadataPrimaryKeysLoader(schema: Option[String], meta : DatabaseMetaData)
 				}).toList
 				PrimaryKeys(keys)
 			} 
-		}
-		catch {
+		} catch {
 			case se : SQLException  => throw new Exception("Reading the primary keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
 			case ex : Throwable => throw new Exception("Reading the primary keys of the "+tableName +" table got", ex)
 		}

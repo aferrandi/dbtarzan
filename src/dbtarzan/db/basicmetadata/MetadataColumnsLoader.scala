@@ -15,8 +15,7 @@ class MetadataColumnsLoader(schema: Option[String], meta : DatabaseMetaData) {
 			println("Columns loaded")
 			Fields(list)
 		}
-	}
-	catch {
+	} catch {
 		case se : SQLException  => throw new Exception("Reading the columns of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
 		case ex : Throwable => throw new Exception("Reading the columns of the "+tableName +" table got", ex)
 	}

@@ -1,7 +1,7 @@
 package dbtarzan.db.actor
 
 import dbtarzan.db.{QueryLoader, ForeignKeyLoader }
-import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader} 
+import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader} 
 
 
 /* to be able to reset the connection we need to close the original and create a new one. This puts together the connection
@@ -12,5 +12,6 @@ class DatabaseWorkerCore(connection : java.sql.Connection, schema: Option[String
 	val tablesLoader = new MetadataTablesLoader(schema, connection.getMetaData())
 	val columnsLoader = new MetadataColumnsLoader(schema, connection.getMetaData())
 	val primaryKeysLoader = new MetadataPrimaryKeysLoader(schema, connection.getMetaData())
+	val schemasLoader = new MetadataSchemasLoader(connection.getMetaData())
 	def closeConnection() = connection.close()
 }

@@ -14,5 +14,4 @@ object DBTableStructure {
 		DBTableStructure(description, columns, None, None, None, attributes)
 
     def hasFilter(structure : DBTableStructure) : Boolean = structure.genericFilter.isDefined
-    
 }

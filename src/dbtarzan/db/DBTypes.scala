@@ -45,3 +45,6 @@ case class OrderByFields(fields : List[OrderByField])
 /* the primary keys of a table) */
 case class PrimaryKey(keyName: String, fields : List[String])
 case class PrimaryKeys(keys : List[PrimaryKey])
+
+case class Schema(name : String)
+case class Schemas(schemas : List[Schema]) 

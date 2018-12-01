@@ -34,8 +34,7 @@ class MetadataTablesLoader(schema: Option[String], meta : DatabaseMetaData) {
 			using(meta.getTables(null, schema.orNull, "%", Array("TABLE"))) { rs =>
 				toTableNames(readTableNames(rs))
 			}
-		}			
-		catch {
+		} catch {
 			case se : SQLException  => throw new Exception("Reading the database tables got "+ExceptionToText.sqlExceptionText(se), se)
 			case ex : Throwable => throw new Exception("Reading the database tables got", ex)
 		}
