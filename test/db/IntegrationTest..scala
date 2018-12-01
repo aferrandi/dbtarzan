@@ -4,7 +4,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.BeforeAndAfter
 import java.sql.Connection
 import java.sql.DriverManager
-import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader} 
+import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader} 
 
 class IntegrationTest extends FlatSpec with BeforeAndAfter {
   var connection: Connection = _
@@ -31,6 +31,13 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
         Field("SCREEN",FieldType.INT)
         ) === columnNames.fields)
   }
+
+  "schemaNames" should "give a list of the schemas in the database" in {
+    val metadataLoader = new MetadataSchemasLoader(connection.getMetaData())
+    val schemasNames = metadataLoader.schemasNames()
+  	assert(List(Schema("INFORMATION_SCHEMA"), Schema("PUBLIC")) === schemasNames.schemas)
+  }
+
 
   "tablesByPattern" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(None, connection.getMetaData())

@@ -42,9 +42,9 @@ case class ForeignKeysForTableList(keys : List[ForeignKeysForTable])
 /* the fields used to sort the rows resulting from a query (order by) */
 case class OrderByField(field : Field, direction: OrderByDirection)
 case class OrderByFields(fields : List[OrderByField])
-/* the primary keys of a table) */
+/* the primary keys of a table */
 case class PrimaryKey(keyName: String, fields : List[String])
 case class PrimaryKeys(keys : List[PrimaryKey])
-
+/* the schmas of a database */
 case class Schema(name : String)
 case class Schemas(schemas : List[Schema]) 
