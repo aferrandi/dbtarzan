@@ -39,7 +39,6 @@ class MetadataTablesLoader(schema: Option[String], meta : DatabaseMetaData) {
 			case ex : Throwable => throw new Exception("Reading the database tables got", ex)
 		}
 
-
 	private def toTableNames(tableNames : List[String]) = TableNames(tableNames.sorted)
 
 	private def toUpperCase(tableAndSchema : TableAndSchema) = TableAndSchema(
@@ -49,7 +48,6 @@ class MetadataTablesLoader(schema: Option[String], meta : DatabaseMetaData) {
 
 	private def readTableNames(rs : ResultSet) : List[String] = 
 		ResultSetReader.readRS(rs, _.getString("TABLE_NAME"))
-
 
 	private def readTableAndSchemas(rs : ResultSet) : List[TableAndSchema] = 
 		ResultSetReader.readRS(rs, 

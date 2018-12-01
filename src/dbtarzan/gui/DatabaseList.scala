@@ -24,11 +24,10 @@ class DatabaseList() extends TControlBuilder with TDatabaseList {
 	      	  })
 	        }} 
 
-
   def setDatabaseIds(databaseIds: DatabaseIds) : Unit = {
     println("Got new database list:"+databaseIds)
     buffer.clear()
-    buffer ++= databaseIds.names
+    buffer ++= databaseIds.names.sortBy(_.databaseName)
   }
 
   def onDatabaseSelected(use : DatabaseId => Unit) : Unit = 
@@ -42,5 +41,6 @@ class DatabaseList() extends TControlBuilder with TDatabaseList {
         println("Selected "+selectedDatabaseId.databaseName)
         use(selectedDatabaseId)
       })
+
   def control : Parent = list
 }

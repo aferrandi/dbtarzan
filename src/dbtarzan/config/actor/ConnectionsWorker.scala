@@ -56,8 +56,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Ac
 	 		)
 	 }
 
-	 private def newConnections(datas: ConnectionDatas) : Unit =
-	 {
+	 private def newConnections(datas: ConnectionDatas) : Unit = {
 	 	connectionsConfig = new ConnectionsConfig(datas.datas)
 	 	guiActor ! DatabaseIds(connectionsConfig.connections.map(DatabaseId(_)))
 	 }
