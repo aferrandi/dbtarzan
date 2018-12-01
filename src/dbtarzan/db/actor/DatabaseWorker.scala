@@ -110,7 +110,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
 			else {
 				val schemas = core.schemasLoader.schemasNames()
-				val schemasText = schemas.schemas.map(_.name).mkString(",")
+				val schemasText = schemas.schemas.map(_.name).mkString(", ")
 				log.warning("No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText)
 			}
     		guiActor ! ResponseTables(qry.databaseId, names)

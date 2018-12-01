@@ -68,35 +68,40 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   }
 
   "query of PC" should "give the rows matching the where clause in the correct order" in {
-    val sql = SqlBuilder.buildSql(
+    val structure = DBTableStructure(
         TableDescription("pc", None, None),
+        noFields(),
         Some(
           ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING)))
           ),
         Some(Filter("speed > 450")),
         Some(OrderByFields(List(
-          OrderByField(Field("model",  FieldType.STRING), OrderByDirection.ASC),
+          OrderByField(Field("model",  FieldType.STRING), OrderByDirection.ASC)
           ))),
-        QueryAttributesApplier.none()
-      )
+        QueryAttributes.none()
+    )
+    val sql = SqlBuilder.buildSql(structure)
     var rows : Rows = Rows(List())
     new QueryLoader(connection).query(sql, 500, rs => rows = rs)
     assert(Rows(List(Row(List("1", "1232", "500", "64", "5.0", "12x", "600.0")), Row(List("7", "1232", "500", "32", "10.0", "12x", "400.0"))))  === rows)
   }
 
   "query of PC" should "give the no more rows than the limit" in {
-    val sql = SqlBuilder.buildSql(
+    val structure = DBTableStructure(
         TableDescription("pc", None, None),
+        noFields(),
         None,
         None,
         None,
-        QueryAttributesApplier.none()
+        QueryAttributes.none()
       )
+    val sql = SqlBuilder.buildSql(structure)
     var rows : Rows = Rows(List())
     new QueryLoader(connection).query(sql, 3, rs => rows = rs)
     assert(3  === rows.rows.length)
   }
 
+  private def noFields() = Fields(List())
 
   before {
     Class.forName("org.h2.Driver")

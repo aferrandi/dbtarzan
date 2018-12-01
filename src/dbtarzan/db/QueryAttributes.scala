@@ -5,3 +5,7 @@ case class IdentifierDelimiters(start: Char, end: Char) {
 }
 
 case class QueryAttributes(delimiters : Option[IdentifierDelimiters], schema : Option[String])
+
+object QueryAttributes {
+	def none() = QueryAttributes(None, None)
+} 
