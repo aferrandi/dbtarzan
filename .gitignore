@@ -13,6 +13,7 @@ target
 !src/test/resources/sampledb/**/*.sql
 *.~
 *.fgk
+*.lock
 togit
 db_example
 sqllite
