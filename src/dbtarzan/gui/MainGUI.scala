@@ -83,16 +83,7 @@ class MainGUI(
 		    items = List(
 		      new MenuItem("Edit Connections") {
 		        onAction = {
-		          e: ActionEvent => {
-								guiActor match {
-									case Some(ga) => new Logger(ga).info("Editing connections configuration file "+connectonsConfigPath.path)
-									case None => println("MainGUI: guiActor not defined")
-								}
-								connectionsActor match {
-									case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, connectonsConfigPath, openWeb)
-									case None => println("MainGUI: connectionsActor not defined") 
-								}
-							}
+		          e: ActionEvent => { openConnectionsEditor()	}
 		        }
 		      }
 		    )
@@ -102,7 +93,7 @@ class MainGUI(
 		    items = List(
 		      new MenuItem("Documentation") {
 		        onAction = {		        	
-		          e: ActionEvent =>  openWeb("http://github.com/aferrandi/dbtarzan/wiki") 
+		          e: ActionEvent =>  openWeb("https://aferrandi.github.io/dbtarzan/") 
 		        }
 		      }
 		    )
@@ -128,4 +119,15 @@ class MainGUI(
 	}
   
 	private def appIcon() = new Image(getClass().getResourceAsStream("monkey-face-cartoon.png"))
+
+	private def openConnectionsEditor() : Unit = {
+		guiActor match {
+			case Some(ga) => new Logger(ga).info("Editing connections configuration file "+connectonsConfigPath.path)
+			case None => println("MainGUI: guiActor not defined")
+		}
+		connectionsActor match {
+			case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, connectonsConfigPath, openWeb)
+			case None => println("MainGUI: connectionsActor not defined") 
+		}
+	}
 }
