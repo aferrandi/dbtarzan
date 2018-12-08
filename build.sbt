@@ -6,11 +6,11 @@ enablePlugins(DebianPlugin,JavaAppPackaging)
 
 name := "dbtarzan"
 
-version := "1.15"
+version := "1.16"
 
 maintainer := "Andrea Ferrandi"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.7"
 
 mainClass in Compile := Some("dbtarzan.gui.Main")
 
@@ -23,7 +23,7 @@ scalacOptions in Compile --= Seq("-Xfatal-warnings")
 libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.3.4",
   "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test",
-  "org.scalafx" %% "scalafx" % "8.+",
+  "org.scalafx" %% "scalafx" % "11.+",
   "com.typesafe.akka" %% "akka-actor" % "2.5.11",
   "com.h2database" % "h2" % "1.4.197"
 )
@@ -37,7 +37,7 @@ fork := true
 packageSummary := "DBTarzan Debian Package"
 packageDescription := "DBTarzan, the database browser"
 debianPackageDependencies in Debian ++= Seq("openjdk-8-jre")
-bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
+bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan -Djdk.gtk.version=2""""
 
 
 lazy val packageMacOS = taskKey[Unit]("Packages MacOS app")
@@ -57,7 +57,6 @@ packageSnap := {
   val rootDir = baseDirectory.value
   "mksnap/create.sh "+rootDir+" "+version.value !
 }
-
 
 addCommandAlias("packageAll", 
 	"; assembly " + 
