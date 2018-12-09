@@ -13,26 +13,26 @@ Open a database from the list (read from the [Configuration](./The-database-conn
 If the database list is empty, add a database with the Connections Editor.
 This example uses the Derby demo database, ToursDB.
 
-![Databases](images/databases.jpeg)
+![Databases](images/databases.png)
 
 You get a list of the tables contained in the database:
 
-![Databases](images/tables.jpeg)
+![Tables](images/tables.png)
 
-Open a table double-clicking on it:
+The list of tables can be [filtered](./Tables-Names-Filter). Open a table double-clicking on it:
 
-![Databases](images/selection.jpeg)
+![Selection](images/selection.png)
 
 If you select some rows (like in the previous image) and double-click on a foreign key, you open the table related to the original one through the foreign key, showing the rows related to the originally selected rows:
 
-![Databases](images/derived.jpeg)
+![Derived](images/derived.png)
 
 You can select specific rows of the table specifying a where clause:
 
-![Databases](images/where.jpeg)
+![Where](images/where.png)
 
 DbTarzan shows the original rows in the table filtered with the where clause: 
 
-![Databases](images/whereresult.jpeg)
+![Where Result](images/whereresult.png)
 
 Every time you follow a foreign key or filter the table with a where clause DbTarzan opens a new tab leaving the original one immutated.
