@@ -13,6 +13,18 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.16
+
+A text box on the top of the table list allows to filter them, so that only the ones with names or columns containing the text are displayed.
+
+If the where clause written in the "Where" text box is wrong, running the query turns the text color to red.
+
+The database list is now sorted, making it easy to find the correct database with many databases available.
+
+When no table is found in the database, assuming the wrong schema was chosen, the error message shows a list of the available schemas.
+
+Pressing the "help" menu shows the now the correct documentation page https://aferrandi.github.io/dbtarzan/ .
+
 - Release 1.15
 
 show if the columns are part of primary or foreign keys with icons of keys.
@@ -23,14 +35,4 @@ when the table names are loaded after the connection to a database, show it so t
 about it
 
 sort of the table names list so that it is easier to find them when there are many
-
-- Release 1.14
-
-Installation file for MacOS (DBTarzanxxx.app.zip).
-
-When connecting to the database, in case of failure the error is displayed correctly.
-
-Complete error messages in case of SQL errors.
-
-Show a link to a "JDBC connection strings" page in the connection editor.
 
