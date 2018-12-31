@@ -32,7 +32,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     })
   }
   splitter.fillSplitPanel(rowDetailsView)
-  private val progressBar = new TableProgressBar()
+  private val progressBar = new TableProgressBar(removeProgressBar)
   private val layout = new BorderPane {
     top = buildTop()
     center = splitter.splitCenter
@@ -50,6 +50,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   def startOrderByEditor() : Unit = {
     OrderByEditorStarter.openOrderByEditor(stage(), dbTable, useNewTable)
   }
+
+  private def removeProgressBar() : Unit = 
+    layout.bottom = null
 
   private def stage() : Stage = 
     new Stage(layout.scene.window().asInstanceOf[javafx.stage.Stage])

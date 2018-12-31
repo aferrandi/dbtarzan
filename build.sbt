@@ -6,7 +6,7 @@ enablePlugins(DebianPlugin,JavaAppPackaging)
 
 name := "dbtarzan"
 
-version := "1.16"
+version := "1.18"
 
 maintainer := "Andrea Ferrandi"
 
@@ -23,7 +23,7 @@ scalacOptions in Compile --= Seq("-Xfatal-warnings")
 libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.3.4",
   "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test",
-  "org.scalafx" %% "scalafx" % "11.+",
+  "org.scalafx" %% "scalafx" % "8.+",
   "com.typesafe.akka" %% "akka-actor" % "2.5.11",
   "com.h2database" % "h2" % "1.4.197"
 )
