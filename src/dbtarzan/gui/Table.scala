@@ -11,7 +11,7 @@ import akka.actor.ActorRef
 import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, DBTable}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, TableColumnsHeadings, TableContextMenu, HeadingText}
+import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, TableColumnsHeadings, TableContextMenu, HeadingText, TableColumnsFitter}
 import dbtarzan.messages.Logger
 
 
@@ -26,6 +26,8 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   private val checkedRows = new CheckedRowsBuffer()
   /* the table */
   private val table = buildTable()
+  /* to resize the columns by their sizes */
+  private val tableFit = new TableColumnsFitter(table, names)
   /* a row click listener (to show the row in the external list) */
   private var rowClickListener : Option[Row => Unit] = None
    /* converts rows to structures usable from the table */
@@ -91,6 +93,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   def addRows(rows : Rows) : Unit = { 
     buffer ++= fromRow(rows, names)
     checkedIfOnlyOne()
+    tableFit.addRows(rows.rows)
     } 
 
   def setRowClickListener(listener : Row => Unit) : Unit = {

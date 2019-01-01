@@ -1,9 +1,10 @@
 package dbtarzan.gui.util
 
 import scalafx.scene.Node
-import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, ButtonType }
+import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, ButtonType}
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.image.Image
+import scalafx.scene.text.{Text, Font}
 import scalafx.geometry.Insets
 import scalafx.scene.input.{ MouseEvent, MouseButton, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._
@@ -79,5 +80,12 @@ object JFXUtil {
 	def loadIcon(fileName: String) : Image = 
 		// println(this.getClass().getResource("").getPath())
 	    new Image(getClass().getResourceAsStream(fileName))
+
+	
+    def averageCharacterSize() : Double = {
+		val s = "XXXXX"
+        val text = new Text(s);
+        text.getBoundsInLocal().getWidth() / s.length;        
+    }	
    
  }
