@@ -18,7 +18,6 @@ class TableColumnsMaxSizes(columns : List[Field]) {
 
     private def randomRows(rows : List[Row]) : List[Row] = {   
         val finalSize = Math.min(rows.size, Math.max(rows.size / 10, 10)) 
-        println("finalSize"+finalSize)
         val arrRows = rows.toArray
         val indexes = List.fill(finalSize)(rnd.nextInt(arrRows.size))
         indexes.map(i => arrRows(i))

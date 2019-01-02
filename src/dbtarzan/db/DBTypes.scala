@@ -23,7 +23,7 @@ case class ForeignKeys(keys : List[ForeignKey])
 /* a fields with its content in a row */
 case class FieldWithValue(field : String, value : String)
 /* a row. The values are in the same order as in the table description (FieldsOnTable) */
-case class Row(values : List[String ])
+case class Row(values : List[String])
 /* rows in a table */
 case class Rows(rows : List[Row])
 /* a text filter to use it in a where clause */

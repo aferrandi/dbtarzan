@@ -14,8 +14,8 @@ class TableColumnsFitterTest extends FlatSpec {
   "logistic of 50" should "be around 50" in {
 	  assert(TableColumnsFitter.logistic(50) === 46.843696553792995)
   }
+  
   "logistic of 100" should "be around 50" in {
 	  assert(TableColumnsFitter.logistic(100) === 49.97731033621018)
   }
-
 }

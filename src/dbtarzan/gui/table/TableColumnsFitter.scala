@@ -1,6 +1,6 @@
 package dbtarzan.gui.table
 
-import scalafx.scene.control.TableView
+import scalafx.scene.control.{TableView, TableColumn}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.db._
 import scalafx.Includes._
@@ -11,23 +11,22 @@ object TableColumnsFitter {
        50.0 / (1.0 + 10.0 * scala.math.exp(-.1 * x))
 }
 
-class TableColumnsFitter(table : TableView[_], columns : List[Field]) {
-    val maxSizes = new TableColumnsMaxSizes(columns)
-    val charSize = JFXUtil.averageCharacterSize()
+class TableColumnsFitter[S](table : TableView[S], columns : List[Field]) {
+    private val maxSizes = new TableColumnsMaxSizes(columns)
+    private val charSize = JFXUtil.averageCharacterSize()
+
+    private def resizeColumn(column : TableColumn[S, _], size : Int) : Unit = {
+        val x = TableColumnsFitter.logistic((size+2)) 
+        column.prefWidth = x * charSize
+    }
 
     def addRows(rows : List[Row]) : Unit = {
       val columns =  table.columns.drop(1)
-      println("columns "+columns)
       maxSizes.addRows(rows)
       val newSizes = maxSizes.maxLengths
-      println("newSizes "+newSizes)
-      columns.zip(newSizes).foreach({case (column, size) => {
-           val x = TableColumnsFitter.logistic((size+2)) 
-           println("Resize "+size+","+charSize+"=> "+x)
-           column.prefWidth = x * charSize
-           }}) 
-
+      // println("newSizes "+newSizes)
+      columns.zip(newSizes).foreach({
+          case (column, size) => resizeColumn(column, size)
+          }) 
     }
-
-
 }
