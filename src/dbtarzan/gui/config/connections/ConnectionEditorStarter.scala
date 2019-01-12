@@ -20,7 +20,7 @@ object ConnectionEditorStarter
     localization: Localization) : Unit = {
     println("open connections editor")  
     val connectionStage = new Stage {
-      title = "Edit Connections"
+      title = localization.editConnections
       width = 800
       height = 600
       scene = new Scene {

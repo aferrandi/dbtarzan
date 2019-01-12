@@ -4,13 +4,15 @@ import scalafx.scene.control.{ TabPane, Tab, Tooltip}
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
+
 import dbtarzan.db.{DBTableStructure, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributes, DatabaseId, TableId}
 import dbtarzan.messages._
 import dbtarzan.gui.util.StringUtil
 import dbtarzan.gui.tabletabs.{ TableTabsMap, BrowsingTableWithTab }
+import dbtarzan.localization.Localization
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tabs = new TabPane()
   private val tables = new TableTabsMap()
@@ -68,7 +70,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   } 
 
   private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : BrowsingTableWithTab = {
-    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId)
+    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId, localization)
     val tab = buildTab(structure, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)

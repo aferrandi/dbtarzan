@@ -32,7 +32,7 @@ class MainGUI(
 	closeApp : () => Unit)
 {
 	/* the database tabs on the middle-right side */
-	val databaseTabs = new DatabaseTabs()
+	val databaseTabs = new DatabaseTabs(localization)
 	/* the log/error list on the bottom */
 	val logList = new LogList()
 	/* the database/connection list on the left side */
@@ -81,14 +81,14 @@ class MainGUI(
 		)
 	}
 
-	private def buildSettingsMenu() = new Menu("Settings") {
+	private def buildSettingsMenu() = new Menu(localization.settings) {
 		    items = List(
-		      new MenuItem("Global Settings") {
+		      new MenuItem(localization.globalSettings) {
 		        onAction = {
 		          e: ActionEvent => { openGlobalEditor()	}
 		        }
 		      },					
-		      new MenuItem("Edit Connections") {
+		      new MenuItem(localization.editConnections) {
 		        onAction = {
 		          e: ActionEvent => { openConnectionsEditor()	}
 		        }
@@ -96,9 +96,9 @@ class MainGUI(
 		    )
 		  }
 
-	private def buildHelpMenu() = new Menu("Help") {
+	private def buildHelpMenu() = new Menu(localization.help) {
 		    items = List(
-		      new MenuItem("Documentation") {
+		      new MenuItem(localization.documentation) {
 		        onAction = {		        	
 		          e: ActionEvent =>  openWeb("https://aferrandi.github.io/dbtarzan/") 
 		        }

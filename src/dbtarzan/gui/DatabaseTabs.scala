@@ -8,11 +8,12 @@ import scalafx.event.Event
 import akka.actor.ActorRef
 import dbtarzan.messages._
 import dbtarzan.db.{DatabaseId, TableId}
+import dbtarzan.localization.Localization
 
 case class DatabaseWithTab(database : Database, tab : Tab)
 
 /** All the tabs with one database for each*/
-class DatabaseTabs() extends TDatabases with TControlBuilder {
+class DatabaseTabs(localization : Localization) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
   private val databaseById = HashMap.empty[DatabaseId, DatabaseWithTab]
   private var guiActor: Option[ActorRef]  = None
@@ -27,7 +28,7 @@ class DatabaseTabs() extends TDatabases with TControlBuilder {
     println("add database tab for "+databaseId.databaseName)
     guiActor match {
       case Some(ga) => {
-        val database = new Database(dbActor, ga, databaseId)
+        val database = new Database(dbActor, ga, databaseId, localization)
         val tab = buildTab(database)
         tabs += tab
         selectTab(tab)

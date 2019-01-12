@@ -11,12 +11,13 @@ import scalafx.geometry.Insets
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.db.{ DatabaseId, TableId }
+import dbtarzan.localization.Localization
 
 /* A panel containing all the tabs related to a database */
-class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId) extends TControlBuilder {
+class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tableList = new TableList()
-  private val tableTabs = new TableTabs(dbActor, guiActor, databaseId)  
+  private val tableTabs = new TableTabs(dbActor, guiActor, databaseId, localization)  
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
   private val filterText = new TextField() { 
     promptText = "Filter"
@@ -29,7 +30,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val pane = new SplitPane {
     val tableListWithTitle = new BorderPane {
       top = new FlowPane {
-        children = List(buildMenu(), new Label("Tables"))
+        children = List(buildMenu(), new Label(localization.tables))
       }
       center = new BorderPane {
         top = filterText
@@ -45,7 +46,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 		menus = List(
 		  new Menu(JFXUtil.threeLines) {
 		    items = List(
-		      new MenuItem("Connection Reset") {
+		      new MenuItem(localization.connectionReset) {
 		        onAction = {
 		          e: ActionEvent => dbActor ! QueryReset(databaseId)
 		        }

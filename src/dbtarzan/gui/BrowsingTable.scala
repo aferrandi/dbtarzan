@@ -13,9 +13,10 @@ import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText}
 import dbtarzan.messages._
+import dbtarzan.localization.Localization
 
 /* table + constraint input box + foreign keys */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId) extends TControlBuilder {
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
@@ -61,7 +62,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
       items = dbTable.columnNames.map(f => 
         new MenuItem(f.name) {
             onAction = { e: ActionEvent => guiActor ! RequestOrderByField(queryId, f) }
-        }) :+ new MenuItem("More...") {
+        }) :+ new MenuItem(localization.more) {
             onAction = { e: ActionEvent => guiActor ! RequestOrderByEditor(queryId) }
         }
     }
