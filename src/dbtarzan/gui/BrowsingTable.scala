@@ -19,7 +19,7 @@ import dbtarzan.localization.Localization
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList()
-  private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, "Foreign keys") 
+  private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val dbTable = new DBTable(structure)
   private val table = new Table(dbActor, guiActor, queryId, dbTable)
   private val splitter = new BrowsingTableSplitter(table, foreignKeyListWithTitle)
@@ -81,7 +81,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   private def buildTop() : BorderPane = new BorderPane {        
       stylesheets += "orderByMenuBar.css"
-      left = TableMenu.buildMainMenu(guiActor, queryId)
+      left = TableMenu.buildMainMenu(guiActor, queryId, localization)
 	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
 	    right =new MenuBar {
 		    menus = List(buildOrderByMenu())

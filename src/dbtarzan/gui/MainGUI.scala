@@ -112,7 +112,7 @@ class MainGUI(
 	}
 
   private def buildDatabaseSplitPane() = new SplitPane {
-		val databaseListWithTitle = JFXUtil.withTitle(databaseList.control, "Databases")
+		val databaseListWithTitle = JFXUtil.withTitle(databaseList.control, localization.databases)
 		items.addAll(databaseListWithTitle, databaseTabs.control)
 		dividerPositions = 0.2
 		SplitPane.setResizableWithParent(databaseListWithTitle, false)

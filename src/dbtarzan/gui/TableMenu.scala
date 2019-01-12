@@ -8,7 +8,7 @@ import akka.actor.ActorRef
 
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages._
-
+import dbtarzan.localization.Localization
 
 /* the code to build the tabs menu and the related key combinations */ 
 object TableMenu {
@@ -31,17 +31,17 @@ object TableMenu {
             onAction = ev
         }
 
-    def buildMainMenu(guiActor: ActorRef, queryId : QueryId) = new MenuBar {
+    def buildMainMenu(guiActor: ActorRef, queryId : QueryId, localization : Localization) = new MenuBar {
         menus = List(
             new Menu(JFXUtil.threeLines) {
                 items = List(
-                    menuItem("Copy SQL To Clipboard",  (ev: ActionEvent) =>  guiActor ! CopySQLToClipboard(queryId)),
-                    menuItem("Close tabs before this", CLOSE_TAB_BEFORE_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
-                    menuItem("Close tabs after this", CLOSE_TAB_AFTER_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
-                    menuItem("Close all tabs", (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
-                    menuItem("Check All", CHECK_ALL_KEY, (ev: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
-                    menuItem("Uncheck All", CHECK_NONE_KEY, (ev: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
-                    checkMenuItem("Row Details", ROW_DETAILS_KEY, (ev: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
+                    menuItem(localization.copySQLToClipboard,  (ev: ActionEvent) =>  guiActor ! CopySQLToClipboard(queryId)),
+                    menuItem(localization.closeTabsBeforeThis, CLOSE_TAB_BEFORE_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
+                    menuItem(localization.closeTabsAfterThis, CLOSE_TAB_AFTER_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
+                    menuItem(localization.closeAllTabs, (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
+                    menuItem(localization.checkAll, CHECK_ALL_KEY, (ev: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
+                    menuItem(localization.uncheckAll, CHECK_NONE_KEY, (ev: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
+                    checkMenuItem(localization.rowDetails, ROW_DETAILS_KEY, (ev: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
                 )
             }
         )

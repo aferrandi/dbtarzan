@@ -18,6 +18,16 @@ trait Localization {
     def delimiters : String
     def maxRows : String
     def tables: String
+    def databases: String
+    def foreignKeys: String
     def connectionReset: String
     def more: String
+    def copySQLToClipboard: String
+    def closeTabsBeforeThis: String
+    def closeTabsAfterThis: String
+    def closeAllTabs: String
+    def checkAll: String
+    def uncheckAll: String
+    def rowDetails: String
+
 }
