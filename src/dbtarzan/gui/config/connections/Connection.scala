@@ -1,4 +1,4 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.connections
 
 import scalafx.scene.control.{ TextField, Label, PasswordField, Hyperlink }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
@@ -8,12 +8,14 @@ import scalafx.geometry.{ Insets, HPos }
 import scalafx.Includes._
 import dbtarzan.gui.util.OnChangeSafe
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.config.{ ConnectionData, PasswordEncryption }
+import dbtarzan.config.connections.ConnectionData
+import dbtarzan.config.PasswordEncryption
+import dbtarzan.localization.Localization
 
 /**
   The list of database to choose from
 */
-class Connection(openWeb : String => Unit) extends TControlBuilder {
+class Connection(openWeb : String => Unit, localization: Localization) extends TControlBuilder {
   val safe = new OnChangeSafe()
   val txtName = new TextField {
     text = ""
@@ -57,7 +59,7 @@ class Connection(openWeb : String => Unit) extends TControlBuilder {
       new ColumnConstraints() {
         hgrow = Priority.ALWAYS
       })
-    add(new Label { text = "Name:" }, 0, 0)
+    add(new Label { text = localization.name+":" }, 0, 0)
     add(txtName, 1, 0)
     add(new Label { text = "Jar:" }, 0, 1)
     add(jarSelector.control, 1, 1)
@@ -65,15 +67,15 @@ class Connection(openWeb : String => Unit) extends TControlBuilder {
     add(txtUrl, 1, 2)
     add(new Label { text = "Driver:" }, 0, 3)
     add(txtDriver, 1, 3)
-    add(new Label { text = "User:" }, 0, 4)
+    add(new Label { text = localization.user+":" }, 0, 4)
     add(txtUser, 1, 4)    
-    add(new Label { text = "Password:" }, 0, 5)
+    add(new Label { text = localization.password+":" }, 0, 5)
     add(txtPassword, 1, 5)
-    add(new Label { text = "Schema:" }, 0, 6)
+    add(new Label { text = localization.schema+":" }, 0, 6)
     add(txtSchema, 1, 6)
-    add(new Label { text = "Delimiters:" }, 0, 7)
+    add(new Label { text = localization.delimiters+":" }, 0, 7)
     add(cmbDelimiters.control, 1, 7)
-    add(new Label { text = "Max Rows:" }, 0, 8)
+    add(new Label { text = localization.maxRows+":" }, 0, 8)
     add(txtMaxRows, 1, 8)
     add(linkToJdbcUrls, 1, 9)
     GridPane.setHalignment(linkToJdbcUrls, HPos.RIGHT) 

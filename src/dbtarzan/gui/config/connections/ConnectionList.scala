@@ -1,11 +1,11 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.connections
 
 import scalafx.scene.control.{ ListView, ListCell, SplitPane, ContextMenu, MenuItem }
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.config.ConnectionData
+import dbtarzan.config.connections.ConnectionData
 
 case class ConnectionDataErrors(name : String, errors : List[String])
 

@@ -2,7 +2,7 @@ package dbtarzan.db.actor
 
 import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
-import dbtarzan.config.ConnectionData
+import dbtarzan.config.connections.ConnectionData
 import dbtarzan.db.util.ResourceManagement.using
 import akka.actor.ActorRef
 import dbtarzan.db._

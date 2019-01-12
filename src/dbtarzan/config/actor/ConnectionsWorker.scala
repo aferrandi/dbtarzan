@@ -6,7 +6,7 @@ import akka.routing.Broadcast
 import scala.collection.mutable.HashMap
 
 import dbtarzan.messages._
-import dbtarzan.config.ConnectionsConfig
+import dbtarzan.config.connections.ConnectionsConfig
 import dbtarzan.db.{ConnectionBuilder, DatabaseId }
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */

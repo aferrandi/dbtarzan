@@ -1,26 +1,31 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.connections
 
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
 import scalafx.Includes._
-import dbtarzan.config.{ ConnectionDataReader, ConnectionDataWriter, ConnectionData }
 import akka.actor.ActorRef
+import java.nio.file.Path
+import dbtarzan.config.connections.{ ConnectionDataReader, ConnectionDataWriter, ConnectionData }
 import dbtarzan.messages.ConnectionDatas
-import dbtarzan.types.ConfigPath
+import dbtarzan.localization.Localization
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
 object ConnectionEditorStarter
 {
- def openConnectionsEditor(parentStage : Stage, connectionsWorker : ActorRef, connectionsConfigPath: ConfigPath, openWeb : String => Unit) : Unit = {
-
+ def openConnectionsEditor(
+    parentStage : Stage, 
+    connectionsWorker : ActorRef, 
+    configPath: Path, 
+    openWeb : String => Unit, 
+    localization: Localization) : Unit = {
     println("open connections editor")  
-     val connectionStage = new Stage {
+    val connectionStage = new Stage {
       title = "Edit Connections"
       width = 800
       height = 600
       scene = new Scene {
         def onSave(connectionsToSave: List[ConnectionData]) : Unit = {
-            ConnectionDataWriter.write(connectionsConfigPath, connectionsToSave)
+            ConnectionDataWriter.write(configPath, connectionsToSave)
             connectionsWorker ! ConnectionDatas(connectionsToSave)
             window().hide()
           }
@@ -28,7 +33,7 @@ object ConnectionEditorStarter
         def onCancel() : Unit = 
           window().hide()
 
-        val editor = new ConnectionEditor(ConnectionDataReader.read(connectionsConfigPath), openWeb)
+        val editor = new ConnectionEditor(ConnectionDataReader.read(configPath), openWeb, localization)
         editor.onSave(onSave(_))
         editor.onCancel(() => onCancel())
         onCloseRequest = (event : WindowEvent) => { 
@@ -42,5 +47,4 @@ object ConnectionEditorStarter
     connectionStage.initStyle(StageStyle.UTILITY)
     connectionStage.show()
   }
-
 }

@@ -1,7 +1,7 @@
 package dbtarzan.messages
 
 import dbtarzan.db.DatabaseId
-import dbtarzan.config.ConnectionData
+import dbtarzan.config.connections.ConnectionData
 
 
 case class QueryClose(databaseId : DatabaseId) 

@@ -1,4 +1,4 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.connections
 
 import scalafx.scene.control.{ TextField, Button }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }

@@ -1,17 +1,17 @@
-package dbtarzan.config
+package dbtarzan.config.connections
 
 import spray.json._
 import dbtarzan.db.util.FileReadWrite
 import dbtarzan.types.ConfigPath
-
+import java.nio.file.Path
 
 /* writes the databases configuration file */
 object ConnectionDataWriter {
 	import ConnectionDataJsonProtocol._
 
-	def write(path : ConfigPath, connections : List[ConnectionData]) : Unit  = {
+	def write(path : Path, connections : List[ConnectionData]) : Unit  = {
 		val text = toText(connections)
-		FileReadWrite.writeFile(path.path, text)		
+		FileReadWrite.writeFile(path, text)		
 	}
 	
 	def toText(connections : List[ConnectionData]) : String = {

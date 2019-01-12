@@ -1,22 +1,24 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.connections
 
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.Parent
-import dbtarzan.config.ConnectionData
+import dbtarzan.config.connections.ConnectionData
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
+import dbtarzan.localization.Localization
 
 /**
   table + constraint input box + foreign keys
 */
 class ConnectionEditor(
   connectionDatas : List[ConnectionData],
-  openWeb : String => Unit
+  openWeb : String => Unit,
+  localization: Localization
   ) extends TControlBuilder {
   private val list = new ConnectionList(connectionDatas)
-  private val connection = new Connection(openWeb)
-  private val buttons = new ConnectionButtons() 
+  private val connection = new Connection(openWeb, localization)
+  private val buttons = new ConnectionButtons(localization) 
   private val layout = new BorderPane {
     center = buildSplitPane()
     bottom = buttons.control

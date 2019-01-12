@@ -1,7 +1,7 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.connections
 
 import dbtarzan.gui.util.Validation
-import dbtarzan.config.ConnectionData
+import dbtarzan.config.connections.ConnectionData
 
 /* verify if a connection data can be saved */
 object ConnectionDataValidation

@@ -1,4 +1,4 @@
-package dbtarzan.config
+package dbtarzan.config.connections
 
 
 import spray.json._

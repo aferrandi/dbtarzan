@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import scala.collection.mutable.HashMap
 
 import dbtarzan.db.util.ExceptionToText
-import dbtarzan.config.ConnectionData
+import dbtarzan.config.connections.ConnectionData
 import dbtarzan.db._
 import dbtarzan.messages._
 import dbtarzan.db.ForeignKeysToFile

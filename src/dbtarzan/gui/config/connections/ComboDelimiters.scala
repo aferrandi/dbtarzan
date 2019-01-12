@@ -1,4 +1,4 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.connections
 
 import scalafx.scene.control.{ ComboBox, ListCell }
 import scalafx.scene.Parent

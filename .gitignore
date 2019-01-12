@@ -22,3 +22,4 @@ mksnap/snap
 mksnap/*
 !mksnap/**/snapcraft.mod
 !mksnap/**/*.sh
+global.config

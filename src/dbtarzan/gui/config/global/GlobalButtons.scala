@@ -1,4 +1,4 @@
-package dbtarzan.gui.config
+package dbtarzan.gui.config.global
 
 import scalafx.scene.layout. { HBox, Region, Priority }
 import scalafx.scene.control.Button
@@ -9,19 +9,7 @@ import scalafx.scene.Parent
 import scalafx.geometry.{ Insets, Pos }
 
 
-class ConnectionButtons() extends TControlBuilder {
-  val buttonNew = new Button {
-    text = "New"
-  }
-  
-  val buttonRemove = new Button {
-    text = "Remove"
-  }
-
-  val buttonDuplicate = new Button {
-    text = "Duplicate"
-  }
-
+class GlobalButtons() extends TControlBuilder {
   val buttonCancel = new Button {
     text = "Cancel"
     alignmentInParent = Pos.CENTER_RIGHT
@@ -33,20 +21,11 @@ class ConnectionButtons() extends TControlBuilder {
   }
 
 	private val layout = new HBox {
-    children = List(buttonNew, buttonRemove, buttonDuplicate, new Region() { hgrow = Priority.Always }, buttonSave, buttonCancel )
+    children = List(buttonSave, buttonCancel )
   	padding = Insets(10)
   	spacing = 10
   }
  
-  def onNew(action : () => Unit ): Unit = 
-    buttonNew.onAction = (event: ActionEvent)  => action()
-
-  def onRemove(action : () => Unit ): Unit =
-    buttonRemove.onAction = (event: ActionEvent)  => action()
-
-  def onDuplicate(action : () => Unit ): Unit =
-    buttonDuplicate.onAction = (event: ActionEvent)  => action()
-
   def onSave(action : () => Unit ): Unit =
     buttonSave.onAction = (event: ActionEvent)  => action()
 

@@ -1,5 +1,5 @@
 
-package dbtarzan.config
+package dbtarzan.config.connections
 
 import org.scalatest.FlatSpec
 

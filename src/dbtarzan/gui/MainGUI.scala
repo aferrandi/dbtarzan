@@ -12,11 +12,12 @@ import scalafx.geometry.Orientation
 import scalafx.scene.layout.BorderPane
 import akka.actor.ActorRef
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.gui.config.ConnectionEditorStarter
+import dbtarzan.gui.config.connections.ConnectionEditorStarter
+import dbtarzan.gui.config.global.GlobalEditorStarter
 import dbtarzan.types.ConfigPath
 import dbtarzan.messages.Logger
 import dbtarzan.db.DatabaseId
-
+import dbtarzan.localization.Localization
 
 
 
@@ -24,7 +25,8 @@ import dbtarzan.db.DatabaseId
 	the actors are still not been created when calling the constructor, therefore they are passed as functions.
  */
 class MainGUI(
-	connectonsConfigPath: ConfigPath, 
+	configPaths: ConfigPath, 
+	localization: Localization,
 	version: String, 
 	openWeb : String => Unit, 
 	closeApp : () => Unit)
@@ -74,13 +76,18 @@ class MainGUI(
 	
 	private def buildMenu() = new MenuBar {
 		menus = List(
-			buildConnectionsMenu(),
+			buildSettingsMenu(),
 		  buildHelpMenu()
 		)
 	}
 
-	private def buildConnectionsMenu() = new Menu("Connections") {
+	private def buildSettingsMenu() = new Menu("Settings") {
 		    items = List(
+		      new MenuItem("Global Settings") {
+		        onAction = {
+		          e: ActionEvent => { openGlobalEditor()	}
+		        }
+		      },					
 		      new MenuItem("Edit Connections") {
 		        onAction = {
 		          e: ActionEvent => { openConnectionsEditor()	}
@@ -122,12 +129,22 @@ class MainGUI(
 
 	private def openConnectionsEditor() : Unit = {
 		guiActor match {
-			case Some(ga) => new Logger(ga).info("Editing connections configuration file "+connectonsConfigPath.path)
+			case Some(ga) => new Logger(ga).info("Editing connections configuration file "+configPaths.connectionsConfigPath)
 			case None => println("MainGUI: guiActor not defined")
 		}
 		connectionsActor match {
-			case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, connectonsConfigPath, openWeb)
+			case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, localization)
 			case None => println("MainGUI: connectionsActor not defined") 
+		}
+	}
+
+	private def openGlobalEditor() : Unit = {
+		guiActor match {
+			case Some(ga) => {
+				new Logger(ga).info("Editing global configuration file "+configPaths.globalConfigPath)
+				GlobalEditorStarter.openGlobalEditor(stage, configPaths.globalConfigPath)
+			}
+			case None => println("MainGUI: guiActor not defined")
 		}
 	}
 }

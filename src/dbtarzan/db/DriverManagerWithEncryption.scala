@@ -1,7 +1,8 @@
 package dbtarzan.db
 
 import java.sql.{ DriverManager, Connection}
-import dbtarzan.config.{ConnectionData, PasswordEncryption}
+import dbtarzan.config.connections.ConnectionData
+import dbtarzan.config.PasswordEncryption
 
 object DriverManagerWithEncryption extends ConnectionProvider
 {

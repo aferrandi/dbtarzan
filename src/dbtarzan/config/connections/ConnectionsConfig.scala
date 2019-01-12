@@ -1,4 +1,4 @@
-package dbtarzan.config
+package dbtarzan.config.connections
 
 
 /* the database configuration file content as a map databaseName => database JDBC configuration */
