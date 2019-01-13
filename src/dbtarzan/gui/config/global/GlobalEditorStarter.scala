@@ -3,16 +3,18 @@ package dbtarzan.gui.config.global
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
 import scalafx.Includes._
-import dbtarzan.config.global.{ GlobalDataReader, GlobalDataWriter, GlobalData }
 import java.nio.file.Path
+
+import dbtarzan.config.global.{ GlobalDataReader, GlobalDataWriter, GlobalData }
+import dbtarzan.localization.Localization
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
 object GlobalEditorStarter
 {
-    def openGlobalEditor(parentStage : Stage, configPath: Path) : Unit = {
+    def openGlobalEditor(parentStage : Stage, configPath: Path, localization : Localization) : Unit = {
         println("open global editor")  
         val globalStage = new Stage {
-            title = "Edit Global Settings"
+            title = localization.editGlobalSettings
             width = 800
             height = 600
             scene = new Scene {
@@ -24,7 +26,7 @@ object GlobalEditorStarter
                 def onCancel() : Unit = 
                 window().hide()
 
-                val editor = new GlobalEditor(GlobalDataReader.read(configPath))
+                val editor = new GlobalEditor(GlobalDataReader.read(configPath), localization)
                 editor.onSave(onSave(_))
                 editor.onCancel(() => onCancel())
                 onCloseRequest = (event : WindowEvent) => { 

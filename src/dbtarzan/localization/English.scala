@@ -22,6 +22,8 @@ class English extends Localization {
     def foreignKeys = "Foreign keys"
     def connectionReset = "Connection Reset"
     def more= "More..."
+    def language = "Language"
+    def editGlobalSettings = "Edit Global Settings"    
     def copySQLToClipboard = "Copy SQL To Clipboard"
     def closeTabsBeforeThis = "Close tabs before this"
     def closeTabsAfterThis = "Close tabs after this"
@@ -29,4 +31,9 @@ class English extends Localization {
     def checkAll = "Check All"
     def uncheckAll = "Uncheck All"
     def rowDetails = "Row Details"
+    def areYouSureClose = "Are you sure you want to close without saving?"
+    def areYouSureSaveConnections = "Are you sure you want to save the connections?"
+    def saveConnections = "Save connections"
+    def areYouSureSaveGlobalSettings = "Are you sure you want to save the global settings?"
+    def saveGlobalSettings = "Save global settings"
 }

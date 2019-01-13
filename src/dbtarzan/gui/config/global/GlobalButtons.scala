@@ -3,20 +3,24 @@ package dbtarzan.gui.config.global
 import scalafx.scene.layout. { HBox, Region, Priority }
 import scalafx.scene.control.Button
 import scalafx.event.ActionEvent
-import dbtarzan.gui.TControlBuilder
 import scalafx.Includes._
 import scalafx.scene.Parent
 import scalafx.geometry.{ Insets, Pos }
 
+import dbtarzan.gui.TControlBuilder
+import dbtarzan.localization.Localization
 
-class GlobalButtons() extends TControlBuilder {
+
+class GlobalButtons(
+  localization: Localization
+) extends TControlBuilder {
   val buttonCancel = new Button {
-    text = "Cancel"
+    text = localization.cancel
     alignmentInParent = Pos.CENTER_RIGHT
   }
 
   val buttonSave = new Button {
-    text = "Save"
+    text = localization.save
     alignmentInParent = Pos.CENTER_RIGHT
   }
 

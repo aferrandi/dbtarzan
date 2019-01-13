@@ -8,9 +8,7 @@ import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 
-/**
-  table + constraint input box + foreign keys
-*/
+/* table + constraint input box + foreign keys */
 class ConnectionEditor(
   connectionDatas : List[ConnectionData],
   openWeb : String => Unit,
@@ -47,7 +45,7 @@ class ConnectionEditor(
   private def saveIfPossible(save : List[ConnectionData]  => Unit) : Unit = {
     val errors = list.validate()
     if(errors.isEmpty) {
-      if(JFXUtil.areYouSure("Are you sure you want to save the connections?", "Save connections"))
+      if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
         try { save(list.content()) } 
         catch {
           case ex : Exception => JFXUtil.showErrorAlert("Saving the connections got: ", ex.getMessage())
@@ -58,7 +56,7 @@ class ConnectionEditor(
   }
 
   def cancelIfPossible(cancel : () => Unit) : Unit = {
-    if(JFXUtil.areYouSure("Are you sure you want to close without saving?", "Cancel"))
+    if(JFXUtil.areYouSure(localization.areYouSureClose, localization.cancel))
         cancel()
   }
 

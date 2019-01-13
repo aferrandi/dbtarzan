@@ -11,12 +11,14 @@ import dbtarzan.config.global.GlobalData
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import scalafx.Includes._
-import dbtarzan.localization.{ Languages, Language }
+import dbtarzan.localization.{ Languages, Language, Localization }
 
 /**
   table + constraint input box + foreign keys
 */
-class GlobalEditor(data : GlobalData
+class GlobalEditor(
+    data : GlobalData,
+    localization: Localization
   ) extends TControlBuilder {
   
   val languages = ObservableBuffer(Languages.languages)
@@ -29,21 +31,20 @@ class GlobalEditor(data : GlobalData
     buttonCell = buildLanguageCell()
   }
 
-
- private val grid =  new GridPane {
+  private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
       new ColumnConstraints() {
         hgrow = Priority.ALWAYS
       })
-    add(new Label { text = "Language:" }, 0, 0)
+    add(new Label { text = localization.language+":" }, 0, 0)
     add(cmbLanguages, 1, 0)
     padding = Insets(10)
     vgap = 10
     hgap = 10
   }
 
-  private val buttons = new GlobalButtons() 
+  private val buttons = new GlobalButtons(localization) 
 
   private val layout = new BorderPane {
     center = grid
@@ -57,7 +58,7 @@ class GlobalEditor(data : GlobalData
   }
   
   private def saveIfPossible(save : GlobalData  => Unit) : Unit = {
-    if(JFXUtil.areYouSure("Are you sure you want to save the global settings?", "Save global settings"))
+    if(JFXUtil.areYouSure(localization.areYouSureSaveGlobalSettings, localization.saveGlobalSettings))
       try { save(GlobalData(
         cmbLanguages.getSelectionModel().selectedItem()
       )) } 
@@ -67,7 +68,7 @@ class GlobalEditor(data : GlobalData
   }
 
   def cancelIfPossible(cancel : () => Unit) : Unit = {
-    if(JFXUtil.areYouSure("Are you sure you want to close without saving?", "Cancel"))
+    if(JFXUtil.areYouSure(localization.areYouSureClose, localization.cancel))
         cancel()
   }
 

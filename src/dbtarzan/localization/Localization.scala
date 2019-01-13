@@ -22,6 +22,8 @@ trait Localization {
     def foreignKeys: String
     def connectionReset: String
     def more: String
+    def language: String
+    def editGlobalSettings: String
     def copySQLToClipboard: String
     def closeTabsBeforeThis: String
     def closeTabsAfterThis: String
@@ -29,5 +31,9 @@ trait Localization {
     def checkAll: String
     def uncheckAll: String
     def rowDetails: String
-
+    def areYouSureClose: String
+    def areYouSureSaveConnections: String
+    def saveConnections: String
+    def areYouSureSaveGlobalSettings: String
+    def saveGlobalSettings: String
 }
