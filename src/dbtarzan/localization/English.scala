@@ -36,4 +36,10 @@ class English extends Localization {
     def saveConnections = "Save connections"
     def areYouSureSaveGlobalSettings = "Are you sure you want to save the global settings?"
     def saveGlobalSettings = "Save global settings"
+    def selectionCopied = "Selection copied"
+    def sqlCopied = "SQL copied"
+    def connectedTo(databaseName : String) = "Connected to "+databaseName
+    def loadedTables(amount : Int, databaseName : String) = "Loaded "+amount+" tables from the database "+databaseName
+    def openingDatabase(databaseName : String) = "Opening database "+databaseName
+    def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName    
 }

@@ -8,9 +8,10 @@ import scala.collection.mutable.HashMap
 import dbtarzan.messages._
 import dbtarzan.config.connections.ConnectionsConfig
 import dbtarzan.db.{ConnectionBuilder, DatabaseId }
+import dbtarzan.localization.Localization
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
-class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Actor {
+class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localization : Localization) extends Actor {
 	 private val mapDBWorker = HashMap.empty[DatabaseId, ActorRef]
 	 private var connectionsConfig = new ConnectionsConfig(datas.datas)
 	 private val log = new Logger(guiActor)
@@ -18,7 +19,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Ac
 	 /* creates the actors to serve the queries for a database */
 	 private def getDBWorker(databaseId : DatabaseId) : ActorRef = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-		val dbActor = ConnectionBuilder.buildDBWorker(data, guiActor, context)
+		val dbActor = ConnectionBuilder.buildDBWorker(data, guiActor, context, localization)
 		mapDBWorker += databaseId -> dbActor
 		dbActor
 	 } 
@@ -26,7 +27,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef) extends Ac
 	/* creates the actor to serve the creation of foreign keys text files and start the copy */
 	 private def startCopyWorker(databaseId : DatabaseId) : Unit = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-		val copyActor = ConnectionBuilder.buildCopyWorker(data, guiActor, context)
+		val copyActor = ConnectionBuilder.buildCopyWorker(data, guiActor, context, localization)
 		copyActor ! CopyToFile
 	 } 
 

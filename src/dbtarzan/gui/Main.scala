@@ -23,13 +23,13 @@ object Main extends JFXApp {
   val mainGUI = new MainGUI(configPaths, localization, version, openWeb, closeApp)
   val actors = new ActorHandler(
     () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList), 
-    guiActor => new ConnectionsWorker(connectionDatas, guiActor)
+    guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization)
     ) 
   mainGUI.setActors(actors.guiActor, actors.connectionsActor)
   val log = new Logger(actors.guiActor)
   mainGUI.databaseList.setDatabaseIds(databaseIds(connectionDatas))
   mainGUI.onDatabaseSelected( { case databaseId => {
-    log.info("Opening database "+databaseId.databaseName)
+    log.info(localization.openingDatabase(databaseId.databaseName))
     actors.connectionsActor ! QueryDatabase(databaseId) 
     }})
   mainGUI.onForeignKeyToFile( { case databaseId => actors.connectionsActor ! CopyToFile(databaseId) })

@@ -21,7 +21,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val dbTable = new DBTable(structure)
-  private val table = new Table(dbActor, guiActor, queryId, dbTable)
+  private val table = new Table(dbActor, guiActor, queryId, dbTable, localization)
   private val splitter = new BrowsingTableSplitter(table, foreignKeyListWithTitle)
   private var useNewTable : DBTableStructure => Unit = table => {}
   private var rowDetailsView : Option[RowDetailsView] = None
@@ -128,7 +128,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   def copySQLToClipboard() : Unit = try {
     JFXUtil.copyTextToClipboard(SqlBuilder.buildSql(structure).sql)
-    log.info("SQL copied")
+    log.info(localization.sqlCopied)
   } catch {
     case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)
   }

@@ -1,13 +1,15 @@
 package dbtarzan.db
 
 import akka.actor.{ ActorRef, Props, ActorContext }
-import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
 import akka.routing.{ RoundRobinPool}
-import dbtarzan.config.connections.ConnectionData
 import java.sql.{DriverManager, Driver}
 import java.net.{ URL, URLClassLoader }
 
-private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext) {	
+import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
+import dbtarzan.config.connections.ConnectionData
+import dbtarzan.localization.Localization
+
+private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext, localization : Localization) {	
 	def buildDBWorker() : ActorRef = try {
 		registerDriver()		
 		val instances = data.instances.getOrElse(1)
@@ -36,7 +38,7 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 	} 
 
 	private def buildSubWorkerProps() : Props = {
-		Props(classOf[DatabaseWorker], DriverManagerWithEncryption, data, guiActor).withDispatcher("my-pinned-dispatcher") 
+		Props(classOf[DatabaseWorker], DriverManagerWithEncryption, data, guiActor, localization).withDispatcher("my-pinned-dispatcher") 
 	}	
 
 	private def buildSubWorkerName(index : Int) : String = {
@@ -46,9 +48,9 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 }
 
 object ConnectionBuilder {
-	def buildDBWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext) : ActorRef = 
-		new ConnectionBuilder(data, guiActor, context).buildDBWorker()
+	def buildDBWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext, localization : Localization) : ActorRef = 
+		new ConnectionBuilder(data, guiActor, context, localization).buildDBWorker()
 
-	def buildCopyWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext) : ActorRef = 
-		new ConnectionBuilder(data, guiActor, context).buildCopyWorker()
+	def buildCopyWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext, localization : Localization) : ActorRef = 
+		new ConnectionBuilder(data, guiActor, context, localization).buildCopyWorker()
 }

@@ -13,10 +13,11 @@ import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, TableColumnsHeadings, TableContextMenu, HeadingText, TableColumnsFitter}
 import dbtarzan.messages.Logger
+import dbtarzan.localization.Localization
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/
-class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable : DBTable) extends TControlBuilder {
+class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   val names : List[Field] = dbTable.columnNames
   println("ColumnNames: "+names.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
@@ -136,7 +137,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
         case true => JFXUtil.copyTextToClipboard(headersToString()+ "\n" + selectedRowsToString()) 
         case false => JFXUtil.copyTextToClipboard(selectedRowsToString())
       } 
-      log.info("Selection copied")
+      log.info(localization.selectionCopied)
     } catch {
       case ex : Exception => log.error("Copying selection to the clipboard got ", ex)
     }

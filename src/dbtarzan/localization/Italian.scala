@@ -36,4 +36,10 @@ class Italian extends Localization {
     def saveConnections = "Salva le connessioni"
     def areYouSureSaveGlobalSettings = "Sicuro di voler salvare le opzioni globali?"    
     def saveGlobalSettings = "Salvare le opzioni globali"
+    def selectionCopied = "Selezione copiata"
+    def sqlCopied = "SQL copiato"
+    def connectedTo(databaseName: String) = "Connesso a "+databaseName
+    def loadedTables(amount : Int, databaseName : String) = "Caricate "+amount+" tabelle dal database "+databaseName
+    def openingDatabase(databaseName : String) = "Sto aprendo il database "+databaseName
+    def loadingForeignKeys(fileName : String) = "Sto caricando le chiavi esterne dal file dei database "+fileName    
 }

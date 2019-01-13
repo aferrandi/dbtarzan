@@ -11,10 +11,15 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.db._
 import dbtarzan.messages._
 import dbtarzan.db.ForeignKeysToFile
-
+import dbtarzan.localization.Localization
 
 /* The actor that reads data from the database */
-class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionData, guiActor : ActorRef) extends Actor {
+class DatabaseWorker(
+	createConnection : ConnectionProvider, 
+	data : ConnectionData, 
+	guiActor : ActorRef, 
+	localization: Localization
+	) extends Actor {
 	def databaseName = data.name
 	def databaseId = DatabaseId(data.name)	
 	val log = new Logger(guiActor)
@@ -25,7 +30,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
 			val connection = createConnection.getConnection(data)
-			log.info("Connected to "+databaseName) 
+			log.info(localization.connectedTo(databaseName)) 
 			Some(new DatabaseWorkerCore(connection, data.schema))
 		} 
 		catch { 
@@ -41,7 +46,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 
 	private def loadForeignKeysFromFile() : Unit = 
 		if(ForeignKeysToFile.fileExist(databaseName)) {
-			log.info("Loading foreign keys from the database file "+databaseName)
+			log.info(localization.loadingForeignKeys(databaseName))
 			try
 			{
 				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
@@ -107,7 +112,7 @@ class DatabaseWorker(createConnection : ConnectionProvider, data : ConnectionDat
 	private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => { 
 			val names = core.tablesLoader.tableNames()
 			if(!names.tableNames.isEmpty)
-				log.info("Loaded "+names.tableNames.size+" tables from the database "+databaseName)
+				log.info(localization.loadedTables(names.tableNames.size, databaseName))
 			else {
 				val schemas = core.schemasLoader.schemasNames()
 				val schemasText = schemas.schemas.map(_.name).mkString(", ")

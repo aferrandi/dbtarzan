@@ -36,4 +36,10 @@ trait Localization {
     def saveConnections: String
     def areYouSureSaveGlobalSettings: String
     def saveGlobalSettings: String
+    def selectionCopied: String    
+    def sqlCopied: String
+    def connectedTo(databaseName : String) : String
+    def loadedTables(amount : Int, databaseName : String)  : String
+    def openingDatabase(databaseName : String) : String
+    def loadingForeignKeys(fileName : String) : String
 }
