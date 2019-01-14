@@ -31,15 +31,15 @@ class DatabaseWorker(
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
 			val connection = createConnection.getConnection(data)
 			log.info(localization.connectedTo(databaseName)) 
-			Some(new DatabaseWorkerCore(connection, data.schema))
+			Some(new DatabaseWorkerCore(connection, data.schema, localization))
 		} 
 		catch { 
 			case se : SQLException => { 
-				log.error("Cronnecting to the database "+databaseName+" got "+ExceptionToText.sqlExceptionText(se), se) 
+				log.error(localization.errorConnectingToDatabase(databaseName)+" "+ExceptionToText.sqlExceptionText(se), se) 
 				None
 			}
 			case e : Exception => { 
-				log.error("Cronnecting to the database "+databaseName+" got", e) 
+				log.error(localization.errorConnectingToDatabase(databaseName), e) 
 				None
 			}
 		}

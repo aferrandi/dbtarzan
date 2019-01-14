@@ -1,5 +1,8 @@
 package dbtarzan.localization
 
+import java.nio.file.Path
+import dbtarzan.messages.QueryId
+
 class English extends Localization {
     def settings = "Settings"
     def globalSettings = "Global Settings"
@@ -38,8 +41,12 @@ class English extends Localization {
     def saveGlobalSettings = "Save global settings"
     def selectionCopied = "Selection copied"
     def sqlCopied = "SQL copied"
+    def writingFile(fileName : Path) = "Writing file "+fileName
+    def fileWritten(fileName : Path) = "File "+fileName+" written"
     def connectedTo(databaseName : String) = "Connected to "+databaseName
     def loadedTables(amount : Int, databaseName : String) = "Loaded "+amount+" tables from the database "+databaseName
     def openingDatabase(databaseName : String) = "Opening database "+databaseName
     def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName    
+    def errorConnectingToDatabase(databaseName : String) = "Cronnecting to the database "+databaseName+" got"
+    def errorRequestingTheRows(queryId : QueryId) = "Requesting the rows for the tab "+queryId+" got"    
 }

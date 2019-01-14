@@ -85,7 +85,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
     table.rowsError(error.ex)
-    log.error("Requesting the rows for the tab "+error.queryId+" got", error.ex)
+    log.error(localization.errorRequestingTheRows(error.queryId), error.ex)
   }
 
   def addColumns(columns : ResponseColumns) : Unit =  {

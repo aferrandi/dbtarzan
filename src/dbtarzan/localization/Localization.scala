@@ -1,5 +1,8 @@
 package dbtarzan.localization
 
+import java.nio.file.Path
+import dbtarzan.messages.QueryId
+
 trait Localization {
     def settings : String
     def globalSettings: String
@@ -38,8 +41,12 @@ trait Localization {
     def saveGlobalSettings: String
     def selectionCopied: String    
     def sqlCopied: String
+    def writingFile(fileName : Path) : String
+    def fileWritten(fileName : Path) : String
     def connectedTo(databaseName : String) : String
     def loadedTables(amount : Int, databaseName : String)  : String
     def openingDatabase(databaseName : String) : String
     def loadingForeignKeys(fileName : String) : String
+    def errorConnectingToDatabase(databaseName : String) : String 
+    def errorRequestingTheRows(queryId : QueryId)  : String
 }

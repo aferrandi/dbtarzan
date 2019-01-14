@@ -5,13 +5,14 @@ import scala.collection.mutable.ListBuffer
 
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db.util.ExceptionToText
+import dbtarzan.localization.Localization
 
 
 /**
 	The part of the database actor that reads the foreign keys
 	schema is the database schema (in case of Oracle and SQL server)
 */
-class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String]) {
+class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String], localization: Localization) {
 	/* the foreign key between two tables, has a name */
 	case class ForeignKeyKey(name: String, fromTable : String, toTable : String)
 	/* a column of the foreign key */
@@ -77,7 +78,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String])
 		}
 		catch {
 			case se : SQLException  => throw new Exception("Reading the foreign keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
-			case ex : Throwable => throw new Exception("Reading the foreign keyss of the "+tableName +" table got", ex)
+			case ex : Throwable => throw new Exception("Reading the foreign keys of the "+tableName +" table got", ex)
 		}
 
 

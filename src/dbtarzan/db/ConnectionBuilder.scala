@@ -22,7 +22,7 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 	def buildCopyWorker() : ActorRef = try {
 		registerDriver()
 		val name = "copyworker" + data.name		
-		context.actorOf(Props(new CopyWorker(data, guiActor)).withDispatcher("my-pinned-dispatcher"), name)
+		context.actorOf(Props(new CopyWorker(data, guiActor, localization)).withDispatcher("my-pinned-dispatcher"), name)
 	} catch { 
 		case c: ClassNotFoundException => throw new Exception("Getting the copyworker with the driver "+data.driver+" got ClassNotFoundException:",c)
 		case t: Throwable => throw new Exception("Getting the copyworker with the driver "+data.driver+" got the exception of type "+t.getClass().getCanonicalName()+":",t) 
