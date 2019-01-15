@@ -34,9 +34,9 @@ class MainGUI(
 	/* the database tabs on the middle-right side */
 	val databaseTabs = new DatabaseTabs(localization)
 	/* the log/error list on the bottom */
-	val logList = new LogList()
+	val logList = new LogList(localization)
 	/* the database/connection list on the left side */
-	val databaseList = new DatabaseList()
+	val databaseList = new DatabaseList(localization)
 	/* how big is the screen */
 	private val screenBounds = Screen.primary.visualBounds
 	/* the gui */

@@ -25,6 +25,8 @@ class English extends Localization {
     def foreignKeys = "Foreign keys"
     def connectionReset = "Connection Reset"
     def more= "More..."
+    def message = "Message"
+    def details = "Details"
     def language = "Language"
     def editGlobalSettings = "Edit Global Settings"    
     def copySQLToClipboard = "Copy SQL To Clipboard"
@@ -33,7 +35,9 @@ class English extends Localization {
     def closeAllTabs = "Close all tabs"
     def checkAll = "Check All"
     def uncheckAll = "Uncheck All"
+    def copyMessageToClipboard = "Copy Message To Clipboard"
     def rowDetails = "Row Details"
+    def buildForeignKeysFile = "Build foreign keys file"
     def areYouSureClose = "Are you sure you want to close without saving?"
     def areYouSureSaveConnections = "Are you sure you want to save the connections?"
     def saveConnections = "Save connections"
@@ -49,4 +53,5 @@ class English extends Localization {
     def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName    
     def errorConnectingToDatabase(databaseName : String) = "Cronnecting to the database "+databaseName+" got"
     def errorRequestingTheRows(queryId : QueryId) = "Requesting the rows for the tab "+queryId+" got"    
+    def errorCopyingSelection = "Copying selection to the clipboard got "
 }

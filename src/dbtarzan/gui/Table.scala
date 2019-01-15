@@ -139,7 +139,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
       } 
       log.info(localization.selectionCopied)
     } catch {
-      case ex : Exception => log.error("Copying selection to the clipboard got ", ex)
+      case ex : Exception => log.error(localization.errorCopyingSelection, ex)
     }
 
   def control : Parent = table

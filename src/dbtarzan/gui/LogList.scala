@@ -15,11 +15,12 @@ import dbtarzan.messages.TLogMessage
 import dbtarzan.messages.LogText
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.util.{ JFXUtil, LogIcons }
+import dbtarzan.localization.Localization
 
 /**
   A list of the errors happened in the application, last error first
 */
-class LogList extends TLogs with TControlBuilder {
+class LogList(localization : Localization) extends TLogs with TControlBuilder {
   private val buffer = ObservableBuffer.empty[TLogMessage]
   private val logTable = buildTable()
   private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -32,7 +33,7 @@ class LogList extends TLogs with TControlBuilder {
     editable = true
     placeholder = Label("") // prevent "no content in table" message to appear when the table is empty
     columnResizePolicy = TableView.ConstrainedResizePolicy
-    contextMenu = new ContextMenu(new MenuItem("Copy Message To Clipboard") {
+    contextMenu = new ContextMenu(new MenuItem(localization.copyMessageToClipboard) {
             onAction = (ev: ActionEvent) =>  try {
               JFXUtil.copyTextToClipboard(selectionToString())
               println("Message copied")
@@ -75,8 +76,8 @@ class LogList extends TLogs with TControlBuilder {
   /* when you double-click on a line it shows the whole message in a dialog box */ 
   private def showMessageInDialogBox(selectedMessage : TLogMessage) : Unit = 
       new Alert(AlertType.Information) { 
-         headerText="Message"
-         contentText= "Details:"
+         headerText = localization.message
+         contentText= localization.details+":"
          dialogPane().content =  new TextArea {
               text = LogText.extractWholeLogText(selectedMessage)
               editable = false

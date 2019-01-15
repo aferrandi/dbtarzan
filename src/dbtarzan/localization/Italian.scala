@@ -25,6 +25,8 @@ class Italian extends Localization {
     def foreignKeys = "Chiavi esterne"
     def connectionReset = "Resetta connessione"
     def more = "Altro..."
+    def message = "Messaggio"    
+    def details = "Dettagli"
     def language = "Lingua"
     def editGlobalSettings = "Modifica Opzioni Globali"    
     def copySQLToClipboard = "Copia SQL nel Clipboard"
@@ -33,7 +35,9 @@ class Italian extends Localization {
     def closeAllTabs = "Chiudi tutte le tab"
     def checkAll = "Spunta Tutto"
     def uncheckAll = "Rimuovi tutte le spunte"
+    def copyMessageToClipboard = "Copia Messaggio Nel Clipboard"
     def rowDetails = "Dettagli della riga"  
+    def buildForeignKeysFile = "crea file con le chiavi esterne"
     def areYouSureClose = "Sicuro di chiudere senza salvare?"
     def areYouSureSaveConnections = "Sicuro di voler salvare le connessioni?"
     def saveConnections = "Salva le connessioni"
@@ -49,4 +53,5 @@ class Italian extends Localization {
     def loadingForeignKeys(fileName : String) = "Sto caricando le chiavi esterne dal file dei database "+fileName    
     def errorConnectingToDatabase(databaseName : String) = "La connessione al database "+databaseName+" e' fallita a causa di"
     def errorRequestingTheRows(queryId : QueryId) = "La richiesta delle right di "+queryId+" e' fallita a a causa di"    
+    def errorCopyingSelection = "La copia della selezione e' fallita a causa di "
 }

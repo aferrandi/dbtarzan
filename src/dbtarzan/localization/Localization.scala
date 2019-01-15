@@ -25,6 +25,8 @@ trait Localization {
     def foreignKeys: String
     def connectionReset: String
     def more: String
+    def message: String    
+    def details: String
     def language: String
     def editGlobalSettings: String
     def copySQLToClipboard: String
@@ -33,7 +35,9 @@ trait Localization {
     def closeAllTabs: String
     def checkAll: String
     def uncheckAll: String
+    def copyMessageToClipboard : String
     def rowDetails: String
+    def buildForeignKeysFile: String
     def areYouSureClose: String
     def areYouSureSaveConnections: String
     def saveConnections: String
@@ -48,5 +52,6 @@ trait Localization {
     def openingDatabase(databaseName : String) : String
     def loadingForeignKeys(fileName : String) : String
     def errorConnectingToDatabase(databaseName : String) : String 
-    def errorRequestingTheRows(queryId : QueryId)  : String
+    def errorRequestingTheRows(queryId : QueryId) : String
+    def errorCopyingSelection : String
 }

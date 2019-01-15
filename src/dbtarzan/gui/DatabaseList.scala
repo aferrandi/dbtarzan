@@ -6,10 +6,11 @@ import scalafx.collections.ObservableBuffer
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.DatabaseIds
 import dbtarzan.db.DatabaseId
+import dbtarzan.localization.Localization
 
 /*	The list of database to choose from*/
-class DatabaseList() extends TControlBuilder with TDatabaseList {
-  private val menuForeignKeyToFile = new MenuItem("Build foreign keys file")
+class DatabaseList(localization : Localization) extends TControlBuilder with TDatabaseList {
+  private val menuForeignKeyToFile = new MenuItem(localization.buildForeignKeysFile)
   private val buffer = ObservableBuffer.empty[DatabaseId]
   private val list = new ListView[DatabaseId](buffer) {
   	SplitPane.setResizableWithParent(this, false) 
