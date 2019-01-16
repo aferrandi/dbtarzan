@@ -45,6 +45,9 @@ class English extends Localization {
     def saveGlobalSettings = "Save global settings"
     def selectionCopied = "Selection copied"
     def sqlCopied = "SQL copied"
+    def copySelectionToClipboard = "Copy selection to clipboard"
+    def onlyCells = "Only cells"
+    def cellsWithHeaders = "Cells with headers"
     def writingFile(fileName : Path) = "Writing file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" written"
     def connectedTo(databaseName : String) = "Connected to "+databaseName

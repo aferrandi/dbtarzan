@@ -45,6 +45,9 @@ class Italian extends Localization {
     def saveGlobalSettings = "Salvare le opzioni globali"
     def selectionCopied = "Selezione copiata"
     def sqlCopied = "SQL copiato"
+    def copySelectionToClipboard = "Copia selezione nel clipboard"
+    def onlyCells = "Solo le celle"
+    def cellsWithHeaders = "Celle con titoli"
     def writingFile(fileName : Path) = "Sto scrivendo il file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" scritto"
     def connectedTo(databaseName: String) = "Connesso a "+databaseName

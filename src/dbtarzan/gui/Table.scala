@@ -54,7 +54,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
           rowClickListener.foreach(listener => listener(rowValues))
         )
     )
-    contextMenu = new TableContextMenu(queryId, guiActor).buildContextMenu()
+    contextMenu = new TableContextMenu(queryId, guiActor, localization).buildContextMenu()
   }
 
   private def checkedIfOnlyOne() =

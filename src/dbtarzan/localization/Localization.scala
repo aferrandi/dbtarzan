@@ -45,6 +45,9 @@ trait Localization {
     def saveGlobalSettings: String
     def selectionCopied: String    
     def sqlCopied: String
+    def copySelectionToClipboard : String
+    def onlyCells : String
+    def cellsWithHeaders : String
     def writingFile(fileName : Path) : String
     def fileWritten(fileName : Path) : String
     def connectedTo(databaseName : String) : String
