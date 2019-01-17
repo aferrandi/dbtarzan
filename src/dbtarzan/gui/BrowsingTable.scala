@@ -49,7 +49,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   }
 
   def startOrderByEditor() : Unit = {
-    OrderByEditorStarter.openOrderByEditor(stage(), dbTable, useNewTable)
+    OrderByEditorStarter.openOrderByEditor(stage(), dbTable, useNewTable, localization)
   }
 
   private def removeProgressBar() : Unit = 

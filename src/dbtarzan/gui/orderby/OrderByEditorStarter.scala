@@ -5,15 +5,17 @@ import scalafx.scene.Scene
 import scalafx.Includes._
 
 import dbtarzan.db.{  DBTable, DBTableStructure, OrderByFields }
+import dbtarzan.localization.Localization
+
 /* to start the order by editor. It handles all the cancel/closing/save events */
 object OrderByEditorStarter
 {
- def openOrderByEditor(parentStage : Stage, dbTable: DBTable, useNewTable : DBTableStructure => Unit) : Unit = {
+ def openOrderByEditor(parentStage : Stage, dbTable: DBTable, useNewTable : DBTableStructure => Unit, localization : Localization) : Unit = {
      val orderByStage = new Stage {
       title = "Choose OrderBy Columns"
       width = 400
       height = 400
-      scene = buildScene(dbTable, useNewTable) 
+      scene = buildScene(dbTable, useNewTable, localization) 
       onCloseRequest = (event : WindowEvent) => { 
         event.consume()
         scene.window().hide()
@@ -24,7 +26,7 @@ object OrderByEditorStarter
     orderByStage.show()
   }
 
-  private def buildScene(dbTable: DBTable, useNewTable : DBTableStructure => Unit) = new Scene {
+  private def buildScene(dbTable: DBTable, useNewTable : DBTableStructure => Unit, localization : Localization) = new Scene {
       def onSave(orderByFields: OrderByFields) : Unit = {
         useNewTable(dbTable.withOrderByFields(orderByFields))
         window().hide()
@@ -35,7 +37,7 @@ object OrderByEditorStarter
         window().hide()
       }
 
-      val editor = new OrderByEditor(dbTable.columnNames, dbTable.orderBys, onSave(_), () => onCancel())
+      val editor = new OrderByEditor(dbTable.columnNames, dbTable.orderBys, onSave(_), () => onCancel(), localization)
 
       root = editor.control
   }

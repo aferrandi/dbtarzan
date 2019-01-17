@@ -12,6 +12,8 @@ import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import dbtarzan.db.{ OrderByField, OrderByFields, Field, OrderByDirection, DBEnumsText }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.localization.Localization
+
 /**
   to change the order by columns. A list of order by columns with a panel on the side to change it.
 */
@@ -19,7 +21,8 @@ class OrderByEditor(
   possibleOrderByFields: List[Field], 
   currentOrderBys : Option[OrderByFields],
   onSave : OrderByFields  => Unit,
-  onCancel : ()  => Unit
+  onCancel : ()  => Unit,
+  localization : Localization
 ) extends TControlBuilder { 
   private val currentOrderByFields = currentOrderBys.map(_.fields).getOrElse(List.empty[OrderByField])
   private val listBuffer = ObservableBuffer[OrderByField](currentOrderByFields)
@@ -94,19 +97,19 @@ class OrderByEditor(
 	  }		
 
   private def buttonCancel() = new Button {
-    text = "Cancel"
+    text = localization.cancel
     alignmentInParent = Pos.CENTER_RIGHT
     onAction = (event: ActionEvent)  => onCancel()
   }
 
   private def buttonAdd() = new Button {
-    text = "Add"
+    text = localization.add
     onAction = (event: ActionEvent) => chosenOrderByField().foreach(listBuffer.add(_)) 
     disable <==> addButtonsDisabled
   }
   
   private def buttonUpdate() = new Button {
-    text = "Update"
+    text = localization.update
     onAction = (event: ActionEvent)  =>  
       chosenOrderByField().foreach(of => 
           listFieldsCurrentIndex.foreach(i => 
@@ -116,7 +119,7 @@ class OrderByEditor(
     }
   
   private def buttonMoveUp() = new Button {
-    text = "Move Up"
+    text = localization.moveUp
     onAction = (event: ActionEvent)  => 
           listFieldsCurrentIndex.foreach(i => 
             if(i > 0)
@@ -125,7 +128,7 @@ class OrderByEditor(
     }
 
   private def buttonMoveDown() = new Button {
-    text = "Move Down"
+    text = localization.moveDown
     onAction = (event: ActionEvent)  => 
           listFieldsCurrentIndex.foreach(i => 
             if(i < listBuffer.size() - 1)
@@ -134,7 +137,7 @@ class OrderByEditor(
     }
 
   private def buttonDelete() = new Button {
-    text = "Delete"
+    text = localization.delete
     onAction = (event: ActionEvent)  => 
           listFieldsCurrentIndex.foreach(i => { 
               listBuffer.remove(i)

@@ -11,6 +11,7 @@ trait Localization {
     def documentation: String
     def new_ : String 
     def remove : String
+    def delete : String
     def duplicate : String
     def cancel : String
     def save : String
@@ -28,6 +29,10 @@ trait Localization {
     def message: String    
     def details: String
     def language: String
+    def add: String
+    def update : String
+    def moveUp : String
+    def moveDown : String
     def editGlobalSettings: String
     def copySQLToClipboard: String
     def closeTabsBeforeThis: String
