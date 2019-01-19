@@ -1,12 +1,14 @@
 package dbtarzan.gui.actor
 
 import akka.actor.Actor
-import dbtarzan.gui.{ TDatabases, TLogs, TDatabaseList}
-import dbtarzan.messages._
 import scalafx.application.Platform
 
+import dbtarzan.gui.{ TDatabases, TLogs, TDatabaseList}
+import dbtarzan.messages._
+import dbtarzan.localization.Localization
+
 /* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */
-class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) extends Actor {
+class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList, localization : Localization) extends Actor {
   private var log = new Logger(self)  
   def receive = {
         case rsp: TWithQueryId => Platform.runLater { databases.handleQueryIdMessage(rsp) }
@@ -14,12 +16,12 @@ class GUIWorker(databases : TDatabases, logs : TLogs, dbList : TDatabaseList) ex
         case rsp: TWithTableId => Platform.runLater { databases.handleTableIdMessage(rsp) }
         case msg: TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
         case msg: DatabaseIds => Platform.runLater { 
-            println("Delivery databases"+msg)
+            println("Delivery databases "+msg)
             dbList.setDatabaseIds(msg) 
         }
         case err: ErrorDatabaseAlreadyOpen => Platform.runLater { 
             databases.showDatabase(err.databaseId)
-            log.warning("Database "+err.databaseId.databaseName+" already open")
+            log.warning(localization.databaseAlreadyOpen(err.databaseId.databaseName))
         }
 	}
 }

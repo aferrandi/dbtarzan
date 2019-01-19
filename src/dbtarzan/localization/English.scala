@@ -25,6 +25,8 @@ class English extends Localization {
     def databases = "Databases"
     def foreignKeys = "Foreign keys"
     def connectionReset = "Connection Reset"
+    def orderBy = "Order by"
+    def where = "Where"
     def more= "More..."
     def message = "Message"
     def details = "Details"
@@ -36,6 +38,7 @@ class English extends Localization {
     def moveDown = "Move Down"
     def field = "Field"
     def direction = "Direction"
+    def addConnection = "Add Connection"
     def copySQLToClipboard = "Copy SQL To Clipboard"
     def closeTabsBeforeThis = "Close tabs before this"
     def closeTabsAfterThis = "Close tabs after this"
@@ -57,14 +60,25 @@ class English extends Localization {
     def onlyCells = "Only cells"
     def cellsWithHeaders = "Cells with headers"
     def chooseOrderByColumns = "Choose OrderBy Columns"
+    def selectDriverFile = "Select the driver jar file"
+    def jdbcUrlStrings = "Jdbc connections url strings"
+    def jarFiles = "JAR files"
     def writingFile(fileName : Path) = "Writing file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" written"
     def connectedTo(databaseName : String) = "Connected to "+databaseName
     def loadedTables(amount : Int, databaseName : String) = "Loaded "+amount+" tables from the database "+databaseName
     def openingDatabase(databaseName : String) = "Opening database "+databaseName
     def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName    
+    def noRowsFromForeignKey(keyName : String, keyToTable : String) = "No rows selected with key "+keyName+". Open table "+keyToTable+" without filter."
     def unorderedQueryResults = "Unordered query results?"
+    def connectionResetted(databaseName : String) = "Connection to the database "+databaseName+" resetted"
+    def databaseAlreadyOpen(databaseName : String) =  "Database "+databaseName+" already open"
     def errorConnectingToDatabase(databaseName : String) = "Cronnecting to the database "+databaseName+" got"
+    def errorQueryingDatabase(databaseName : String) = "Querying the database "+databaseName+" got"
     def errorRequestingTheRows(queryId : QueryId) = "Requesting the rows for the tab "+queryId+" got"    
     def errorCopyingSelection = "Copying selection to the clipboard got "
+    def errorCopyingSQL = "Copying SQL to the clipboard got "
+    def errorReadingKeys(databaseName : String) = "Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the application."
+    def errorDisplayingConnections = "Displaying connections got"
+    def errorSavingConnections = "Saving the connections got"
 }

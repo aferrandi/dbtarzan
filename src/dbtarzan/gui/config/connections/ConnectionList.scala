@@ -6,19 +6,17 @@ import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
+import dbtarzan.localization.Localization
 
 case class ConnectionDataErrors(name : String, errors : List[String])
 
-/**
-	The list of database to choose from
-*/
-class ConnectionList(connectionDatasRead : List[ConnectionData]) extends TControlBuilder {
-
+/* The list of database to choose from */
+class ConnectionList(connectionDatasRead : List[ConnectionData], localization : Localization) extends TControlBuilder {
   private val connectionDatas = ObservableBuffer(
     if(!connectionDatasRead.isEmpty) connectionDatasRead else List(newData())
   )
-  private val menuAddConnection = new MenuItem("Add Connection")
-  private val menuSave = new MenuItem("Save")
+  private val menuAddConnection = new MenuItem(localization.addConnection)
+  private val menuSave = new MenuItem(localization.save)
   private val list = new ListView[ConnectionData](connectionDatas) {
   	SplitPane.setResizableWithParent(this, false) 
   	contextMenu = new ContextMenu(menuAddConnection, menuSave)   

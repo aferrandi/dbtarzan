@@ -14,7 +14,7 @@ class ConnectionEditor(
   openWeb : String => Unit,
   localization: Localization
   ) extends TControlBuilder {
-  private val list = new ConnectionList(connectionDatas)
+  private val list = new ConnectionList(connectionDatas, localization)
   private val connection = new Connection(openWeb, localization)
   private val buttons = new ConnectionButtons(localization) 
   private val layout = new BorderPane {
@@ -39,7 +39,7 @@ class ConnectionEditor(
   private def showConnection(data : ConnectionData) : Unit = try {
       connection.show(data)
     } catch {
-      case ex : Exception => JFXUtil.showErrorAlert("Displaying connections got: ", ex.getMessage())
+      case ex : Exception => JFXUtil.showErrorAlert(localization.errorDisplayingConnections+": ", ex.getMessage())
     } 
 
   private def saveIfPossible(save : List[ConnectionData]  => Unit) : Unit = {
@@ -48,7 +48,7 @@ class ConnectionEditor(
       if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
         try { save(list.content()) } 
         catch {
-          case ex : Exception => JFXUtil.showErrorAlert("Saving the connections got: ", ex.getMessage())
+          case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
         }
     }
     else 
@@ -62,7 +62,7 @@ class ConnectionEditor(
 
   private def showConnectionDataErrors(errors : List[ConnectionDataErrors]) : Unit = {
     val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
-    JFXUtil.showErrorAlert("Saving the connections got: ", errorText)
+    JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", errorText)
   }
 
   def onSave(save : List[ConnectionData]  => Unit): Unit =

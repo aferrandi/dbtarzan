@@ -53,7 +53,7 @@ class DatabaseWorker(
 				tablesKeys.keys.foreach(tableKeys => foreignKeysFromFile += tableKeys.table -> tableKeys.keys)
 			} 
 			catch { 
-				case e : Exception => log.error("Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the system.", e) 
+				case e : Exception => log.error(localization.errorReadingKeys(databaseName), e) 
 			}
 		}
 
@@ -91,7 +91,7 @@ class DatabaseWorker(
 			try { core.closeConnection() } catch { case e : Throwable => {} }
 			)
 		optCore = buildCore()
-		log.info("Connection to the database "+databaseName+" resetted")
+		log.info(localization.connectionResetted(databaseName))
 	})		
 
 	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(logError, core => {

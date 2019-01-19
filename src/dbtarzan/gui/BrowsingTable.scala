@@ -58,7 +58,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private def stage() : Stage = 
     new Stage(layout.scene.window().asInstanceOf[javafx.stage.Stage])
 
-  private def buildOrderByMenu() = new Menu("Order by") {
+  private def buildOrderByMenu() = new Menu(localization.orderBy) {
       items = dbTable.columnNames.map(f => 
         new MenuItem(f.name) {
             onAction = { e: ActionEvent => guiActor ! RequestOrderByField(queryId, f) }
@@ -75,14 +75,14 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
         dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.columnNames, key, checkedRows))
       } else {
         dbActor ! QueryColumns(foreignTableId)
-        log.warning("No rows selected with key "+key.name+". Open table "+key.to.table+" without filter.")
+        log.warning(localization.noRowsFromForeignKey(key.name, key.to.table))
       }
   } 
 
   private def buildTop() : BorderPane = new BorderPane {        
       stylesheets += "orderByMenuBar.css"
       left = TableMenu.buildMainMenu(guiActor, queryId, localization)
-	    center = JFXUtil.withLeftTitle(queryText.textBox, "Where:")
+	    center = JFXUtil.withLeftTitle(queryText.textBox, localization.where+":")
 	    right =new MenuBar {
 		    menus = List(buildOrderByMenu())
         stylesheets += "orderByMenuBar.css"
@@ -130,7 +130,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     JFXUtil.copyTextToClipboard(SqlBuilder.buildSql(structure).sql)
     log.info(localization.sqlCopied)
   } catch {
-    case ex : Exception => log.error("Copying SQL to the clipboard got ", ex)
+    case ex : Exception => log.error(localization.errorCopyingSQL, ex)
   }
 
   def checkAllTableRows() : Unit = 

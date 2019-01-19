@@ -22,7 +22,7 @@ object Main extends JFXApp {
   val localization = Localizations.of(globalData.language)
   val mainGUI = new MainGUI(configPaths, localization, version, openWeb, closeApp)
   val actors = new ActorHandler(
-    () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList), 
+    () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, localization), 
     guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization)
     ) 
   mainGUI.setActors(actors.guiActor, actors.connectionsActor)

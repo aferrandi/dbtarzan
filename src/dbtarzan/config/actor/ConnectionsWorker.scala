@@ -43,7 +43,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseId)
 			} catch {
 				case e : Exception => {
-					log.error("Querying the database "+databaseId.databaseName+" got", e)
+					log.error(localization.errorQueryingDatabase(databaseId.databaseName), e)
 					e.printStackTrace()
 				}	    	
 			}	 	

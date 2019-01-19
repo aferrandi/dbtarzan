@@ -25,6 +25,8 @@ class Italian extends Localization {
     def databases = "Database"
     def foreignKeys = "Chiavi esterne"
     def connectionReset = "Resetta connessione"
+    def orderBy = "Order by"
+    def where = "Where"
     def more = "Altro..."
     def message = "Messaggio"    
     def details = "Dettagli"
@@ -35,7 +37,8 @@ class Italian extends Localization {
     def moveDown = "Giu'"
     def field = "Colonna"
     def direction = "Direzione"    
-    def editGlobalSettings = "Modifica Opzioni Globali"    
+    def editGlobalSettings = "Modifica Opzioni Globali"   
+    def addConnection = "Nuova connessione" 
     def copySQLToClipboard = "Copia SQL nel Clipboard"
     def closeTabsBeforeThis = "Chiudi le tab prima di questa"
     def closeTabsAfterThis = "Chiudi le tab dopo questa"
@@ -57,14 +60,25 @@ class Italian extends Localization {
     def onlyCells = "Solo le celle"
     def cellsWithHeaders = "Celle con titoli"
     def chooseOrderByColumns = "Segli le Colonne Da Ordinare"
+    def selectDriverFile = "Seleziona il jar file del driver"
+    def jdbcUrlStrings = "Url per le connessioni Jdbc"
+    def jarFiles = "File JAR"
     def writingFile(fileName : Path) = "Sto scrivendo il file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" scritto"
     def connectedTo(databaseName: String) = "Connesso a "+databaseName
     def loadedTables(amount : Int, databaseName : String) = "Caricate "+amount+" tabelle dal database "+databaseName
     def openingDatabase(databaseName : String) = "Sto aprendo il database "+databaseName
     def loadingForeignKeys(fileName : String) = "Sto caricando le chiavi esterne dal file dei database "+fileName    
+    def noRowsFromForeignKey(keyName : String, keyToTable : String) = "Nessuna riga selezionata con la chiave "+keyName+". Tabella "+keyToTable+" aperta senza filtro."
     def unorderedQueryResults = "Risultati non ordinati?"
+    def connectionResetted(databaseName : String) = "Connessione al database "+databaseName+" resettata"
+    def databaseAlreadyOpen(databaseName : String) =  "Il database "+databaseName+" e' gia' aperto"
     def errorConnectingToDatabase(databaseName : String) = "La connessione al database "+databaseName+" e' fallita a causa di"
+    def errorQueryingDatabase(databaseName : String) = "L'apertura del database "+databaseName+" e' fallita a causa di"
     def errorRequestingTheRows(queryId : QueryId) = "La richiesta delle right di "+queryId+" e' fallita a a causa di"    
     def errorCopyingSelection = "La copia della selezione e' fallita a causa di "
+    def errorCopyingSQL = "La copia dell'SQL' e' fallita a causa di "
+    def errorReadingKeys(databaseName : String) = "Nella lettiura del file delle chiavi esterne del database "+databaseName+" si e' avuto il seguente errore. Cancella il file se e' corrotto o di una vecchia versione dell'applicazione."
+    def errorDisplayingConnections = "La lista delle connessioni e' fallita a causa di"
+    def errorSavingConnections = "Il salvataggio delle connessioni e' fallito a causa di"
 }

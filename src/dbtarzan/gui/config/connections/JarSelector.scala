@@ -9,11 +9,10 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import java.io.File
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.localization.Localization
 
-/**
-  The list of database to choose from
-*/
-class JarSelector() extends TControlBuilder {
+/* The list of database to choose from*/
+class JarSelector(localization : Localization) extends TControlBuilder {
   var optJarFilePath : Option[String] = None
   val txtJar = new TextField {
     text = ""
@@ -39,8 +38,8 @@ class JarSelector() extends TControlBuilder {
 
   def chooseFile() : Unit = {
       val fileChooser = new FileChooser() {
-        title = "Select the driver jar file"
-        extensionFilters.add(new ExtensionFilter("JAR files (*.jar)", "*.jar"))
+        title = localization.jdbcUrlStrings
+        extensionFilters.add(new ExtensionFilter(localization.jarFiles+more trans" (*.jar)", "*.jar"))
       }
       optJarFilePath.map(new File(_).getParentFile()).foreach(fileChooser.initialDirectory = _)
 

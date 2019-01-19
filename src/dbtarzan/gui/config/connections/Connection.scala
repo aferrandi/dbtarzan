@@ -20,7 +20,7 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
   val txtName = new TextField {
     text = ""
   } 
-  val jarSelector = new JarSelector()
+  val jarSelector = new JarSelector(localization)
   val txtUrl = new TextField {
     text = ""
   }
