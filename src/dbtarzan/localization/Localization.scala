@@ -33,6 +33,8 @@ trait Localization {
     def update : String
     def moveUp : String
     def moveDown : String
+    def field : String
+    def direction : String
     def editGlobalSettings: String
     def copySQLToClipboard: String
     def closeTabsBeforeThis: String
@@ -50,8 +52,10 @@ trait Localization {
     def saveGlobalSettings: String
     def selectionCopied: String    
     def sqlCopied: String
+    def saveOrder : String
     def copySelectionToClipboard : String
     def onlyCells : String
+    def chooseOrderByColumns : String
     def cellsWithHeaders : String
     def writingFile(fileName : Path) : String
     def fileWritten(fileName : Path) : String
@@ -59,6 +63,7 @@ trait Localization {
     def loadedTables(amount : Int, databaseName : String)  : String
     def openingDatabase(databaseName : String) : String
     def loadingForeignKeys(fileName : String) : String
+    def unorderedQueryResults : String
     def errorConnectingToDatabase(databaseName : String) : String 
     def errorRequestingTheRows(queryId : QueryId) : String
     def errorCopyingSelection : String

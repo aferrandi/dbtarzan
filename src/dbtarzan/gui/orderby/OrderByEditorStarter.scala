@@ -12,7 +12,7 @@ object OrderByEditorStarter
 {
  def openOrderByEditor(parentStage : Stage, dbTable: DBTable, useNewTable : DBTableStructure => Unit, localization : Localization) : Unit = {
      val orderByStage = new Stage {
-      title = "Choose OrderBy Columns"
+      title = localization.chooseOrderByColumns
       width = 400
       height = 400
       scene = buildScene(dbTable, useNewTable, localization) 

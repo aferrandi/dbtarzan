@@ -150,13 +150,13 @@ class OrderByEditor(
     alignmentInParent = Pos.CENTER_RIGHT
     disable <==> saveButtonDisabled
     onAction = (event: ActionEvent)  => {
-      if(!listBuffer.isEmpty || JFXUtil.areYouSure("Unordered query results?", "Save Order"))
+      if(!listBuffer.isEmpty || JFXUtil.areYouSure(localization.unorderedQueryResults, localization.saveOrder))
         onSave(OrderByFields(listBuffer.toList))
     }
  }
 
   private def comboFields() = new ComboBox[Field] {
-      promptText.value = "[Field]"
+      promptText.value = "["+localization.field+"]"
       items = comboFieldsBuffer
       editable = false
       cellFactory = { _ => buildFieldsCell() }
@@ -165,7 +165,7 @@ class OrderByEditor(
   }
 
   private def comboDirection() = new ComboBox[OrderByDirection] {
-      promptText.value = "[Direction]"
+      promptText.value = "["+localization.direction+"]"
       items = comboOrderByDirectionsBuffer
       editable = false
       cellFactory = { _ => buildDirectionCell() }
