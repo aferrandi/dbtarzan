@@ -39,7 +39,7 @@ class JarSelector(localization : Localization) extends TControlBuilder {
   def chooseFile() : Unit = {
       val fileChooser = new FileChooser() {
         title = localization.jdbcUrlStrings
-        extensionFilters.add(new ExtensionFilter(localization.jarFiles+more trans" (*.jar)", "*.jar"))
+        extensionFilters.add(new ExtensionFilter(localization.jarFiles+" (*.jar)", "*.jar"))
       }
       optJarFilePath.map(new File(_).getParentFile()).foreach(fileChooser.initialDirectory = _)
 
