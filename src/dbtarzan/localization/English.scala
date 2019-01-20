@@ -74,6 +74,7 @@ class English extends Localization {
     def unorderedQueryResults = "Unordered query results?"
     def connectionResetted(databaseName : String) = "Connection to the database "+databaseName+" resetted"
     def databaseAlreadyOpen(databaseName : String) =  "Database "+databaseName+" already open"
+    def editingConnectionFile(fileName: Path) = "Editing connections configuration file " + fileName
     def errorConnectingToDatabase(databaseName : String) = "Cronnecting to the database "+databaseName+" got"
     def errorQueryingDatabase(databaseName : String) = "Querying the database "+databaseName+" got"
     def errorRequestingTheRows(queryId : QueryId) = "Requesting the rows for the tab "+queryId+" got"    

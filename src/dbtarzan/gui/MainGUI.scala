@@ -129,7 +129,7 @@ class MainGUI(
 
 	private def openConnectionsEditor() : Unit = {
 		guiActor match {
-			case Some(ga) => new Logger(ga).info("Editing connections configuration file "+configPaths.connectionsConfigPath)
+			case Some(ga) => new Logger(ga).info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
 			case None => println("MainGUI: guiActor not defined")
 		}
 		connectionsActor match {

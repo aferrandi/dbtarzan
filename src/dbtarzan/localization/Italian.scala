@@ -74,6 +74,7 @@ class Italian extends Localization {
     def unorderedQueryResults = "Risultati non ordinati?"
     def connectionResetted(databaseName : String) = "Connessione al database "+databaseName+" resettata"
     def databaseAlreadyOpen(databaseName : String) =  "Il database "+databaseName+" e' gia' aperto"
+    def editingConnectionFile(fileName: Path) = "Sto editando il file di configurazione delle connessioni " + fileName
     def errorConnectingToDatabase(databaseName : String) = "La connessione al database "+databaseName+" e' fallita a causa di"
     def errorQueryingDatabase(databaseName : String) = "L'apertura del database "+databaseName+" e' fallita a causa di"
     def errorRequestingTheRows(queryId : QueryId) = "La richiesta delle right di "+queryId+" e' fallita a a causa di"    

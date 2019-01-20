@@ -74,6 +74,7 @@ trait Localization {
     def unorderedQueryResults : String
     def connectionResetted(databaseName : String) : String
     def databaseAlreadyOpen(databaseName : String) : String
+    def editingConnectionFile(fileName: Path) : String
     def errorConnectingToDatabase(databaseName : String) : String 
     def errorQueryingDatabase(databaseName : String) : String
     def errorRequestingTheRows(queryId : QueryId) : String
