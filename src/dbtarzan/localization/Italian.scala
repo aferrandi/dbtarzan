@@ -1,7 +1,7 @@
 package dbtarzan.localization
 
 import java.nio.file.Path
-import dbtarzan.messages.QueryId
+import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId }
 
 class Italian extends Localization {
     def settings = "Opzioni"
@@ -31,6 +31,7 @@ class Italian extends Localization {
     def message = "Messaggio"    
     def details = "Dettagli"
     def language = "Lingua"
+    def filter = "Filtro"
     def add = "Aggiungi"
     def update = "Aggiorna"
     def moveUp = "Su"
@@ -81,4 +82,9 @@ class Italian extends Localization {
     def errorReadingKeys(databaseName : String) = "Nella lettiura del file delle chiavi esterne del database "+databaseName+" si e' avuto il seguente errore. Cancella il file se e' corrotto o di una vecchia versione dell'applicazione."
     def errorDisplayingConnections = "La lista delle connessioni e' fallita a causa di"
     def errorSavingConnections = "Il salvataggio delle connessioni e' fallito a causa di"
+    def errorSavingGlobalSettings = "Il salvataggio delle opzioni globali e' fallito a causa di"
+    def errorDatabaseMessage(msg : TWithDatabaseId) = "Messaggio dal database "+msg+" non riconosciuto"
+    def errorTableMessage(msg : TWithTableId) = "Messaggio dalla tabella "+msg+" non riconosciuto"
+    def errorTableMessage(msg : TWithQueryId) = "Messaggio dalla tabella "+msg+" non riconosciuto"
+    def errorNoTables(databaseName : String, schemasText : String) = "Nessuna tabella letta dal database "+databaseName+". Schema errato? Schemi disponibili: "+schemasText
 }

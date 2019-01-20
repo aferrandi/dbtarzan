@@ -63,7 +63,7 @@ class GlobalEditor(
         cmbLanguages.getSelectionModel().selectedItem()
       )) } 
       catch {
-        case ex : Exception => JFXUtil.showErrorAlert("Saving the global settings got: ", ex.getMessage())
+        case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings+": ", ex.getMessage())
       }
   }
 

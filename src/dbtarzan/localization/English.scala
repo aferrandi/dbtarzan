@@ -1,7 +1,7 @@
 package dbtarzan.localization
 
 import java.nio.file.Path
-import dbtarzan.messages.QueryId
+import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId }
 
 class English extends Localization {
     def settings = "Settings"
@@ -31,13 +31,14 @@ class English extends Localization {
     def message = "Message"
     def details = "Details"
     def language = "Language"
-    def editGlobalSettings = "Edit Global Settings"   
+    def filter = "Filter"
     def add = "Add" 
     def update = "Update"
     def moveUp = "Move up"
     def moveDown = "Move Down"
     def field = "Field"
     def direction = "Direction"
+    def editGlobalSettings = "Edit Global Settings"   
     def addConnection = "Add Connection"
     def copySQLToClipboard = "Copy SQL To Clipboard"
     def closeTabsBeforeThis = "Close tabs before this"
@@ -81,4 +82,9 @@ class English extends Localization {
     def errorReadingKeys(databaseName : String) = "Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the application."
     def errorDisplayingConnections = "Displaying connections got"
     def errorSavingConnections = "Saving the connections got"
+    def errorSavingGlobalSettings = "Saving the global settings got"
+    def errorDatabaseMessage(msg : TWithDatabaseId) = "Database message "+msg+" not recognized"
+    def errorTableMessage(msg : TWithTableId) = "Table message "+msg+" not recognized"
+    def errorTableMessage(msg : TWithQueryId) = "Table message "+msg+" not recognized"    
+    def errorNoTables(databaseName : String, schemasText : String) = "No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText
 }

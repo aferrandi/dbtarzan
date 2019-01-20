@@ -123,7 +123,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
     case rows : ResponseRows => tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
-    case _ => log.error("Table message "+msg+" not recognized")
+    case _ => log.error(localization.errorTableMessage(msg))
   }    
   
   def control : Parent = tabs

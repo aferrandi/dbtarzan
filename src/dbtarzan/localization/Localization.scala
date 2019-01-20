@@ -1,7 +1,7 @@
 package dbtarzan.localization
 
 import java.nio.file.Path
-import dbtarzan.messages.QueryId
+import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId }
 
 trait Localization {
     def settings : String
@@ -31,6 +31,7 @@ trait Localization {
     def message: String    
     def details: String
     def language: String
+    def filter : String
     def add: String
     def update : String
     def moveUp: String
@@ -80,5 +81,10 @@ trait Localization {
     def errorCopyingSQL : String
     def errorReadingKeys(databaseName : String) : String
     def errorDisplayingConnections : String
-    def errorSavingConnections : String
+    def errorSavingConnections: String
+    def errorSavingGlobalSettings: String
+    def errorDatabaseMessage(msg : TWithDatabaseId) : String
+    def errorTableMessage(msg : TWithTableId) : String
+    def errorTableMessage(msg : TWithQueryId) : String
+    def errorNoTables(databaseName : String, schemasText : String) : String
 }

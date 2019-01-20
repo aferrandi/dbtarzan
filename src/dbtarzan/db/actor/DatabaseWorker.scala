@@ -116,7 +116,7 @@ class DatabaseWorker(
 			else {
 				val schemas = core.schemasLoader.schemasNames()
 				val schemasText = schemas.schemas.map(_.name).mkString(", ")
-				log.warning("No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText)
+				log.warning(localization.errorNoTables(databaseName, schemasText))
 			}
     		guiActor ! ResponseTables(qry.databaseId, names)
 		})

@@ -20,7 +20,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val tableTabs = new TableTabs(dbActor, guiActor, databaseId, localization)  
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
   private val filterText = new TextField() { 
-    promptText = "Filter"
+    promptText = localization.filter
     margin = Insets(0,0,3,0)
     text.onChange { (value , oldValue, newValue) => {
         val optValue = Option(newValue)
@@ -66,13 +66,13 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case tables : ResponseTables => tableList.addTableNames(tables.names)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
     case request : RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
-    case _ => log.error("Database message "+msg+" not recognized")
+    case _ => log.error(localization.errorDatabaseMessage(msg))
   }  
 
   def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
     case columns : ResponseColumns => tableTabs.addColumns(columns)
     case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
-    case _ => log.error("Table message "+msg+" not recognized")
+    case _ => log.error(localization.errorTableMessage(msg))
   }  
 
 

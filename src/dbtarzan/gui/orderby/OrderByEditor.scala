@@ -146,7 +146,7 @@ class OrderByEditor(
     }
 
   private def buttonSave() = new Button {
-    text = "Save"
+    text = localization.save
     alignmentInParent = Pos.CENTER_RIGHT
     disable <==> saveButtonDisabled
     onAction = (event: ActionEvent)  => {
