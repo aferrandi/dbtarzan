@@ -81,11 +81,12 @@ class Spanish extends Localization {
     def errorCopyingSelection = "La copia de la selección y 'fallado debido a "
     def errorCopyingSQL = "La copia de SQL y 'fallado debido a "
     def errorReadingKeys(databaseName : String) = "Se produjo el siguiente error en la lectura del archivo de clave externa de la base de datos "+databaseName+". Elimine el archivo si está dañado o es de una versión anterior de la aplicación."
-    def errorDisplayingConnections = "La lista de conexiones ha fallado debido a"
+    def errorDisplayingConnections = "La visualización de conexiones ha fallado debido a"
     def errorSavingConnections = "El guardado de conexiones ha fallado debido a"
     def errorSavingGlobalSettings = "El guardado de las opciones globales, y 'fallado debido a"
     def errorDatabaseMessage(msg : TWithDatabaseId) = "Mensaje de la base de datos "+msg+" no reconocido"
     def errorTableMessage(msg : TWithTableId) = "Mensaje de la tabla "+msg+" non riconosciuto"
     def errorTableMessage(msg : TWithQueryId) = "Mensaje de la tabla "+msg+" non riconosciuto"
     def errorNoTables(databaseName : String, schemasText : String) = "Ninguna tabla leído de la base de datos "+databaseName+". Esquema incorrecto? Esquemas disponibles: "+schemasText
+    def errorDisplayingRows = "La visualización de las filas de la tabla falló debido a"
 }

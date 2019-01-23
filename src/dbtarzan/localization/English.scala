@@ -88,4 +88,5 @@ class English extends Localization {
     def errorTableMessage(msg : TWithTableId) = "Table message "+msg+" not recognized"
     def errorTableMessage(msg : TWithQueryId) = "Table message "+msg+" not recognized"    
     def errorNoTables(databaseName : String, schemasText : String) = "No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText
+    def errorDisplayingRows = "Displaying the table rows got"
 }

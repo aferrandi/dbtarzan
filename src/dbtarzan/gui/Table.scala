@@ -91,11 +91,13 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   def firstSelectedRow() : Option[Row] = selectedRows().headOption.map(_.row) 
 
   /* adds the database rows to the table */
-  def addRows(rows : Rows) : Unit = { 
+  def addRows(rows : Rows) : Unit = try { 
     buffer ++= fromRow(rows, names)
     checkedIfOnlyOne()
     tableFit.addRows(rows.rows)
-    } 
+    } catch {
+      case ex : Exception => log.error(localization.errorDisplayingRows, ex)
+    }
 
   def setRowClickListener(listener : Row => Unit) : Unit = {
     rowClickListener = Some(listener)

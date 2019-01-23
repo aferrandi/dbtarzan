@@ -88,4 +88,5 @@ trait Localization {
     def errorTableMessage(msg : TWithTableId) : String
     def errorTableMessage(msg : TWithQueryId) : String
     def errorNoTables(databaseName : String, schemasText : String) : String
+    def errorDisplayingRows: String
 }
