@@ -1,9 +1,11 @@
 package dbtarzan.gui.table
 
 import scalafx.scene.control.{TableView, TableColumn}
+import scala.util.Random
+import scalafx.Includes._
+
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.db._
-import scalafx.Includes._
 
 object TableColumnsFitter {
     /* a logistic (sigmoid) function, almost linear, returns max 50 */ 
@@ -12,7 +14,7 @@ object TableColumnsFitter {
 }
 
 class TableColumnsFitter[S](table : TableView[S], columns : List[Field]) {
-    private val maxSizes = new TableColumnsMaxSizes(columns)
+    private val maxSizes = new TableColumnsMaxSizes(columns, new Random())
     private val charSize = JFXUtil.averageCharacterSize()
 
     private def resizeColumn(column : TableColumn[S, _], size : Int) : Unit = {

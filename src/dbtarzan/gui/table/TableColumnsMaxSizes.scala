@@ -4,9 +4,8 @@ import dbtarzan.db._
 import scala.util.Random
 
 
-class TableColumnsMaxSizes(columns : List[Field]) {
+class TableColumnsMaxSizes(columns : List[Field], rnd : Random) {
     private var lengths = rowLengths(columns.map(_.name))
-    private val rnd = new Random()
 
     def addRows(rows : List[Row]) : Unit = {   
         val randomRowsValues = randomRows(rows).map(_.values)

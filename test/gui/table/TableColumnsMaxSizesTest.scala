@@ -1,7 +1,10 @@
 package dbtarzan.gui.table
 
-import dbtarzan.db._
 import org.scalatest.FlatSpec
+import scala.util.Random
+
+import dbtarzan.db._
+
 
 class TableColumnsMaxSizesTest extends FlatSpec {
   "maxLength" should "contain the maximum lengths of rows and header" in {
@@ -10,7 +13,7 @@ class TableColumnsMaxSizesTest extends FlatSpec {
         Field("verylong", FieldType.STRING),
         Field("muchlongerthanthat", FieldType.STRING),
         Field("shorter", FieldType.STRING)
-    ))
+    ), new Random(32321))
     sizes.addRows(List(
         Row(List("1", "a", "b", "0123456789")),
         Row(List("2", "cdd", "sdsd", "0123456789")),

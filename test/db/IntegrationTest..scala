@@ -5,6 +5,7 @@ import org.scalatest.BeforeAndAfter
 import java.sql.Connection
 import java.sql.DriverManager
 import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader} 
+import dbtarzan.localization.English
 
 class IntegrationTest extends FlatSpec with BeforeAndAfter {
   var connection: Connection = _
@@ -53,7 +54,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   }
 
  "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, None)
+    val foreignKeyLoader = new ForeignKeyLoader(connection, None, new English())
     val foreignKeys = foreignKeyLoader.foreignKeys("LAPTOP")
   	assert(
       List(
@@ -63,7 +64,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   }
 
    "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, None)
+    val foreignKeyLoader = new ForeignKeyLoader(connection, None, new English())
     val foreignKeys = foreignKeyLoader.foreignKeys("PRODUCT")
   	assert(
       List(
