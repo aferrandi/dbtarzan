@@ -7,6 +7,8 @@ import dbtarzan.db._
 
 
 class TableColumnsMaxSizesTest extends FlatSpec {
+
+
   "maxLength" should "contain the maximum lengths of rows and header" in {
     val sizes = new TableColumnsMaxSizes(List(
         Field("id", FieldType.STRING), 
@@ -22,4 +24,11 @@ class TableColumnsMaxSizesTest extends FlatSpec {
     ))
 	assert(sizes.maxLengths === List(2, 8, 18, 10))
   }
+   "maxLength for zero lines" should "not give an excepion"  in {
+    val sizes = new TableColumnsMaxSizes(List(
+        Field("id", FieldType.STRING), 
+        Field("verylong", FieldType.STRING)
+        ), new Random(32321))
+    sizes.addRows(List.empty)
+   }
 }

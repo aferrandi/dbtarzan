@@ -31,6 +31,9 @@ class TableColumnsMaxSizes(columns : List[Field], rnd : Random) {
     
     private def maxRows(rows : List[List[String]]) : List[Int] = {
         val rowsSizes = rows.map(rowLengths)
-        rowsSizes.tail.foldLeft(rowsSizes.head)(max2Rows)
+        if(!rowsSizes.isEmpty)
+            rowsSizes.tail.foldLeft(rowsSizes.head)(max2Rows)
+        else
+            lengths
     }
 }
