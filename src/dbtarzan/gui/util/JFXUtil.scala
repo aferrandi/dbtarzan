@@ -4,7 +4,7 @@ import scalafx.scene.Node
 import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, ButtonType}
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.image.Image
-import scalafx.scene.text.{Text, Font}
+import scalafx.scene.text.Text
 import scalafx.geometry.Insets
 import scalafx.scene.input.{ MouseEvent, MouseButton, KeyEvent, KeyCode, Clipboard, ClipboardContent }
 import scalafx.Includes._

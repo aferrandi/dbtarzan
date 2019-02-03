@@ -1,6 +1,6 @@
 package dbtarzan.gui.config.global
 
-import scalafx.scene.layout. { HBox, Region, Priority }
+import scalafx.scene.layout.HBox
 import scalafx.scene.control.Button
 import scalafx.event.ActionEvent
 import scalafx.Includes._

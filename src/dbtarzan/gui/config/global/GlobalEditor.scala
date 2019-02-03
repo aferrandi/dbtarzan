@@ -1,10 +1,9 @@
 package dbtarzan.gui.config.global
 
-import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.control.{ ComboBox, ListCell, Label }
-import scalafx.geometry.{ Insets, HPos }
+import scalafx.geometry.Insets
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import dbtarzan.config.global.GlobalData

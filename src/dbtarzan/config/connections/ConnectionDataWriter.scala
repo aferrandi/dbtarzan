@@ -2,7 +2,6 @@ package dbtarzan.config.connections
 
 import spray.json._
 import dbtarzan.db.util.FileReadWrite
-import dbtarzan.types.ConfigPath
 import java.nio.file.Path
 
 /* writes the databases configuration file */
