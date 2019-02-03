@@ -12,7 +12,7 @@ class MetadataColumnsLoader(schema: Option[String], meta : DatabaseMetaData) {
 	def columnNames(tableName : String) : Fields = try {
 		using(meta.getColumns(null, schema.orNull, tableName, "%")) { rs =>
 			val list = readColumns(rs) 
-			println("Columns loaded")
+			println("Columns with schema "+schema+" loaded")
 			Fields(list)
 		}
 	} catch {
