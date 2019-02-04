@@ -15,8 +15,8 @@ object GlobalEditorStarter
         println("open global editor")  
         val globalStage = new Stage {
             title = localization.editGlobalSettings
-            width = 800
-            height = 600
+            width = 500
+            height = 300
             scene = new Scene {
                 def onSave(dataToSave: GlobalData) : Unit = {
                     GlobalDataWriter.write(configPath, dataToSave)
