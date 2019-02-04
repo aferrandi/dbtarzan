@@ -14,7 +14,7 @@ The editor actually just changes the [connections.config file](The-database-conn
 
 ![Connections editor](images/editConnections.jpeg)
 
-To open the editor, in the menu on the top choose "Connections" and then "Edit Connections".
+To open the editor, in the "Settings" menu on the top choose "Edit Connections".
 The editor displays on the right side a list of database connections. 
 Once a connection is chosen on the list, the right side of the editor shows the definition of the connection, in terms of:
 * **Name**, the connection identifier

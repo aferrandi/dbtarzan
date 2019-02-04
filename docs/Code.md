@@ -3,7 +3,7 @@
 layout: default
 title: Code
 resource: true
-categories: [Other]
+categories: [Code]
 
 ---
 

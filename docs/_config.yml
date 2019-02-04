@@ -28,7 +28,7 @@ theme: jekyll-theme-architect
 plugins:
   - jekyll-feed
 
-category-list: [GUI, Other]
+category-list: [GUI, Other, Code]
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
