@@ -13,6 +13,14 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.18
+
+Automatic sizing of the table columns to fit the columns content. This means more information in the UI.
+
+Internationalization: Added Spanish and Italian to the set of languages used to display the application's texts, buttons and menus. Added the "global options" panel to choose the language.
+
+Remove the progress bar from the UI after a table has been completely loaded. It is not needed and just uses space.
+
 - Release 1.16
 
 A text box on the top of the table list allows to filter them, so that only the ones with names or columns containing the text are displayed.
@@ -24,15 +32,4 @@ The database list is now sorted, making it easy to find the correct database wit
 When no table is found in the database, assuming the wrong schema was chosen, the error message shows a list of the available schemas.
 
 Pressing the "help" menu shows the now the correct documentation page https://aferrandi.github.io/dbtarzan/ .
-
-- Release 1.15
-
-show if the columns are part of primary or foreign keys with icons of keys.
-
-centralized the handling of combination keys (e.g. Ctrl+Shift+...) because the accelerators did not work for menus under tabs
-
-when the table names are loaded after the connection to a database, show it so that if none was found the user knows it and can decide what to do 
-about it
-
-sort of the table names list so that it is easier to find them when there are many
 
