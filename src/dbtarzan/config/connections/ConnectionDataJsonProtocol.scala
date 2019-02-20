@@ -25,6 +25,7 @@ import IdentifierDelimitersJsonProtocol._
     "passwordEncrypted", 
   	"instances", 
   	"identifierDelimiters",
-    "maxRows"
+    "maxRows",
+		"catalog"
   	)
 }

@@ -10,7 +10,6 @@ import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.db._
 import dbtarzan.messages._
-import dbtarzan.db.ForeignKeysToFile
 import dbtarzan.localization.Localization
 
 /* The actor that reads data from the database */
@@ -31,7 +30,7 @@ class DatabaseWorker(
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
 			val connection = createConnection.getConnection(data)
 			log.info(localization.connectedTo(databaseName)) 
-			Some(new DatabaseWorkerCore(connection, data.schema, localization))
+			Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), localization))
 		} 
 		catch { 
 			case se : SQLException => { 
@@ -144,7 +143,7 @@ class DatabaseWorker(
     		guiActor ! ResponsePrimaryKeys(qry.queryId, primaryKeys)
     	})
 
-	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, data.schema)
+	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, DBDefinition(data.schema, data.catalog))
 
 
   	def receive = {

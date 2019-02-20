@@ -4,19 +4,19 @@ import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
 
 import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.TableNames
+import dbtarzan.db.{ TableNames, DBDefinition }
 
 /* to read the basic methadata (tables and columns) from the dataase */
-class MetadataTablesLoader(schema: Option[String], meta : DatabaseMetaData) {
+class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 	private case class TableAndSchema(tableName : String, schema: Option[String])
 
 	/* gets the tables whose names or whose column names match a pattern */
 	def tablesByPattern(pattern : String) : TableNames = try {
 			val uppercasePattern = pattern.toUpperCase		
-			val allStandardTables = using(meta.getTables(null, schema.orNull, "%", Array("TABLE"))) { rs =>
+			val allStandardTables = using(meta.getTables(definition.catalog.orNull, definition.schema.orNull, "%", Array("TABLE"))) { rs =>
 				readTableAndSchemas(rs)
 			}
-			val tablesByColumnPattern = using(meta.getColumns(null, schema.orNull, "%", "%"+uppercasePattern+"%")) { rs =>
+			val tablesByColumnPattern = using(meta.getColumns(definition.catalog.orNull, definition.schema.orNull, "%", "%"+uppercasePattern+"%")) { rs =>
 				readTableAndSchemas(rs)
 			}.map(toUpperCase).toSet
 			val matchingTables = allStandardTables.filter(t => {
@@ -31,7 +31,7 @@ class MetadataTablesLoader(schema: Option[String], meta : DatabaseMetaData) {
 
 	/* gets all the tables in the database/schema from the database metadata */
 	def tableNames() : TableNames = try {
-			using(meta.getTables(null, schema.orNull, "%", Array("TABLE"))) { rs =>
+			using(meta.getTables(definition.catalog.orNull, definition.schema.orNull, "%", Array("TABLE"))) { rs =>
 				toTableNames(readTableNames(rs))
 			}
 		} catch {

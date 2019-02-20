@@ -4,15 +4,15 @@ import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
 
 import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ Fields, Field, FieldType }
+import dbtarzan.db.{ Fields, Field, FieldType, DBDefinition }
 
 /* to read the basic methadata (tables and columns) from the dataase */
-class MetadataColumnsLoader(schema: Option[String], meta : DatabaseMetaData) {
+class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 	/* gets the columns of a table from the database metadata */
 	def columnNames(tableName : String) : Fields = try {
-		using(meta.getColumns(null, schema.orNull, tableName, "%")) { rs =>
+		using(meta.getColumns(definition.catalog.orNull, definition.schema.orNull, tableName, "%")) { rs =>
 			val list = readColumns(rs) 
-			println("Columns with schema "+schema+" loaded")
+			println("Columns with schema "+definition+" loaded")
 			Fields(list)
 		}
 	} catch {

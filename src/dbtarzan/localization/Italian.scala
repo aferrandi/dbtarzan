@@ -19,6 +19,8 @@ class Italian extends Localization {
     def user = "Utente"
     def password = "Password"
     def schema = "Schema"
+    def advanced = "Avanzate"
+    def catalog = "Catalogo"
     def delimiters = "Separatori"
     def maxRows = "Max Righe"    
     def tables = "Tabelle"    

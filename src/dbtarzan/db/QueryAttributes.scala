@@ -4,8 +4,10 @@ case class IdentifierDelimiters(start: Char, end: Char) {
 	def withDelimiters(identifier: String) : String = start + identifier + end			
 }
 
-case class QueryAttributes(delimiters : Option[IdentifierDelimiters], schema : Option[String])
+case class DBDefinition(schema : Option[String], catalog : Option[String])
+
+case class QueryAttributes(delimiters : Option[IdentifierDelimiters], definition : DBDefinition)
 
 object QueryAttributes {
-	def none() = QueryAttributes(None, None)
+	def none() = QueryAttributes(None, DBDefinition(None, None))
 } 

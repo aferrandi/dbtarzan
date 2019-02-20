@@ -19,6 +19,8 @@ class Spanish extends Localization {
     def user = "Usuario"
     def password = "Contraseña"
     def schema = "Esquema"
+    def advanced = "Avanzadas"
+    def catalog = "catálogo"        
     def delimiters = "Separadores"
     def maxRows = "Máximo de filas"    
     def tables = "Tablas"    

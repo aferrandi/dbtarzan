@@ -1,6 +1,6 @@
 package dbtarzan.gui.config.connections
 
-import scalafx.scene.control.{ TextField, Label, PasswordField, Hyperlink }
+import scalafx.scene.control.{ TextField, Label, PasswordField, Hyperlink, CheckBox }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
 import scalafx.event.ActionEvent
@@ -36,7 +36,14 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
   val txtSchema = new TextField {
     text = ""
   }
- 
+   val txtCatalog = new TextField {
+    text = ""
+  }
+  val chkAdvanced = new CheckBox {
+    text = localization.advanced
+    selected.onChange((_, _, newValue) => changeAdvancedVisibility(newValue))
+  }    
+
   val cmbDelimiters = new ComboDelimiters()
 
   val txtMaxRows = new TextField {
@@ -47,6 +54,10 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
             text = oldValue
       }}
    }
+
+  val lblDelimiters = new Label { text = localization.delimiters+":" }
+  val lblMaxRows = new Label { text = localization.maxRows+":" }
+  val lblCatalog = new Label { text = localization.catalog+":" }   
   val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
     onAction = (event: ActionEvent)  => openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
@@ -73,11 +84,14 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
     add(txtPassword, 1, 5)
     add(new Label { text = localization.schema+":" }, 0, 6)
     add(txtSchema, 1, 6)
-    add(new Label { text = localization.delimiters+":" }, 0, 7)
-    add(cmbDelimiters.control, 1, 7)
-    add(new Label { text = localization.maxRows+":" }, 0, 8)
-    add(txtMaxRows, 1, 8)
-    add(linkToJdbcUrls, 1, 9)
+    add(chkAdvanced, 0, 7)
+    add(lblDelimiters, 0, 8)
+    add(cmbDelimiters.control, 1, 8)
+    add(lblMaxRows, 0, 9)
+    add(txtMaxRows, 1, 9)
+    add(lblCatalog, 0, 10)
+    add(txtCatalog, 1, 10)    
+    add(linkToJdbcUrls, 1, 11)
     GridPane.setHalignment(linkToJdbcUrls, HPos.RIGHT) 
     padding = Insets(10)
     vgap = 10
@@ -104,12 +118,24 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
     txtSchema.text = noneToEmpty(data.schema)
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
+    txtCatalog.text = noneToEmpty(data.catalog)
+    chkAdvanced.selected = false
+    changeAdvancedVisibility(false)
   })
 
   private def noneToEmpty(optS : Option[String]) : String = 
     optS.getOrElse("")
   private def emptyToNone(s : String) : Option[String] =
     Option(s).filter(_.trim.nonEmpty)
+
+  private def changeAdvancedVisibility(visible : Boolean) : Unit = {
+    lblDelimiters.visible = visible
+    cmbDelimiters.control.visible = visible
+    lblMaxRows.visible = visible
+    txtMaxRows.visible = visible
+    lblCatalog.visible = visible
+    txtCatalog.visible = visible
+  }
 
   private def encryptPassword(password: String) : String =
     try { 
@@ -131,7 +157,8 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
       Some(true),
       None,
       cmbDelimiters.toDelimiters(),
-      emptyToNone(txtMaxRows.text()).map(_.toInt) // it can only be None or Int
+      emptyToNone(txtMaxRows.text()).map(_.toInt), // it can only be None or Int
+      emptyToNone(txtCatalog.text())
   )}
 
   def control : Parent = grid
@@ -144,7 +171,8 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
       txtSchema.text,
       txtUser.text,
       txtPassword.text,
-      txtMaxRows.text
+      txtMaxRows.text,
+      txtCatalog.text
     ).foreach(_.onChange(safe.onChange(() => useData(toData()))))
     jarSelector.onChange(safe.onChange(() => useData(toData())))
     cmbDelimiters.onChanged(() => safe.onChange(() => useData(toData())))

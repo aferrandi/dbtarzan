@@ -6,7 +6,7 @@ class QueryAttributesApplier(queryAttributes: QueryAttributes) {
 		queryAttributes.delimiters.map(ds => ds.withDelimiters(identifier)).getOrElse(identifier)
 
 	def applySchema(identifier: String) : String = 	
-		queryAttributes.schema.map(s => applyDelimiters(s)+"."+identifier).getOrElse(identifier)
+		queryAttributes.definition.schema.map(s => applyDelimiters(s)+"."+identifier).getOrElse(identifier)
 
 	def applyBoth(identifier: String) : String = 	
 		applySchema(applyDelimiters(identifier))
@@ -16,6 +16,6 @@ class QueryAttributesApplier(queryAttributes: QueryAttributes) {
 object QueryAttributesApplier {
 	def from(queryAttributes: QueryAttributes) = new QueryAttributesApplier(queryAttributes)
 
-	def none() = from(QueryAttributes(None, None))
+	def none() = from(QueryAttributes(None, DBDefinition(None, None)))
 } 
 

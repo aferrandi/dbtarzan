@@ -4,14 +4,14 @@ import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
 
 import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ PrimaryKeys, PrimaryKey }
+import dbtarzan.db.{ PrimaryKeys, PrimaryKey, DBDefinition }
 
 /* to read the basic methadata (tables and columns) from the dataase */
-class MetadataPrimaryKeysLoader(schema: Option[String], meta : DatabaseMetaData) {
+class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData) {
     private case class PrimaryKeyField(keyName : String, fieldName : String)
 
 	def primaryKeys(tableName : String) : PrimaryKeys = try {
-			using(meta.getPrimaryKeys(null, schema.orNull, tableName)) { rs =>
+			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schema.orNull, tableName)) { rs =>
 				val list = readPrimaryKeys(rs)
 				println("Primary keys ("+list.size+") loaded")
 				val keys =list.groupBy(_.keyName).map({ 

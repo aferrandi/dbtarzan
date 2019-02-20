@@ -19,6 +19,8 @@ trait Localization {
     def user : String
     def password : String
     def schema : String
+    def advanced: String
+    def catalog : String
     def delimiters : String
     def maxRows : String
     def tables: String

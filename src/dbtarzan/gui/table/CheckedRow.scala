@@ -5,12 +5,8 @@ import dbtarzan.db.{Row, Rows, Field, FieldType}
 import scalafx.Includes._
 import scalafx.scene.control.MultipleSelectionModel
 
-
-/**
-	One row of a table. The first column is for the check box, the others come from the database
-*/
+/* One row of a table. The first column is for the check box, the others come from the database */
 case class CheckedRow(checked: BooleanProperty, values : List[StringProperty], row : Row)
-
 
 /* needed to have the check box working */
 class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSelectionModel[CheckedRow]) {

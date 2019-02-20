@@ -18,12 +18,12 @@ class CopyWorker(data : ConnectionData, guiActor : ActorRef, localization: Local
 	val log = new Logger(guiActor)
 	val connection = DriverManagerWithEncryption.getConnection(data)
 	def databaseName = data.name
-	val foreignKeyLoader =  new ForeignKeyLoader(connection, data.schema, localization)
+	val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
 	val queryLoader = new QueryLoader(connection)
 	/* gets all the tables in the database/schema from the database metadata */
 	private def tableNames() : List[String] = {
 		val meta = connection.getMetaData()
-		using(meta.getTables(null, data.schema.orNull, "%", Array("TABLE"))) { rs =>
+		using(meta.getTables(data.catalog.orNull, data.schema.orNull, "%", Array("TABLE"))) { rs =>
 			val list = new ListBuffer[String]()
 			while(rs.next) {
 				list += rs.getString("TABLE_NAME")			

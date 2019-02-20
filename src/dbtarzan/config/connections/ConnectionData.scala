@@ -26,5 +26,7 @@ case class ConnectionData(
 	/* the identifiers delimiters to prevent having troubles with reserved words */
 	identifierDelimiters: Option[IdentifierDelimiters],
 	/* the path of the jar file of the driver */
-	maxRows : Option[Int]
+	maxRows : Option[Int],
+	/* the catalog of the database containing the data, used when the schema is not enough (table user n MySQL)  */
+	catalog: Option[String]
 	)

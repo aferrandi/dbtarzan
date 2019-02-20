@@ -5,6 +5,7 @@ import scala.collection.mutable.ListBuffer
 
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db.util.ExceptionToText
+
 import dbtarzan.localization.Localization
 
 
@@ -12,7 +13,7 @@ import dbtarzan.localization.Localization
 	The part of the database actor that reads the foreign keys
 	schema is the database schema (in case of Oracle and SQL server)
 */
-class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String], localization: Localization) {
+class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinition, localization: Localization) {
 	/* the foreign key between two tables, has a name */
 	case class ForeignKeyKey(name: String, fromTable : String, toTable : String)
 	/* a column of the foreign key */
@@ -65,9 +66,9 @@ class ForeignKeyLoader(connection : java.sql.Connection, schema: Option[String],
 	*/
 	def foreignKeys(tableName : String) : ForeignKeys = try {
 			var meta = connection.getMetaData()
-			using(meta.getImportedKeys(null, schema.orNull, tableName)) { rs =>
+			using(meta.getImportedKeys(definition.catalog.orNull, definition.schema.orNull, tableName)) { rs =>
 				val keysImported = rsToForeignKeys(rs) 
-				using(meta.getExportedKeys(null, schema.orNull, tableName)) { rs =>
+				using(meta.getExportedKeys(definition.catalog.orNull, definition.schema.orNull, tableName)) { rs =>
 					val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
 					println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 					val keys = keysImported ++ keysExported
