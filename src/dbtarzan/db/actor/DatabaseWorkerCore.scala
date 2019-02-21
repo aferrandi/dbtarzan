@@ -12,6 +12,6 @@ class DatabaseWorkerCore(connection : java.sql.Connection, definition: DBDefinit
 	val tablesLoader = new MetadataTablesLoader(definition, connection.getMetaData())
 	val columnsLoader = new MetadataColumnsLoader(definition, connection.getMetaData())
 	val primaryKeysLoader = new MetadataPrimaryKeysLoader(definition, connection.getMetaData())
-	val schemasLoader = new MetadataSchemasLoader(definition, connection.getMetaData())
+	val schemasLoader = new MetadataSchemasLoader(connection.getMetaData())
 	def closeConnection() = connection.close()
 }

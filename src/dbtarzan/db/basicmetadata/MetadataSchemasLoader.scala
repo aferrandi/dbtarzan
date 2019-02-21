@@ -4,10 +4,10 @@ import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
 
 import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ Schema, Schemas, DBDefinition }
+import dbtarzan.db.{ Schema, Schemas }
 
 /* to read the basic methadata (tables and columns) from the dataase */
-class MetadataSchemasLoader(definition: DBDefinition, meta : DatabaseMetaData) {
+class MetadataSchemasLoader(meta : DatabaseMetaData) {
 	/* gets the columns of a table from the database metadata */
 	def schemasNames() : Schemas = try {
 		using(meta.getSchemas()) { rs =>
