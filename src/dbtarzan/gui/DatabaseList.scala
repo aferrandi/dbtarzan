@@ -19,11 +19,11 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
   }
 
   private def buildCell() = new ListCell[DatabaseId] {
-      item.onChange { (_, _, _) => 
-	          Option(item.value).foreach(databaseId => {
-		          text.value = databaseId.databaseName
-	      	  })
-	        }} 
+    item.onChange { (_, _, _) => 
+      Option(item.value).foreach(databaseId => {
+        text.value = databaseId.databaseName
+      })
+    }} 
 
   def setDatabaseIds(databaseIds: DatabaseIds) : Unit = {
     println("Got new database list:"+databaseIds)
@@ -32,16 +32,16 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
   }
 
   def onDatabaseSelected(use : DatabaseId => Unit) : Unit = 
-      JFXUtil.onAction(list, { selectedDatabaseId : DatabaseId => 
-        println("Selected "+selectedDatabaseId.databaseName)
-        use(selectedDatabaseId)
-      })
+    JFXUtil.onAction(list, (selectedDatabaseId : DatabaseId, _) => { 
+      println("Selected "+selectedDatabaseId.databaseName)
+      use(selectedDatabaseId)
+    })
 
   def onForeignKeyToFile(use : DatabaseId => Unit) : Unit =
   	JFXUtil.onContextMenu(menuForeignKeyToFile, list, {selectedDatabaseId : DatabaseId => 
-        println("Selected "+selectedDatabaseId.databaseName)
-        use(selectedDatabaseId)
-      })
+      println("Selected "+selectedDatabaseId.databaseName)
+      use(selectedDatabaseId)
+    })
 
   def control : Parent = list
 }

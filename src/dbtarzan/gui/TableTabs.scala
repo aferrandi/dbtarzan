@@ -50,6 +50,9 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def requestRemovalTabsBefore(queryId : QueryId) : Unit =
     removeTabsBefore(queryId, tabs.tabs.toList) 
 
+  private def requestRemovalThisTab(queryId : QueryId) : Unit =
+    tables.withQueryId(queryId, table => removeTabs(List(table.tab)))
+
   def requestRemovalAllTabs() : Unit =
     removeTabs(tabs.tabs.toList)
 
@@ -119,6 +122,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
     case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
+    case request : RequestRemovalThisTab => requestRemovalThisTab(request.queryId)
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
     case rows : ResponseRows => tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))

@@ -39,7 +39,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     center = splitter.splitCenter
     bottom = progressBar.control
   }
-  foreignKeyList.onForeignKeySelected(key => openTableConnectedByForeignKey(key))
+  foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
 
   def orderByField(field : Field) : Unit = {
@@ -67,8 +67,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
         }
     }
 
-  private def openTableConnectedByForeignKey(key : ForeignKey) : Unit = {
+  private def openTableConnectedByForeignKey(key : ForeignKey, closePrevious : Boolean) : Unit = {
       println("Selected "+key)
+      if(closePrevious)
+        guiActor ! RequestRemovalThisTab(queryId) 
       val checkedRows = table.getCheckedRows
       val foreignTableId = TableId(queryId.tableId.databaseId, key.to.table)
       if(!checkedRows.isEmpty) {
@@ -80,13 +82,13 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   } 
 
   private def buildTop() : BorderPane = new BorderPane {        
+    stylesheets += "orderByMenuBar.css"
+    left = TableMenu.buildMainMenu(guiActor, queryId, localization)
+    center = JFXUtil.withLeftTitle(queryText.textBox, localization.where+":")
+    right =new MenuBar {
+      menus = List(buildOrderByMenu())
       stylesheets += "orderByMenuBar.css"
-      left = TableMenu.buildMainMenu(guiActor, queryId, localization)
-	    center = JFXUtil.withLeftTitle(queryText.textBox, localization.where+":")
-	    right =new MenuBar {
-		    menus = List(buildOrderByMenu())
-        stylesheets += "orderByMenuBar.css"
-      }
+    }
 	}
               
   def switchRowDetailsView() : Unit = {

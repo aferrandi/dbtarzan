@@ -25,7 +25,7 @@ class LogList(localization : Localization) extends TLogs with TControlBuilder {
   private val logTable = buildTable()
   private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-  JFXUtil.onAction(logTable, showMessageInDialogBox(_))
+  JFXUtil.onAction(logTable, (selectedMessage : TLogMessage, _) => showMessageInDialogBox(selectedMessage))
 
 /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
   private def buildTable() = new TableView[TLogMessage](buffer) {

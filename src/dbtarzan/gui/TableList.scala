@@ -18,7 +18,7 @@ class TableList extends TControlBuilder {
   }
 
   def onTableSelected(useTable : String => Unit) : Unit = {
-      JFXUtil.onAction(list, { selectedTable : String =>
+      JFXUtil.onAction(list, { (selectedTable : String, _) =>
         println("Selected "+selectedTable)      
         useTable(selectedTable)
         })

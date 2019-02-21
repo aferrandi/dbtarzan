@@ -57,10 +57,10 @@ class ForeignKeyList() extends TControlBuilder {
 	}
 	
 	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */
-  	def onForeignKeySelected(useKey : ForeignKey => Unit) : Unit =
-	     JFXUtil.onAction(list, { selectedKey : ForeignKeyWithSharingCheck =>
+  	def onForeignKeySelected(useKey : (ForeignKey, Boolean)  => Unit) : Unit =
+	     JFXUtil.onAction(list, { (selectedKey : ForeignKeyWithSharingCheck, ctrlDown) =>
 	        println("Selected "+selectedKey)      
-	        useKey(selectedKey.key)
+	        useKey(selectedKey.key, ctrlDown)
 	      })
 
 	def control : Parent = list

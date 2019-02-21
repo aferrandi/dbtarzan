@@ -44,6 +44,9 @@ case class RequestRemovalTabsAfter(queryId : QueryId)
 
 case class RequestRemovalTabsBefore(queryId : QueryId) 
     extends TWithQueryId
+    
+case class RequestRemovalThisTab(queryId : QueryId) 
+    extends TWithQueryId
 
 case class RequestRemovalAllTabs(databaseId : DatabaseId) 
     extends TWithDatabaseId

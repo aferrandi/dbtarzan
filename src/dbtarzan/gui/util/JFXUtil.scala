@@ -25,33 +25,33 @@ object JFXUtil {
 	    center = graphic
 	}
 
-    def buildTitle(title : String) = new Label(title) {
-    	margin = Insets(5)
-    }
+	def buildTitle(title : String) = new Label(title) {
+		margin = Insets(5)
+	}
 
 	private def focusedItem[T](list : ListView[T]) = list.focusModel().focusedItem()    
-	def onAction[T](list : ListView[T] , action : T => Unit) = {
+	def onAction[T](list : ListView[T] , action : (T, Boolean) => Unit) = {
 		list.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.PRIMARY) 
-			action(focusedItem(list))
+			action(focusedItem(list), ev.controlDown)
 		list.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
-			action(focusedItem(list))
+			action(focusedItem(list), ev.controlDown)
 	}
 
 	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()    
-	def onAction[T](table : TableView[T] , action : T => Unit) = {
+	def onAction[T](table : TableView[T] , action : (T, Boolean) => Unit) = {
 		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.PRIMARY) 
-			action(focusedItem(table))
+			action(focusedItem(table), ev.controlDown)
 		table.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
-			action(focusedItem(table))
+			action(focusedItem(table), ev.controlDown)
 	}
 
 	def onContextMenu[T](menu : MenuItem, list : ListView[T] , action : T => Unit) = 
 		menu.onAction = (ev: ActionEvent) => action(focusedItem(list))
 
 	def copyTextToClipboard(text : String) : Unit = {
-      val content = new ClipboardContent()
-      content.putString(text)
-      Clipboard.systemClipboard.setContent(content)		
+		val content = new ClipboardContent()
+		content.putString(text)
+		Clipboard.systemClipboard.setContent(content)		
 	}
 
  	def swapListBuffer[T](lb : ObservableBuffer[T], i : Int, j : Int) : Unit =	{
@@ -60,22 +60,23 @@ object JFXUtil {
 		lb.update(i, vj)
 		lb.update(j, vi)
 	}
+
 	def bufferSet[T](b : ObservableBuffer[T], l: Traversable[T]) : ObservableBuffer[T] = {
 		b.clear() 
 		b ++= l
 	}
 
-   def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
-      headerText = header
-    }.showAndWait() match {
-      case Some(ButtonType.Yes) => true
-      case _ => false
-    }
+	def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
+		headerText = header
+	}.showAndWait() match {
+		case Some(ButtonType.Yes) => true
+		case _ => false
+	}
 
-  	def showErrorAlert(header : String, error : String) : Unit = new Alert(AlertType.Error) { 
-       headerText= header
-       contentText= error
-       }.showAndWait()
+	def showErrorAlert(header : String, error : String) : Unit = new Alert(AlertType.Error) { 
+			headerText= header
+			contentText= error
+		}.showAndWait()
 
 	def loadIcon(fileName: String) : Image = 
 		// println(this.getClass().getResource("").getPath())
@@ -83,9 +84,9 @@ object JFXUtil {
 
 	
     def averageCharacterSize() : Double = {
-		val s = "XXXXX"
-        val text = new Text(s);
-        text.getBoundsInLocal().getWidth() / s.length;        
+			val s = "XXXXX"
+			val text = new Text(s);
+			text.getBoundsInLocal().getWidth() / s.length;        
     }	
    
  }
