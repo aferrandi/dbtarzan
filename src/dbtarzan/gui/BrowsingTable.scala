@@ -23,13 +23,13 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val dbTable = new DBTable(structure)
   private val table = new Table(dbActor, guiActor, queryId, dbTable, localization)
   private val splitter = new BrowsingTableSplitter(table, foreignKeyListWithTitle)
-  private var useNewTable : DBTableStructure => Unit = table => {}
+  private var useNewTable : (DBTableStructure, Boolean) => Unit = (table, closeCurrentTab) => {}
   private var rowDetailsView : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetailsView.foreach(details => details.displayRow(row)))
   private val queryText = new QueryText() { 
-    onEnter(text => {
+    onEnter((text, closeCurrentTab) => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
-        useNewTable(tableWithFilters)
+        useNewTable(tableWithFilters, closeCurrentTab)
     })
   }
   splitter.fillSplitPanel(rowDetailsView)
@@ -45,7 +45,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   def orderByField(field : Field) : Unit = {
     val orderByFields = OrderByFields(List(OrderByField(field, OrderByDirection.ASC)))
     val newStructure = dbTable.withOrderByFields(orderByFields)
-    useNewTable(newStructure)
+    useNewTable(newStructure, false)
   }
 
   def startOrderByEditor() : Unit = {
@@ -67,9 +67,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
         }
     }
 
-  private def openTableConnectedByForeignKey(key : ForeignKey, closePrevious : Boolean) : Unit = {
+  private def openTableConnectedByForeignKey(key : ForeignKey, closeCurrentTab : Boolean) : Unit = {
       println("Selected "+key)
-      if(closePrevious)
+      if(closeCurrentTab)
         guiActor ! RequestRemovalThisTab(queryId) 
       val checkedRows = table.getCheckedRows
       val foreignTableId = TableId(queryId.tableId.databaseId, key.to.table)
@@ -99,8 +99,8 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     splitter.fillSplitPanel(rowDetailsView)  
   }
 
-  /* if someone entere a query in the text box on the top of the table it creates a new table that depends by this query */
-  def onNewTable(useTable : DBTableStructure => Unit) : Unit = {
+  /* if someone enters a query in the text box on the top of the table it creates a new table that depends by this query */
+  def onNewTable(useTable : (DBTableStructure, Boolean) => Unit) : Unit = {
     useNewTable = useTable
   }
 

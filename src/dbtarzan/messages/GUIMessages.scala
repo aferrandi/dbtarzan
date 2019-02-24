@@ -9,7 +9,7 @@ trait TWithQueryId { def queryId : QueryId }
 
 trait TWithTableId { def tableId : TableId }
       
-case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : Rows) 
+case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : Rows, original : Option[OriginalQuery]) 
     extends TWithQueryId
 
 case class ErrorRows(queryId : QueryId,  ex: Exception) 

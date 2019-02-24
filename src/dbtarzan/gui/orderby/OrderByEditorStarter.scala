@@ -10,7 +10,7 @@ import dbtarzan.localization.Localization
 /* to start the order by editor. It handles all the cancel/closing/save events */
 object OrderByEditorStarter
 {
- def openOrderByEditor(parentStage : Stage, dbTable: DBTable, useNewTable : DBTableStructure => Unit, localization : Localization) : Unit = {
+ def openOrderByEditor(parentStage : Stage, dbTable: DBTable, useNewTable : (DBTableStructure, Boolean) => Unit, localization : Localization) : Unit = {
      val orderByStage = new Stage {
       title = localization.chooseOrderByColumns
       width = 400
@@ -26,9 +26,9 @@ object OrderByEditorStarter
     orderByStage.show()
   }
 
-  private def buildScene(dbTable: DBTable, useNewTable : DBTableStructure => Unit, localization : Localization) = new Scene {
+  private def buildScene(dbTable: DBTable, useNewTable : (DBTableStructure, Boolean) => Unit, localization : Localization) = new Scene {
       def onSave(orderByFields: OrderByFields) : Unit = {
-        useNewTable(dbTable.withOrderByFields(orderByFields))
+        useNewTable(dbTable.withOrderByFields(orderByFields), false)
         window().hide()
       }
 

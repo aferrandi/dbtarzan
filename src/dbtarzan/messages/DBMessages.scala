@@ -2,7 +2,9 @@ package dbtarzan.messages
 
 import dbtarzan.db.{ FollowKey, DatabaseId, TableId, DBTableStructure}
 
-case class QueryRows(queryId : QueryId, originalQueryId : Option[QueryId], structure : DBTableStructure) 
+case class OriginalQuery(queryId : QueryId, close : Boolean)
+
+case class QueryRows(queryId : QueryId, original : Option[OriginalQuery], structure : DBTableStructure) 
 
 case class QueryTables(databaseId : DatabaseId) 
 

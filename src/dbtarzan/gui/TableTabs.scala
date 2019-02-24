@@ -77,7 +77,10 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     val tab = buildTab(structure, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)
-    browsingTable.onNewTable(newStructure => queryRows(Some(queryId), newStructure))
+    
+    browsingTable.onNewTable((newStructure, closeCurrentTab) => 
+        queryRows(Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
+      )
     BrowsingTableWithTab(browsingTable, tab)
   }
 
@@ -96,9 +99,9 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     queryRows(None, structure) 
   }
 
-  private def queryRows(originalQueryId : Option[QueryId], structure : DBTableStructure) : Unit = {
+  private def queryRows(originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
     val queryId = IDGenerator.queryId(TableId(databaseId, structure.description.name))
-    dbActor ! QueryRows(queryId, originalQueryId, structure)
+    dbActor ! QueryRows(queryId, originalQuery, structure)
   }
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
@@ -125,7 +128,13 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case request : RequestRemovalThisTab => requestRemovalThisTab(request.queryId)
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
-    case rows : ResponseRows => tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))
+    case rows : ResponseRows => { 
+      tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))
+      rows.original.foreach(original => {
+            if(original.close)
+              guiActor ! RequestRemovalThisTab(original.queryId)
+        })
+      }
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case _ => log.error(localization.errorTableMessage(msg))
   }    

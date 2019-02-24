@@ -102,9 +102,9 @@ class DatabaseWorker(
 	})
 
 	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(
-		e => qry.originalQueryId.foreach(originalQueryId => guiActor ! ErrorRows(originalQueryId, e)), 
+		e => qry.original.foreach(original => guiActor ! ErrorRows(original.queryId, e)), 
 		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500),  rows => 
-			guiActor ! ResponseRows(qry.queryId, qry.structure, rows)
+			guiActor ! ResponseRows(qry.queryId, qry.structure, rows, qry.original)
 		)
 	)
 
