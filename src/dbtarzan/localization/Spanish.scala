@@ -68,6 +68,9 @@ class Spanish extends Localization {
     def selectDriverFile = "Seleccione el archivo JAR del controlador"
     def jdbcUrlStrings = "URL para las conexiones Jdbc"
     def jarFiles = "Archivo JAR"
+    def originalEncryptionKey = "Originale"
+    def newEncryptionKey1 = "Nueva"
+    def newEncryptionKey2 = "Nueva, una vez mas"
     def writingFile(fileName : Path) = "Estoy escribiendo el archivo "+fileName
     def fileWritten(fileName : Path) = "Archivo "+fileName+" escrito"
     def connectedTo(databaseName: String) = "Conectado a "+databaseName

@@ -68,6 +68,9 @@ class English extends Localization {
     def selectDriverFile = "Select the driver jar file"
     def jdbcUrlStrings = "Jdbc connections url strings"
     def jarFiles = "JAR files"
+    def originalEncryptionKey = "Original"
+    def newEncryptionKey1 = "New"
+    def newEncryptionKey2 = "New again"
     def writingFile(fileName : Path) = "Writing file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" written"
     def connectedTo(databaseName : String) = "Connected to "+databaseName

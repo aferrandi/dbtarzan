@@ -1,12 +1,13 @@
 package dbtarzan.gui.config.global
 
-import scalafx.scene.control.{ PasswordField, CheckBox }
+import scalafx.scene.control.{ PasswordField, CheckBox, Label }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
 import scalafx.geometry.Insets
 import scalafx.Includes._
 
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.localization.Localization
 
@@ -19,11 +20,19 @@ class EncryptionKeyEditor(
     text = localization.encryptionKey
     selected.onChange((_, _, newValue) => changeVisibility(newValue))
   }    
-  val pwdEncryptionKey1 = new PasswordField {
+
+  val lblOriginalEncryptionKey = new Label { text = localization.originalEncryptionKey+":" }
+  val pwdOriginalEncryptionKey = new PasswordField {
     text.onChange { (_, _, _) => passwordTextChanged = true	}
 	}
 
-  val pwdEncryptionKey2 = new PasswordField {
+  val lblNewEncryptionKey1 = new Label { text = localization.newEncryptionKey1+":" }
+  val pwdNewEncryptionKey1 = new PasswordField {
+    text.onChange { (_, _, _) => passwordTextChanged = true	}
+	}
+
+  val lblNewEncryptionKey2 = new Label { text = localization.newEncryptionKey2+":" }
+  val pwdNewEncryptionKey2 = new PasswordField {
     text.onChange { (_, _, _) => passwordTextChanged = true	}
   }
 
@@ -36,8 +45,12 @@ class EncryptionKeyEditor(
         hgrow = Priority.ALWAYS
       })
     add(chkEncryptionKey, 0, 0)
-    add(pwdEncryptionKey1, 1, 0)
-    add(pwdEncryptionKey2, 1, 1)
+    add(lblOriginalEncryptionKey, 0, 1)
+    add(pwdOriginalEncryptionKey, 1, 1)
+    add(lblNewEncryptionKey1, 0, 2)
+    add(pwdNewEncryptionKey1, 1, 2)
+    add(lblNewEncryptionKey2, 0, 3)
+    add(pwdNewEncryptionKey2, 1, 3)
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -47,24 +60,45 @@ class EncryptionKeyEditor(
   def show() : Unit = {
       val isEncryptionKey = verificationKey.isDefined
       chkEncryptionKey.selected = isEncryptionKey 
-      pwdEncryptionKey1.visible = isEncryptionKey 
-      pwdEncryptionKey2.visible = isEncryptionKey 
+      lblOriginalEncryptionKey.visible = isEncryptionKey && verificationKey.isDefined
+      pwdOriginalEncryptionKey.visible = isEncryptionKey && verificationKey.isDefined
+      lblNewEncryptionKey1.visible = isEncryptionKey 
+      pwdNewEncryptionKey1.visible = isEncryptionKey 
+      lblNewEncryptionKey2.visible = isEncryptionKey 
+      pwdNewEncryptionKey2.visible = isEncryptionKey 
   }
 
   private def changeVisibility(visible : Boolean) : Unit = {
-      pwdEncryptionKey1.visible = visible 
-      pwdEncryptionKey2.visible = visible 
+      lblOriginalEncryptionKey.visible = visible && verificationKey.isDefined
+      pwdOriginalEncryptionKey.visible = visible && verificationKey.isDefined
+      lblNewEncryptionKey1.visible = visible 
+      pwdNewEncryptionKey1.visible = visible 
+      lblNewEncryptionKey2.visible = visible 
+      pwdNewEncryptionKey2.visible = visible 
   }
 
   private def isSamePassword() : Boolean = 
-    pwdEncryptionKey1.text == pwdEncryptionKey2.text
+    pwdNewEncryptionKey1.text == pwdNewEncryptionKey2.text
 
-  def cannotSave() : Boolean = 
-    chkEncryptionKey.selected() && passwordTextChanged && !isSamePassword()
+  def canSave() : Boolean = 
+    if(!chkEncryptionKey.selected()) 
+      true
+    else if(passwordTextChanged) {
+      if(verificationKey.map(vk => EncryptionVerification.verify(EncryptionKey(pwdOriginalEncryptionKey.text()), vk)).getOrElse(true)) {
+        JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorWrongEncryptionKey)
+        false
+      } else if(!isSamePassword()) {
+        JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorWrongEncryptionKey)
+        false
+      } else
+        true
+    } else
+      true
+  
 
   def toData() : Option[VerificationKey] = 
     if(chkEncryptionKey.selected())
-        Some(pwdEncryptionKey1.text()).map(EncryptionKey(_)).map(EncryptionVerification.toVerification(_))
+        Some(pwdNewEncryptionKey1.text()).map(EncryptionKey(_)).map(EncryptionVerification.toVerification(_))
     else
         verificationKey
   
