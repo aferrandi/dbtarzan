@@ -5,8 +5,10 @@ import scalafx.scene.Scene
 import scalafx.Includes._
 import akka.actor.ActorRef
 import java.nio.file.Path
+
 import dbtarzan.config.connections.{ ConnectionDataReader, ConnectionDataWriter, ConnectionData }
 import dbtarzan.messages.ConnectionDatas
+import dbtarzan.config.EncryptionKey
 import dbtarzan.localization.Localization
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
@@ -17,6 +19,7 @@ object ConnectionEditorStarter
     connectionsWorker : ActorRef, 
     configPath: Path, 
     openWeb : String => Unit, 
+    encryptionKey : EncryptionKey,
     localization: Localization) : Unit = {
     println("open connections editor")  
     val connectionStage = new Stage {
@@ -33,7 +36,7 @@ object ConnectionEditorStarter
         def onCancel() : Unit = 
           window().hide()
 
-        val editor = new ConnectionEditor(ConnectionDataReader.read(configPath), openWeb, localization)
+        val editor = new ConnectionEditor(ConnectionDataReader.read(configPath), openWeb, encryptionKey, localization)
         editor.onSave(onSave(_))
         editor.onCancel(() => onCancel())
         onCloseRequest = (event : WindowEvent) => { 

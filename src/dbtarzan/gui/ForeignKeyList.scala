@@ -60,7 +60,7 @@ class ForeignKeyList() extends TControlBuilder {
   	def onForeignKeySelected(useKey : (ForeignKey, Boolean)  => Unit) : Unit =
 	     JFXUtil.onAction(list, { (selectedKey : ForeignKeyWithSharingCheck, ctrlDown) =>
 	        println("Selected "+selectedKey)      
-	        useKey(selectedKey.key, ctrlDown)
+					Option(selectedKey).foreach(k => useKey(k.key, ctrlDown))
 	      })
 
 	def control : Parent = list

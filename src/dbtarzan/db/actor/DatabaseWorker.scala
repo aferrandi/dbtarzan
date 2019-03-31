@@ -8,19 +8,21 @@ import scala.collection.mutable.HashMap
 
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.connections.ConnectionData
+import dbtarzan.config.EncryptionKey
 import dbtarzan.db._
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
 /* The actor that reads data from the database */
 class DatabaseWorker(
-	createConnection : ConnectionProvider, 
+	encryptionKey : EncryptionKey, 
 	data : ConnectionData, 
 	guiActor : ActorRef, 
 	localization: Localization
 	) extends Actor {
 	def databaseName = data.name
 	def databaseId = DatabaseId(data.name)	
+	val createConnection = new DriverManagerWithEncryption(encryptionKey)
 	val log = new Logger(guiActor)
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
 	val foreignKeysFromFile = HashMap.empty[String, ForeignKeys]

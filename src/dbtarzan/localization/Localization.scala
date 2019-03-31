@@ -33,6 +33,8 @@ trait Localization {
     def message: String    
     def details: String
     def language: String
+    def encryptionKey : String
+    def enter: String
     def filter : String
     def add: String
     def update : String
@@ -86,6 +88,7 @@ trait Localization {
     def errorDisplayingConnections : String
     def errorSavingConnections: String
     def errorSavingGlobalSettings: String
+    def errorWrongEncryptionKey : String
     def errorDatabaseMessage(msg : TWithDatabaseId) : String
     def errorTableMessage(msg : TWithTableId) : String
     def errorTableMessage(msg : TWithQueryId) : String

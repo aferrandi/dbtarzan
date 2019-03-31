@@ -7,6 +7,7 @@ import scala.collection.mutable.HashMap
 
 import dbtarzan.messages._
 import dbtarzan.config.connections.ConnectionsConfig
+import dbtarzan.config.EncryptionKey
 import dbtarzan.db.{ConnectionBuilder, DatabaseId }
 import dbtarzan.localization.Localization
 
@@ -17,26 +18,26 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	 private val log = new Logger(guiActor)
 
 	 /* creates the actors to serve the queries for a database */
-	 private def getDBWorker(databaseId : DatabaseId) : ActorRef = {
+	 private def getDBWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey) : ActorRef = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-		val dbActor = ConnectionBuilder.buildDBWorker(data, guiActor, context, localization)
+		val dbActor = ConnectionBuilder.buildDBWorker(data, encriptionKey, guiActor, context, localization)
 		mapDBWorker += databaseId -> dbActor
 		dbActor
 	 } 
 
 	/* creates the actor to serve the creation of foreign keys text files and start the copy */
-	 private def startCopyWorker(databaseId : DatabaseId) : Unit = {
+	 private def startCopyWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey) : Unit = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-		val copyActor = ConnectionBuilder.buildCopyWorker(data, guiActor, context, localization)
+		val copyActor = ConnectionBuilder.buildCopyWorker(data, encriptionKey, guiActor, context, localization)
 		copyActor ! CopyToFile
 	 } 
 
 	 /* if no actors are serving the queries to a specific database, creates them */
-	 private def queryDatabase(databaseId : DatabaseId) : Unit = {
+	 private def queryDatabase(databaseId : DatabaseId, encriptionKey : EncryptionKey) : Unit = {
 	    	println("Querying the database "+databaseId.databaseName)
 	    	try {
 	    		if(!mapDBWorker.isDefinedAt(databaseId)) {
-					val dbWorker = getDBWorker(databaseId)
+					val dbWorker = getDBWorker(databaseId, encriptionKey)
 	    			guiActor ! ResponseDatabase(databaseId, dbWorker)
 				}
 	    		else
@@ -63,9 +64,9 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	 }
 
 	 def receive = {
-	    case qry : QueryDatabase => queryDatabase(qry.databaseId)
+	    case qry : QueryDatabase => queryDatabase(qry.databaseId, qry.encryptionKey)
 	    case qry : QueryClose => queryClose(qry.databaseId)
-	    case cpy : CopyToFile => startCopyWorker(cpy.databaseId)
+	    case cpy : CopyToFile => startCopyWorker(cpy.databaseId, cpy.encryptionKey)
 	    case datas: ConnectionDatas => newConnections(datas)
 	}
 }

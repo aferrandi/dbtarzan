@@ -12,6 +12,7 @@ import dbtarzan.db.IdentifierDelimiters
 }
 
 
+
 object ConnectionDataJsonProtocol extends DefaultJsonProtocol {
 import IdentifierDelimitersJsonProtocol._
   implicit val connectionDataFormat = jsonFormat(ConnectionData, 

@@ -20,7 +20,7 @@ object Main extends JFXApp {
   val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
   val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
   val localization = Localizations.of(globalData.language)
-  val mainGUI = new MainGUI(configPaths, localization, version, openWeb, closeApp)
+  val mainGUI = new MainGUI(configPaths, localization, globalData.verificationKey, version, openWeb, closeApp)
   val actors = new ActorHandler(
     () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, localization), 
     guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization)
@@ -28,11 +28,13 @@ object Main extends JFXApp {
   mainGUI.setActors(actors.guiActor, actors.connectionsActor)
   val log = new Logger(actors.guiActor)
   mainGUI.databaseList.setDatabaseIds(databaseIds(connectionDatas))
-  mainGUI.onDatabaseSelected( { case databaseId => {
+  mainGUI.onDatabaseSelected( { case (databaseId, encryptionKey) => {
     log.info(localization.openingDatabase(databaseId.databaseName))
-    actors.connectionsActor ! QueryDatabase(databaseId) 
+    actors.connectionsActor ! QueryDatabase(databaseId, encryptionKey) 
     }})
-  mainGUI.onForeignKeyToFile( { case databaseId => actors.connectionsActor ! CopyToFile(databaseId) })
+  mainGUI.onForeignKeyToFile( { 
+    case (databaseId, encryptionKey) => actors.connectionsActor ! CopyToFile(databaseId, encryptionKey) 
+    })
 
   private def databaseIds(connections : ConnectionDatas)  =
     DatabaseIds(connections.datas.map(c => DatabaseId(c.name)))

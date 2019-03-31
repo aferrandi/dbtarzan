@@ -11,8 +11,10 @@ import scalafx.event.ActionEvent
 import scalafx.geometry.Orientation
 import scalafx.scene.layout.BorderPane
 import akka.actor.ActorRef
+
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.config.connections.ConnectionEditorStarter
+import dbtarzan.config.{EncryptionKey, VerificationKey, PasswordEncryption}
 import dbtarzan.gui.config.global.GlobalEditorStarter
 import dbtarzan.types.ConfigPath
 import dbtarzan.messages.Logger
@@ -27,6 +29,7 @@ import dbtarzan.localization.Localization
 class MainGUI(
 	configPaths: ConfigPath, 
 	localization: Localization,
+	verificationKey: Option[VerificationKey],
 	version: String, 
 	openWeb : String => Unit, 
 	closeApp : () => Unit)
@@ -40,9 +43,11 @@ class MainGUI(
 	/* how big is the screen */
 	private val screenBounds = Screen.primary.visualBounds
 	/* the gui */
-	private var stage = buildStage() 
+	private val stage = buildStage() 
 	private var guiActor: Option[ActorRef]  = None
 	private var connectionsActor: Option[ActorRef] = None 
+	private var encryptionKey : Option[EncryptionKey] = None
+	private val encryptionKeyDialog  = new EncryptionKeyDialog(stage, localization)
 	
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
@@ -52,9 +57,11 @@ class MainGUI(
 		databaseTabs.setActors(guiActor, connectionsActor)
   } 
 
-	def onDatabaseSelected(use : DatabaseId => Unit) : Unit = databaseList.onDatabaseSelected(use)
+	def onDatabaseSelected(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
+		databaseList.onDatabaseSelected(databaseId => use(databaseId, extractEncryptionKey().get))
 
-	def onForeignKeyToFile(use : DatabaseId => Unit) : Unit = databaseList.onForeignKeyToFile(use)
+	def onForeignKeyToFile(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
+		databaseList.onForeignKeyToFile(databaseId => use(databaseId, extractEncryptionKey().get))
 
 	private def buildStage() : PrimaryStage = new PrimaryStage {
 	    title = "DbTarzan "+version
@@ -131,12 +138,26 @@ class MainGUI(
 		guiActor match {
 			case Some(ga) => new Logger(ga).info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
 			case None => println("MainGUI: guiActor not defined")
-		}
-		connectionsActor match {
-			case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, localization)
-			case None => println("MainGUI: connectionsActor not defined") 
+		}		 
+		extractEncryptionKey() match {
+			case Some(key) => connectionsActor match {
+					case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, key, localization)
+					case None => println("MainGUI: connectionsActor not defined") 
+				}
+			case None => println("MainGUI: encryptionKey not entered")
 		}
 	}
+
+	private def extractEncryptionKey() : Option[EncryptionKey] = {
+		if(!encryptionKey.isDefined) 
+		encryptionKey  = verificationKey.map(
+			vkey => encryptionKeyDialog.showDialog()
+			).getOrElse(
+				Some(PasswordEncryption.defaultEncryptionKey)
+				)
+		encryptionKey
+	}
+
 
 	private def openGlobalEditor() : Unit = {
 		guiActor match {

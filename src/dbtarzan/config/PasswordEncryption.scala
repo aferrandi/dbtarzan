@@ -2,11 +2,15 @@ package dbtarzan.config
 
 import dbtarzan.config.util.{ Encryption, ByteArrayHex }
 
-/* to encrypt and decrypt the database passwords */
+/* to encrypt and decrypt the database passwords: "1gCDuAntiQiFPHIT" */
+class PasswordEncryption(key : EncryptionKey) {
+	val encryption = new Encryption(key.key, "eJSUpCT9VNo5AbF6")
+
+	def encrypt(plainPassword : Password) : Password =  Password(ByteArrayHex.toHex(encryption.encrypt(plainPassword.key)))
+
+	def decrypt(cipherPassword : Password) : Password = Password(encryption.decrypt(ByteArrayHex.fromHex(cipherPassword.key)))
+}
+
 object PasswordEncryption {
-	val encryption = new Encryption("1gCDuAntiQiFPHIT", "eJSUpCT9VNo5AbF6")
-
-	def encrypt(plainPassword : String) : String =  ByteArrayHex.toHex(encryption.encrypt(plainPassword))
-
-	def decrypt(cipherPassword : String) : String = encryption.decrypt(ByteArrayHex.fromHex(cipherPassword))
+	val defaultEncryptionKey = EncryptionKey("1gCDuAntiQiFPHIT")
 }

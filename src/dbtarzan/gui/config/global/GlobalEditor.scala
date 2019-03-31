@@ -30,6 +30,8 @@ class GlobalEditor(
     buttonCell = buildLanguageCell()
   }
 
+  val encryptionEditor = new EncryptionKeyEditor(data.verificationKey, localization)
+
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
@@ -38,6 +40,7 @@ class GlobalEditor(
       })
     add(new Label { text = localization.language+":" }, 0, 0)
     add(cmbLanguages, 1, 0)
+    add(encryptionEditor.control, 0, 1)
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -57,13 +60,17 @@ class GlobalEditor(
   }
   
   private def saveIfPossible(save : GlobalData  => Unit) : Unit = {
-    if(JFXUtil.areYouSure(localization.areYouSureSaveGlobalSettings, localization.saveGlobalSettings))
-      try { save(GlobalData(
-        cmbLanguages.getSelectionModel().selectedItem()
-      )) } 
-      catch {
-        case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings+": ", ex.getMessage())
-      }
+    if(!encryptionEditor.cannotSave()) {
+      if(JFXUtil.areYouSure(localization.areYouSureSaveGlobalSettings, localization.saveGlobalSettings))    
+        try { save(GlobalData(
+          cmbLanguages.getSelectionModel().selectedItem(),
+          encryptionEditor.toData()
+        )) } 
+        catch {
+          case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings+": ", ex.getMessage())
+        }
+      } else
+        JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorWrongEncryptionKey)
   }
 
   def cancelIfPossible(cancel : () => Unit) : Unit = {

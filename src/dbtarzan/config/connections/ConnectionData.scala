@@ -1,5 +1,6 @@
 package dbtarzan.config.connections
 
+import dbtarzan.config.Password
 import dbtarzan.db.IdentifierDelimiters
 
 

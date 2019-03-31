@@ -3,7 +3,9 @@ package dbtarzan.gui.config.connections
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.Parent
+
 import dbtarzan.config.connections.ConnectionData
+import dbtarzan.config.EncryptionKey
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
@@ -12,10 +14,11 @@ import dbtarzan.localization.Localization
 class ConnectionEditor(
   connectionDatas : List[ConnectionData],
   openWeb : String => Unit,
+  encryptionKey : EncryptionKey,
   localization: Localization
   ) extends TControlBuilder {
   private val list = new ConnectionList(connectionDatas, localization)
-  private val connection = new Connection(openWeb, localization)
+  private val connection = new OneConnectionEditor(openWeb, encryptionKey, localization)
   private val buttons = new ConnectionButtons(localization) 
   private val layout = new BorderPane {
     center = buildSplitPane()

@@ -1,10 +1,12 @@
 package dbtarzan.db.actor
 
-import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
 import akka.actor.ActorRef
 
+import scala.collection.mutable.ListBuffer
+
 import dbtarzan.config.connections.ConnectionData
+import dbtarzan.config.EncryptionKey
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
 import dbtarzan.messages._
@@ -14,9 +16,10 @@ import dbtarzan.localization.Localization
 /* The actor that copies the foreign keys it read from a database to a text file.
 The file is then used by DatabaseWorker instead of reading the foreign keys fron the database, 
 thus avoiding delays when reading foreign keys from the database is slow (Oracle) */
-class CopyWorker(data : ConnectionData, guiActor : ActorRef, localization: Localization) extends Actor {
+class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : ActorRef, localization: Localization) extends Actor {
 	val log = new Logger(guiActor)
-	val connection = DriverManagerWithEncryption.getConnection(data)
+	val driverManger = new DriverManagerWithEncryption(encryptionKey)
+	val connection = driverManger.getConnection(data)
 	def databaseName = data.name
 	val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
 	val queryLoader = new QueryLoader(connection)

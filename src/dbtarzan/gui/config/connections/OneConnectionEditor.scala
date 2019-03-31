@@ -6,16 +6,20 @@ import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import scalafx.geometry.{ Insets, HPos }
 import scalafx.Includes._
+
 import dbtarzan.gui.util.OnChangeSafe
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.PasswordEncryption
+import dbtarzan.config.{ EncryptionKey, PasswordEncryption, Password }
 import dbtarzan.localization.Localization
 
-/**
-  The list of database to choose from
-*/
-class Connection(openWeb : String => Unit, localization: Localization) extends TControlBuilder {
+/* The list of database to choose from */
+class OneConnectionEditor(
+  openWeb : String => Unit, 
+  encryptionKey : EncryptionKey,
+  localization: Localization
+  ) extends TControlBuilder {
+  val passwordEncryption = new PasswordEncryption(encryptionKey)
   val safe = new OnChangeSafe()
   val txtName = new TextField {
     text = ""
@@ -98,10 +102,10 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
     hgap = 10
   }
 
-  private def decryptPasswordIfNeeded(password: String, passwordEncrypted : Boolean) : String =
+  private def decryptPasswordIfNeeded(password: Password, passwordEncrypted : Boolean) : Password =
       if(passwordEncrypted)
         try { 
-          PasswordEncryption.decrypt(password)
+          passwordEncryption.decrypt(password)
         } catch {
           case ex: Exception => throw new Exception("Decrypting the password "+password+" got", ex) 
         }
@@ -114,7 +118,7 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
     txtUrl.text = data.url
     txtDriver.text = data.driver
     txtUser.text = data.user
-    txtPassword.text = decryptPasswordIfNeeded(data.password, data.passwordEncrypted.getOrElse(false))
+    txtPassword.text = decryptPasswordIfNeeded(Password(data.password), data.passwordEncrypted.getOrElse(false)).key
     txtSchema.text = noneToEmpty(data.schema)
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
@@ -137,9 +141,9 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
     txtCatalog.visible = visible
   }
 
-  private def encryptPassword(password: String) : String =
+  private def encryptPassword(password: Password) : Password =
     try { 
-      PasswordEncryption.encrypt(password)
+      passwordEncryption.encrypt(password)
     } catch {
       case ex: Exception => throw new Exception("Encrypting the password "+password+" got", ex) 
     }
@@ -153,7 +157,7 @@ class Connection(openWeb : String => Unit, localization: Localization) extends T
       txtUrl.text(),
       emptyToNone(txtSchema.text()),
       txtUser.text(), 
-      encryptPassword(txtPassword.text()),
+      encryptPassword(Password(txtPassword.text())).key,
       Some(true),
       None,
       cmbDelimiters.toDelimiters(),

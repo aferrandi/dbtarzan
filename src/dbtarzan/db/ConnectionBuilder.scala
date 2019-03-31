@@ -7,9 +7,10 @@ import java.net.{ URL, URLClassLoader }
 
 import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
 import dbtarzan.config.connections.ConnectionData
+import dbtarzan.config.EncryptionKey
 import dbtarzan.localization.Localization
 
-private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, context : ActorContext, localization : Localization) {	
+private class ConnectionBuilder(data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization) {	
 	def buildDBWorker() : ActorRef = try {
 		registerDriver()		
 		val instances = data.instances.getOrElse(1)
@@ -22,7 +23,7 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 	def buildCopyWorker() : ActorRef = try {
 		registerDriver()
 		val name = "copyworker" + data.name		
-		context.actorOf(Props(new CopyWorker(data, guiActor, localization)).withDispatcher("my-pinned-dispatcher"), name)
+		context.actorOf(Props(new CopyWorker(data, encriptionKey, guiActor, localization)).withDispatcher("my-pinned-dispatcher"), name)
 	} catch { 
 		case c: ClassNotFoundException => throw new Exception("Getting the copyworker with the driver "+data.driver+" got ClassNotFoundException:",c)
 		case t: Throwable => throw new Exception("Getting the copyworker with the driver "+data.driver+" got the exception of type "+t.getClass().getCanonicalName()+":",t) 
@@ -38,7 +39,7 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 	} 
 
 	private def buildSubWorkerProps() : Props = {
-		Props(classOf[DatabaseWorker], DriverManagerWithEncryption, data, guiActor, localization).withDispatcher("my-pinned-dispatcher") 
+		Props(classOf[DatabaseWorker], encriptionKey, data, guiActor, localization).withDispatcher("my-pinned-dispatcher") 
 	}	
 
 	private def buildSubWorkerName(index : Int) : String = {
@@ -48,9 +49,9 @@ private class ConnectionBuilder(data : ConnectionData, guiActor : ActorRef, cont
 }
 
 object ConnectionBuilder {
-	def buildDBWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext, localization : Localization) : ActorRef = 
-		new ConnectionBuilder(data, guiActor, context, localization).buildDBWorker()
+	def buildDBWorker(data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization) : ActorRef = 
+		new ConnectionBuilder(data, encriptionKey, guiActor, context, localization).buildDBWorker()
 
-	def buildCopyWorker(data : ConnectionData, guiActor : ActorRef, context : ActorContext, localization : Localization) : ActorRef = 
-		new ConnectionBuilder(data, guiActor, context, localization).buildCopyWorker()
+	def buildCopyWorker(data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization) : ActorRef = 
+		new ConnectionBuilder(data, encriptionKey, guiActor, context, localization).buildCopyWorker()
 }
