@@ -11,6 +11,17 @@ import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.localization.Localization
 
+
+case class EncryptionKeyChange(
+  originalEncryptionKey : Option[EncryptionKey],
+  newEncryptionKey : Option[EncryptionKey]
+)
+
+case class EncryptionKeyEditorData(
+  newVerificationKey : Option[VerificationKey],
+  change : EncryptionKeyChange
+)
+
 /* The list of database to choose from */
 class EncryptionKeyEditor(
     verificationKey : Option[VerificationKey],
@@ -96,11 +107,17 @@ class EncryptionKeyEditor(
       true
   
 
-  def toData() : Option[VerificationKey] = 
+  private def calcVerificationKey() : Option[VerificationKey] = 
+    Some(pwdNewEncryptionKey1.text()).map(EncryptionKey(_)).map(EncryptionVerification.toVerification(_))
+
+  def toData() : EncryptionKeyEditorData = 
     if(chkEncryptionKey.selected())
-        Some(pwdNewEncryptionKey1.text()).map(EncryptionKey(_)).map(EncryptionVerification.toVerification(_))
+      EncryptionKeyEditorData(
+        calcVerificationKey(), 
+        EncryptionKeyChange(Some(EncryptionKey(pwdOriginalEncryptionKey.text())), Some(EncryptionKey(pwdNewEncryptionKey1.text())))  
+      )
     else
-        verificationKey
+      EncryptionKeyEditorData(verificationKey, EncryptionKeyChange(None, None))
   
 
   def control : Parent = grid

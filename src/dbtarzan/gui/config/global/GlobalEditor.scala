@@ -59,13 +59,19 @@ class GlobalEditor(
         }
   }
   
-  private def saveIfPossible(save : GlobalData  => Unit) : Unit = 
+  private def saveIfPossible(save : (GlobalData, EncryptionKeyChange)  => Unit) : Unit = 
     if(encryptionEditor.canSave()) {
       if(JFXUtil.areYouSure(localization.areYouSureSaveGlobalSettings, localization.saveGlobalSettings))    
-        try { save(GlobalData(
-          cmbLanguages.getSelectionModel().selectedItem(),
-          encryptionEditor.toData()
-        )) } 
+        try { 
+          val data = encryptionEditor.toData()
+          save(
+            GlobalData(
+              cmbLanguages.getSelectionModel().selectedItem(),
+              data.newVerificationKey
+            ),
+            data.change
+          ) 
+        } 
         catch {
           case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings+": ", ex.getMessage())
         }
@@ -77,7 +83,7 @@ class GlobalEditor(
         cancel()
   }
 
-  def onSave(save : GlobalData  => Unit): Unit =
+  def onSave(save : (GlobalData, EncryptionKeyChange)  => Unit): Unit =
     buttons.onSave(() => saveIfPossible(save))
 
   def onCancel(cancel : ()  => Unit): Unit =
