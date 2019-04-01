@@ -8,14 +8,10 @@ import scalafx.Includes._
 
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
+import dbtarzan.config.connections.EncryptionKeyChange
 import dbtarzan.config.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.localization.Localization
 
-
-case class EncryptionKeyChange(
-  originalEncryptionKey : Option[EncryptionKey],
-  newEncryptionKey : Option[EncryptionKey]
-)
 
 case class EncryptionKeyEditorData(
   newVerificationKey : Option[VerificationKey],

@@ -5,16 +5,13 @@ import scalafx.scene.Scene
 import scalafx.Includes._
 import java.nio.file.Path
 
+import dbtarzan.config.connections.{EncryptionKeyChange, ConnectionDataPasswordChanger}
 import dbtarzan.config.global.{ GlobalDataReader, GlobalDataWriter, GlobalData }
 import dbtarzan.localization.Localization
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
 object GlobalEditorStarter
 {
-    private def rebuildConnectionPasswords(change : EncryptionKeyChange) : Unit = {
-
-    }
-
     def openGlobalEditor(parentStage : Stage, configPath: Path, localization : Localization) : Unit = {
         println("open global editor")  
         val globalStage = new Stage {
@@ -25,7 +22,7 @@ object GlobalEditorStarter
                 val originalData = GlobalDataReader.read(configPath)
                 def onSave(dataToSave: GlobalData, change : EncryptionKeyChange) : Unit = {
                     if(dataToSave.verificationKey != originalData.verificationKey)
-                        rebuildConnectionPasswords(change)
+                        new ConnectionDataPasswordChanger(change).updateDatas(configPath)
                     GlobalDataWriter.write(configPath, dataToSave)
                     window().hide()
                 }

@@ -36,7 +36,8 @@ object ConnectionEditorStarter
         def onCancel() : Unit = 
           window().hide()
 
-        val editor = new ConnectionEditor(ConnectionDataReader.read(configPath), openWeb, encryptionKey, localization)
+        val connectionData = ConnectionDataReader.read(configPath)
+        val editor = new ConnectionEditor(connectionData, openWeb, encryptionKey, localization)
         editor.onSave(onSave(_))
         editor.onCancel(() => onCancel())
         onCloseRequest = (event : WindowEvent) => { 

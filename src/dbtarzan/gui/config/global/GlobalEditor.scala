@@ -6,10 +6,12 @@ import scalafx.scene.control.{ ComboBox, ListCell, Label }
 import scalafx.geometry.Insets
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
+import scalafx.Includes._
+
 import dbtarzan.config.global.GlobalData
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
-import scalafx.Includes._
+import dbtarzan.config.connections.EncryptionKeyChange
 import dbtarzan.localization.{ Languages, Language, Localization }
 
 /**
