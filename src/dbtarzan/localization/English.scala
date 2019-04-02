@@ -92,6 +92,7 @@ class English extends Localization {
     def errorSavingConnections = "Saving the connections got"
     def errorSavingGlobalSettings = "Saving the global settings got"
     def errorWrongEncryptionKey = "Wrong master password"
+    def errorEncryptionKeysDifferent = "Encryption keys are different"
     def errorDatabaseMessage(msg : TWithDatabaseId) = "Database message "+msg+" not recognized"
     def errorTableMessage(msg : TWithTableId) = "Table message "+msg+" not recognized"
     def errorTableMessage(msg : TWithQueryId) = "Table message "+msg+" not recognized"    

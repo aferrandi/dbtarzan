@@ -85,23 +85,25 @@ class EncryptionKeyEditor(
   }
 
   private def isSamePassword() : Boolean = 
-    pwdNewEncryptionKey1.text == pwdNewEncryptionKey2.text
+    pwdNewEncryptionKey1.text().equals(pwdNewEncryptionKey2.text())
 
-  def canSave() : Boolean = 
+  def canSave() : Boolean = {
+    def originalEncryptionKeyVerified() : Boolean = 
+      verificationKey.map(vk => EncryptionVerification.verify(EncryptionKey(pwdOriginalEncryptionKey.text()), vk)).getOrElse(true)
     if(!chkEncryptionKey.selected()) 
       true
     else if(passwordTextChanged) {
-      if(verificationKey.map(vk => EncryptionVerification.verify(EncryptionKey(pwdOriginalEncryptionKey.text()), vk)).getOrElse(true)) {
+      if(!originalEncryptionKeyVerified()) {
         JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorWrongEncryptionKey)
         false
       } else if(!isSamePassword()) {
-        JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorWrongEncryptionKey)
+        JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorEncryptionKeysDifferent)
         false
       } else
         true
     } else
       true
-  
+  }  
 
   private def calcVerificationKey() : Option[VerificationKey] = 
     Some(pwdNewEncryptionKey1.text()).map(EncryptionKey(_)).map(EncryptionVerification.toVerification(_))
