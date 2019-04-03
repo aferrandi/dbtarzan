@@ -11,6 +11,7 @@ class Encryption(key : String, initVector : String) {
 	val method = "AES/CBC/PKCS5PADDING"
 	val utf8 = "UTF-8"
    	val iv = new IvParameterSpec(initVector.getBytes(utf8));
+	println("key:"+key)
     val keySpec =new SecretKeySpec(key.getBytes(utf8), "AES");
 
 	/* returns the JDBC configuration for a database */

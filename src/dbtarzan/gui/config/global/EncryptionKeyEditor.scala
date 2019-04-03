@@ -112,7 +112,10 @@ class EncryptionKeyEditor(
     if(chkEncryptionKey.selected())
       EncryptionKeyEditorData(
         calcVerificationKey(), 
-        EncryptionKeyChange(Some(EncryptionKey(pwdOriginalEncryptionKey.text())), Some(EncryptionKey(pwdNewEncryptionKey1.text())))  
+        EncryptionKeyChange(
+          verificationKey.map(vk => EncryptionKey(pwdOriginalEncryptionKey.text())),
+           Some(EncryptionKey(pwdNewEncryptionKey1.text()))
+           )  
       )
     else
       EncryptionKeyEditorData(verificationKey, EncryptionKeyChange(None, None))

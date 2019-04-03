@@ -7,7 +7,9 @@ import scalafx.geometry.Insets
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import scalafx.Includes._
+import akka.actor.ActorRef
 
+import dbtarzan.messages.Logger
 import dbtarzan.config.global.GlobalData
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
@@ -19,10 +21,11 @@ import dbtarzan.localization.{ Languages, Language, Localization }
 */
 class GlobalEditor(
     data : GlobalData,
-    localization: Localization
+    localization: Localization,
+    guiActor : ActorRef
   ) extends TControlBuilder {
-  
-  val languages = ObservableBuffer(Languages.languages)
+  private val log = new Logger(guiActor)
+  private val languages = ObservableBuffer(Languages.languages)
 
   val cmbLanguages = new ComboBox[Language] {
     items = languages
@@ -75,7 +78,11 @@ class GlobalEditor(
           ) 
         } 
         catch {
-          case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings+": ", ex.getMessage())
+          case ex : Exception => {
+              JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings+": ", ex.getMessage())
+              log.error("Saving the global settings got", ex)
+              ex.printStackTrace()
+            }
         }
       }
   

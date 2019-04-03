@@ -163,7 +163,7 @@ class MainGUI(
 		guiActor match {
 			case Some(ga) => {
 				new Logger(ga).info("Editing global configuration file "+configPaths.globalConfigPath)
-				GlobalEditorStarter.openGlobalEditor(stage, configPaths.globalConfigPath, localization)
+				GlobalEditorStarter.openGlobalEditor(stage, configPaths, localization, ga)
 			}
 			case None => println("MainGUI: guiActor not defined")
 		}
