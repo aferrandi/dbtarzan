@@ -13,7 +13,7 @@ import dbtarzan.localization.Localization
 
 class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
   def showDialog(): Option[EncryptionKey] = {
-    val dialog = new Dialog[EncryptionKey]() {
+    val dialog = new Dialog[String]() {
       initOwner(stage)
       title = localization.encryptionKey
       // graphic = new ImageView(this.getClass.getResource("login_icon.png").toString)
@@ -39,13 +39,10 @@ class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
     dialog.dialogPane().content = grid
     Platform.runLater(pwdEncryptionKey.requestFocus())
     dialog.resultConverter = dialogButton =>
-      if (dialogButton == btnTypeEnter) EncryptionKey(pwdEncryptionKey.text())
+      if (dialogButton == btnTypeEnter) pwdEncryptionKey.text()
       else null
 
-    val result = dialog.showAndWait()
-    result match {
-      case Some(e)   => Some(EncryptionKey("pippo"))
-      case None => None
-    }
+    val encryptionKey = dialog.showAndWait((x: String) => x).asInstanceOf[Option[String]]
+    encryptionKey.map(EncryptionKey(_))
   }
 }
