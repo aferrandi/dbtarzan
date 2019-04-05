@@ -24,7 +24,7 @@ class EncryptionKeyEditor(
     localization: Localization
     ) extends TControlBuilder {
   val chkEncryptionKey = new CheckBox {
-    text = localization.encryptionKey
+    text = localization.changeEncryptionKey
     selected.onChange((_, _, newValue) => changeVisibility(newValue))
   }    
 

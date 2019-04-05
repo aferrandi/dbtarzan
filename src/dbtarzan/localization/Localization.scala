@@ -68,6 +68,7 @@ trait Localization {
     def selectDriverFile: String
     def jdbcUrlStrings : String
     def jarFiles : String
+    def changeEncryptionKey : String
     def originalEncryptionKey : String
     def newEncryptionKey1 : String
     def newEncryptionKey2 : String

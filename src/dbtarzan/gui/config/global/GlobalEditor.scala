@@ -45,7 +45,7 @@ class GlobalEditor(
       })
     add(new Label { text = localization.language+":" }, 0, 0)
     add(cmbLanguages, 1, 0)
-    add(encryptionEditor.control, 0, 1)
+    add(encryptionEditor.control, 0, 1, 2, 1)
     padding = Insets(10)
     vgap = 10
     hgap = 10
