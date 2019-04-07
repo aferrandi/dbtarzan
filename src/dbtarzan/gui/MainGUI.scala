@@ -57,11 +57,14 @@ class MainGUI(
 		databaseTabs.setActors(guiActor, connectionsActor)
   } 
 
+	private def withExtractedEncryptionKey(use : EncryptionKey => Unit) : Unit = 
+		extractEncryptionKey().foreach(use) 
+
 	def onDatabaseSelected(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
-		databaseList.onDatabaseSelected(databaseId => use(databaseId, extractEncryptionKey().get))
+		databaseList.onDatabaseSelected(databaseId => withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey)))
 
 	def onForeignKeyToFile(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
-		databaseList.onForeignKeyToFile(databaseId => use(databaseId, extractEncryptionKey().get))
+		databaseList.onForeignKeyToFile(databaseId => withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey)))
 
 	private def buildStage() : PrimaryStage = new PrimaryStage {
 	    title = "DbTarzan "+version
@@ -150,11 +153,11 @@ class MainGUI(
 
 	private def extractEncryptionKey() : Option[EncryptionKey] = {
 		if(!encryptionKey.isDefined) 
-		encryptionKey  = verificationKey.map(
-			vkey => encryptionKeyDialog.showDialog()
-			).getOrElse(
-				Some(PasswordEncryption.defaultEncryptionKey)
-				)
+			encryptionKey  = verificationKey.map(
+				vkey => encryptionKeyDialog.showDialog(vkey)
+				).getOrElse(
+					Some(PasswordEncryption.defaultEncryptionKey)
+					)
 		encryptionKey
 	}
 

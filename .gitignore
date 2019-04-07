@@ -23,3 +23,4 @@ mksnap/*
 !mksnap/**/snapcraft.mod
 !mksnap/**/*.sh
 global.config
+connections (copy).config
