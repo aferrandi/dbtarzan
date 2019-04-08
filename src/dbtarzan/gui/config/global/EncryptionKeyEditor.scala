@@ -24,7 +24,7 @@ class EncryptionKeyEditor(
     localization: Localization
     ) extends TControlBuilder {
   val chkEncryptionKey = new CheckBox {
-    text = localization.changeEncryptionKey
+    text = localization.changeEncryptionKey+": "+EncryptionVerification.possibleEncryptionKeyLength.map(_.toString).mkString(",")
     selected.onChange((_, _, newValue) => changeVisibility(newValue))
   }    
 
@@ -51,7 +51,7 @@ class EncryptionKeyEditor(
       new ColumnConstraints() {
         hgrow = Priority.ALWAYS
       })
-    add(chkEncryptionKey, 0, 0)
+    add(chkEncryptionKey, 0, 0, 2, 1)
     add(lblOriginalEncryptionKey, 0, 1)
     add(pwdOriginalEncryptionKey, 1, 1)
     add(lblNewEncryptionKey1, 0, 2)
@@ -85,11 +85,17 @@ class EncryptionKeyEditor(
   }
 
   private def isSamePassword() : Boolean = 
-    pwdNewEncryptionKey1.text().equals(pwdNewEncryptionKey2.text())
+    newEncryptionKey1().equals(newEncryptionKey2())
+
+  private def newEncryptionKey1() = EncryptionKey(pwdNewEncryptionKey1.text())
+
+  private def newEncryptionKey2() = EncryptionKey(pwdNewEncryptionKey2.text())
+
+  private def originalEncryptionKey() = EncryptionKey(pwdOriginalEncryptionKey.text())
 
   def canSave() : Boolean = {
     def originalEncryptionKeyVerified() : Boolean = 
-      verificationKey.map(vk => EncryptionVerification.verify(EncryptionKey(pwdOriginalEncryptionKey.text()), vk)).getOrElse(true)
+      verificationKey.map(vk => EncryptionVerification.verify(originalEncryptionKey(), vk)).getOrElse(true)
     if(!chkEncryptionKey.selected()) 
       true
     else if(passwordTextChanged) {
@@ -99,6 +105,9 @@ class EncryptionKeyEditor(
       } else if(!isSamePassword()) {
         JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorEncryptionKeysDifferent)
         false
+      } else if(!EncryptionVerification.isEncryptionKeyOfValidSize(newEncryptionKey1())) {
+        JFXUtil.showErrorAlert(localization.errorSavingGlobalSettings, localization.errorWrongEncryptionKeySize+":"+EncryptionVerification.possibleEncryptionKeyLength.map(_.toString).mkString(","))
+        false
       } else
         true
     } else
@@ -106,15 +115,15 @@ class EncryptionKeyEditor(
   }  
 
   private def calcVerificationKey() : Option[VerificationKey] = 
-    Some(pwdNewEncryptionKey1.text()).map(EncryptionKey(_)).map(EncryptionVerification.toVerification(_))
+    Option(newEncryptionKey1()).map(EncryptionVerification.toVerification(_))
 
   def toData() : EncryptionKeyEditorData = 
     if(chkEncryptionKey.selected())
       EncryptionKeyEditorData(
         calcVerificationKey(), 
         EncryptionKeyChange(
-          verificationKey.map(vk => EncryptionKey(pwdOriginalEncryptionKey.text())),
-           Some(EncryptionKey(pwdNewEncryptionKey1.text()))
+          verificationKey.map(vk => originalEncryptionKey()),
+           Some(newEncryptionKey1())
            )  
       )
     else

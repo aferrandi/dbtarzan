@@ -68,7 +68,7 @@ class Spanish extends Localization {
     def selectDriverFile = "Seleccione el archivo JAR del controlador"
     def jdbcUrlStrings = "URL para las conexiones Jdbc"
     def jarFiles = "Archivo JAR"
-    def changeEncryptionKey = "Cambiar la master password"
+    def changeEncryptionKey = "Cambiar la master password. Posibles longitudes:"
     def originalEncryptionKey = "Originale"
     def newEncryptionKey1 = "Nueva"
     def newEncryptionKey2 = "Nueva, una vez mas"
