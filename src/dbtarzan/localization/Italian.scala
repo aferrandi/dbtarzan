@@ -93,6 +93,7 @@ class Italian extends Localization {
     def errorSavingConnections = "Il salvataggio delle connessioni e' fallito a causa di"
     def errorSavingGlobalSettings = "Il salvataggio delle opzioni globali e' fallito a causa di"
     def errorWrongEncryptionKey = "Master password errata"
+    def errorWrongEncryptionKeySize = "La lunghezza della master password e' errata. Possibili lunghezze:"
     def errorEncryptionKeysDifferent = "Le Master password sono diverse"
     def errorDatabaseMessage(msg : TWithDatabaseId) = "Messaggio dal database "+msg+" non riconosciuto"
     def errorTableMessage(msg : TWithTableId) = "Messaggio dalla tabella "+msg+" non riconosciuto"

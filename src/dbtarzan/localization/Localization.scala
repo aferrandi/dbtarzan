@@ -94,6 +94,7 @@ trait Localization {
     def errorSavingGlobalSettings: String
     def errorWrongEncryptionKey : String
     def errorEncryptionKeysDifferent : String
+    def errorWrongEncryptionKeySize : String
     def errorDatabaseMessage(msg : TWithDatabaseId) : String
     def errorTableMessage(msg : TWithTableId) : String
     def errorTableMessage(msg : TWithQueryId) : String

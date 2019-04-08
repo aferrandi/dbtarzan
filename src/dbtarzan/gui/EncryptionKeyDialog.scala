@@ -7,9 +7,6 @@ import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.stage.Stage
 import scalafx.scene.control._
 import scalafx.scene.layout.GridPane
-import scalafx.event.ActionEvent
-import scalafx.event.Event
-import javafx.event.EventHandler
 
 import dbtarzan.config.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.localization.Localization
@@ -26,7 +23,10 @@ class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
       promptText = localization.encryptionKey
       text.onChange { (_, _, newValue) => btnEnter.disable = newValue.trim().isEmpty}
     }
-    val lblError = new Label();
+    val lblError = new Label() {
+      wrapText = true
+      minWidth = 400
+    }
     val grid = buildGrid()
     dialog.dialogPane().content = grid
     Platform.runLater(pwdEncryptionKey.requestFocus())
@@ -42,7 +42,7 @@ class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
         padding = Insets(20, 10, 10, 10)
         add(new Label(localization.encryptionKey+":"), 0, 1)
         add(pwdEncryptionKey, 1, 1)
-        add(lblError, 0, 2, 2, 1)
+        add(lblError, 0, 2, 2, 2)
     }
 
     private def buildButtonTypeEnter() : ButtonType = {
@@ -56,10 +56,10 @@ class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
       btnEnter.addEventFilter(javafx.event.ActionEvent.ACTION, (event:javafx.event.ActionEvent) => {
         val encryptionKey = EncryptionKey(pwdEncryptionKey.text())
         if(!EncryptionVerification.isEncryptionKeyOfValidSize(encryptionKey)) {
-          lblError.text = "Wrong master password length (must be long)"
+          lblError.text = localization.errorWrongEncryptionKeySize+EncryptionVerification.possibleEncryptionKeyLength.map(_.toString).mkString(",")
           event.consume()
         } else if(!EncryptionVerification.verify(encryptionKey, verificationKey)) {
-          lblError.text = "Wrong master password"
+          lblError.text = localization.errorWrongEncryptionKey
           event.consume()
         }
       })
@@ -69,7 +69,6 @@ class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
     
     def showAndWait() : Option[EncryptionKey] = {
       val res = dialog.showAndWait((x: EncryptionKey) => x).asInstanceOf[Option[EncryptionKey]] 
-      println("showAndWait")
       res
     }
       

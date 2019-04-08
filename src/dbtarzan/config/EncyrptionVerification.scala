@@ -19,8 +19,12 @@ object EncryptionVerification {
     }
 
     def verify(encryptionKey : EncryptionKey, verificationKey : VerificationKey) : Boolean = {
-        val res = new PasswordEncryption(encryptionKey).decrypt(verificationKey.password)
-        alwaysTheSame == res
+        try {
+            val res = new PasswordEncryption(encryptionKey).decrypt(verificationKey.password)
+            alwaysTheSame == res
+        } catch {
+            case e : Exception => false
+        }
     }
 
     /*For AES, NIST selected three members of the Rijndael family, each with a block size of 128 bits, but three different key lengths: 128, 192 and 256 bits. */
