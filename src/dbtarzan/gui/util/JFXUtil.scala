@@ -11,6 +11,7 @@ import scalafx.Includes._
 import scalafx.event.ActionEvent
 import scalafx.scene.control.Alert.AlertType
 import scalafx.collections.ObservableBuffer 
+import scalafx.scene.layout.Region
 
 object JFXUtil {
 	def threeLines : String = "\u2630"
@@ -73,10 +74,14 @@ object JFXUtil {
 		case _ => false
 	}
 
-	def showErrorAlert(header : String, error : String) : Unit = new Alert(AlertType.Error) { 
+	def showErrorAlert(header : String, error : String) : Unit = {
+		val alert = new Alert(AlertType.Error) { 
 			headerText= header
 			contentText= error
-		}.showAndWait()
+		}
+		alert.dialogPane().minHeight_=(Region.USE_PREF_SIZE)
+		alert.showAndWait()
+	}
 
 	def loadIcon(fileName: String) : Image = 
 		// println(this.getClass().getResource("").getPath())
