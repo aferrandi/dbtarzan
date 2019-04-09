@@ -79,6 +79,7 @@ object JFXUtil {
 			headerText= header
 			contentText= error
 		}
+		// show long text without truncating it
 		alert.dialogPane().minHeight_=(Region.USE_PREF_SIZE)
 		alert.showAndWait()
 	}

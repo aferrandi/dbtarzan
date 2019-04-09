@@ -35,7 +35,7 @@ class GlobalEditor(
     buttonCell = buildLanguageCell()
   }
 
-  val encryptionEditor = new EncryptionKeyEditor(data.verificationKey, localization)
+  val encryptionEditor = new EncryptionKeyEditor(data.encryptionData, localization)
 
   private val grid =  new GridPane {
     columnConstraints = List(
@@ -72,7 +72,7 @@ class GlobalEditor(
           save(
             GlobalData(
               cmbLanguages.getSelectionModel().selectedItem(),
-              data.newVerificationKey
+              data.newEncryptionData
             ),
             data.change
           ) 

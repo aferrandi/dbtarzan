@@ -28,7 +28,7 @@ class ConnectionDataPasswordChanger(change : EncryptionKeyChange) {
             original.url,
             original.schema,
             original.user, 
-            reencryptPassword(Password(original.password), original.passwordEncrypted.getOrElse(false)).key,
+            reencryptPassword(original.password, original.passwordEncrypted.getOrElse(false)),
             Some(true),
             original.instances,
             original.identifierDelimiters,

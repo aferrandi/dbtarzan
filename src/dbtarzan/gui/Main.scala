@@ -20,7 +20,7 @@ object Main extends JFXApp {
   val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
   val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
   val localization = Localizations.of(globalData.language)
-  val mainGUI = new MainGUI(configPaths, localization, globalData.verificationKey, version, openWeb, closeApp)
+  val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, openWeb, closeApp)
   val actors = new ActorHandler(
     () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, localization), 
     guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization)

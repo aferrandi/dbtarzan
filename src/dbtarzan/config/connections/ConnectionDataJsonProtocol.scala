@@ -1,7 +1,8 @@
 package dbtarzan.config.connections
 
-
 import spray.json._
+
+import dbtarzan.config.PasswordJsonProtocol
 
 object IdentifierDelimitersJsonProtocol extends DefaultJsonProtocol {
 import dbtarzan.db.IdentifierDelimiters
@@ -11,10 +12,9 @@ import dbtarzan.db.IdentifierDelimiters
   	)
 }
 
-
-
 object ConnectionDataJsonProtocol extends DefaultJsonProtocol {
 import IdentifierDelimitersJsonProtocol._
+import PasswordJsonProtocol._
   implicit val connectionDataFormat = jsonFormat(ConnectionData, 
   	"jar", 
   	"name", 

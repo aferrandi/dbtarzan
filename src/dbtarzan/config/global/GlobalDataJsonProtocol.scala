@@ -1,29 +1,33 @@
 package dbtarzan.config.global
 
-
 import spray.json._
+
+import dbtarzan.config.PasswordJsonProtocol
 
 object LanguageJsonProtocol extends DefaultJsonProtocol {
 import dbtarzan.localization.Language
   implicit val languageFormat = jsonFormat(Language, "language")
 }
 
-object PasswordJsonProtocol extends DefaultJsonProtocol {
-import dbtarzan.config.Password
-  implicit val passwordFormat = jsonFormat(Password, "password")
-}
-
 object VerificationKeyJsonProtocol extends DefaultJsonProtocol {
   import PasswordJsonProtocol._
-import dbtarzan.config.VerificationKey
-  implicit val verificationKeyFormat = jsonFormat(VerificationKey, "verificationKey")
+  import dbtarzan.config.VerificationKey
+  implicit object VerificationKeyFormat extends JsonFormat[VerificationKey] {
+    def write(verificationKey: VerificationKey) = PasswordFormat.write(verificationKey.password)
+    def read(json: JsValue): VerificationKey = VerificationKey(PasswordFormat.read(json))
+  }
+}
+
+object EncryptionDataJsonProtocol extends DefaultJsonProtocol {
+import VerificationKeyJsonProtocol._
+  implicit val encryptionDataFormat = jsonFormat(EncryptionData, "verificationKey")
 }
 
 object GlobalDataJsonProtocol extends DefaultJsonProtocol {
   import LanguageJsonProtocol._
-  import VerificationKeyJsonProtocol._
+  import EncryptionDataJsonProtocol._
   implicit val globalDataFormat = jsonFormat(GlobalData, 
   	"language",
-    "verificationKey"
+    "encryptionData"
   	)
 }

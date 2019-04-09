@@ -7,8 +7,8 @@ import scalafx.Includes._
 
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.Password
 import dbtarzan.localization.Localization
+import dbtarzan.config.Password
 
 case class ConnectionDataErrors(name : String, errors : List[String])
 
@@ -35,7 +35,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   private def selectionModel() = list.selectionModel() 
 
-  def newData() = ConnectionData("", "<NEW>", "","",None,"","",None, None, None, None, None)
+  def newData() = ConnectionData("", "<NEW>", "","",None,"", Password(""),None, None, None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex() = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)

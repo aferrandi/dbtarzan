@@ -8,7 +8,7 @@ class DriverManagerWithEncryption(key : EncryptionKey) extends ConnectionProvide
 	private val passwordEncryption = new PasswordEncryption(key)
 	def getConnection(data : ConnectionData) : Connection = 
 		if(data.passwordEncrypted.getOrElse(false))
-			DriverManager.getConnection(data.url, data.user, passwordEncryption.decrypt(Password(data.password)).key)
+			DriverManager.getConnection(data.url, data.user, passwordEncryption.decrypt(data.password).key)
 		else	
-			DriverManager.getConnection(data.url, data.user, data.password)
+			DriverManager.getConnection(data.url, data.user, data.password.key)
 }

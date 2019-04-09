@@ -10,17 +10,18 @@ import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.connections.EncryptionKeyChange
 import dbtarzan.config.{ EncryptionKey, VerificationKey, EncryptionVerification }
+import dbtarzan.config.global.EncryptionData
 import dbtarzan.localization.Localization
 
 
 case class EncryptionKeyEditorData(
-  newVerificationKey : Option[VerificationKey],
+  newEncryptionData : Option[EncryptionData],
   change : EncryptionKeyChange
 )
 
 /* The list of database to choose from */
 class EncryptionKeyEditor(
-    verificationKey : Option[VerificationKey],
+    encryptionData : Option[EncryptionData],
     localization: Localization
     ) extends TControlBuilder {
   val chkEncryptionKey = new CheckBox {
@@ -52,12 +53,20 @@ class EncryptionKeyEditor(
         hgrow = Priority.ALWAYS
       })
     add(chkEncryptionKey, 0, 0, 2, 1)
-    add(lblOriginalEncryptionKey, 0, 1)
-    add(pwdOriginalEncryptionKey, 1, 1)
-    add(lblNewEncryptionKey1, 0, 2)
-    add(pwdNewEncryptionKey1, 1, 2)
-    add(lblNewEncryptionKey2, 0, 3)
-    add(pwdNewEncryptionKey2, 1, 3)
+    if(encryptionData.isDefined) {
+      add(lblOriginalEncryptionKey, 0, 1)
+      add(pwdOriginalEncryptionKey, 1, 1)
+      add(lblNewEncryptionKey1, 0, 2)
+      add(pwdNewEncryptionKey1, 1, 2)
+      add(lblNewEncryptionKey2, 0, 3)
+      add(pwdNewEncryptionKey2, 1, 3)      
+    } else {
+      add(lblNewEncryptionKey1, 0, 2)
+      add(pwdNewEncryptionKey1, 1, 2)
+      add(lblNewEncryptionKey2, 0, 3)
+      add(pwdNewEncryptionKey2, 1, 3)      
+    }
+
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -65,10 +74,10 @@ class EncryptionKeyEditor(
   show()
 
   def show() : Unit = {
-      val isEncryptionKey = verificationKey.isDefined
+      val isEncryptionKey = encryptionData.isDefined
       chkEncryptionKey.selected = isEncryptionKey 
-      lblOriginalEncryptionKey.visible = isEncryptionKey && verificationKey.isDefined
-      pwdOriginalEncryptionKey.visible = isEncryptionKey && verificationKey.isDefined
+      lblOriginalEncryptionKey.visible = isEncryptionKey
+      pwdOriginalEncryptionKey.visible = isEncryptionKey
       lblNewEncryptionKey1.visible = isEncryptionKey 
       pwdNewEncryptionKey1.visible = isEncryptionKey 
       lblNewEncryptionKey2.visible = isEncryptionKey 
@@ -76,8 +85,8 @@ class EncryptionKeyEditor(
   }
 
   private def changeVisibility(visible : Boolean) : Unit = {
-      lblOriginalEncryptionKey.visible = visible && verificationKey.isDefined
-      pwdOriginalEncryptionKey.visible = visible && verificationKey.isDefined
+      lblOriginalEncryptionKey.visible = visible
+      pwdOriginalEncryptionKey.visible = visible
       lblNewEncryptionKey1.visible = visible 
       pwdNewEncryptionKey1.visible = visible 
       lblNewEncryptionKey2.visible = visible 
@@ -95,7 +104,8 @@ class EncryptionKeyEditor(
 
   def canSave() : Boolean = {
     def originalEncryptionKeyVerified() : Boolean = 
-      verificationKey.map(vk => EncryptionVerification.verify(originalEncryptionKey(), vk)).getOrElse(true)
+      encryptionData.map(ed => EncryptionVerification.verify(originalEncryptionKey(), ed.verificationKey)).getOrElse(true)
+
     if(!chkEncryptionKey.selected()) 
       true
     else if(passwordTextChanged) {
@@ -120,14 +130,14 @@ class EncryptionKeyEditor(
   def toData() : EncryptionKeyEditorData = 
     if(chkEncryptionKey.selected())
       EncryptionKeyEditorData(
-        calcVerificationKey(), 
+        calcVerificationKey().map(EncryptionData(_)), 
         EncryptionKeyChange(
-          verificationKey.map(vk => originalEncryptionKey()),
+          encryptionData.map(ed => originalEncryptionKey()),
            Some(newEncryptionKey1())
            )  
       )
     else
-      EncryptionKeyEditorData(verificationKey, EncryptionKeyChange(None, None))
+      EncryptionKeyEditorData(encryptionData, EncryptionKeyChange(None, None))
   
 
   def control : Parent = grid

@@ -23,7 +23,7 @@ object GlobalEditorStarter
             scene = new Scene {
                 val originalData = GlobalDataReader.read(configPaths.globalConfigPath)
                 def onSave(dataToSave: GlobalData, change : EncryptionKeyChange) : Unit = {
-                    if(dataToSave.verificationKey != originalData.verificationKey)
+                    if(dataToSave.encryptionData != originalData.encryptionData)
                         new ConnectionDataPasswordChanger(change).updateDatas(configPaths.connectionsConfigPath)
                     GlobalDataWriter.write(configPaths.globalConfigPath, dataToSave)
                     window().hide()

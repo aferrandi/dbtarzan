@@ -118,7 +118,7 @@ class OneConnectionEditor(
     txtUrl.text = data.url
     txtDriver.text = data.driver
     txtUser.text = data.user
-    txtPassword.text = decryptPasswordIfNeeded(Password(data.password), data.passwordEncrypted.getOrElse(false)).key
+    txtPassword.text = decryptPasswordIfNeeded(data.password, data.passwordEncrypted.getOrElse(false)).key
     txtSchema.text = noneToEmpty(data.schema)
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
@@ -157,7 +157,7 @@ class OneConnectionEditor(
       txtUrl.text(),
       emptyToNone(txtSchema.text()),
       txtUser.text(), 
-      encryptPassword(Password(txtPassword.text())).key,
+      encryptPassword(Password(txtPassword.text())),
       Some(true),
       None,
       cmbDelimiters.toDelimiters(),
