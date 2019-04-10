@@ -7,7 +7,7 @@ import scalafx.event.ActionEvent
 import scalafx.geometry.{ Insets, HPos }
 import scalafx.Includes._
 
-import dbtarzan.gui.util.OnChangeSafe
+import dbtarzan.gui.util.{ OnChangeSafe, JFXUtil }
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.{ EncryptionKey, PasswordEncryption, Password }
@@ -133,12 +133,14 @@ class OneConnectionEditor(
     Option(s).filter(_.trim.nonEmpty)
 
   private def changeAdvancedVisibility(visible : Boolean) : Unit = {
-    lblDelimiters.visible = visible
-    cmbDelimiters.control.visible = visible
-    lblMaxRows.visible = visible
-    txtMaxRows.visible = visible
-    lblCatalog.visible = visible
-    txtCatalog.visible = visible
+    JFXUtil.changeControlsVisibility(visible,
+      lblDelimiters,
+      cmbDelimiters.control,
+      lblMaxRows,
+      txtMaxRows,
+      lblCatalog,
+      txtCatalog
+    )
   }
 
   private def encryptPassword(password: Password) : Password =

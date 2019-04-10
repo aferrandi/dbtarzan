@@ -95,4 +95,11 @@ object JFXUtil {
 			text.getBoundsInLocal().getWidth() / s.length;        
     }	
    
+    /* invisible controls don't use space in the layout */
+	def changeControlsVisibility(visible : Boolean, nodes: javafx.scene.Node*) {
+		nodes.foreach(node => {
+			node.visible = visible
+			node.managed = visible
+		})
+	}
  }

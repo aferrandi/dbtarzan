@@ -53,20 +53,9 @@ class EncryptionKeyEditor(
         hgrow = Priority.ALWAYS
       })
     add(chkEncryptionKey, 0, 0, 2, 1)
-    if(encryptionData.isDefined) {
-      add(lblOriginalEncryptionKey, 0, 1)
-      add(pwdOriginalEncryptionKey, 1, 1)
-      add(lblNewEncryptionKey1, 0, 2)
-      add(pwdNewEncryptionKey1, 1, 2)
-      add(lblNewEncryptionKey2, 0, 3)
-      add(pwdNewEncryptionKey2, 1, 3)      
-    } else {
-      add(lblNewEncryptionKey1, 0, 2)
-      add(pwdNewEncryptionKey1, 1, 2)
-      add(lblNewEncryptionKey2, 0, 3)
-      add(pwdNewEncryptionKey2, 1, 3)      
-    }
-
+    addRow(1, lblOriginalEncryptionKey, pwdOriginalEncryptionKey)
+    addRow(2, lblNewEncryptionKey1, pwdNewEncryptionKey1)
+    addRow(3, lblNewEncryptionKey2, pwdNewEncryptionKey2)
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -76,21 +65,28 @@ class EncryptionKeyEditor(
   def show() : Unit = {
       val isEncryptionKey = encryptionData.isDefined
       chkEncryptionKey.selected = isEncryptionKey 
-      lblOriginalEncryptionKey.visible = isEncryptionKey
-      pwdOriginalEncryptionKey.visible = isEncryptionKey
-      lblNewEncryptionKey1.visible = isEncryptionKey 
-      pwdNewEncryptionKey1.visible = isEncryptionKey 
-      lblNewEncryptionKey2.visible = isEncryptionKey 
-      pwdNewEncryptionKey2.visible = isEncryptionKey 
+      JFXUtil.changeControlsVisibility(isEncryptionKey,
+        lblOriginalEncryptionKey, 
+        pwdOriginalEncryptionKey,
+        lblNewEncryptionKey1,
+        pwdNewEncryptionKey1,
+        lblNewEncryptionKey2,
+        pwdNewEncryptionKey2
+      )
   }
 
   private def changeVisibility(visible : Boolean) : Unit = {
-      lblOriginalEncryptionKey.visible = visible
-      pwdOriginalEncryptionKey.visible = visible
-      lblNewEncryptionKey1.visible = visible 
-      pwdNewEncryptionKey1.visible = visible 
-      lblNewEncryptionKey2.visible = visible 
-      pwdNewEncryptionKey2.visible = visible 
+      val isEncryptionKey = encryptionData.isDefined
+      JFXUtil.changeControlsVisibility(visible && isEncryptionKey,
+        lblOriginalEncryptionKey, 
+        pwdOriginalEncryptionKey
+      )
+      JFXUtil.changeControlsVisibility(visible,
+        lblNewEncryptionKey1,
+        pwdNewEncryptionKey1,
+        lblNewEncryptionKey2,
+        pwdNewEncryptionKey2
+      )
   }
 
   private def isSamePassword() : Boolean = 
