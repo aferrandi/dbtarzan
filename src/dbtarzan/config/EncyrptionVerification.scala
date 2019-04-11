@@ -6,8 +6,6 @@ case class EncryptionKey(key : String)
 
 case class VerificationKey(password: Password)
 
-
-
 object EncryptionVerification {
     val alwaysTheSame = Password("7ODu6l6eU5NgiZp7")
 
