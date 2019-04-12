@@ -13,9 +13,13 @@ object GlobalDataReader {
 	def read(path: Path) : GlobalData = {
 		try { 
 			val text = FileReadWrite.readFile(path)
-			text.parseJson.convertTo[GlobalData]
+			parseText(text)
 		} catch {
 		  case e: FileNotFoundException => GlobalData(Languages.default, None)
 		}
+	}
+
+	def parseText(text : String) : GlobalData = {
+		text.parseJson.convertTo[GlobalData]
 	}
 }
