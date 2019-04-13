@@ -1,6 +1,7 @@
 package dbtarzan.db
 
-
+/* to apply the delimeters (e.g. [ and ] in SQL server) to the table names or to the field names when querying them, and/or prefixing the table
+	names with a schema */
 class QueryAttributesApplier(queryAttributes: QueryAttributes) {
 	def applyDelimiters(identifier: String) : String = 	
 		queryAttributes.delimiters.map(ds => ds.withDelimiters(identifier)).getOrElse(identifier)

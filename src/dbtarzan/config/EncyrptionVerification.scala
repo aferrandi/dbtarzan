@@ -6,6 +6,9 @@ case class EncryptionKey(key : String)
 
 case class VerificationKey(password: Password)
 
+/* the verification key is used to check that the encryption key is correct, before trying to open a database with a password decrypted with that key.
+   The veriication key is stored with the global configuration
+ */
 object EncryptionVerification {
     val alwaysTheSame = Password("7ODu6l6eU5NgiZp7")
 
