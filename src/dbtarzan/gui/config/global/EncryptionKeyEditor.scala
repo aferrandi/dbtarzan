@@ -124,13 +124,13 @@ class EncryptionKeyEditor(
     Option(newEncryptionKey1()).map(EncryptionVerification.toVerification(_))
 
   def toData() : EncryptionKeyEditorData = 
-    if(chkEncryptionKey.selected())
+    if(chkEncryptionKey.selected() && passwordTextChanged)
       EncryptionKeyEditorData(
         calcVerificationKey().map(EncryptionData(_)), 
         EncryptionKeyChange(
           encryptionData.map(ed => originalEncryptionKey()),
-           Some(newEncryptionKey1())
-           )  
+          Some(newEncryptionKey1())
+        )  
       )
     else
       EncryptionKeyEditorData(encryptionData, EncryptionKeyChange(None, None))

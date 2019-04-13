@@ -11,6 +11,6 @@ case class EncryptionData(
 case class GlobalData(
 	/* the laguage used for the UI */
 	language : Language,
-	/* if this is not empty, a passwrod is needed */
+	/* if this is not empty, a password is needed */
 	encryptionData : Option[EncryptionData]
 )

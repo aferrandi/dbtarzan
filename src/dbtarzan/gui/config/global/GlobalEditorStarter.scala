@@ -24,6 +24,7 @@ object GlobalEditorStarter
             height = 300
             scene = new Scene {
                 val originalData = GlobalDataReader.read(configPaths.globalConfigPath)
+                
                 def onSave(dataToSave: GlobalData, change : EncryptionKeyChange) : Unit = {
                     if(dataToSave.encryptionData != originalData.encryptionData)
                         new ConnectionDataPasswordChanger(change).updateDatas(configPaths.connectionsConfigPath)
