@@ -80,6 +80,7 @@ class Spanish extends Localization {
     def loadingForeignKeys(fileName : String) = "Estoy cargando  las claves externas desde el archivo de base de datos "+fileName    
     def noRowsFromForeignKey(keyName : String, keyToTable : String) = "Ninguna fila seleccionada con la clave "+keyName+". Tabla "+keyToTable+" abierta sin filtro."
     def unorderedQueryResults = "Resultados no ordenadas?"
+    def globalChangesAfterRestart = "Reinicie la aplicación para activar estos cambios"
     def connectionResetted(databaseName : String) = "Conexión de base de datos "+databaseName+" restablecida"
     def databaseAlreadyOpen(databaseName : String) =  "La base de datos "+databaseName+" ya está abierta"
     def editingConnectionFile(fileName: Path) = "Estoy editando el archivo de configuración de las conexiones " + fileName

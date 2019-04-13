@@ -1,10 +1,12 @@
 package dbtarzan.gui.config.global
 
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
+import scalafx.scene.control.Alert
+import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.Scene
 import scalafx.Includes._
-import java.nio.file.Path
 import akka.actor.ActorRef
+import scalafx.scene.layout.Region
 
 import dbtarzan.config.connections.{EncryptionKeyChange, ConnectionDataPasswordChanger}
 import dbtarzan.config.global.{ GlobalDataReader, GlobalDataWriter, GlobalData }
@@ -26,6 +28,11 @@ object GlobalEditorStarter
                     if(dataToSave.encryptionData != originalData.encryptionData)
                         new ConnectionDataPasswordChanger(change).updateDatas(configPaths.connectionsConfigPath)
                     GlobalDataWriter.write(configPaths.globalConfigPath, dataToSave)
+                    new Alert(AlertType.Information) { 
+                        headerText= localization.editGlobalSettings
+                        contentText= localization.globalChangesAfterRestart
+                        dialogPane().minHeight_=(Region.USE_PREF_SIZE)
+                    }.showAndWait()
                     window().hide()
                 }
 

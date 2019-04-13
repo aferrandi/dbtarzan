@@ -74,15 +74,14 @@ object JFXUtil {
 		case _ => false
 	}
 
-	def showErrorAlert(header : String, error : String) : Unit = {
-		val alert = new Alert(AlertType.Error) { 
+	def showErrorAlert(header : String, error : String) : Unit =
+		new Alert(AlertType.Error) { 
 			headerText= header
 			contentText= error
-		}
-		// show long text without truncating it
-		alert.dialogPane().minHeight_=(Region.USE_PREF_SIZE)
-		alert.showAndWait()
-	}
+			// show long text without truncating it
+			dialogPane().minHeight_=(Region.USE_PREF_SIZE)
+		}.showAndWait()
+	
 
 	def loadIcon(fileName: String) : Image = 
 		// println(this.getClass().getResource("").getPath())

@@ -80,6 +80,7 @@ trait Localization {
     def loadingForeignKeys(fileName : String) : String
     def noRowsFromForeignKey(keyName : String, keyToTable : String) : String
     def unorderedQueryResults : String
+    def globalChangesAfterRestart : String
     def connectionResetted(databaseName : String) : String
     def databaseAlreadyOpen(databaseName : String) : String
     def editingConnectionFile(fileName: Path) : String
