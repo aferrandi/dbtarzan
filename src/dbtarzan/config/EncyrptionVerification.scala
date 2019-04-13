@@ -10,8 +10,9 @@ case class VerificationKey(password: Password)
    The veriication key is stored with the global configuration
  */
 object EncryptionVerification {
+    /* if the encryption key encrypted with the verification key matches this invariant, then it is correct */
     val alwaysTheSame = Password("7ODu6l6eU5NgiZp7")
-
+    /* AES allows only encyrption keys of that size */
     val possibleEncryptionKeyLength = List(16, 24, 32)
 
     def toVerification(encryptionKey : EncryptionKey) : VerificationKey = {
