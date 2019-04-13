@@ -93,7 +93,7 @@ class Spanish extends Localization {
     def errorSavingConnections = "El guardado de conexiones ha fallado debido a"
     def errorSavingGlobalSettings = "El guardado de las opciones globales, y 'fallado debido a"
     def errorWrongEncryptionKey = "Contraseña maestra incorrecta"
-    def errorWrongEncryptionKeySize = "La longitud de la contraseña maestra es incorrecta. Posibles longitudes:"
+    def errorWrongEncryptionKeySize = "La longitud de la contraseña maestra es incorrecta. Posibles longitudes"
     def errorEncryptionKeysDifferent = "Las contraseñas maestras son diferentes"
     def errorDatabaseMessage(msg : TWithDatabaseId) = "Mensaje de la base de datos "+msg+" no reconocido"
     def errorTableMessage(msg : TWithTableId) = "Mensaje de la tabla "+msg+" non riconosciuto"
