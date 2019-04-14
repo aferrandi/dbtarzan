@@ -12,7 +12,7 @@ categories: [GUI]
 DbTarzan includes a connection editor. With it it is possible to add, update and remove connections to databases.
 The editor actually just changes the [connections.config file](The-database-connections-configuration-file), which is used by dbtarzan to display the list of available database connections.
 
-![Connections editor](images/editConnections.jpeg)
+![Connections editor](images/editConnections.png)
 
 To open the editor, in the "Settings" menu on the top choose "Edit Connections".
 The editor displays on the right side a list of database connections. 
@@ -23,8 +23,11 @@ Once a connection is chosen on the list, the right side of the editor shows the 
 * **Driver**, the driver class used to connect to the database, included in the jar file.
 * **User and password**, difining the login account to connect to the database. 
 * **Schema**. For databases that require the indication of a schema when connecting to them, like for example Oracle and SQL server.
+
+And optionally (generally not needed):
 * **Delimiters**. If the database contains tables or columns that have as name reserved words in the database (like GROUP or RULE), queries don't work unless these names are delimited with special characters. These characters vary between databases, but they are either double quotes or squared brackets. 
- 
+* **Max rows**. The number of rows resulting from queries are limited to 500 by default: you don't want to use local memory, network and database resources to read many table rows, not to mention the queries performance. If you want to see other rows, it is generally enough to change the query parameters or the order of the resulting rows. But there are some cases in which you want to have a larger rows number limit. 
+ * **Catalog**. similar concept to the schema, used to identify a specific database, added to solve issue [#78](https://github.com/aferrandi/dbtarzan/issues/78).
 
 
 To **update** the definition of a database connection:

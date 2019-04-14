@@ -23,7 +23,7 @@ The list of tables can be [filtered](./Tables-Names-Filter). Open a table double
 
 ![Selection](images/selection.png)
 
-If you select some rows (like in the previous image) and double-click on a **foreign key**, you open the table related to the original one through the foreign key, showing the rows related to the originally selected rows:
+If you select some rows (like in the previous image) and double-click on a **foreign key**, you open the table related to the original one through the foreign key, showing the rows related to the originally selected rows. Keeping the Ctrl button pressed when double-clicking the foreign key the current tab is closed when opening the new one.
 
 ![Derived](images/derived.png)
 
