@@ -13,6 +13,15 @@ DBTarzan needs Java 8, but in case of the Windows installation and of the debian
 DBTarzan changelog
 =================
 
+- Release 1.19
+
+Added the possibility to use a master password to encrypt all the databases' password in the connections.config file.
+
+Added the possibility to use catalog (similar concept to schema) as JDBC parameter to connect to a specific database.
+
+Keeping the Ctrl button pressed when double-clicking a foreign key it closes the previous tab when opening the new one.
+
+
 - Release 1.18
 
 Automatic sizing of the table columns to fit the columns content. This means more information in the UI.
@@ -20,16 +29,4 @@ Automatic sizing of the table columns to fit the columns content. This means mor
 Internationalization: Added Spanish and Italian to the set of languages used to display the application's texts, buttons and menus. Added the "global options" panel to choose the language.
 
 Remove the progress bar from the UI after a table has been completely loaded. It is not needed and just uses space.
-
-- Release 1.16
-
-A text box on the top of the table list allows to filter them, so that only the ones with names or columns containing the text are displayed.
-
-If the where clause written in the "Where" text box is wrong, running the query turns the text color to red.
-
-The database list is now sorted, making it easy to find the correct database with many databases available.
-
-When no table is found in the database, assuming the wrong schema was chosen, the error message shows a list of the available schemas.
-
-Pressing the "help" menu shows the now the correct documentation page https://aferrandi.github.io/dbtarzan/ .
 
