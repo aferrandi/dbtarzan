@@ -30,10 +30,16 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 			case _ => FieldType.STRING
 		}
 
+	private def toTypeDescription(typeName : String, columnSize: Option[Int], decimalDigits: Option[Int]) : String =
+		typeName+"["+List(columnSize, decimalDigits).flatten.mkString(",")+"]"
+
 	private def readColumns(rs : ResultSet) : List[Field] = 
 		ResultSetReader.readRS(rs, r => {
 			val fieldName = r.getString("COLUMN_NAME")
 			val fieldType = r.getInt("DATA_TYPE")
-			Field(fieldName, toType(fieldType))
+			val typeName = r.getString("TYPE_NAME")
+			val columnSize = Option(r.getInt("COLUMN_SIZE"))
+			val decimalDigits = Option(r.getInt("DECIMAL_DIGITS"))
+			Field(fieldName, toType(fieldType), toTypeDescription(typeName, columnSize, decimalDigits))
 		})
 }

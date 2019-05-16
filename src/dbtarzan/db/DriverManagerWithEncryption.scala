@@ -2,7 +2,7 @@ package dbtarzan.db
 
 import java.sql.{ DriverManager, Connection}
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.{ PasswordEncryption, EncryptionKey, Password }
+import dbtarzan.config.{ PasswordEncryption, EncryptionKey }
 
 class DriverManagerWithEncryption(key : EncryptionKey) extends ConnectionProvider {
 	private val passwordEncryption = new PasswordEncryption(key)

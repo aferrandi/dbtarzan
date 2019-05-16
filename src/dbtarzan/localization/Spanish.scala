@@ -41,6 +41,7 @@ class Spanish extends Localization {
     def moveUp = "Arriba"
     def moveDown = "Abajo'"
     def field = "Columna"
+    def description = "Descripción"
     def direction = "Dirección"    
     def editGlobalSettings = "Editar configuración global"   
     def addConnection = "Nueva conexion" 

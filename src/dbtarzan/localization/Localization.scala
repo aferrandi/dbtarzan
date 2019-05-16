@@ -41,6 +41,7 @@ trait Localization {
     def moveUp: String
     def moveDown: String
     def field: String
+    def description: String
     def direction : String
     def editGlobalSettings: String
     def addConnection: String

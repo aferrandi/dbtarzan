@@ -41,6 +41,7 @@ class Italian extends Localization {
     def moveUp = "Su"
     def moveDown = "Giu'"
     def field = "Colonna"
+    def description = "Descrizione"
     def direction = "Direzione"    
     def editGlobalSettings = "Modifica Opzioni Globali"   
     def addConnection = "Nuova connessione" 

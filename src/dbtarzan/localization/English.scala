@@ -41,6 +41,7 @@ class English extends Localization {
     def moveUp = "Move up"
     def moveDown = "Move Down"
     def field = "Field"
+    def description = "Description"
     def direction = "Direction"
     def editGlobalSettings = "Edit Global Settings"   
     def addConnection = "Add Connection"

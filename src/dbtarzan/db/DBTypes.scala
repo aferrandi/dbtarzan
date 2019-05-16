@@ -11,7 +11,7 @@ case class TableDescription(name: String, origin : Option[String], notes: Option
 /* the tables in a databases */
 case class TableNames(tableNames : List[String])
 /* a field in a table (name and type) */
-case class Field(name : String,  fieldType : FieldType)
+case class Field(name : String,  fieldType : FieldType, typeDescription : String)
 /* all fields in a table */
 case class Fields(fields : List[Field])
 /* all fields in a table (with the table name)n*/

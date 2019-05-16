@@ -11,7 +11,8 @@ import akka.actor.ActorRef
 import dbtarzan.db.{ DBTable, DBTableStructure, SqlBuilder, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, TableId }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
-import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText}
+import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText, ForeignKeysInfoSplitter}
+import dbtarzan.gui.info.{ ColumnsTable, Info, QueryInfo }
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -20,9 +21,13 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList()
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
+  private val columnsTable = new ColumnsTable(structure.columns, guiActor, localization)
+  private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure), localization)
+  private val info = new Info(columnsTable, queryInfo)
   private val dbTable = new DBTable(structure)
   private val table = new Table(dbActor, guiActor, queryId, dbTable, localization)
-  private val splitter = new BrowsingTableSplitter(table, foreignKeyListWithTitle)
+  private val foreignKeysInfoSplitter = new ForeignKeysInfoSplitter(foreignKeyListWithTitle, info)
+  private val splitter = new BrowsingTableSplitter(table, foreignKeysInfoSplitter)
   private var useNewTable : (DBTableStructure, Boolean) => Unit = (table, closeCurrentTab) => {}
   private var rowDetailsView : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetailsView.foreach(details => details.displayRow(row)))
@@ -36,7 +41,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val progressBar = new TableProgressBar(removeProgressBar)
   private val layout = new BorderPane {
     top = buildTop()
-    center = splitter.splitCenter
+    center = splitter.control
     bottom = progressBar.control
   }
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
