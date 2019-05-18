@@ -45,13 +45,14 @@ trait Localization {
     def direction : String
     def editGlobalSettings: String
     def addConnection: String
-    def copySQLToClipboard: String
     def closeTabsBeforeThis: String
     def closeTabsAfterThis: String
     def closeAllTabs: String
     def checkAll: String
     def uncheckAll: String
     def copyMessageToClipboard : String
+    def queryText : String
+    def columnsDescription : String    
     def rowDetails: String
     def buildForeignKeysFile: String
     def areYouSureClose: String

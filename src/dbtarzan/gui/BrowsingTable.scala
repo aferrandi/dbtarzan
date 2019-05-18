@@ -23,7 +23,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, guiActor, localization)
   private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure), localization)
-  private val info = new Info(columnsTable, queryInfo)
+  private val info = new Info(columnsTable, queryInfo, localization)
   private val dbTable = new DBTable(structure)
   private val table = new Table(dbActor, guiActor, queryId, dbTable, localization)
   private val foreignKeysInfoSplitter = new ForeignKeysInfoSplitter(foreignKeyListWithTitle, info)
@@ -133,13 +133,6 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   def copySelectionToClipboard(includeHeaders : Boolean) : Unit = 
     table.copySelectionToClipboard(includeHeaders) 
 
-  def copySQLToClipboard() : Unit = try {
-    JFXUtil.copyTextToClipboard(SqlBuilder.buildSql(structure).sql)
-    log.info(localization.sqlCopied)
-  } catch {
-    case ex : Exception => log.error(localization.errorCopyingSQL, ex)
-  }
-
   def checkAllTableRows() : Unit = 
     table.checkAll(true) 
 
@@ -150,7 +143,5 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   def rowsNumber = table.rowsNumber
 
-  def sql = SqlBuilder.buildSql(structure)
-  
   def control : Parent = layout
 }

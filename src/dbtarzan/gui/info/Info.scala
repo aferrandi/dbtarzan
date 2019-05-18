@@ -1,25 +1,28 @@
 package dbtarzan.gui.info
 
-import scalafx.scene.control.SplitPane
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.control.{ TabPane, Tab }
+import scalafx.scene.Parent
 import scalafx.Includes._
-import scalafx.geometry.Orientation
 
-import dbtarzan.gui.info.ColumnsTable
+import dbtarzan.localization.Localization
 
 /* splitter that seåareater table, details and potentially reoDetailsView  */
-class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo) {
-  private val center = buildCenter()
+class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, localization : Localization) {
+  private val tabs = buildTabs()
 
-  def control : SplitPane =  center
+  def control : Parent =  tabs
 
    /* builds the split panel containing the table and the foreign keys list */
-  private def buildCenter() = new SplitPane {
-    items ++= List(columnsTable.control, queryInfo.control)
-    orientation() =  Orientation.VERTICAL
-    maxHeight = Double.MaxValue    
-    maxWidth = Double.MaxValue
-    dividerPositions = 0.8
-    SplitPane.setResizableWithParent(queryInfo.control, false)
+  private def buildTabs() = new TabPane {
+    tabs = List(
+      new Tab() {      
+        text = localization.queryText
+        content = queryInfo.control     
+      },
+      new Tab() {      
+        text = localization.columnsDescription
+        content = columnsTable.control     
+      }
+    )
   }
 }

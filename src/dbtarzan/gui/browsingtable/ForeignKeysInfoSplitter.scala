@@ -19,7 +19,7 @@ class ForeignKeysInfoSplitter(foreignKeys : BorderPane, info: Info) {
     orientation() =  Orientation.VERTICAL
     maxHeight = Double.MaxValue    
     maxWidth = Double.MaxValue
-    dividerPositions = 0.6
+    dividerPositions = 0.8
     SplitPane.setResizableWithParent(info.control, false)
   }
 }

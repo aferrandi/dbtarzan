@@ -86,7 +86,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   private def addRows(table: BrowsingTableWithTab, rows : ResponseRows) : Unit = {
     table.table.addRows(rows)
-    table.tab.tooltip.value.text = StringUtil.shortenIfTooLong(table.table.sql.sql, 500) +" ("+table.table.rowsNumber+" rows)"
+    table.tab.tooltip.value.text = table.table.rowsNumber+" rows"
   }
 
   private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
@@ -116,7 +116,6 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   }
 
   def handleQueryIdMessage(msg: TWithQueryId) : Unit = msg match {
-    case copy : CopySQLToClipboard => tables.tableWithQueryId(copy.queryId, _.copySQLToClipboard())
     case copy : CopySelectionToClipboard => tables.tableWithQueryId(copy.queryId, _.copySelectionToClipboard(copy.includeHeaders))
     case check : CheckAllTableRows => tables.tableWithQueryId(check.queryId, _.checkAllTableRows())
     case check : CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
