@@ -90,8 +90,8 @@ class SqlBuilderTest extends FlatSpec {
     ForeignKeyCriteria(rows, buildColumns())
   }
 
-  private def buildNameColumn() = Field("name",  FieldType.STRING)
-  private def buildAgeColumn() = Field("age",  FieldType.INT)
+  private def buildNameColumn() = Field("name",  FieldType.STRING, "")
+  private def buildAgeColumn() = Field("age",  FieldType.INT, "")
 
   private def buildColumns() = 
     List(
