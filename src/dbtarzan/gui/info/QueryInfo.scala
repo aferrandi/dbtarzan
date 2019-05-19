@@ -9,7 +9,7 @@ import dbtarzan.localization.Localization
 import dbtarzan.gui.TControlBuilder
 
 
-/** The GUI table control showing the content of a database table in a GUI table*/
+/** The read only text box showing the query sql, so that it can be seen anc copied */
 class QueryInfo(sql : QuerySql, localization : Localization) extends TControlBuilder {
 	val textBox = new TextArea {
 		text = sql.sql

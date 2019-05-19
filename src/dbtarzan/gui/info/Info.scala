@@ -6,13 +6,13 @@ import scalafx.Includes._
 
 import dbtarzan.localization.Localization
 
-/* splitter that seåareater table, details and potentially reoDetailsView  */
+/* the info box on the right bottom, which shows the information views as tabs  */
 class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, localization : Localization) {
   private val tabs = buildTabs()
 
   def control : Parent =  tabs
 
-   /* builds the split panel containing the table and the foreign keys list */
+   /* builds the tab panel with the information views */
   private def buildTabs() = new TabPane {
     tabs = List(
       new Tab() {      
