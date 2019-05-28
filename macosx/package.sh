@@ -5,7 +5,7 @@ rm -r $DIR/DBTarzan-*.app*
 rm $DIR/dbtarzan-assembly-*.jar
 # create app
 APP=DBTarzan-$VERSION.app
-cp $DIR/../target/scala-2.12/dbtarzan-assembly-$VERSION.jar $DIR
+cp $DIR/../prjmac/target/scala-2.12/dbtarzan-assembly-$VERSION.jar $DIR
 (cd $DIR; jar2app dbtarzan-assembly-$VERSION.jar -n "DBTarzan-$VERSION" -i monkey-face-cartoon_256x256.icns -j "-DconfigPath=\$HOME/Library/ApplicationSupport/dbtarzan" -e universalJavaApplicationStub)
 # fix executable (https://github.com/tofi86/universalJavaApplicationStub)
 cp $DIR/universalJavaApplicationStub $DIR/$APP/Contents/MacOS

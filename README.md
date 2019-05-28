@@ -19,16 +19,16 @@ The following videos show examples of database exploration, the first one is a s
 
 |[![IMAGE dbtarzan simple video on youtube](https://img.youtube.com/vi/qLh5HnW0Rwc/default.jpg)](https://youtu.be/qLh5HnW0Rwc)|[![IMAGE dbtarzan detailed video on youtube](https://img.youtube.com/vi/CezsF9vME6U/default.jpg)](https://youtu.be/CezsF9vME6U)|
 
-More details in the [Documentation](https://aferrandi.github.io/dbtarzan).
+More details in the :books:[Documentation](https://aferrandi.github.io/dbtarzan).
 
-If you have any problem or question about the project please use the [DBTarzan gitter channel](https://gitter.im/aferrandi/dbtarzan) or add an [issue](https://github.com/aferrandi/dbtarzan/issues). 
+If you have any problem or question about the project please use the :speech_balloon:[DBTarzan gitter channel](https://gitter.im/aferrandi/dbtarzan) or add an [issue](https://github.com/aferrandi/dbtarzan/issues). 
 
 Examples
 --------
 
 Bank: with a few mouse clicks, from a single operation, get the source and destination account, the account owners, which other operations was made in the same day between the accounts. 
 
-Hospital: with a few mouse clicks, from a patient, find the reaason of the hospitalization, the insurance data, the clinical history, which other patients are in the hospital for the same reason.
+Hospital: with a few mouse clicks, from a patient, find the reason of the hospitalization, the insurance data, the clinical history, which other patients are in the hospital for the same reason.
 
 You can do the same with standard SQL queries or with views, but in this way it is much faster.
 
