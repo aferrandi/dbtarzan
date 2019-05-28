@@ -27,7 +27,8 @@ class ColumnsTable(fields: Fields, guiActor : ActorRef, localization : Localizat
   /* builds table with the two columns (name and description) */ 
   def buildTable() = new TableView[Field](buffer) {
     columns ++= List ( nameColumn(), descriptionColumn())
-    editable = true
+    editable = false
+    columnResizePolicy = TableView.ConstrainedResizePolicy
   }
 
    /* the column with the name of the database field */
