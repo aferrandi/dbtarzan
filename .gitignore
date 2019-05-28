@@ -24,3 +24,4 @@ mksnap/*
 !mksnap/**/*.sh
 global.config
 connections (copy).config
+build (copy).sbt

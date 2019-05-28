@@ -6,8 +6,9 @@ cp snapcraft.mod snapcraft.yaml
 sed -i "s/VERSION/$VERSION/g" snapcraft.yaml
 rm dbtarzan_$VERSION.0_amd64.snap
 find . -type f -name dbtarzan-assembly* -delete
-cp ../target/scala-2.12/dbtarzan-assembly-$VERSION.jar .
-cp ../target/scala-2.12/dbtarzan-assembly-$VERSION.jar $SNAPDIR/source/
+ASSEMBLY=../prjlinux/target/scala-2.12/dbtarzan-assembly-$VERSION.jar
+cp $ASSEMBLY .
+cp $ASSEMBLY $SNAPDIR/source/
 snapcraft clean
 snapcraft build
 find parts/java -type f -name dbtarzan-assembly* -delete
