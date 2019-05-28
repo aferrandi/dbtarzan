@@ -54,9 +54,6 @@ case class RequestRemovalAllTabs(databaseId : DatabaseId)
 case class CopySelectionToClipboard(queryId : QueryId, includeHeaders : Boolean) 
     extends TWithQueryId
 
-case class CopySQLToClipboard(queryId : QueryId) 
-    extends TWithQueryId
-
 case class CheckAllTableRows(queryId : QueryId) 
     extends TWithQueryId
 

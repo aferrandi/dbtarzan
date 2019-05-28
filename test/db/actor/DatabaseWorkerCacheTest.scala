@@ -14,7 +14,7 @@ class DatabaseWorkerCacheTest extends FlatSpec {
 
  "the cache" should "contain the columns" in {
     val cache = new DatabaseWorkerCache()
-    val fields = cache.cachedFields("user", new Fields(List(Field("lastName", FieldType.STRING))))
+    val fields = cache.cachedFields("user", new Fields(List(Field("lastName", FieldType.STRING, ""))))
 	assert("lastName" === fields.fields.head.name)
   }
 

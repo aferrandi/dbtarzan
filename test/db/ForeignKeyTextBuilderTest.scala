@@ -35,8 +35,8 @@ class ForeignKeyTextBuilderTest extends FlatSpec {
   private def noneAttributes() = QueryAttributes(None, DBDefinition(None, None))
 
   private def buildColumns() = List(
-	Field("name", FieldType.STRING),
-	Field("age", FieldType.INT)
+	Field("name", FieldType.STRING, ""),
+	Field("age", FieldType.INT, "")
 	)
 
   private def buildRow(name : String, age: String) = FKRow(

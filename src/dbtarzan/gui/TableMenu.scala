@@ -35,7 +35,6 @@ object TableMenu {
         menus = List(
             new Menu(JFXUtil.threeLines) {
                 items = List(
-                    menuItem(localization.copySQLToClipboard,  (ev: ActionEvent) =>  guiActor ! CopySQLToClipboard(queryId)),
                     menuItem(localization.closeTabsBeforeThis, CLOSE_TAB_BEFORE_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
                     menuItem(localization.closeTabsAfterThis, CLOSE_TAB_AFTER_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
                     menuItem(localization.closeAllTabs, (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),

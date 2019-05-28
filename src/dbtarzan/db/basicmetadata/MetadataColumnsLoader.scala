@@ -30,10 +30,36 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 			case _ => FieldType.STRING
 		}
 
+	private def toSizeDescription(columnSize: Option[Int], decimalDigits: Option[Int]) : Option[String] = {
+		def isValidSize(number : Int) = number >= 0 && number <= 1000
+		val validSizes = List(columnSize, decimalDigits)
+			.map(_.filter(isValidSize))
+			.takeWhile(_.isDefined)
+			.flatten
+		if(!validSizes.isEmpty)
+			Some(validSizes.mkString("[", ",", "]"))
+		else
+			None
+	}
+
+	private def toNullableDescription(nullable : Int) : Option[String] = nullable match {
+		case DatabaseMetaData.columnNoNulls => None
+		case DatabaseMetaData.columnNullable => Some("NULL")
+		case _ => Some("NULL?")
+	}
+
+	private def toTypeDescription(typeName : String, columnSize: Option[Int], decimalDigits: Option[Int], nullable : Int) : String = 
+		List(Some(typeName), toSizeDescription(columnSize, decimalDigits), toNullableDescription(nullable)).flatten.mkString(" ")
+
+
 	private def readColumns(rs : ResultSet) : List[Field] = 
 		ResultSetReader.readRS(rs, r => {
 			val fieldName = r.getString("COLUMN_NAME")
 			val fieldType = r.getInt("DATA_TYPE")
-			Field(fieldName, toType(fieldType))
+			val typeName = r.getString("TYPE_NAME")
+			val columnSize = Option(r.getInt("COLUMN_SIZE"))
+			val decimalDigits = Option(r.getInt("DECIMAL_DIGITS"))
+			val nullable = r.getInt("NULLABLE")
+			Field(fieldName, toType(fieldType), toTypeDescription(typeName, columnSize, decimalDigits, nullable))
 		})
 }

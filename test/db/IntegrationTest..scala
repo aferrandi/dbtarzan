@@ -23,13 +23,13 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
     val columnNames = metadataLoader.columnNames("LAPTOP")
   	assert(
       List(
-        Field("CODE", FieldType.INT), 
-        Field("MODEL", FieldType.STRING), 
-        Field("SPEED", FieldType.INT), 
-        Field("RAM", FieldType.INT), 
-        Field("HD", FieldType.FLOAT),
-        Field("PRICE", FieldType.FLOAT), 
-        Field("SCREEN",FieldType.INT)
+        Field("CODE", FieldType.INT, "INTEGER [10,0]"), 
+        Field("MODEL", FieldType.STRING, "VARCHAR [50,0]"), 
+        Field("SPEED", FieldType.INT, "INTEGER [10,0]"), 
+        Field("RAM", FieldType.INT, "INTEGER [10,0]"), 
+        Field("HD", FieldType.FLOAT, "DOUBLE [17,0]"),
+        Field("PRICE", FieldType.FLOAT, "DOUBLE [17,0] NULL"), 
+        Field("SCREEN",FieldType.INT, "INTEGER [10,0]")
         ) === columnNames.fields)
   }
 
@@ -80,11 +80,11 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
         TableDescription("pc", None, None),
         noFields(),
         Some(
-          ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING)))
+          ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "")))
           ),
         Some(Filter("speed > 450")),
         Some(OrderByFields(List(
-          OrderByField(Field("model",  FieldType.STRING), OrderByDirection.ASC)
+          OrderByField(Field("model",  FieldType.STRING, ""), OrderByDirection.ASC)
           ))),
         QueryAttributes.none()
     )
