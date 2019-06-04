@@ -1,7 +1,8 @@
-package dbtarzan.db
+package dbtarzan.db.foreignkeys
 
 import spray.json._
 import dbtarzan.db.util.FileReadWrite
+import dbtarzan.db.{ ForeignKeyDirection, DBEnumsText, FieldsOnTable, ForeignKey, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList }
 import java.nio.file.{Path, Paths}
 
   class ForeignKeyDirectionFormat extends RootJsonFormat[ForeignKeyDirection] {

@@ -5,9 +5,9 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{DBTableStructure, Fields, TableDescription, FollowKey, ForeignKeyMapper, QueryAttributes, DatabaseId, TableId}
+import dbtarzan.db.{DBTableStructure, Fields, TableDescription, FollowKey, QueryAttributes, DatabaseId, TableId}
+import dbtarzan.db.foreignkeys.ForeignKeyMapper
 import dbtarzan.messages._
-import dbtarzan.gui.util.StringUtil
 import dbtarzan.gui.tabletabs.{ TableTabsMap, BrowsingTableWithTab }
 import dbtarzan.localization.Localization
 

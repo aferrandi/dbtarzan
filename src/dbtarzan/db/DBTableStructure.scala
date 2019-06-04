@@ -1,5 +1,7 @@
 package dbtarzan.db
 
+import dbtarzan.db.foreignkeys.ForeignKeyCriteria
+
 case class DBTableStructure(	
 	description : TableDescription, 
 	columns : Fields, 

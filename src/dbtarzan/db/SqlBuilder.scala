@@ -1,5 +1,7 @@
 package dbtarzan.db
 
+import dbtarzan.db.foreignkeys.ForeignKeyTextBuilder
+
 class SqlBuilder(
     structure: DBTableStructure
 ) {

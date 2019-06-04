@@ -10,6 +10,7 @@ import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db._
+import dbtarzan.db.foreignkeys.ForeignKeysToFile
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 

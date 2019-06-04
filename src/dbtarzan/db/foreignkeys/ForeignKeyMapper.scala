@@ -1,4 +1,6 @@
-package dbtarzan.db
+package dbtarzan.db.foreignkeys
+
+import dbtarzan.db.{ FollowKey, Fields, QueryAttributes, DBTableStructure, TableDescription, Row, FieldWithValue }
 
 
 /* builds the table that is the result of using a foreign key of another table*/
