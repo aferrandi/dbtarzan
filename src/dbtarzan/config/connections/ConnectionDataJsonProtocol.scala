@@ -2,7 +2,7 @@ package dbtarzan.config.connections
 
 import spray.json._
 
-import dbtarzan.config.PasswordJsonProtocol
+import dbtarzan.config.password.PasswordJsonProtocol
 
 object IdentifierDelimitersJsonProtocol extends DefaultJsonProtocol {
 import dbtarzan.db.IdentifierDelimiters

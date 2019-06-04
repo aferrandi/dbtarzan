@@ -7,7 +7,7 @@ import java.net.{ URL, URLClassLoader }
 
 import dbtarzan.db.actor.{ DatabaseWorker, CopyWorker }
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.EncryptionKey
+import dbtarzan.config.password.EncryptionKey
 import dbtarzan.localization.Localization
 
 private class ConnectionBuilder(data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization) {	

@@ -7,7 +7,7 @@ import scala.collection.mutable.HashMap
 
 import dbtarzan.messages._
 import dbtarzan.config.connections.ConnectionsConfig
-import dbtarzan.config.EncryptionKey
+import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.{ConnectionBuilder, DatabaseId }
 import dbtarzan.localization.Localization
 

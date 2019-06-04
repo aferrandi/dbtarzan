@@ -1,7 +1,7 @@
 package dbtarzan.config.global
 
 import dbtarzan.localization.Language
-import dbtarzan.config.VerificationKey
+import dbtarzan.config.password.VerificationKey
 
 case class EncryptionData(
 	verificationKey : VerificationKey

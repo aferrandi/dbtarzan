@@ -6,7 +6,7 @@ import akka.actor.ActorRef
 import scala.collection.mutable.ListBuffer
 
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.EncryptionKey
+import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
 import dbtarzan.messages._

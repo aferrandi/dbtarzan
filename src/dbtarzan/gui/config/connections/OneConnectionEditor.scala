@@ -10,7 +10,7 @@ import scalafx.Includes._
 import dbtarzan.gui.util.{ OnChangeSafe, JFXUtil }
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.{ EncryptionKey, PasswordEncryption, Password }
+import dbtarzan.config.password.{ EncryptionKey, PasswordEncryption, Password }
 import dbtarzan.localization.Localization
 
 /* The list of database to choose from */

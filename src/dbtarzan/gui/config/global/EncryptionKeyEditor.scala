@@ -9,7 +9,7 @@ import scalafx.Includes._
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.connections.EncryptionKeyChange
-import dbtarzan.config.{ EncryptionKey, VerificationKey, EncryptionVerification }
+import dbtarzan.config.password.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.config.global.EncryptionData
 import dbtarzan.localization.Localization
 

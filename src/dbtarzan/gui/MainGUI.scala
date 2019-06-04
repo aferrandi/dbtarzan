@@ -14,7 +14,7 @@ import akka.actor.ActorRef
 
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.config.connections.ConnectionEditorStarter
-import dbtarzan.config.{EncryptionKey, VerificationKey, PasswordEncryption}
+import dbtarzan.config.password.{EncryptionKey, VerificationKey, PasswordEncryption}
 import dbtarzan.gui.config.global.GlobalEditorStarter
 import dbtarzan.types.ConfigPath
 import dbtarzan.messages.Logger
