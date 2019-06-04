@@ -10,7 +10,7 @@ import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.ForeignKeysToFile
+import dbtarzan.db.foreignkeys.ForeignKeysFiles
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -28,6 +28,7 @@ class DatabaseWorker(
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
 	val foreignKeysFromFile = HashMap.empty[String, ForeignKeys]
 	val cache = new DatabaseWorkerCache()
+	val foreignKeysFile = ForeignKeysFiles.forCache(databaseName)
 	loadForeignKeysFromFile()	
 
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
@@ -47,11 +48,11 @@ class DatabaseWorker(
 		}
 
 	private def loadForeignKeysFromFile() : Unit = 
-		if(ForeignKeysToFile.fileExist(databaseName)) {
+		if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(databaseName))
 			try
 			{
-				val tablesKeys = ForeignKeysToFile.fromFile(databaseName)
+				val tablesKeys = foreignKeysFile.fromFile()
 				tablesKeys.keys.foreach(tableKeys => foreignKeysFromFile += tableKeys.table -> tableKeys.keys)
 			} 
 			catch { 
