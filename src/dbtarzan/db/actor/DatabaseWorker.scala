@@ -26,10 +26,10 @@ class DatabaseWorker(
 	val createConnection = new DriverManagerWithEncryption(encryptionKey)
 	val log = new Logger(guiActor)
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
-	val foreignKeysFromFile = HashMap.empty[String, ForeignKeys]
 	val cache = new DatabaseWorkerCache()
-	val foreignKeysFile = ForeignKeysFiles.forCache(databaseName)
-	loadForeignKeysFromFile()	
+	val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, log)
+	val foreignKeysForCache = HashMap(fromFile.loadForeignKeysForCache().toSeq: _*) 	
+	val addtionalForeignKeys = HashMap(fromFile.loadAdditionalForeignKeys().toSeq: _*) 		
 
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
 			val connection = createConnection.getConnection(data)
@@ -47,18 +47,6 @@ class DatabaseWorker(
 			}
 		}
 
-	private def loadForeignKeysFromFile() : Unit = 
-		if(foreignKeysFile.fileExist()) {
-			log.info(localization.loadingForeignKeys(databaseName))
-			try
-			{
-				val tablesKeys = foreignKeysFile.fromFile()
-				tablesKeys.keys.foreach(tableKeys => foreignKeysFromFile += tableKeys.table -> tableKeys.keys)
-			} 
-			catch { 
-				case e : Exception => log.error(localization.errorReadingKeys(databaseName), e) 
-			}
-		}
 
 	/* handles the exceptions sending the exception messages to the GUI */
 	private def handleErr[R](errHandler : Exception => Unit, operation: => R): Unit = 
@@ -99,7 +87,7 @@ class DatabaseWorker(
 
 	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(logError, core => {
 		val tableName = qry.queryId.tableId.tableName
-		val foreignKeys = foreignKeysFromFile.getOrElseUpdate(tableName, 
+		val foreignKeys = foreignKeysForCache.getOrElseUpdate(tableName, 
 			cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
 		)
 		guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
@@ -159,6 +147,6 @@ class DatabaseWorker(
 	    case qry : QueryColumns => queryColumns(qry)
 	    case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
 	    case qry : QueryForeignKeys => queryForeignKeys(qry)    	
-		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
+			case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
   	}
 }

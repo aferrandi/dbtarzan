@@ -25,6 +25,7 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
 	val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
 	val queryLoader = new QueryLoader(connection)
 	val foreignKeysFile = ForeignKeysFiles.forCache(databaseName)
+
 	/* gets all the tables in the database/schema from the database metadata */
 	private def tableNames() : List[String] = {
 		val meta = connection.getMetaData()
@@ -45,7 +46,6 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
 			)
 		foreignKeysFile.toFile(ForeignKeysForTableList(keysForTables))
 	}
-
 
   	def receive = {
 	    case CopyToFile => {
