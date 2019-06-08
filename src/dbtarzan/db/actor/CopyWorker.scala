@@ -14,9 +14,11 @@ import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
 
-/* The actor that copies the foreign keys it read from a database to a text file.
-The file is then used by DatabaseWorker instead of reading the foreign keys fron the database, 
-thus avoiding delays when reading foreign keys from the database is slow (Oracle) */
+/* 
+	The actor that copies the foreign keys it read from a database to a text file.
+	The file is then used by DatabaseWorker instead of reading the foreign keys fron the database, 
+	thus avoiding delays when reading foreign keys from the database is slow (Oracle) 
+*/
 class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : ActorRef, localization: Localization) extends Actor {
 	val log = new Logger(guiActor)
 	val driverManger = new DriverManagerWithEncryption(encryptionKey)
