@@ -10,7 +10,6 @@ import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.ForeignKeysFiles
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -142,6 +141,9 @@ class DatabaseWorker(
 		AdditionalForeignKeys(databaseId, ForeignKeysForTableList(tableKeys))
 	}
 
+	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit =
+			update.keys.keys.foreach(ks =>  additionalForeignKeys.update(ks.table, ks.keys))
+
   	def receive = {
 	    case qry : QueryRows => queryRows(qry, data.maxRows)
 	    case qry : QueryClose => close() 	    
@@ -153,5 +155,6 @@ class DatabaseWorker(
 	    case qry : QueryForeignKeys => queryForeignKeys(qry)    	
 			case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
 			case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
+			case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
   	}
 }
