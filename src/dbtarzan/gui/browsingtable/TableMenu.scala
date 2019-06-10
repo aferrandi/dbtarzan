@@ -1,4 +1,4 @@
-package dbtarzan.gui
+package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.{MenuItem, Menu, MenuBar, CheckMenuItem }
 import scalafx.event.ActionEvent
