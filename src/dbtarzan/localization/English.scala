@@ -74,6 +74,10 @@ class English extends Localization {
     def originalEncryptionKey = "Original"
     def newEncryptionKey1 = "New"
     def newEncryptionKey2 = "New again"
+    def tableFrom = "Table from"
+    def tableTo = "Table to"
+    def columnsFrom = "Columns from"
+    def columnsTo = "Columns to"
     def writingFile(fileName : Path) = "Writing file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" written"
     def connectedTo(databaseName : String) = "Connected to "+databaseName

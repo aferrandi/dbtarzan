@@ -1,5 +1,6 @@
 package dbtarzan.gui
 
+import scalafx.stage.Stage
 import scalafx.scene.control.{ SplitPane, MenuBar, Menu, MenuItem, Label, TextField }
 import scalafx.scene.layout.{ BorderPane, FlowPane }
 import scalafx.scene.Parent
@@ -8,6 +9,7 @@ import akka.actor.ActorRef
 import scalafx.event.ActionEvent
 import scalafx.geometry.Insets
 
+import dbtarzan.gui.foreignkeys. { AdditionalForeignKeysEditorStarter, AdditionalForeignKeysEditor }
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.db.{ DatabaseId, TableId }
@@ -18,6 +20,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val log = new Logger(guiActor)
   private val tableList = new TableList()
   private val tableTabs = new TableTabs(dbActor, guiActor, databaseId, localization)  
+  private var additionalForeignKeyEditor : Option[AdditionalForeignKeysEditor] = Option.empty
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
   private val filterText = new TextField() { 
     promptText = localization.filter
@@ -50,14 +53,29 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 		        onAction = {
 		          e: ActionEvent => dbActor ! QueryReset(databaseId)
 		        }
-		      }
-		    )
-		  }
+		      },
+		      new MenuItem(localization.connectionReset) {
+		        onAction = {
+		          e: ActionEvent => {
+                additionalForeignKeyEditor = Some(AdditionalForeignKeysEditorStarter.openAdditionalForeignKeysEditor(
+                  stage(),                 
+                  dbActor, 
+                  guiActor,
+                  localization
+                  ))
+                }
+              }
+            }
+      )
+      }
     )
     stylesheets += "orderByMenuBar.css"
   }
 
   def control : Parent = pane
+
+  private def stage() : Stage = 
+    new Stage(pane.scene.window().asInstanceOf[javafx.stage.Stage])
 
   def handleQueryIdMessage(msg: TWithQueryId) : Unit = 
     tableTabs.handleQueryIdMessage(msg)

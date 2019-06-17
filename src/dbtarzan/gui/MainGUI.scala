@@ -145,7 +145,7 @@ class MainGUI(
 		}		 
 		extractEncryptionKey() match {
 			case Some(key) => connectionsActor match {
-					case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, key, localization)
+					// case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, key, localization)
 					case None => println("MainGUI: connectionsActor not defined") 
 				}
 			case None => println("MainGUI: encryptionKey not entered")

@@ -74,6 +74,10 @@ trait Localization {
     def originalEncryptionKey : String
     def newEncryptionKey1 : String
     def newEncryptionKey2 : String
+    def tableFrom : String
+    def tableTo : String
+    def columnsFrom : String
+    def columnsTo : String
     def writingFile(fileName : Path) : String
     def fileWritten(fileName : Path) : String
     def connectedTo(databaseName : String) : String
