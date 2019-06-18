@@ -20,6 +20,7 @@ class FieldCheckItem(val field: Field) {
 
 /* The list of database to choose from */
 class SingleEditor(
+  tableNames: TableNames,
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
@@ -31,7 +32,7 @@ class SingleEditor(
   }
   private val fromColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
   private val toColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
-  private val tableNamesBuffer = ObservableBuffer.empty[String]
+  private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
   val cboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty) 
   val cboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty) 
   val clsColumnsFrom = buildCheckList(fromColumnsBuffer)
@@ -71,19 +72,21 @@ class SingleEditor(
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
+      new ColumnConstraints() {},
+      new ColumnConstraints() {},
       new ColumnConstraints() {
-        hgrow = Priority.ALWAYS
+       // hgrow = Priority.ALWAYS
       })
     add(new Label { text = localization.name+":" }, 0, 0)
     add(txtName, 1, 0)
     add(new Label { text = localization.tableFrom+":" }, 0, 1)
-    add(new Label { text = localization.columnsFrom+":" }, 1, 1)
-    add(cboTableFrom, 0, 2)
-    add(clsColumnsFrom, 1, 2)
-    add(new Label { text = localization.tableTo+":" }, 0, 3)
-    add(new Label { text = localization.columnsTo+":" }, 1, 3)
-    add(cboTableTo, 0, 4)
-    add(clsColumnsTo, 1, 4)
+    add(cboTableFrom, 1, 1)
+    add(new Label { text = localization.columnsFrom+":" }, 2, 1)
+    add(clsColumnsFrom, 3, 1)
+    add(new Label { text = localization.tableTo+":" }, 0, 2)
+    add(cboTableTo, 1, 2)
+    add(new Label { text = localization.columnsTo+":" }, 2, 2)
+    add(clsColumnsTo, 3, 2)
     padding = Insets(10)
     vgap = 10
     hgap = 10

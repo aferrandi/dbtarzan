@@ -78,6 +78,7 @@ trait Localization {
     def tableTo : String
     def columnsFrom : String
     def columnsTo : String
+    def openAdditionalForeignKeys: String
     def writingFile(fileName : Path) : String
     def fileWritten(fileName : Path) : String
     def connectedTo(databaseName : String) : String

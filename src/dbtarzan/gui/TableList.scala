@@ -11,7 +11,6 @@ class TableList extends TControlBuilder {
   private val buffer = ObservableBuffer.empty[String] 
   private val list = new ListView[String](buffer)
 
-
   def addTableNames(names : TableNames) : Unit = {
     buffer.clear()
     buffer ++= names.tableNames
@@ -24,5 +23,7 @@ class TableList extends TControlBuilder {
         })
     }
   def control : Parent = list
+
+  def tableNames = TableNames(buffer.toList)
 }
 

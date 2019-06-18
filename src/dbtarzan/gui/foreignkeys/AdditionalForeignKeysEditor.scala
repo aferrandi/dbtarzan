@@ -9,22 +9,20 @@ import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 
-// additionalKeys.keys.flatMap(_.keys.keys),
-
 /* table + constraint input box + foreign keys */
 class AdditionalForeignKeysEditor(
   guiActor: ActorRef,
+  tableNames: TableNames,
   localization: Localization
   ) extends TControlBuilder {
   private val keysTable = new ForeignKeysTable(guiActor, localization)
-  private val oneTable = new SingleEditor(localization)
+  private val singleEditor = new SingleEditor(tableNames, localization)
   private val buttons = new AdditionalButtons(localization)
   private val layout = new BorderPane {
     top = keysTable.control
-    center = oneTable.control
+    center = singleEditor.control
     bottom = buttons.control
   }
-
 
   private def saveIfPossible(save : List[ForeignKey]  => Unit) : Unit = {
       if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
@@ -44,6 +42,9 @@ class AdditionalForeignKeysEditor(
 
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
+
+  def handleForeignKeys(additionalKeys : ForeignKeysForTableList) : Unit = 
+    keysTable.addRows(additionalKeys.keys.flatMap(_.keys.keys))
 
   def control : Parent = layout
 }

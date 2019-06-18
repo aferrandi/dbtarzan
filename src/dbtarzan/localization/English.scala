@@ -78,6 +78,7 @@ class English extends Localization {
     def tableTo = "Table to"
     def columnsFrom = "Columns from"
     def columnsTo = "Columns to"
+    def openAdditionalForeignKeys = "Additional foreign keys"
     def writingFile(fileName : Path) = "Writing file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" written"
     def connectedTo(databaseName : String) = "Connected to "+databaseName

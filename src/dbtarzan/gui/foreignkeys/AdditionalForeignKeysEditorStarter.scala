@@ -13,18 +13,19 @@ object AdditionalForeignKeysEditorStarter
 {
  def openAdditionalForeignKeysEditor(
     parentStage : Stage, 
-    dbWorker : ActorRef,
+    dbActor : ActorRef,
     guiActor: ActorRef, 
+    tableNames: TableNames,
     localization: Localization) : AdditionalForeignKeysEditor = {
     println("open additional foreign keys editor")  
-    val editor = new AdditionalForeignKeysEditor(guiActor, localization)
+    val editor = new AdditionalForeignKeysEditor(guiActor, tableNames, localization)
     val additionalForeignKeysStage = new Stage {
-      title = localization.editConnections
+      title = localization.openAdditionalForeignKeys
       width = 800
       height = 600
       scene = new Scene {
         def onSave(additionalKeys: List[ForeignKey]) : Unit = {
-            dbWorker !
+            dbActor !
             window().hide()
           }
 

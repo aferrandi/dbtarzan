@@ -54,19 +54,21 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 		          e: ActionEvent => dbActor ! QueryReset(databaseId)
 		        }
 		      },
-		      new MenuItem(localization.connectionReset) {
+		      new MenuItem(localization.openAdditionalForeignKeys) {
 		        onAction = {
 		          e: ActionEvent => {
                 additionalForeignKeyEditor = Some(AdditionalForeignKeysEditorStarter.openAdditionalForeignKeysEditor(
                   stage(),                 
                   dbActor, 
                   guiActor,
+                  tableList.tableNames,
                   localization
                   ))
-                }
+                dbActor ! RequestAdditionalForeignKeys(databaseId)
               }
             }
-      )
+          }
+        )
       }
     )
     stylesheets += "orderByMenuBar.css"
@@ -90,12 +92,12 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
     case columns : ResponseColumns => tableTabs.addColumns(columns)
     case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
+    case additionalKeys: AdditionalForeignKeys =>  additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
+
     case _ => log.error(localization.errorTableMessage(msg))
   }  
 
-
   def getId : DatabaseId = databaseId
 
-  def currentTableId : Option[QueryId] = 
-    tableTabs.currentTableId  
+  def currentTableId : Option[QueryId] =  tableTabs.currentTableId  
 }
