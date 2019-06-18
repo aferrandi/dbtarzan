@@ -61,6 +61,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
                   stage(),                 
                   dbActor, 
                   guiActor,
+                  databaseId,
                   tableList.tableNames,
                   localization
                   ))
@@ -85,6 +86,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTables => tableList.addTableNames(tables.names)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
+    case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableName, columns.columns)) 
     case request : RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
     case _ => log.error(localization.errorDatabaseMessage(msg))
   }  

@@ -128,6 +128,12 @@ class DatabaseWorker(
     		guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, queryAttributes())
     	})		
 
+	private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = withCore(logError, core => {
+			val tableName = qry.tableName
+			val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+    		guiActor ! ResponseColumnsForForeignKeys(qry.databaseId, tableName, columns)
+		})
+
 	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(logError, core => {
 			val tableName = qry.queryId.tableId.tableName
 			val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
@@ -152,6 +158,7 @@ class DatabaseWorker(
 	    case qry : QueryTablesByPattern => queryTablesByPattern(qry) 
 	    case qry : QueryColumns => queryColumns(qry)
 	    case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
+			case qry : QueryColumnsForForeignKeys => queryColumnsForForeignKeys(qry) 
 	    case qry : QueryForeignKeys => queryForeignKeys(qry)    	
 			case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
 			case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)

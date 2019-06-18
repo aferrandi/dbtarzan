@@ -13,6 +13,8 @@ case class QueryTablesByPattern(databaseId : DatabaseId, pattern: String)
 
 case class QueryColumns(tableId: TableId) 
 
+case class QueryColumnsForForeignKeys(databaseId : DatabaseId, tableName: String) 
+
 case class QueryColumnsFollow(tableId: TableId, follow : FollowKey) 
 
 case class QueryPrimaryKeys(queryId : QueryId) 

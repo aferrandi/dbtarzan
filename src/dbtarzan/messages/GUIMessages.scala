@@ -24,6 +24,9 @@ case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId])
 case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
+case class  ResponseColumnsForForeignKeys(databaseId : DatabaseId, tableName: String, columns : Fields) 
+    extends TWithDatabaseId
+
 case class ResponsePrimaryKeys(queryId : QueryId, keys : PrimaryKeys) 
     extends TWithQueryId
 

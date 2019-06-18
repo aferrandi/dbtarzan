@@ -2,16 +2,18 @@ package dbtarzan.gui.foreignkeys
 
 import scalafx.scene.control.{ TextField, Label, ComboBox, ListCell, ListView }
 import scalafx.scene.control.cell.CheckBoxListCell
-import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
+import scalafx.scene.layout.{ GridPane, ColumnConstraints }
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{ Insets }
 import scalafx.beans.property.{ StringProperty, ObjectProperty, BooleanProperty }
 import scalafx.Includes._
+import akka.actor.ActorRef
 
 import dbtarzan.gui.util.OnChangeSafe
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.db.{TableNames, Field, ForeignKey, FieldsOnTable, ForeignKeyDirection }
+import dbtarzan.db.{TableNames, Field, ForeignKey, FieldsOnTable, ForeignKeyDirection, Fields, DatabaseId }
+import dbtarzan.messages.QueryColumnsForForeignKeys
 import dbtarzan.localization.Localization
 
 class FieldCheckItem(val field: Field) {
@@ -20,15 +22,17 @@ class FieldCheckItem(val field: Field) {
 
 /* The list of database to choose from */
 class SingleEditor(
+  dbActor: ActorRef,
+  databaseId: DatabaseId,  
   tableNames: TableNames,
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
   private val chosenTableFromProperty =  new ObjectProperty[String]() {
-    onChange {  }
+    onChange { (_, _, newValue) => dbActor ! QueryColumnsForForeignKeys(databaseId, newValue) }
   }
   private val chosenTableToProperty =  new ObjectProperty[String]() {
-    onChange {  }
+    onChange { (_, _, newValue) => dbActor ! QueryColumnsForForeignKeys(databaseId, newValue) }
   }
   private val fromColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
   private val toColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
@@ -118,5 +122,18 @@ class SingleEditor(
       toColumnsBuffer 
     ).flatMap(_.map(_.selected)).foreach(_.onChange((_,_,_) => safe.onChange(() => useKey(toKey()))))
   }
+
+  def handleColumns(tableName : String, columns : Fields) : Unit = {
+    if(cboTableFrom.value == tableName) {
+      fromColumnsBuffer.clear() 
+      fromColumnsBuffer ++= columns.fields.map(new FieldCheckItem(_));
+    }
+    if(cboTableTo.value == tableName) {
+      toColumnsBuffer.clear() 
+      toColumnsBuffer ++= columns.fields.map(new FieldCheckItem(_))
+    }
+  }
+
+
 }
 

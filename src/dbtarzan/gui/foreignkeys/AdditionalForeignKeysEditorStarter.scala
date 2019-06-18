@@ -5,7 +5,7 @@ import scalafx.scene.Scene
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ TableNames, ForeignKeysForTableList, ForeignKey }
+import dbtarzan.db.{ TableNames, ForeignKey, DatabaseId }
 import dbtarzan.localization.Localization
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
@@ -15,10 +15,11 @@ object AdditionalForeignKeysEditorStarter
     parentStage : Stage, 
     dbActor : ActorRef,
     guiActor: ActorRef, 
+    databaseId: DatabaseId,
     tableNames: TableNames,
     localization: Localization) : AdditionalForeignKeysEditor = {
     println("open additional foreign keys editor")  
-    val editor = new AdditionalForeignKeysEditor(guiActor, tableNames, localization)
+    val editor = new AdditionalForeignKeysEditor(dbActor, guiActor, databaseId, tableNames, localization)
     val additionalForeignKeysStage = new Stage {
       title = localization.openAdditionalForeignKeys
       width = 800
