@@ -18,6 +18,7 @@ import dbtarzan.localization.Localization
 
 class FieldCheckItem(val field: Field) {
   val selected = BooleanProperty(false)
+  override def toString() : String = field.name
 }
 
 /* The list of database to choose from */
@@ -124,11 +125,11 @@ class SingleEditor(
   }
 
   def handleColumns(tableName : String, columns : Fields) : Unit = {
-    if(cboTableFrom.value == tableName) {
+    if(cboTableFrom.value.value == tableName) {
       fromColumnsBuffer.clear() 
       fromColumnsBuffer ++= columns.fields.map(new FieldCheckItem(_));
     }
-    if(cboTableTo.value == tableName) {
+    if(cboTableTo.value.value == tableName) {
       toColumnsBuffer.clear() 
       toColumnsBuffer ++= columns.fields.map(new FieldCheckItem(_))
     }
