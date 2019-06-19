@@ -26,6 +26,8 @@ class AdditionalForeignKeysEditor(
     center = singleEditor.control
     bottom = buttons.control
   }
+  buttons.onNew(() => singleEditor.showNew())
+  buttons.onRemove(() => keysTable.removeSelected())
 
   private def saveIfPossible(save : List[ForeignKey]  => Unit) : Unit = {
       if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
@@ -45,6 +47,8 @@ class AdditionalForeignKeysEditor(
 
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
+
+  
 
   def handleForeignKeys(additionalKeys : ForeignKeysForTableList) : Unit = 
     keysTable.addRows(additionalKeys.keys.flatMap(_.keys.keys))

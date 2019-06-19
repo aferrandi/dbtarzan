@@ -45,9 +45,9 @@ class SingleEditor(
   val txtName = new TextField {
     text = ""
   }
+  private var editorDisabled = BooleanProperty(true)
 
   private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[String]) = new ComboBox[String] {
-      promptText.value = name
       items = tableNamesBuffer
       editable = false
       cellFactory = { _ => buildTableCell() }
@@ -62,11 +62,6 @@ class SingleEditor(
         }
       }
   } 	
-
-/* all fields in a table (with the table name)n*/
-// case class FieldsOnTable(table : String, fields : List[String])
-/* a foreign key is a relation between two tables. It has a name and matches fields on the two tables (can clearly be more than one) */
-// case class ForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable, direction : ForeignKeyDirection)
 
   def buildCheckList(columnsBuffer : ObservableBuffer[FieldCheckItem]) = new  ListView[FieldCheckItem] {
         prefHeight=250
@@ -86,15 +81,16 @@ class SingleEditor(
     add(txtName, 1, 0)
     add(new Label { text = localization.tableFrom+":" }, 0, 1)
     add(cboTableFrom, 1, 1)
-    add(new Label { text = localization.columnsFrom+":" }, 2, 1)
-    add(clsColumnsFrom, 3, 1)
-    add(new Label { text = localization.tableTo+":" }, 0, 2)
-    add(cboTableTo, 1, 2)
+    add(new Label { text = localization.tableTo+":" }, 2, 1)
+    add(cboTableTo, 3, 1)
+    add(new Label { text = localization.columnsFrom+":" }, 0, 2)
+    add(clsColumnsFrom, 1, 2)
     add(new Label { text = localization.columnsTo+":" }, 2, 2)
     add(clsColumnsTo, 3, 2)
     padding = Insets(10)
     vgap = 10
     hgap = 10
+    disable <==> editorDisabled
   }
 
 
@@ -102,6 +98,13 @@ class SingleEditor(
     txtName.text = key.name
     chosenTableFromProperty.value = key.from.table
     chosenTableToProperty.value = key.to.table
+    editorDisabled.value = false
+  })
+
+  def showNew() : Unit = safe.noChangeEventDuring(() => {
+    txtName.text = "<NEW>"
+    editorDisabled.value = false
+    println("New")
   })
 
   private def extractCheckedFields(checkedFields : ObservableBuffer[FieldCheckItem]) : List[String] =
@@ -134,7 +137,5 @@ class SingleEditor(
       toColumnsBuffer ++= columns.fields.map(new FieldCheckItem(_))
     }
   }
-
-
 }
 

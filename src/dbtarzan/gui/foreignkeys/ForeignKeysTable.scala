@@ -63,6 +63,14 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
   def addRows(additionalKeys : List[ForeignKey]) : Unit = 
     buffer ++= additionalKeys.filter(_.direction == ForeignKeyDirection.STRAIGHT)
     
+  def onSelected(action : ForeignKey => Unit) : Unit =
+    table.selectionModel().selectedItem.onChange(
+      (_, _, row) => 
+        Option(row).foreach(action(_))
+    )
+
+  def removeSelected() : Unit = 
+    buffer.remove(table.selectionModel().selectedIndex)
 
   def control : Parent = table
 
