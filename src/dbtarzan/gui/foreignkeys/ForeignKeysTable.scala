@@ -8,7 +8,7 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ ForeignKey, ForeignKeyDirection }
+import dbtarzan.db.{ ForeignKey, ForeignKeyDirection, FieldsOnTable }
 import dbtarzan.messages._
 import dbtarzan.messages.Logger
 import dbtarzan.localization.Localization
@@ -22,12 +22,25 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
   /* the table */
   private val table = buildTable()
 
+  private var lastSelectedIndex : Option[Int] = None
+  table.selectionModel().selectedIndex.onChange((_, _, idx) => 
+    Some(idx.intValue()).filter(i => i >= 0).foreach(i => lastSelectedIndex = Some(i))
+  )
+
 
   /* builds table with the two columns (name and description) */ 
   def buildTable() = new TableView[ForeignKey](buffer) {
-    columns ++= List ( tableFromColumn(), tableToColumn(), foreignKeysFromColumn(), foreignKeysToColumn())
+    columns ++= List ( nameColumn(), tableFromColumn(), tableToColumn(), foreignKeysFromColumn(), foreignKeysToColumn())
     editable = false
     columnResizePolicy = TableView.ConstrainedResizePolicy
+  }
+
+
+   /* the column with the name of the foreign key */
+  private def nameColumn() = new TableColumn[ForeignKey, String] {
+    text = localization.name
+    cellValueFactory = { x => new StringProperty(x.value.name) }
+    resizable = true
   }
 
    /* the column with the name of the database field */
@@ -37,8 +50,6 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
     resizable = true
   }
 
-//  ForeignKey(name: String,  : FieldsOnTable, : FieldsOnTable, direction : ForeignKeyDirection)
-// FieldsOnTable( : String, fields : List[String])
   private def tableToColumn() = new TableColumn[ForeignKey, String] {
     text = localization.tableTo
     cellValueFactory = { x => new StringProperty(x.value.to.table) }
@@ -65,14 +76,22 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
     
   def onSelected(action : ForeignKey => Unit) : Unit =
     table.selectionModel().selectedItem.onChange(
-      (_, _, row) => 
+      (_, _, row) => {
         Option(row).foreach(action(_))
-    )
+    })
 
   def removeSelected() : Unit = 
-    buffer.remove(table.selectionModel().selectedIndex)
+    lastSelectedIndex.foreach(i => buffer.remove(i))
 
-  def control : Parent = table
+  def refreshSelected(key : ForeignKey) : Unit =
+    lastSelectedIndex.foreach(i => buffer.update(i, key))
+
+  def addEmptyRow() : Unit = {
+    println("Adding row")
+    buffer += ForeignKey("<NEW>",  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty), ForeignKeyDirection.STRAIGHT)
+  }
+
+  def control : TableView[ForeignKey] = table
 
   def currentForeignKeys() : List[ForeignKey] = buffer.toList
 }

@@ -29,12 +29,8 @@ class SingleEditor(
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
-  private val chosenTableFromProperty =  new ObjectProperty[String]() {
-    onChange { (_, _, newValue) => dbActor ! QueryColumnsForForeignKeys(databaseId, newValue) }
-  }
-  private val chosenTableToProperty =  new ObjectProperty[String]() {
-    onChange { (_, _, newValue) => dbActor ! QueryColumnsForForeignKeys(databaseId, newValue) }
-  }
+  private val chosenTableFromProperty = buildChosenTableProperty()
+  private val chosenTableToProperty =  buildChosenTableProperty()
   private val fromColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
   private val toColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
@@ -46,6 +42,12 @@ class SingleEditor(
     text = ""
   }
   private var editorDisabled = BooleanProperty(true)
+
+  private def buildChosenTableProperty() = new ObjectProperty[String]() {
+    onChange { (_, _, newTable) => Option(newTable).filter(t => !t.isEmpty).foreach(t =>
+      dbActor ! QueryColumnsForForeignKeys(databaseId, t)
+    ) }
+  }
 
   private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[String]) = new ComboBox[String] {
       items = tableNamesBuffer
@@ -64,7 +66,6 @@ class SingleEditor(
   } 	
 
   def buildCheckList(columnsBuffer : ObservableBuffer[FieldCheckItem]) = new  ListView[FieldCheckItem] {
-        prefHeight=250
         items = columnsBuffer
         cellFactory = CheckBoxListCell.forListView(_.selected)
   }
@@ -101,12 +102,6 @@ class SingleEditor(
     editorDisabled.value = false
   })
 
-  def showNew() : Unit = safe.noChangeEventDuring(() => {
-    txtName.text = "<NEW>"
-    editorDisabled.value = false
-    println("New")
-  })
-
   private def extractCheckedFields(checkedFields : ObservableBuffer[FieldCheckItem]) : List[String] =
     checkedFields.toList.filter(_.selected.value).map(_.field.name)
 
@@ -125,6 +120,8 @@ class SingleEditor(
       fromColumnsBuffer,
       toColumnsBuffer 
     ).flatMap(_.map(_.selected)).foreach(_.onChange((_,_,_) => safe.onChange(() => useKey(toKey()))))
+
+      txtName.text.onChange(safe.onChange(() => useKey(toKey())))
   }
 
   def handleColumns(tableName : String, columns : Fields) : Unit = {
