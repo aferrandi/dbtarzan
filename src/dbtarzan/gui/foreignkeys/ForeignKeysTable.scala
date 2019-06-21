@@ -89,6 +89,7 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
   def addEmptyRow() : Unit = {
     println("Adding row")
     buffer += ForeignKey("<NEW>",  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty), ForeignKeyDirection.STRAIGHT)
+    table.selectionModel().selectLast()
   }
 
   def control : TableView[ForeignKey] = table

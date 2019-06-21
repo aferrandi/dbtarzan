@@ -122,17 +122,22 @@ class SingleEditor(
     ).flatMap(_.map(_.selected)).foreach(_.onChange((_,_,_) => safe.onChange(() => useKey(toKey()))))
 
       txtName.text.onChange(safe.onChange(() => useKey(toKey())))
+     List(
+      chosenTableFromProperty,
+      chosenTableToProperty 
+    ).foreach(_.onChange(safe.onChange(() => useKey(toKey()))))
+  }
+
+  private def handleColumnsForTable(tableName : String, columns : Fields, cboTable : ComboBox[String], columnsBuffer : ObservableBuffer[FieldCheckItem]) : Unit = {
+    if(cboTable.value.value == tableName) {
+      columnsBuffer.clear() 
+      columnsBuffer ++= columns.fields.map(new FieldCheckItem(_));
+    }
   }
 
   def handleColumns(tableName : String, columns : Fields) : Unit = {
-    if(cboTableFrom.value.value == tableName) {
-      fromColumnsBuffer.clear() 
-      fromColumnsBuffer ++= columns.fields.map(new FieldCheckItem(_));
-    }
-    if(cboTableTo.value.value == tableName) {
-      toColumnsBuffer.clear() 
-      toColumnsBuffer ++= columns.fields.map(new FieldCheckItem(_))
-    }
+    handleColumnsForTable(tableName, columns, cboTableFrom, fromColumnsBuffer)
+    handleColumnsForTable(tableName, columns, cboTableTo, toColumnsBuffer)
   }
 }
 
