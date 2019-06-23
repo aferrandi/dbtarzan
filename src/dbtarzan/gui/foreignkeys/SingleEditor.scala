@@ -10,16 +10,11 @@ import scalafx.beans.property.{ StringProperty, ObjectProperty, BooleanProperty 
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.gui.util.OnChangeSafe
+import dbtarzan.gui.util.{ OnChangeSafe, OrderedListView }
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.db.{TableNames, Field, ForeignKey, FieldsOnTable, ForeignKeyDirection, Fields, DatabaseId }
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import dbtarzan.localization.Localization
-
-class FieldCheckItem(val field: Field) {
-  val selected = BooleanProperty(false)
-  override def toString() : String = field.name
-}
 
 /* The list of database to choose from */
 class SingleEditor(
@@ -31,13 +26,13 @@ class SingleEditor(
   val safe = new OnChangeSafe()
   private val chosenTableFromProperty = buildChosenTableProperty()
   private val chosenTableToProperty =  buildChosenTableProperty()
-  private val fromColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
-  private val toColumnsBuffer = ObservableBuffer.empty[FieldCheckItem]    
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
+  private val fromColumnsBuffer = ObservableBuffer.empty[Field]
+  private val toColumnsBuffer = ObservableBuffer.empty[Field]
   val cboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty) 
   val cboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty) 
-  val clsColumnsFrom = buildCheckList(fromColumnsBuffer)
-  val clsColumnsTo = buildCheckList(toColumnsBuffer) 
+  val clsColumnsFrom = new OrderedListView[Field](_.name, "Add", fromColumnsBuffer)
+  val clsColumnsTo = new OrderedListView[Field](_.name, "Add", toColumnsBuffer)
   val txtName = new TextField {
     text = ""
   }
@@ -64,12 +59,7 @@ class SingleEditor(
         }
       }
   } 	
-
-  def buildCheckList(columnsBuffer : ObservableBuffer[FieldCheckItem]) = new  ListView[FieldCheckItem] {
-        items = columnsBuffer
-        cellFactory = CheckBoxListCell.forListView(_.selected)
-  }
-
+  
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
@@ -85,9 +75,9 @@ class SingleEditor(
     add(new Label { text = localization.tableTo+":" }, 2, 1)
     add(cboTableTo, 3, 1)
     add(new Label { text = localization.columnsFrom+":" }, 0, 2)
-    add(clsColumnsFrom, 1, 2)
+    add(clsColumnsFrom.control, 1, 2)
     add(new Label { text = localization.columnsTo+":" }, 2, 2)
-    add(clsColumnsTo, 3, 2)
+    add(clsColumnsTo.control, 3, 2)
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -102,25 +92,17 @@ class SingleEditor(
     editorDisabled.value = false
   })
 
-  private def extractCheckedFields(checkedFields : ObservableBuffer[FieldCheckItem]) : List[String] =
-    checkedFields.toList.filter(_.selected.value).map(_.field.name)
-
   def toKey() = {
     ForeignKey(
       txtName.text(), 
-      FieldsOnTable(chosenTableFromProperty.value, extractCheckedFields(fromColumnsBuffer)),
-      FieldsOnTable(chosenTableToProperty.value, extractCheckedFields(toColumnsBuffer)),
+      FieldsOnTable(chosenTableFromProperty.value, fromColumnsBuffer.map(_.name).toList),
+      FieldsOnTable(chosenTableToProperty.value, toColumnsBuffer.map(_.name).toList),
       ForeignKeyDirection.STRAIGHT
    )}
 
   def control : Parent = grid
 
   def onChanged(useKey : ForeignKey => Unit) : Unit = {  
-    List(
-      fromColumnsBuffer,
-      toColumnsBuffer 
-    ).flatMap(_.map(_.selected)).foreach(_.onChange((_,_,_) => safe.onChange(() => useKey(toKey()))))
-
       txtName.text.onChange(safe.onChange(() => useKey(toKey())))
      List(
       chosenTableFromProperty,
@@ -128,16 +110,15 @@ class SingleEditor(
     ).foreach(_.onChange(safe.onChange(() => useKey(toKey()))))
   }
 
-  private def handleColumnsForTable(tableName : String, columns : Fields, cboTable : ComboBox[String], columnsBuffer : ObservableBuffer[FieldCheckItem]) : Unit = {
+  private def handleColumnsForTable(tableName : String, columns : Fields, cboTable : ComboBox[String], clsColumns : OrderedListView[Field]) : Unit = {
     if(cboTable.value.value == tableName) {
-      columnsBuffer.clear() 
-      columnsBuffer ++= columns.fields.map(new FieldCheckItem(_));
+      clsColumns.setComboData(columns.fields)
     }
   }
 
   def handleColumns(tableName : String, columns : Fields) : Unit = {
-    handleColumnsForTable(tableName, columns, cboTableFrom, fromColumnsBuffer)
-    handleColumnsForTable(tableName, columns, cboTableTo, toColumnsBuffer)
+    handleColumnsForTable(tableName, columns, cboTableFrom, clsColumnsFrom)
+    handleColumnsForTable(tableName, columns, cboTableTo, clsColumnsTo)
   }
 }
 
