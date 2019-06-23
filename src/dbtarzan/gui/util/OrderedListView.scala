@@ -20,34 +20,30 @@ class OrderedListView[T](show : T => String, addButtonLabel : String, comboBuffe
     cellFactory = { _ => buildListCell() }
   }
 
-
-
-  val cmbAdd = new ComboBox[T] {
+  val comboAdd = new ComboBox[T] {
     items = comboBuffer
     editable = false
     buttonCell = buildComboCell()
     cellFactory = { _ => buildComboCell() }
+    maxWidth = Double.MaxValue
   }
   
-
-
-
   val buttonAdd = new Button {
     text = addButtonLabel
-    alignmentInParent = Pos.CENTER_RIGHT
+    //alignmentInParent = Pos.CENTER_RIGHT
 //    disable <===>  
   }
 
-	private val layout = new VBox {
-    children = List(list,
-      new HBox {
-        children = List(cmbAdd, buttonAdd )
+	private val layout = new BorderPane {
+     center = list
+     bottom = new BorderPane {
+        center = comboAdd
+        right = buttonAdd
       }
-    )
   }
  
  buttonAdd.onAction = (event: ActionEvent)  => {
-    Option(cmbAdd.selectionModel().selectedItem.value).foreach(
+    Option(comboAdd.selectionModel().selectedItem.value).foreach(
       choice => {
         tableBuffer += choice
         comboBuffer -= choice

@@ -49,6 +49,7 @@ class SingleEditor(
       editable = false
       cellFactory = { _ => buildTableCell() }
       buttonCell =  buildTableCell()
+      maxWidth = Double.MaxValue
       value <==> chosenTableProperty
   }
  
