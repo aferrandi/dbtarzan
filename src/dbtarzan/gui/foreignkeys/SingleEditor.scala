@@ -1,12 +1,11 @@
 package dbtarzan.gui.foreignkeys
 
-import scalafx.scene.control.{ TextField, Label, ComboBox, ListCell, ListView }
-import scalafx.scene.control.cell.CheckBoxListCell
+import scalafx.scene.control.{ TextField, Label, ComboBox, ListCell }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints }
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{ Insets }
-import scalafx.beans.property.{ StringProperty, ObjectProperty, BooleanProperty }
+import scalafx.beans.property.{ ObjectProperty, BooleanProperty }
 import scalafx.Includes._
 import akka.actor.ActorRef
 
@@ -27,12 +26,10 @@ class SingleEditor(
   private val chosenTableFromProperty = buildChosenTableProperty()
   private val chosenTableToProperty =  buildChosenTableProperty()
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
-  private val fromColumnsBuffer = ObservableBuffer.empty[Field]
-  private val toColumnsBuffer = ObservableBuffer.empty[Field]
   val cboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty) 
   val cboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty) 
-  val clsColumnsFrom = new OrderedListView[Field](_.name, "Add", fromColumnsBuffer)
-  val clsColumnsTo = new OrderedListView[Field](_.name, "Add", toColumnsBuffer)
+  val clsColumnsFrom = new OrderedListView[Field](_.name, "Add")
+  val clsColumnsTo = new OrderedListView[Field](_.name, "Add")
   val txtName = new TextField {
     text = ""
   }
@@ -96,8 +93,8 @@ class SingleEditor(
   def toKey() = {
     ForeignKey(
       txtName.text(), 
-      FieldsOnTable(chosenTableFromProperty.value, fromColumnsBuffer.map(_.name).toList),
-      FieldsOnTable(chosenTableToProperty.value, toColumnsBuffer.map(_.name).toList),
+      FieldsOnTable(chosenTableFromProperty.value, clsColumnsFrom.listBuffer.map(_.name).toList),
+      FieldsOnTable(chosenTableToProperty.value, clsColumnsTo.listBuffer.map(_.name).toList),
       ForeignKeyDirection.STRAIGHT
    )}
 
@@ -109,6 +106,10 @@ class SingleEditor(
       chosenTableFromProperty,
       chosenTableToProperty 
     ).foreach(_.onChange(safe.onChange(() => useKey(toKey()))))
+     List(
+      clsColumnsFrom,
+      clsColumnsTo 
+    ).foreach(_.onChange(_ => safe.onChange(() => useKey(toKey()))))
   }
 
   private def handleColumnsForTable(tableName : String, columns : Fields, cboTable : ComboBox[String], clsColumns : OrderedListView[Field]) : Unit = {

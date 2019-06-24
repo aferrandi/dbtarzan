@@ -59,14 +59,14 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
   /* the column with the description of the database field */
   private def foreignKeysFromColumn() = new TableColumn[ForeignKey, String] {
     text = localization.columnsFrom
-    cellValueFactory = { x => new StringProperty(x.value.from.fields.mkString(" ")) }
+    cellValueFactory = { x => new StringProperty(x.value.from.fields.mkString(",")) }
     resizable = true
   }
 
   /* the column with the description of the database field */
   private def foreignKeysToColumn() = new TableColumn[ForeignKey, String] {
     text = localization.columnsTo
-    cellValueFactory = { x => new StringProperty(x.value.to.fields.mkString(" ")) }
+    cellValueFactory = { x => new StringProperty(x.value.to.fields.mkString(",")) }
     resizable = true
   }
 
