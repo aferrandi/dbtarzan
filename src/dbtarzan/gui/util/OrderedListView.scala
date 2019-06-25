@@ -6,7 +6,7 @@ import scalafx.scene.layout.{ HBox, BorderPane }
 import scalafx.geometry.{ Pos }
 import scalafx.Includes._
 import scalafx.scene.Parent
-import scalafx.beans.property.{ ObjectProperty, BooleanProperty }
+import scalafx.beans.property.BooleanProperty
 import scalafx.event.ActionEvent
 
 /**
@@ -122,8 +122,7 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
         }
 
   def setComboData(data : List[T]) : Unit = {
-    comboBuffer.clear()
-    comboBuffer ++= data
+    JFXUtil.bufferSet(comboBuffer, data)
     listBuffer.clear() // if we change the choices we need to clean up what has been chosen before
   }
 
