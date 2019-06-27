@@ -14,8 +14,11 @@ import scalafx.event.ActionEvent
 */
 class OrderedListView[T](show : T => String, addButtonLabel : String) {
   val comboBuffer = ObservableBuffer.empty[T] 
-  val listBuffer = ObservableBuffer.empty[T]
+  private val listBuffer = ObservableBuffer.empty[T]
   private val emptyCombo = new BooleanProperty { value = comboBuffer.isEmpty }
+  private val buttonDisabled = new BooleanProperty { value = comboBuffer.isEmpty }
+
+  val safe = new OnChangeSafe()
   private val list = new ListView[T](listBuffer) {
     cellFactory = { _ => buildListCell() }
   }
@@ -31,9 +34,15 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
     cellFactory = { _ => buildComboCell() }
     maxWidth = Double.MaxValue
   }
+  comboAdd.selectionModel().selectedItem.onChange(
+      (_, _, nullableValue) => {
+        val buttonEnabled = Option(nullableValue).map(_ => !emptyCombo.value).getOrElse(false)
+        buttonDisabled.value = !buttonEnabled 
+    })
   
   val buttonAdd = new Button {
     text = addButtonLabel
+    disable <==>  buttonDisabled
   }
 
 	private val layout = new BorderPane {
@@ -56,8 +65,10 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
 
   private def buildComboCell() = new ListCell[T] {
       item.onChange { 
-        (_, _, value) => text = Option(value).map(v => show(v)).getOrElse("") 
-        }
+        (_, _, nullableValue) => {
+            text = Option(nullableValue).map(v => show(v)).getOrElse("") 
+        } 
+      }
   } 
 
 
@@ -123,11 +134,18 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
 
   def setComboData(data : List[T]) : Unit = {
     JFXUtil.bufferSet(comboBuffer, data)
-    listBuffer.clear() // if we change the choices we need to clean up what has been chosen before
+    //listBuffer.clear() // if we change the choices we need to clean up what has been chosen before
   }
 
   def onChange(action : List[T] => Unit) : Unit = 
-    listBuffer.onChange((buffer, changes) =>  { action(buffer.toList) })
+    listBuffer.onChange((buffer, changes) =>  
+      safe.noChangeEventDuring(() =>  action(buffer.toList)) 
+    )
+  def setListData(data : List[T]) : Unit = 
+    safe.onChange(() =>
+      JFXUtil.bufferSet(listBuffer, data)
+    )
+  def listData() : List[T] = listBuffer.toList
 
   def control : Parent = layout 
 }
