@@ -145,7 +145,7 @@ class DatabaseWorker(
 
 	private def requestAdditionalForeignKeys(request : RequestAdditionalForeignKeys) : Unit = {
 		val tableKeys = additionalForeignKeys.toList.map({ case (table, keys) => ForeignKeysForTable(table, keys) })
-		AdditionalForeignKeys(databaseId, ForeignKeysForTableList(tableKeys))
+		guiActor ! AdditionalForeignKeys(databaseId, ForeignKeysForTableList(tableKeys))
 	}
 
 	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit = {

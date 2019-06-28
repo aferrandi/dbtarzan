@@ -77,3 +77,4 @@ case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 case class DatabaseIds(names : List[DatabaseId])
 
 case class AdditionalForeignKeys(databaseId : DatabaseId, keys : ForeignKeysForTableList)
+    extends TWithDatabaseId

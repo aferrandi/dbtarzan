@@ -6,6 +6,7 @@ import scalafx.Includes._
 import akka.actor.ActorRef
 
 import dbtarzan.db.{ TableNames, ForeignKey, DatabaseId }
+import dbtarzan.messages.RequestAdditionalForeignKeys
 import dbtarzan.localization.Localization
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
@@ -40,6 +41,7 @@ object AdditionalForeignKeysEditorStarter
     additionalForeignKeysStage.initOwner(parentStage)    
     additionalForeignKeysStage.initStyle(StageStyle.UTILITY)
     additionalForeignKeysStage.show()
+    dbActor ! RequestAdditionalForeignKeys(databaseId)
     editor
   }
 }

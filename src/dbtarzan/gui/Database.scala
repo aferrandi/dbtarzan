@@ -65,7 +65,6 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
                   tableList.tableNames,
                   localization
                   ))
-                dbActor ! RequestAdditionalForeignKeys(databaseId)
               }
             }
           }
@@ -88,14 +87,13 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
     case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableName, columns.columns)) 
     case request : RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
+    case additionalKeys: AdditionalForeignKeys =>  additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
     case _ => log.error(localization.errorDatabaseMessage(msg))
   }  
 
   def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
     case columns : ResponseColumns => tableTabs.addColumns(columns)
     case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
-    case additionalKeys: AdditionalForeignKeys =>  additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
-
     case _ => log.error(localization.errorTableMessage(msg))
   }  
 
