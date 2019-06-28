@@ -14,12 +14,10 @@ class DatabaseWorkerKeysFromFile(
     private def loadForeignKeysFromFile(foreignKeysFile : ForeignKeysFile) : Map[String, ForeignKeys] = 
         if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
-			try
-			{
+			try {
 				val tablesKeys = foreignKeysFile.fromFile()
 				tablesKeys.keys.map(tableKeys => tableKeys.table -> tableKeys.keys).toMap
-			} 
-			catch { 
+			} catch { 
 				case e : Exception => {
 					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString()), e) 
 				 	Map.empty[String, ForeignKeys]

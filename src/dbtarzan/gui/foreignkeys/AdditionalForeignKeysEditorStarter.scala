@@ -25,19 +25,14 @@ object AdditionalForeignKeysEditorStarter
       width = 800
       height = 600
       scene = new Scene {
-        def onSave(additionalKeys: List[ForeignKey]) : Unit = {
-            dbActor !
-            window().hide()
-          }
 
-        def onCancel() : Unit = 
+        def onClose() : Unit = 
           window().hide()
 
-        editor.onSave(onSave(_))
-        editor.onCancel(() => onCancel())
+        editor.onClose(() => onClose())
         onCloseRequest = (event : WindowEvent) => { 
           event.consume()
-          editor.cancelIfPossible(() => onCancel()) 
+          editor.cancelIfPossible(() => onClose()) 
           }
         root = editor.control
       }

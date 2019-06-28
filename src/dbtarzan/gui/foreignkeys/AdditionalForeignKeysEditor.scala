@@ -7,9 +7,10 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{TableNames, ForeignKeysForTableList, ForeignKey, Fields, DatabaseId}
+import dbtarzan.db.{TableNames, ForeignKeysForTableList, ForeignKey, Fields, DatabaseId, ForeignKeys, ForeignKeyDirection, ForeignKeysForTable}
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
+import dbtarzan.messages.UpdateAdditionalForeignKeys
 import dbtarzan.localization.Localization
 
 
@@ -42,26 +43,37 @@ class AdditionalForeignKeysEditor(
   singleEditor.onChanged(key => keysTable.refreshSelected(key))
   keysTable.onSelected(key => singleEditor.show(key))
 
-  private def saveIfPossible(save : List[ForeignKey]  => Unit) : Unit = {
+  private def saveIfPossible(close : () => Unit) : Unit = {
       if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
-        try { save(keysTable.currentForeignKeys()) } 
+        try { dbActor ! UpdateAdditionalForeignKeys(
+              databaseId,
+              ForeignKeysForTableList(buildKeys(
+                keysTable.currentForeignKeys()
+              ))
+          )
+          close()
+        } 
         catch {
           case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
         }
   }
 
-  def cancelIfPossible(cancel : () => Unit) : Unit = {
-    if(JFXUtil.areYouSure(localization.areYouSureClose, localization.cancel))
-        cancel()
+  private def buildKeys(keys: List[ForeignKey]) : List[ForeignKeysForTable] = {
+    val keysTurned = keys.map(k => ForeignKey(k.name+"_turned", k.to, k.from, ForeignKeyDirection.TURNED))
+    (keys ++ keysTurned).groupBy(_.from.table).map({ 
+      case (table, keysForTable) =>  ForeignKeysForTable(table, ForeignKeys(keysForTable))
+      }).toList
   }
 
-  def onSave(save : List[ForeignKey]  => Unit): Unit =
-    buttons.onSave(() => saveIfPossible(save))
+  def cancelIfPossible(close : () => Unit) : Unit = {
+    if(JFXUtil.areYouSure(localization.areYouSureClose, localization.cancel))
+        close()
+  }
 
-  def onCancel(cancel : ()  => Unit): Unit =
-    buttons.onCancel(() => cancelIfPossible(cancel))
-
-  
+  def onClose(close : ()  => Unit): Unit = {
+    buttons.onCancel(() => cancelIfPossible(close))
+    buttons.onSave(() => saveIfPossible(close))
+  }
 
   def handleForeignKeys(additionalKeys : ForeignKeysForTableList) : Unit = 
     keysTable.addRows(additionalKeys.keys.flatMap(_.keys.keys))

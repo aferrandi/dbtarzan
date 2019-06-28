@@ -85,6 +85,7 @@ trait Localization {
     def loadedTables(amount : Int, databaseName : String)  : String
     def openingDatabase(databaseName : String) : String
     def loadingForeignKeys(fileName : String) : String
+    def savingForeignKeys(fileName : String) : String
     def noRowsFromForeignKey(keyName : String, keyToTable : String) : String
     def unorderedQueryResults : String
     def globalChangesAfterRestart : String
@@ -97,6 +98,7 @@ trait Localization {
     def errorCopyingSelection : String
     def errorCopyingSQL : String
     def errorReadingKeys(databaseName : String) : String
+    def errorWritingKeys(databaseName : String) : String
     def errorDisplayingConnections : String
     def errorSavingConnections: String
     def errorSavingGlobalSettings: String

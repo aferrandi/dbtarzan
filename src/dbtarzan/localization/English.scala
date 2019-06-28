@@ -84,7 +84,8 @@ class English extends Localization {
     def connectedTo(databaseName : String) = "Connected to "+databaseName
     def loadedTables(amount : Int, databaseName : String) = "Loaded "+amount+" tables from the database "+databaseName
     def openingDatabase(databaseName : String) = "Opening database "+databaseName
-    def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName    
+    def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName   
+    def savingForeignKeys(fileName : String)  = "Saving foreign keys to the database file "+fileName   
     def noRowsFromForeignKey(keyName : String, keyToTable : String) = "No rows selected with key "+keyName+". Open table "+keyToTable+" without filter."
     def unorderedQueryResults = "Unordered query results?"
     def globalChangesAfterRestart = "Please restart the application to activate these changes"
@@ -97,6 +98,7 @@ class English extends Localization {
     def errorCopyingSelection = "Copying selection to the clipboard got "
     def errorCopyingSQL = "Copying SQL to the clipboard got "
     def errorReadingKeys(databaseName : String) = "Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the application."
+    def errorWritingKeys(databaseName : String) = "Writing the keys file for database "+databaseName+" got the following error. Check that the file is not open in another application"
     def errorDisplayingConnections = "Displaying connections got"
     def errorSavingConnections = "Saving the connections got"
     def errorSavingGlobalSettings = "Saving the global settings got"

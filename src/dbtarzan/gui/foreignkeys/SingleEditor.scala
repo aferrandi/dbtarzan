@@ -23,8 +23,8 @@ class SingleEditor(
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
-  private val orderedListColumnsFrom = new OrderedListView[String](x => x, "Add")
-  private val orderedListColumnsTo = new OrderedListView[String](x => x, "Add")
+  private val orderedListColumnsFrom = new OrderedListView[String](x => x, localization.add)
+  private val orderedListColumnsTo = new OrderedListView[String](x => x, localization.add)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)

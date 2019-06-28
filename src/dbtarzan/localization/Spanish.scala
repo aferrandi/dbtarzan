@@ -84,7 +84,8 @@ class Spanish extends Localization {
     def connectedTo(databaseName: String) = "Conectado a "+databaseName
     def loadedTables(amount : Int, databaseName : String) = "cargadas "+amount+" tablas de base de datos "+databaseName
     def openingDatabase(databaseName : String) = "Estoy abriendo la base de datos "+databaseName
-    def loadingForeignKeys(fileName : String) = "Estoy cargando  las claves externas desde el archivo de base de datos "+fileName    
+    def loadingForeignKeys(fileName : String) = "Estoy cargando las claves externas desde el archivo de base de datos "+fileName    
+    def savingForeignKeys(fileName : String)  = "Estoy guardando las claves externas en el archivo de base de datos "+fileName   
     def noRowsFromForeignKey(keyName : String, keyToTable : String) = "Ninguna fila seleccionada con la clave "+keyName+". Tabla "+keyToTable+" abierta sin filtro."
     def unorderedQueryResults = "Resultados no ordenadas?"
     def globalChangesAfterRestart = "Reinicie la aplicación para activar estos cambios"
@@ -97,6 +98,7 @@ class Spanish extends Localization {
     def errorCopyingSelection = "La copia de la selección y 'fallado debido a "
     def errorCopyingSQL = "La copia de SQL y 'fallado debido a "
     def errorReadingKeys(databaseName : String) = "Se produjo el siguiente error en la lectura del archivo de clave externa de la base de datos "+databaseName+". Elimine el archivo si está dañado o es de una versión anterior de la aplicación."
+    def errorWritingKeys(databaseName : String) = "Se produjo el siguiente error en la escritura del archivo de clave externa de la base de datos  "+databaseName+". Compruebe que el archivo no está abierto en otra aplicación"
     def errorDisplayingConnections = "La visualización de conexiones ha fallado debido a"
     def errorSavingConnections = "El guardado de conexiones ha fallado debido a"
     def errorSavingGlobalSettings = "El guardado de las opciones globales, y 'fallado debido a"

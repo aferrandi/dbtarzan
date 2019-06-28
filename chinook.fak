@@ -1,0 +1,35 @@
+{
+  "keys": [{
+    "name": "Artist",
+    "keys": {
+      "keys": [{
+        "name": "pippo_turned",
+        "from": {
+          "table": "Artist",
+          "fields": ["ArtistId"]
+        },
+        "to": {
+          "table": "Album",
+          "fields": ["AlbumId"]
+        },
+        "direction": "TURNED"
+      }]
+    }
+  }, {
+    "name": "Album",
+    "keys": {
+      "keys": [{
+        "name": "pippo",
+        "from": {
+          "table": "Album",
+          "fields": ["AlbumId"]
+        },
+        "to": {
+          "table": "Artist",
+          "fields": ["ArtistId"]
+        },
+        "direction": "STRAIGHT"
+      }]
+    }
+  }]
+}

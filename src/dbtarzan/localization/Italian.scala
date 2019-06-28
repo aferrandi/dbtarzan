@@ -85,6 +85,7 @@ class Italian extends Localization {
     def loadedTables(amount : Int, databaseName : String) = "Caricate "+amount+" tabelle dal database "+databaseName
     def openingDatabase(databaseName : String) = "Sto aprendo il database "+databaseName
     def loadingForeignKeys(fileName : String) = "Sto caricando le chiavi esterne dal file dei database "+fileName    
+    def savingForeignKeys(fileName : String)  = "Sto salvando le chiavi esterne nel file dei database "+fileName   
     def noRowsFromForeignKey(keyName : String, keyToTable : String) = "Nessuna riga selezionata con la chiave "+keyName+". Tabella "+keyToTable+" aperta senza filtro."
     def unorderedQueryResults = "Risultati non ordinati?"
     def globalChangesAfterRestart = "Riavviare l'applicazione per attivare queste modifiche"
@@ -97,6 +98,7 @@ class Italian extends Localization {
     def errorCopyingSelection = "La copia della selezione e' fallita a causa di "
     def errorCopyingSQL = "La copia dell'SQL e' fallita a causa di "
     def errorReadingKeys(databaseName : String) = "Nella lettiura del file delle chiavi esterne del database "+databaseName+" si e' avuto il seguente errore. Cancella il file se e' corrotto o di una vecchia versione dell'applicazione."
+    def errorWritingKeys(databaseName : String) = "Nella scrittura del file delle chiavi esterne del database  "+databaseName+" si e' avuto il seguente errore. Verifica che il file non sia aperto in un'altra applicazione"
     def errorDisplayingConnections = "La visualizzazione delle connessioni e' fallita a causa di"
     def errorSavingConnections = "Il salvataggio delle connessioni e' fallito a causa di"
     def errorSavingGlobalSettings = "Il salvataggio delle opzioni globali e' fallito a causa di"

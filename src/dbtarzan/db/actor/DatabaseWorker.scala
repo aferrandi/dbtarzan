@@ -27,6 +27,7 @@ class DatabaseWorker(
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
 	val cache = new DatabaseWorkerCache()
 	val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, log)
+	val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, log)
 	val foreignKeysForCache = HashMap(fromFile.loadForeignKeysForCache().toSeq: _*) 	
 	val additionalForeignKeys = HashMap(fromFile.loadAdditionalForeignKeys().toSeq: _*) 		
 
@@ -147,21 +148,23 @@ class DatabaseWorker(
 		AdditionalForeignKeys(databaseId, ForeignKeysForTableList(tableKeys))
 	}
 
-	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit =
+	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit = {
 			update.keys.keys.foreach(ks =>  additionalForeignKeys.update(ks.table, ks.keys))
+			toFile.saveAdditionalForeignKeys(update.keys)
+	}
 
-  	def receive = {
-	    case qry : QueryRows => queryRows(qry, data.maxRows)
-	    case qry : QueryClose => close() 	    
-	    case qry : QueryReset => reset() 	    
-	    case qry : QueryTables => queryTables(qry) 
-	    case qry : QueryTablesByPattern => queryTablesByPattern(qry) 
-	    case qry : QueryColumns => queryColumns(qry)
-	    case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
-			case qry : QueryColumnsForForeignKeys => queryColumnsForForeignKeys(qry) 
-	    case qry : QueryForeignKeys => queryForeignKeys(qry)    	
-			case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
-			case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
-			case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
-  	}
+	def receive = {
+		case qry : QueryRows => queryRows(qry, data.maxRows)
+		case qry : QueryClose => close() 	    
+		case qry : QueryReset => reset() 	    
+		case qry : QueryTables => queryTables(qry) 
+		case qry : QueryTablesByPattern => queryTablesByPattern(qry) 
+		case qry : QueryColumns => queryColumns(qry)
+		case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
+		case qry : QueryColumnsForForeignKeys => queryColumnsForForeignKeys(qry) 
+		case qry : QueryForeignKeys => queryForeignKeys(qry)    	
+		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
+		case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
+		case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
+	}
 }
