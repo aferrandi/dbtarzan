@@ -133,8 +133,9 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
         }
 
   def setComboData(data : List[T]) : Unit = {
-    JFXUtil.bufferSet(comboBuffer, data)
-    //listBuffer.clear() // if we change the choices we need to clean up what has been chosen before
+    val remainingData = data.diff(listBuffer.toList)
+    JFXUtil.bufferSet(comboBuffer, remainingData)
+      
   }
 
   def onChange(action : List[T] => Unit) : Unit = 

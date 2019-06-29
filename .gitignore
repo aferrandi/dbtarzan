@@ -10,6 +10,7 @@ target
 *.sql
 !src/test/resources/sampledb/**/*.sql
 *.~
+*.fak
 *.fgk
 *.lock
 togit
@@ -25,4 +26,3 @@ mksnap/*
 global.config
 connections (copy).config
 build (copy).sbt
-postgresql.fak

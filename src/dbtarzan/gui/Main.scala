@@ -55,7 +55,10 @@ object Main extends JFXApp {
     ConnectionDatas(connections.sortBy(_.name))    
   }
 
-  def closeApp() : Unit = actors.closeApp(() => scalafx.application.Platform.exit())
+  def closeApp() : Unit = actors.closeApp(() => {
+    scalafx.application.Platform.exit()
+    System.exit(0)
+  })
 
   private def openWeb(url : String) : Unit = try
     {  hostServices.showDocument(url) }

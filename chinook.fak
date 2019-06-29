@@ -1,34 +1,66 @@
 {
   "keys": [{
-    "name": "Artist",
+    "name": "Employee",
     "keys": {
       "keys": [{
-        "name": "pippo_turned",
+        "name": "state",
         "from": {
-          "table": "Artist",
-          "fields": ["ArtistId"]
+          "table": "Employee",
+          "fields": ["State"]
         },
         "to": {
-          "table": "Album",
-          "fields": ["AlbumId"]
+          "table": "Customer",
+          "fields": ["State"]
+        },
+        "direction": "STRAIGHT"
+      }]
+    }
+  }, {
+    "name": "Track",
+    "keys": {
+      "keys": [{
+        "name": "composer",
+        "from": {
+          "table": "Track",
+          "fields": ["Composer"]
+        },
+        "to": {
+          "table": "Artist",
+          "fields": ["Name"]
+        },
+        "direction": "STRAIGHT"
+      }]
+    }
+  }, {
+    "name": "Customer",
+    "keys": {
+      "keys": [{
+        "name": "state_turned",
+        "from": {
+          "table": "Customer",
+          "fields": ["State"]
+        },
+        "to": {
+          "table": "Employee",
+          "fields": ["State"]
         },
         "direction": "TURNED"
       }]
     }
   }, {
-    "name": "Album",
+    "name": "Artist",
     "keys": {
       "keys": [{
-        "name": "pippo",
+        "name": "composer_turned",
         "from": {
-          "table": "Album",
-          "fields": ["AlbumId"]
+          "table": "Artist",
+          "fields": ["Name"]
         },
         "to": {
-          "table": "Artist",
-          "fields": ["ArtistId"]
+          "table": "Track",
+          "fields": ["Composer"]
         },
-        "direction": "STRAIGHT"
+        "direction": "TURNED"
       }]
     }
   }]
