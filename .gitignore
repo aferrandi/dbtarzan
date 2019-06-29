@@ -25,3 +25,4 @@ mksnap/*
 global.config
 connections (copy).config
 build (copy).sbt
+postgresql.fak
