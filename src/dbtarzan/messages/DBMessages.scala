@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{ FollowKey, DatabaseId, TableId, DBTableStructure, ForeignKeysForTableList, AdditionalForeignKey}
+import dbtarzan.db.{ FollowKey, DatabaseId, TableId, DBTableStructure, AdditionalForeignKey}
 
 
 case class OriginalQuery(queryId : QueryId, close : Boolean)
