@@ -23,6 +23,8 @@ mksnap/snap
 mksnap/*
 !mksnap/**/snapcraft.mod
 !mksnap/**/*.sh
+mkwin/jre11/**
+mkwin/jre11.zip
 global.config
 connections (copy).config
 build (copy).sbt
