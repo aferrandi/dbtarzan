@@ -3,7 +3,7 @@ package dbtarzan.config.connections
 
 import org.scalatest.FlatSpec
 
-import dbtarzan.config.Password
+import dbtarzan.config.password.Password
 
 class ConnectionsConfigTest extends FlatSpec {
 

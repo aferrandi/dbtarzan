@@ -1,6 +1,7 @@
 package dbtarzan.db
 
 import org.scalatest.FlatSpec
+import dbtarzan.db.foreignkeys.{ FKRow, ForeignKeyCriteria }
 
 class SqlBuilderTest extends FlatSpec {
   "a simple table" should "give a simple query" in {

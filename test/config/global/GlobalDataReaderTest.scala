@@ -4,7 +4,7 @@ import org.scalatest.FlatSpec
 import spray.json._
 
 import dbtarzan.localization.Languages
-import dbtarzan.config.{ Password, VerificationKey }
+import dbtarzan.config.password.{ Password, VerificationKey }
 
 
 class GlobalDataReaderTest extends FlatSpec {
