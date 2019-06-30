@@ -1,7 +1,7 @@
 package dbtarzan.db.actor
 
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.{ForeignKeysFile, ForeignKeysFiles }
+import dbtarzan.db.foreignkeys.{ AdditionalForeignKeysFile }
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
 import dbtarzan.db.ForeignKeys
@@ -11,7 +11,7 @@ class DatabaseWorkerKeysToFile(
 	localization: Localization,
 	log : Logger
 	) {
-    private def saveForeignKeysToFile(foreignKeysFile : ForeignKeysFile, keys : ForeignKeysForTableList) = {
+    private def saveForeignKeysToFile(foreignKeysFile : AdditionalForeignKeysFile, keys : List[AdditionalForeignKey]) = {
 		log.info(localization.savingForeignKeys(foreignKeysFile.fileName.toString()))
 		try {
 			foreignKeysFile.toFile(keys)
@@ -23,6 +23,6 @@ class DatabaseWorkerKeysToFile(
 	}
 
 
-	def saveAdditionalForeignKeys(keys : ForeignKeysForTableList) : Unit =
-		saveForeignKeysToFile(ForeignKeysFiles.additional(databaseName), keys)
+	def saveAdditionalForeignKeys(keys : List[AdditionalForeignKey]) : Unit =
+		saveForeignKeysToFile(new AdditionalForeignKeysFile(databaseName), keys)
 }

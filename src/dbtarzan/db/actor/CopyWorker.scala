@@ -9,7 +9,7 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.{ ForeignKeyLoader, ForeignKeysFiles }
+import dbtarzan.db.foreignkeys.{ ForeignKeyLoader, ForeignKeysFile }
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -26,8 +26,8 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
 	def databaseName = data.name
 	val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
 	val queryLoader = new QueryLoader(connection)
-	val foreignKeysFile = ForeignKeysFiles.forCache(databaseName)
-
+	val foreignKeysFile = new ForeignKeysFile(databaseName)
+	
 	/* gets all the tables in the database/schema from the database metadata */
 	private def tableNames() : List[String] = {
 		val meta = connection.getMetaData()

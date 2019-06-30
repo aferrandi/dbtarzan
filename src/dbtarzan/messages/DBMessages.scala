@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{ FollowKey, DatabaseId, TableId, DBTableStructure, ForeignKeysForTableList}
+import dbtarzan.db.{ FollowKey, DatabaseId, TableId, DBTableStructure, ForeignKeysForTableList, AdditionalForeignKey}
 
 
 case class OriginalQuery(queryId : QueryId, close : Boolean)
@@ -23,6 +23,6 @@ case class QueryForeignKeys(queryId : QueryId)
 
 case class QueryReset(databaseId : DatabaseId) 
 
-case class UpdateAdditionalForeignKeys(databaseId : DatabaseId, keys : ForeignKeysForTableList)
+case class UpdateAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
 
 case class RequestAdditionalForeignKeys(databaseId : DatabaseId)

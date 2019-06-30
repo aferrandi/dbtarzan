@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{Rows, Fields, Field, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys, DatabaseId, TableId, TableNames, DBTableStructure, ForeignKeysForTableList }
+import dbtarzan.db._
 import akka.actor.ActorRef
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
@@ -76,5 +76,5 @@ case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
 case class DatabaseIds(names : List[DatabaseId])
 
-case class AdditionalForeignKeys(databaseId : DatabaseId, keys : ForeignKeysForTableList)
+case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
     extends TWithDatabaseId

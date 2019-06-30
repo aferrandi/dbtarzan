@@ -1,7 +1,7 @@
 package dbtarzan.db.actor
 
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.{ForeignKeysFile, ForeignKeysFiles }
+import dbtarzan.db.foreignkeys.{ForeignKeysFile, AdditionalForeignKeysFile }
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
 import dbtarzan.db.ForeignKeys
@@ -11,7 +11,8 @@ class DatabaseWorkerKeysFromFile(
 	localization: Localization,
 	log : Logger
 	) {
-    private def loadForeignKeysFromFile(foreignKeysFile : ForeignKeysFile) : Map[String, ForeignKeys] = 
+    def loadForeignKeysFromFile() : Map[String, ForeignKeys] = {
+		val foreignKeysFile =  new ForeignKeysFile(databaseName)
         if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
 			try {
@@ -26,11 +27,23 @@ class DatabaseWorkerKeysFromFile(
 		} 
 		else 
 			Map.empty[String, ForeignKeys]
+	}
 
 
-	def loadForeignKeysForCache() : Map[String, ForeignKeys] =
-		loadForeignKeysFromFile(ForeignKeysFiles.forCache(databaseName))
-
-	def loadAdditionalForeignKeys() : Map[String, ForeignKeys] =
-		loadForeignKeysFromFile(ForeignKeysFiles.additional(databaseName))
+    def loadAdditionalForeignKeysFromFile() : List[AdditionalForeignKey] = {
+        val foreignKeysFile =  new AdditionalForeignKeysFile(databaseName)
+		if(foreignKeysFile.fileExist()) {
+			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
+			try {
+				foreignKeysFile.fromFile()
+			} catch { 
+				case e : Exception => {
+					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString()), e) 
+				 	List.empty[AdditionalForeignKey]
+				}
+			}
+		} 
+		else 
+			List.empty[AdditionalForeignKey]
+	}
 }

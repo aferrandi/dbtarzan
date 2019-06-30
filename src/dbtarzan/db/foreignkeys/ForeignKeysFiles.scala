@@ -24,11 +24,11 @@ object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
   implicit val foreignKeysForTableListFormat = jsonFormat(ForeignKeysForTableList, "keys")
 }
 
-//
-class ForeignKeysFile(postfix : String, databaseName : String) {
+
+class ForeignKeysFile(databaseName : String) {
 	import ForeignKeysForTableJsonProtocol._
 
-  val fileName : Path = Paths.get(databaseName+"."+postfix)
+  val fileName : Path = Paths.get(databaseName+".fgk")
 
 	def toFile(list : ForeignKeysForTableList) : Unit =  
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
@@ -41,8 +41,3 @@ class ForeignKeysFile(postfix : String, databaseName : String) {
 	def fileExist() : Boolean = FileReadWrite.fileExist(fileName)
 }
 
-object ForeignKeysFiles {
-  def forCache(databaseName : String) = new ForeignKeysFile("fgk", databaseName)
-
-  def additional(databaseName : String) = new ForeignKeysFile("fak", databaseName)
-}

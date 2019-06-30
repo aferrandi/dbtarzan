@@ -28,8 +28,9 @@ class DatabaseWorker(
 	val cache = new DatabaseWorkerCache()
 	val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, log)
 	val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, log)
-	val foreignKeysForCache = HashMap(fromFile.loadForeignKeysForCache().toSeq: _*) 	
-	val additionalForeignKeys = HashMap(fromFile.loadAdditionalForeignKeys().toSeq: _*) 		
+	val foreignKeysForCache = HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*) 	
+	var additionalForeignKeys = fromFile.loadAdditionalForeignKeysFromFile()
+	var additionalForeignKeysExploded = buildKeys(additionalForeignKeys) 		
 
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
 			val connection = createConnection.getConnection(data)
@@ -89,7 +90,7 @@ class DatabaseWorker(
 		val foreignKeys = ForeignKeys(
 				foreignKeysForCache.getOrElseUpdate(tableName, 
 						cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
-				).keys ++ additionalForeignKeys.get(tableName).map(_.keys).getOrElse(List.empty))
+				).keys ++ additionalForeignKeysExploded.get(tableName).map(_.keys).getOrElse(List.empty))
 		guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
 	})
 
@@ -144,14 +145,20 @@ class DatabaseWorker(
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, DBDefinition(data.schema, data.catalog))
 
 	private def requestAdditionalForeignKeys(request : RequestAdditionalForeignKeys) : Unit = {
-		val tableKeys = additionalForeignKeys.toList.map({ case (table, keys) => ForeignKeysForTable(table, keys) })
-		guiActor ! AdditionalForeignKeys(databaseId, ForeignKeysForTableList(tableKeys))
+		guiActor ! ResponseAdditionalForeignKeys(databaseId, additionalForeignKeys)
 	}
 
 	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit = {
-			update.keys.keys.foreach(ks =>  additionalForeignKeys.update(ks.table, ks.keys))
+			additionalForeignKeys = update.keys
+			additionalForeignKeysExploded = buildKeys(update.keys) 
 			toFile.saveAdditionalForeignKeys(update.keys)
 	}
+
+  private def buildKeys(keys: List[AdditionalForeignKey]) : Map[String, ForeignKeys] = {
+    val keysStraight = keys.map(k => ForeignKey(k.name+"_straight", k.from, k.to, ForeignKeyDirection.TURNED))
+    val keysTurned = keys.map(k => ForeignKey(k.name+"_turned", k.to, k.from, ForeignKeyDirection.TURNED))
+    (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys(_))
+  }
 
 	def receive = {
 		case qry : QueryRows => queryRows(qry, data.maxRows)

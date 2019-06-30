@@ -7,7 +7,7 @@ import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{TableNames, ForeignKeysForTableList, ForeignKey, Fields, DatabaseId, ForeignKeys, ForeignKeyDirection, ForeignKeysForTable}
+import dbtarzan.db.{TableNames, AdditionalForeignKey, Fields, DatabaseId}
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.UpdateAdditionalForeignKeys
@@ -47,22 +47,13 @@ class AdditionalForeignKeysEditor(
       if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
         try { dbActor ! UpdateAdditionalForeignKeys(
               databaseId,
-              ForeignKeysForTableList(buildKeys(
-                keysTable.currentForeignKeys()
-              ))
+              keysTable.currentForeignKeys()
           )
           close()
         } 
         catch {
           case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
         }
-  }
-
-  private def buildKeys(keys: List[ForeignKey]) : List[ForeignKeysForTable] = {
-    val keysTurned = keys.map(k => ForeignKey(k.name+"_turned", k.to, k.from, ForeignKeyDirection.TURNED))
-    (keys ++ keysTurned).groupBy(_.from.table).map({ 
-      case (table, keysForTable) =>  ForeignKeysForTable(table, ForeignKeys(keysForTable))
-      }).toList
   }
 
   def cancelIfPossible(close : () => Unit) : Unit = {
@@ -75,8 +66,8 @@ class AdditionalForeignKeysEditor(
     buttons.onSave(() => saveIfPossible(close))
   }
 
-  def handleForeignKeys(additionalKeys : ForeignKeysForTableList) : Unit = 
-    keysTable.addRows(additionalKeys.keys.flatMap(_.keys.keys))
+  def handleForeignKeys(additionalKeys : List[AdditionalForeignKey]) : Unit = 
+    keysTable.addRows(additionalKeys)
 
   def handleColumns(tableName : String, columns : Fields) : Unit =
     singleEditor.handleColumns(tableName, columns) 

@@ -11,7 +11,7 @@ import akka.actor.ActorRef
 
 import dbtarzan.gui.util.{ OnChangeSafe, OrderedListView, JFXUtil }
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.db.{TableNames, Field, ForeignKey, FieldsOnTable, ForeignKeyDirection, Fields, DatabaseId }
+import dbtarzan.db.{TableNames, Field, AdditionalForeignKey, FieldsOnTable, Fields, DatabaseId }
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import dbtarzan.localization.Localization
 
@@ -85,7 +85,7 @@ class SingleEditor(
   }
 
 
-  def show(key : ForeignKey) : Unit = safe.noChangeEventDuring(() => {
+  def show(key : AdditionalForeignKey) : Unit = safe.noChangeEventDuring(() => {
     println("show "+key)
     txtName.text = key.name
     chosenTableFromProperty.value = key.from.table
@@ -96,18 +96,17 @@ class SingleEditor(
   })
 
   def toKey() = {
-    val key = ForeignKey(
+    val key = AdditionalForeignKey(
       txtName.text(), 
       FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData),
-      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData),
-      ForeignKeyDirection.STRAIGHT
+      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData)
    )
    key
   }
 
   def control : Parent = grid
 
-  def onChanged(useKey : ForeignKey => Unit) : Unit = {  
+  def onChanged(useKey : AdditionalForeignKey => Unit) : Unit = {  
      txtName.text.onChange(safe.onChange(() => useKey(toKey())))
      List(
       chosenTableFromProperty,

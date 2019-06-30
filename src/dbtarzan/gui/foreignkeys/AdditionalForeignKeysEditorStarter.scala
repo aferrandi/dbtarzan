@@ -5,7 +5,7 @@ import scalafx.scene.Scene
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ TableNames, ForeignKey, DatabaseId }
+import dbtarzan.db.{ TableNames, DatabaseId }
 import dbtarzan.messages.RequestAdditionalForeignKeys
 import dbtarzan.localization.Localization
 
