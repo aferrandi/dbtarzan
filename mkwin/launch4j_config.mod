@@ -15,8 +15,8 @@
   <manifest></manifest>
   <icon>ICONFILE</icon>
   <jre>
-    <path></path>
-    <bundledJre64Bit>false</bundledJre64Bit>
+    <path>jre11</path>
+    <bundledJre64Bit>true</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
     <minVersion>11</minVersion>
     <maxVersion></maxVersion>

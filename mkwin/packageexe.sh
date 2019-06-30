@@ -14,3 +14,8 @@ sed -i "s/JARFILE/$JARESCAPED/g" $WINDIR/launch4j_config.xml
 sed -i "s/OUTFILE/$OUTESCAPED/g" $WINDIR/launch4j_config.xml
 sed -i "s/ICONFILE/$ICONESCAPED/g" $WINDIR/launch4j_config.xml
 $ROOTDIR/../../bin/launch4j/launch4j $WINDIR/launch4j_config.xml
+rm -r jre11
+wget -O jre11.zip "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk11?openjdk_impl=hotspot&os=windows&arch=x64&release=latest&type=jre"
+unzip jre11.zip
+mv jdk* jre11
+makensis -DVERSION=$VERSION $WINDIR/nsis.nsi

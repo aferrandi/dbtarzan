@@ -61,7 +61,7 @@ def buildProject(name: String) = {
 lazy val linux = buildProject("linux")
     .settings(Seq(
       debianPackageDependencies in Debian ++= Seq("openjdk-11-jre"),
-      bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan -Djdk.gtk.version=2""""
+      bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
     ))
     .enablePlugins(DebianPlugin, JavaAppPackaging)
     
