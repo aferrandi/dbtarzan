@@ -2,7 +2,7 @@ package dbtarzan.db.foreignkeys
 
 import spray.json._
 import dbtarzan.db.util.FileReadWrite
-import dbtarzan.db.{ ForeignKeyDirection, DBEnumsText, FieldsOnTable, AdditionalForeignKey }
+import dbtarzan.db.{ FieldsOnTable, AdditionalForeignKey }
 import java.nio.file.{Path, Paths}
 
 object AdditionalForeignKeysJsonProtocol extends DefaultJsonProtocol {

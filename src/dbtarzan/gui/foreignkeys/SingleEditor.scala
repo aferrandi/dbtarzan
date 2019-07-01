@@ -9,9 +9,9 @@ import scalafx.beans.property.{ ObjectProperty, BooleanProperty }
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.gui.util.{ OnChangeSafe, OrderedListView, JFXUtil }
+import dbtarzan.gui.util.{ OnChangeSafe, OrderedListView }
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.db.{TableNames, Field, AdditionalForeignKey, FieldsOnTable, Fields, DatabaseId }
+import dbtarzan.db.{TableNames, AdditionalForeignKey, FieldsOnTable, Fields, DatabaseId }
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import dbtarzan.localization.Localization
 

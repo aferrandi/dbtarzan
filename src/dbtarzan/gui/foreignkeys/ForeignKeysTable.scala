@@ -4,7 +4,6 @@ import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.{TableColumn, TableView }
 import scalafx.collections.ObservableBuffer
 import scalafx.beans.property.{ StringProperty }
-import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 

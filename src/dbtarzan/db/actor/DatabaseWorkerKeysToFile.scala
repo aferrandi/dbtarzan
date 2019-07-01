@@ -4,7 +4,6 @@ import dbtarzan.db._
 import dbtarzan.db.foreignkeys.{ AdditionalForeignKeysFile }
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
-import dbtarzan.db.ForeignKeys
 
 class DatabaseWorkerKeysToFile(
 	databaseName : String, 
