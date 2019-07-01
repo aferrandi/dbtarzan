@@ -20,9 +20,7 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
 
   private def buildCell() = new ListCell[DatabaseId] {
     item.onChange { (_, _, _) => 
-      Option(item.value).foreach(databaseId => {
-        text.value = databaseId.databaseName
-      })
+      text.value = Option(item.value).map(databaseId => databaseId.databaseName).getOrElse("")
     }} 
 
   def setDatabaseIds(databaseIds: DatabaseIds) : Unit = {
