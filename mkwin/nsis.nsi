@@ -17,7 +17,7 @@
   InstallDirRegKey HKCU "Software\DBTarzan" ""
 
   ;Request application privileges for Windows Vista
-  RequestExecutionLevel user
+  RequestExecutionLevel none
 
 ;--------------------------------
 ;Interface Settings
@@ -56,7 +56,7 @@ Section "DBTarzan Base" SecBase
   File "dbtarzan_${VERSION}.exe"
   File /r "jre11"
   CreateDirectory "$SMPROGRAMS\DBTarzan"
-  CreateShortCut "$SMPROGRAMS\DBTarzan\DBTarzan.lnk" "$INSTDIR\dbtarzan.exe"
+  CreateShortCut "$SMPROGRAMS\DBTarzan\DBTarzan.lnk" "$INSTDIR\dbtarzan_${VERSION}.exe"
   CreateShortCut "$SMPROGRAMS\DBTarzan\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
   ;Store installation folder
