@@ -110,4 +110,5 @@ class Italian extends Localization {
     def errorTableMessage(msg : TWithQueryId) = "Messaggio dalla tabella "+msg+" non riconosciuto"
     def errorNoTables(databaseName : String, schemasText : String) = "Nessuna tabella letta dal database "+databaseName+". Schema errato? Schemi disponibili: "+schemasText
     def errorDisplayingRows = "La visualizzazione delle righe della tabella e' fallita a causa di"
+    def errorAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) = "Duplicati nelle chiavi esterne aggiuntive. Nomi: "+nameDuplicates.mkString(", ")+", relazioni: "+relationDuplicates.mkString(", ")
 }

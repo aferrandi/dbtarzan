@@ -44,16 +44,19 @@ class AdditionalForeignKeysEditor(
   keysTable.onSelected(key => singleEditor.show(key))
 
   private def saveIfPossible(close : () => Unit) : Unit = {
-      if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
-        try { dbActor ! UpdateAdditionalForeignKeys(
-              databaseId,
-              keysTable.currentForeignKeys()
-          )
-          close()
-        } 
-        catch {
-          case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
-        }
+      val keys = keysTable.currentForeignKeys()
+      val res = AdditionalKeysVerification.verify(keys)
+      if(res.correct) {
+        if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
+          try { 
+            dbActor ! UpdateAdditionalForeignKeys(databaseId, keys)
+            close()
+          } 
+          catch {
+            case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
+          }
+        } else 
+          JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", localization.errorAdditionalForeignKeys(res.nameDuplicates, res.relationDuplicates))
   }
 
   def cancelIfPossible(close : () => Unit) : Unit = {
