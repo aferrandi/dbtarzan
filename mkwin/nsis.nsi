@@ -57,7 +57,7 @@ Section "DBTarzan Base" SecBase
   File /r "jre11"
   CreateDirectory "$SMPROGRAMS\DBTarzan"
   CreateDirectory "$APPDATA\DBTarzan"
-  CreateShortCut "$SMPROGRAMS\DBTarzan\DBTarzan.lnk" "$INSTDIR\dbtarzan_${VERSION}.exe --configPath=$APPDATA\DBTarzan"
+  CreateShortCut "$SMPROGRAMS\DBTarzan\DBTarzan.lnk" "$INSTDIR\dbtarzan_${VERSION}.exe" "--configPath=$APPDATA\DBTarzan"
   CreateShortCut "$SMPROGRAMS\DBTarzan\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
   ;Store installation folder
