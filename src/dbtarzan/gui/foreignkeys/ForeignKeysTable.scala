@@ -1,9 +1,10 @@
 package dbtarzan.gui.foreignkeys
 
 import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView }
+import scalafx.scene.control.{TableColumn, TableView, TableCell, Button }
 import scalafx.collections.ObservableBuffer
-import scalafx.beans.property.{ StringProperty }
+import scalafx.event.ActionEvent
+import scalafx.beans.property.{ StringProperty, ObjectProperty, BooleanProperty }
 import scalafx.Includes._
 import akka.actor.ActorRef
 
@@ -29,7 +30,7 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
 
   /* builds table with the two columns (name and description) */ 
   def buildTable() = new TableView[AdditionalForeignKey](buffer) {
-    columns ++= List ( nameColumn(), tableFromColumn(), tableToColumn(), foreignKeysFromColumn(), foreignKeysToColumn())
+    columns ++= List ( nameColumn(), tableFromColumn(), foreignKeysFromColumn(), tableToColumn(), foreignKeysToColumn(), buttonColumn())
     editable = false
     columnResizePolicy = TableView.ConstrainedResizePolicy
   }
@@ -79,8 +80,6 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
         Option(row).foreach(action(_))
     })
 
-  def removeSelected() : Unit = 
-    lastSelectedIndex.foreach(i => buffer.remove(i))
 
   def refreshSelected(key : AdditionalForeignKey) : Unit =
     lastSelectedIndex.foreach(i => buffer.update(i, key))
@@ -90,6 +89,36 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
     buffer += AdditionalForeignKey("<NEW>",  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty))
     table.selectionModel().selectLast()
   }
+
+   /* build the column on the left, that shows the icon (error, warn, info) */
+  private def buttonColumn() = new TableColumn[AdditionalForeignKey, Boolean] {
+    cellValueFactory = { msg => ObjectProperty(msg.value != null) }
+    cellFactory = {
+      _ : TableColumn[AdditionalForeignKey, Boolean] => buildButtonCell()
+    }
+    maxWidth = 36
+    minWidth = 36
+  }
+
+  private def deleteButton(rowIndex : Int) = new Button {
+      text = "x"
+      stylesheets += "rowButton.css"
+      onAction = {
+        (e: ActionEvent) => {
+          buffer.remove(rowIndex)
+        }
+      }
+    }
+
+  private def buildButtonCell() = new TableCell[AdditionalForeignKey, Boolean] {
+      item.onChange { (_ , _, value) => 
+              if(value) {
+                graphic = deleteButton(tableRow().index())
+              }
+              else 
+                graphic = null
+          }
+        }
 
   def control : TableView[AdditionalForeignKey] = table
 

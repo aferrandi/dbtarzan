@@ -39,7 +39,6 @@ class AdditionalForeignKeysEditor(
     // SplitPane.setResizableWithParent(info.control, false)
   }
   buttons.onNew(() => keysTable.addEmptyRow())
-  buttons.onRemove(() => keysTable.removeSelected())
   singleEditor.onChanged(key => keysTable.refreshSelected(key))
   keysTable.onSelected(key => singleEditor.show(key))
 

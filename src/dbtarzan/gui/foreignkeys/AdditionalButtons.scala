@@ -15,11 +15,6 @@ class AdditionalButtons(localization: Localization) extends TControlBuilder {
     text = localization.new_
   }
   
-  val buttonRemove = new Button {
-    text = localization.remove
-  }
-
-
   val buttonCancel = new Button {
     text = localization.cancel
     alignmentInParent = Pos.CENTER_RIGHT
@@ -31,16 +26,13 @@ class AdditionalButtons(localization: Localization) extends TControlBuilder {
   }
 
 	private val layout = new HBox {
-    children = List(buttonNew, buttonRemove, new Region() { hgrow = Priority.Always }, buttonSave, buttonCancel )
+    children = List(buttonNew, new Region() { hgrow = Priority.Always }, buttonSave, buttonCancel )
   	padding = Insets(10)
   	spacing = 10
   }
  
   def onNew(action : () => Unit ): Unit = 
     buttonNew.onAction = (event: ActionEvent)  => action()
-
-  def onRemove(action : () => Unit ): Unit =
-    buttonRemove.onAction = (event: ActionEvent)  => action()
 
   def onSave(action : () => Unit ): Unit =
     buttonSave.onAction = (event: ActionEvent)  => action()

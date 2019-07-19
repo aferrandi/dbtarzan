@@ -74,6 +74,7 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
 
   private def buttonUp(value : T) = new Button {
     text = "▲"
+    stylesheets += "rowButton.css"
     onAction = {
       (e: ActionEvent) => {                            
         val index = listBuffer.indexOf(value)
@@ -88,6 +89,7 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
 
   private def buttonDown(value : T) = new Button {
     text = "▼"
+    stylesheets += "rowButton.css"
     onAction = {
       (e: ActionEvent) => {                            
         val index = listBuffer.indexOf(value)
@@ -101,6 +103,7 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
 
   private def buttonDelete(value : T) = new Button {
     text = "X"
+    stylesheets += "rowButton.css"
     onAction = {
       (e: ActionEvent) => {
         listBuffer -= value

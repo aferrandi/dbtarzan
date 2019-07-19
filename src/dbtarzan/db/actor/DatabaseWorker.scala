@@ -28,9 +28,9 @@ class DatabaseWorker(
 	val cache = new DatabaseWorkerCache()
 	val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, log)
 	val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, log)
-	val foreignKeysForCache = HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*) 	
-	var additionalForeignKeys = fromFile.loadAdditionalForeignKeysFromFile()
-	var additionalForeignKeysExploded = buildKeys(additionalForeignKeys) 		
+	val foreignKeysForCache  : HashMap[String, ForeignKeys] = HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*) 	
+	var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
+	var additionalForeignKeysExploded : Map[String, ForeignKeys] = buildKeys(additionalForeignKeys) 		
 
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
 			val connection = createConnection.getConnection(data)
@@ -151,11 +151,26 @@ class DatabaseWorker(
 	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit = {
 			additionalForeignKeys = update.keys
 			additionalForeignKeysExploded = buildKeys(update.keys) 
+			
 			toFile.saveAdditionalForeignKeys(update.keys)
 	}
 
+	private def additionalForeignKeysIntersectionOneTable(additionalKey :AdditionalForeignKey, foreignKeysForTable : List[ForeignKey] ) : Boolean = 
+		foreignKeysForTable.exists(k => 
+			(k.from == additionalKey.from && k.to == additionalKey.to) || 
+			(k.from == additionalKey.to && k.to == additionalKey.from)
+			)
+	
+
+	private def additionalForeignKeysIntersection() : List[String] = 
+			 additionalForeignKeys.filter(ak => 
+			 		additionalForeignKeysIntersectionOneTable(ak, foreignKeysForCache.get(ak.from.table).map(_.keys).getOrElse(List.empty)) ||
+			 		additionalForeignKeysIntersectionOneTable(ak, foreignKeysForCache.get(ak.to.table).map(_.keys).getOrElse(List.empty))
+				).map(_.name)
+	
+
   private def buildKeys(keys: List[AdditionalForeignKey]) : Map[String, ForeignKeys] = {
-    val keysStraight = keys.map(k => ForeignKey(k.name+"_straight", k.from, k.to, ForeignKeyDirection.TURNED))
+    val keysStraight = keys.map(k => ForeignKey(k.name+"_straight", k.from, k.to, ForeignKeyDirection.STRAIGHT))
     val keysTurned = keys.map(k => ForeignKey(k.name+"_turned", k.to, k.from, ForeignKeyDirection.TURNED))
     (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys(_))
   }
