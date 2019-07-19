@@ -110,5 +110,6 @@ trait Localization {
     def errorTableMessage(msg : TWithQueryId) : String
     def errorNoTables(databaseName : String, schemasText : String) : String
     def errorDisplayingRows: String
-    def errorAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) : String
+    def errorDuplicateAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) : String
+    def errorAlreadyExistingAdditionalForeignKeys(names : List[String]) : String
 }

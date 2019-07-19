@@ -110,6 +110,7 @@ class English extends Localization {
     def errorTableMessage(msg : TWithQueryId) = "Table message "+msg+" not recognized"    
     def errorNoTables(databaseName : String, schemasText : String) = "No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText
     def errorDisplayingRows = "Displaying the table rows got"
-    def errorAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) = "Duplications in additional foreign keys. Names: "+nameDuplicates.mkString(", ")+", relations: "+relationDuplicates.mkString(", ")
+    def errorDuplicateAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) = "Duplications in additional foreign keys. Names: "+nameDuplicates.mkString(", ")+", relations: "+relationDuplicates.mkString(", ")
+    def errorAlreadyExistingAdditionalForeignKeys(names : List[String]) = "The additional foreign keys "+names.mkString(", ")+" already exist as foreign keys"
 }
 

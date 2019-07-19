@@ -55,7 +55,7 @@ class AdditionalForeignKeysEditor(
             case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
           }
         } else 
-          JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", localization.errorAdditionalForeignKeys(res.nameDuplicates, res.relationDuplicates))
+          JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", localization.errorDuplicateAdditionalForeignKeys(res.nameDuplicates, res.relationDuplicates))
   }
 
   def cancelIfPossible(close : () => Unit) : Unit = {
