@@ -15,6 +15,10 @@ import dbtarzan.localization.Localization
 import dbtarzan.gui.TControlBuilder
 
 
+object ForeignKeysTable {
+    val newRowName = "<NEW>"
+}
+
 /** The GUI table control showing the description of the columns of a database table */
 class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
@@ -86,7 +90,7 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
 
   def addEmptyRow() : Unit = {
     println("Adding row")
-    buffer += AdditionalForeignKey("<NEW>",  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty))
+    buffer += AdditionalForeignKey(ForeignKeysTable.newRowName,  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty))
     table.selectionModel().selectLast()
   }
 
