@@ -8,12 +8,11 @@ import scalafx.Includes._
 import akka.actor.ActorRef
 
 import dbtarzan.db.{TableNames, AdditionalForeignKey, Fields, DatabaseId}
+import dbtarzan.gui.util.StringUtil
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.UpdateAdditionalForeignKeys
 import dbtarzan.localization.Localization
-
-
 
 /* table + constraint input box + foreign keys */
 class AdditionalForeignKeysEditor(
@@ -55,7 +54,15 @@ class AdditionalForeignKeysEditor(
             case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
           }
         } else 
-          JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", localization.errorDuplicateAdditionalForeignKeys(res.nameDuplicates, res.relationDuplicates))
+          JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", 
+            localization.errorAFKVerification + 
+            StringUtil.textIf(res.nameEmpty, () => localization.errorAFKEmptyNames +". ") +
+            StringUtil.textIf(res.nameNewRow, () => localization.errorAFKNameNewRow +". ") +
+            StringUtil.textIf(!res.noColumns.isEmpty, () => localization.errorAFKNoColumns(res.noColumns) +". ") +
+            StringUtil.textIf(!res.sameColumns.isEmpty, () => localization.errorAFKSameColumns(res.sameColumns) +". ") +
+            StringUtil.textIf(!res.nameDuplicates.isEmpty, () => localization.errorAFKDuplicateNames(res.nameDuplicates) +". ") +
+            StringUtil.textIf(!res.relationDuplicates.isEmpty, () => localization.errorAFKDuplicateRelations(res.relationDuplicates) +". ")
+          )
   }
 
   def cancelIfPossible(close : () => Unit) : Unit = {

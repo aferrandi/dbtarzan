@@ -5,11 +5,12 @@ import scala.collection.immutable.HashSet
 
 
 
-case class AdditionalKeysVerificationResult(nameEmpty: Boolean, nameNewRow: Boolean, noColumns: List[String], nameDuplicates: List[String], relationDuplicates: List[String]) {
+case class AdditionalKeysVerificationResult(nameEmpty: Boolean, nameNewRow: Boolean, noColumns: List[String], sameColumns: List[String], nameDuplicates: List[String], relationDuplicates: List[String]) {
     def correct : Boolean = 
         nameEmpty && 
         nameNewRow && 
         noColumns.isEmpty && 
+        sameColumns.isEmpty && 
         nameDuplicates.isEmpty && 
         relationDuplicates.isEmpty
 }
@@ -25,6 +26,9 @@ class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
     private def noColumns() : List[String] = 
         keys.filter(k => k.from.fields.isEmpty || k.to.fields.isEmpty).map(_.name)
 
+    private def sameColumns() : List[String] = 
+        keys.filter(k => k.from == k.to).map(_.name)
+
     private def nameDuplicates() : List[String] = 
         keys.map(_.name).groupBy(identity).mapValues(_.size).filter({case (n, s) => s > 1}).keys.toList
     
@@ -32,7 +36,7 @@ class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
         keys.groupBy(k => HashSet(k.from, k.to)).values.filter(_.size > 1).map(_.head.name).toList
 
     def verify() = AdditionalKeysVerificationResult(
-                     nameEmpty(), nameNewRow(), noColumns(), nameDuplicates(), relationDuplicates()
+                     nameEmpty(), nameNewRow(), noColumns(), sameColumns(), nameDuplicates(), relationDuplicates()
                     )    
 }
 

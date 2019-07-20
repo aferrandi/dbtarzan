@@ -18,4 +18,4 @@ chmod a+x $DIR/$APP/Contents/MacOS/universalJavaApplicationStub
 # fix space in the Info.plist configuration directory  
 sed -i 's/ApplicationSupport/Application Support/g' $DIR/$APP/Contents/Info.plist
 # build zip
-zip -r $DIR/$APP.zip $DIR/$APP
+(cd $DIR; zip -r $APP.zip $APP/*)

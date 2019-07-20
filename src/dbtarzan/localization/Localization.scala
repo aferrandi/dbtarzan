@@ -110,6 +110,12 @@ trait Localization {
     def errorTableMessage(msg : TWithQueryId) : String
     def errorNoTables(databaseName : String, schemasText : String) : String
     def errorDisplayingRows: String
-    def errorDuplicateAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) : String
-    def errorAlreadyExistingAdditionalForeignKeys(names : List[String]) : String
+    def errorAFKVerification: String
+    def errorAFKEmptyNames: String
+    def errorAFKNameNewRow: String
+    def errorAFKNoColumns(noColumns: List[String]) : String
+    def errorAFKSameColumns(sameColumns: List[String]) : String
+    def errorAFKDuplicateNames(nameDuplicates: List[String]) : String
+    def errorAFKDuplicateRelations(relationDuplicates: List[String]) : String
+    def errorAFKAlreadyExisting(names : List[String]) : String
 }

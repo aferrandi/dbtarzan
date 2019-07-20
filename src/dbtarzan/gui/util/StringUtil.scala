@@ -8,4 +8,10 @@ object StringUtil {
             text.take(maxLength - 3)+"..."
         else
             text.take(maxLength)
+
+    def textIf(condition : Boolean, builder: () => String) : String = 
+      if(condition) 
+        builder() 
+      else 
+        ""            
 }

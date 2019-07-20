@@ -110,7 +110,13 @@ class Italian extends Localization {
     def errorTableMessage(msg : TWithQueryId) = "Messaggio dalla tabella "+msg+" non riconosciuto"
     def errorNoTables(databaseName : String, schemasText : String) = "Nessuna tabella letta dal database "+databaseName+". Schema errato? Schemi disponibili: "+schemasText
     def errorDisplayingRows = "La visualizzazione delle righe della tabella e' fallita a causa di"
-    def errorDuplicateAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) = "Duplicati nelle chiavi esterne aggiuntive. Nomi: "+nameDuplicates.mkString(", ")+", relazioni: "+relationDuplicates.mkString(", ")
-    def errorAlreadyExistingAdditionalForeignKeys(names : List[String]) = "Le chiavi esterne aggiuntive "+names.mkString(", ")+" esistono gia' come chiavi esterne"
+    def errorAFKVerification= "Chiavi esterne aggiuntive errate."
+    def errorAFKEmptyNames = "Nomi vuoti"
+    def errorAFKNameNewRow = "Nomi non validi"
+    def errorAFKNoColumns(noColumns: List[String]) = "Mancano colonne in "+noColumns.mkString(", ")
+    def errorAFKSameColumns(sameColumns: List[String]) = "Stesse colonne da e a in "+sameColumns.mkString(", ")
+    def errorAFKDuplicateNames(nameDuplicates: List[String]) = " Nomi duplicati: "+nameDuplicates.mkString(", ")
+    def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Ralazioni duplicate: "+relationDuplicates.mkString(", ")
+    def errorAFKAlreadyExisting(names : List[String]) = "Le chiavi esterne aggiuntive "+names.mkString(", ")+" esistono gia' come chiavi esterne"
 
 }

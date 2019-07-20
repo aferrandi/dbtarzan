@@ -8,14 +8,4 @@
     "table": "Artist",
     "fields": ["Name"]
   }
-}, {
-  "name": "invoice",
-  "from": {
-    "table": "InvoiceLine",
-    "fields": ["InvoiceId"]
-  },
-  "to": {
-    "table": "Invoice",
-    "fields": ["InvoiceId"]
-  }
 }]

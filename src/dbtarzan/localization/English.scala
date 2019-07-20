@@ -110,7 +110,13 @@ class English extends Localization {
     def errorTableMessage(msg : TWithQueryId) = "Table message "+msg+" not recognized"    
     def errorNoTables(databaseName : String, schemasText : String) = "No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText
     def errorDisplayingRows = "Displaying the table rows got"
-    def errorDuplicateAdditionalForeignKeys(nameDuplicates : List[String], relationDuplicates : List[String]) = "Duplications in additional foreign keys. Names: "+nameDuplicates.mkString(", ")+", relations: "+relationDuplicates.mkString(", ")
-    def errorAlreadyExistingAdditionalForeignKeys(names : List[String]) = "The additional foreign keys "+names.mkString(", ")+" already exist as foreign keys"
+    def errorAFKVerification= "Wrong additional foreign keys."
+    def errorAFKEmptyNames = "Empty names"
+    def errorAFKNameNewRow = "Not valid names"
+    def errorAFKNoColumns(noColumns: List[String]) = "Missing columns in "+noColumns.mkString(", ")
+    def errorAFKSameColumns(sameColumns: List[String]) = "Same from and to columns in "+sameColumns.mkString(", ")
+    def errorAFKDuplicateNames(nameDuplicates: List[String]) = " Duplicate names: "+nameDuplicates.mkString(", ")
+    def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Duplicate relations: "+relationDuplicates.mkString(", ")
+    def errorAFKAlreadyExisting(names : List[String]) = "The additional foreign keys "+names.mkString(", ")+" already exist as foreign keys"
 }
 

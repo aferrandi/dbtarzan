@@ -154,7 +154,7 @@ class DatabaseWorker(
 			toFile.saveAdditionalForeignKeys(update.keys)
 			val intersection = additionalForeignKeysIntersection()
 			if(!intersection.isEmpty)
-				log.error(localization.errorAlreadyExistingAdditionalForeignKeys(intersection)) 
+				log.error(localization.errorAFKAlreadyExisting(intersection)) 
 	}
 
 	private def additionalForeignKeysIntersectionOneTable(additionalKey :AdditionalForeignKey, foreignKeysForTable : List[ForeignKey] ) : Boolean = 
