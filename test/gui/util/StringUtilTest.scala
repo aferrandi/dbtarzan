@@ -23,4 +23,12 @@ class StringUtilTest extends FlatSpec {
   "shortening a string with desired length 3" should "should not give a string with dots" in {
   	assert(StringUtil.shortenIfTooLong("Zarathustra", 3) === "Zar")
   }
+
+  "generating a text with false condition" should "should give an empty string" in {
+  	assert(StringUtil.textIf(false, () => "Zarathustra") === "")
+  }
+
+  "generating a text with true condition" should "should give the input string" in {
+  	assert(StringUtil.textIf(true, () => "Zarathustra") === "Zarathustra")
+  }
 }

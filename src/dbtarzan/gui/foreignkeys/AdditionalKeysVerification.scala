@@ -7,8 +7,8 @@ import scala.collection.immutable.HashSet
 
 case class AdditionalKeysVerificationResult(nameEmpty: Boolean, nameNewRow: Boolean, noColumns: List[String], sameColumns: List[String], nameDuplicates: List[String], relationDuplicates: List[String]) {
     def correct : Boolean = 
-        nameEmpty && 
-        nameNewRow && 
+        !nameEmpty && 
+        !nameNewRow && 
         noColumns.isEmpty && 
         sameColumns.isEmpty && 
         nameDuplicates.isEmpty && 
