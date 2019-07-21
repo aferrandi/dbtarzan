@@ -152,24 +152,10 @@ class DatabaseWorker(
 			additionalForeignKeys = update.keys
 			additionalForeignKeysExploded = buildKeys(update.keys) 
 			toFile.saveAdditionalForeignKeys(update.keys)
-			val intersection = additionalForeignKeysIntersection()
+			val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysForCache, additionalForeignKeys)
 			if(!intersection.isEmpty)
 				log.error(localization.errorAFKAlreadyExisting(intersection)) 
 	}
-
-	private def additionalForeignKeysIntersectionOneTable(additionalKey :AdditionalForeignKey, foreignKeysForTable : List[ForeignKey] ) : Boolean = 
-		foreignKeysForTable.exists(k => 
-			(k.from == additionalKey.from && k.to == additionalKey.to) || 
-			(k.from == additionalKey.to && k.to == additionalKey.from)
-			)
-	
-
-	private def additionalForeignKeysIntersection() : List[String] = 
-			 additionalForeignKeys.filter(ak => 
-			 		additionalForeignKeysIntersectionOneTable(ak, foreignKeysForCache.get(ak.from.table).map(_.keys).getOrElse(List.empty)) ||
-			 		additionalForeignKeysIntersectionOneTable(ak, foreignKeysForCache.get(ak.to.table).map(_.keys).getOrElse(List.empty))
-				).map(_.name)
-	
 
   private def buildKeys(keys: List[AdditionalForeignKey]) : Map[String, ForeignKeys] = {
     val keysStraight = keys.map(k => ForeignKey(k.name+"_straight", k.from, k.to, ForeignKeyDirection.STRAIGHT))

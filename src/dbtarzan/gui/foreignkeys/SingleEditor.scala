@@ -15,7 +15,7 @@ import dbtarzan.db.{TableNames, AdditionalForeignKey, FieldsOnTable, Fields, Dat
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import dbtarzan.localization.Localization
 
-/* The list of database to choose from */
+/* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
   dbActor: ActorRef,
   databaseId: DatabaseId,  

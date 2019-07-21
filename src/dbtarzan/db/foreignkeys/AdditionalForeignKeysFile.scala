@@ -11,6 +11,7 @@ object AdditionalForeignKeysJsonProtocol extends DefaultJsonProtocol {
 }
 
 
+/* to write and read the additional foreign keys from a file. */
 class AdditionalForeignKeysFile(databaseName : String) {
 	import AdditionalForeignKeysJsonProtocol._
 

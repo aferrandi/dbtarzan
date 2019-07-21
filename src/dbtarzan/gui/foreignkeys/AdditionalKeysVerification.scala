@@ -15,7 +15,7 @@ case class AdditionalKeysVerificationResult(nameEmpty: Boolean, nameNewRow: Bool
         relationDuplicates.isEmpty
 }
 
-/* checks for additional foreign keys duplications */
+/* checks for additional foreign keys problems, included duplications and missing data */
 class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
     private def nameEmpty() : Boolean = 
         keys.map(_.name).exists(_.trim.isEmpty)
@@ -36,8 +36,8 @@ class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
         keys.groupBy(k => HashSet(k.from, k.to)).values.filter(_.size > 1).map(_.head.name).toList
 
     def verify() = AdditionalKeysVerificationResult(
-                     nameEmpty(), nameNewRow(), noColumns(), sameColumns(), nameDuplicates(), relationDuplicates()
-                    )    
+            nameEmpty(), nameNewRow(), noColumns(), sameColumns(), nameDuplicates(), relationDuplicates()
+        )    
 }
 
 object AdditionalKeysVerification {

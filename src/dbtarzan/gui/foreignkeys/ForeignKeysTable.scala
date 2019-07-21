@@ -19,7 +19,7 @@ object ForeignKeysTable {
     val newRowName = "<NEW>"
 }
 
-/** The GUI table control showing the description of the columns of a database table */
+/** The GUI table control showing the currently edited additional foreign keys */
 class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val buffer = ObservableBuffer.empty[AdditionalForeignKey]
@@ -47,34 +47,35 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
     resizable = true
   }
 
-   /* the column with the name of the database field */
+   /* the column with the from table of the foreign key */
   private def tableFromColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.tableFrom
     cellValueFactory = { x => new StringProperty(x.value.from.table) }
     resizable = true
   }
 
+   /* the column with the to table of the foreign key */
   private def tableToColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.tableTo
     cellValueFactory = { x => new StringProperty(x.value.to.table) }
     resizable = true
   }
 
-  /* the column with the description of the database field */
+   /* the column with the from columns of the foreign key */
   private def foreignKeysFromColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.columnsFrom
     cellValueFactory = { x => new StringProperty(x.value.from.fields.mkString(",")) }
     resizable = true
   }
 
-  /* the column with the description of the database field */
+   /* the column with the to columns of the foreign key */
   private def foreignKeysToColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.columnsTo
     cellValueFactory = { x => new StringProperty(x.value.to.fields.mkString(",")) }
     resizable = true
   }
 
-  /* adds the database rows (the database table fields) to the table */
+  /* adds new foreign keys to the table */
   def addRows(additionalKeys : List[AdditionalForeignKey]) : Unit = 
     buffer ++= additionalKeys
     
@@ -88,13 +89,14 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
   def refreshSelected(key : AdditionalForeignKey) : Unit =
     lastSelectedIndex.foreach(i => buffer.update(i, key))
 
+  /* adds an empty foreign key */
   def addEmptyRow() : Unit = {
     println("Adding row")
     buffer += AdditionalForeignKey(ForeignKeysTable.newRowName,  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty))
     table.selectionModel().selectLast()
   }
 
-   /* build the column on the left, that shows the icon (error, warn, info) */
+   /* builds the column on the right with the button to remove the foreign key */
   private def buttonColumn() = new TableColumn[AdditionalForeignKey, Boolean] {
     cellValueFactory = { msg => ObjectProperty(msg.value != null) }
     cellFactory = {
@@ -104,6 +106,7 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
     minWidth = 36
   }
 
+   /* the button to remove the foreign key */
   private def deleteButton(rowIndex : Int) = new Button {
       text = "x"
       stylesheets += "rowButton.css"
@@ -114,6 +117,7 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
       }
     }
 
+   /* the cell of the button to remove the foreign key */
   private def buildButtonCell() = new TableCell[AdditionalForeignKey, Boolean] {
       item.onChange { (_ , _, value) => 
               if(value) {

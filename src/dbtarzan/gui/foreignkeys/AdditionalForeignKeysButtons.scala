@@ -10,7 +10,8 @@ import dbtarzan.gui.TControlBuilder
 import dbtarzan.localization.Localization
 
 
-class AdditionalButtons(localization: Localization) extends TControlBuilder {
+/* the buttons on the bottom of the additinal foreign keys editor, to add foreign keys, to save them and to exit from the editor without saving */
+class AdditionalForeignKeysButtons(localization: Localization) extends TControlBuilder {
   val buttonNew = new Button {
     text = localization.new_
   }

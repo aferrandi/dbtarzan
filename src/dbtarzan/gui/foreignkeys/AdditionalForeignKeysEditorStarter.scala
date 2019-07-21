@@ -9,7 +9,7 @@ import dbtarzan.db.{ TableNames, DatabaseId }
 import dbtarzan.messages.RequestAdditionalForeignKeys
 import dbtarzan.localization.Localization
 
-/* to start the connection editor. It handles all the cancel/closing/save events */
+/* to start the additional foreign keys editor. It handles all the closing events. The other events are handled by the editor itself */
 object AdditionalForeignKeysEditorStarter
 {
  def openAdditionalForeignKeysEditor(
