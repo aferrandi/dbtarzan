@@ -3,7 +3,7 @@ package dbtarzan.db.foreignkeys
 import spray.json._
 import dbtarzan.db.util.FileReadWrite
 import dbtarzan.db.{ ForeignKeyDirection, DBEnumsText, FieldsOnTable, ForeignKey, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList }
-import java.nio.file.{Path, Paths}
+import java.nio.file.Path
 
 class ForeignKeyDirectionFormat extends RootJsonFormat[ForeignKeyDirection] {
   def write(direction: ForeignKeyDirection): JsValue = JsString(DBEnumsText.foreignKeyDirectionToText(direction))

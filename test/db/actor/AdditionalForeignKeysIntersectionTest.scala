@@ -1,23 +1,41 @@
 package dbtarzan.db.actor
 
 import org.scalatest.FlatSpec
-import dbtarzan.db.actor.AdditionalForeignKeysIntersection
+import dbtarzan.db._
 
 class AdditionalForeignKeysIntersectionTest extends FlatSpec {
-  /*
-  "the cache" should "extract the primary key for a table only the first time it gets called" in {
-    val foreignKeysByTable = Map(
-        "Artist" -> ForeignKeys(List(
-            ForeignKey("key1",  FieldsOnTable(table : String, fields : List[String]), to: FieldsOnTable, direction : ForeignKeyDirection)
+  def foreignKeysByTable = Map(
+      "Artist" -> ForeignKeys(List(
+          ForeignKey("key1",  FieldsOnTable("Album", List("ArtistId")), FieldsOnTable("Artist", List("ArtistId")), ForeignKeyDirection.STRAIGHT)
+          ))
+      )
 
-
-    AdditionalForeignKeysIntersection.intersection(foreignKeysForCache: scala.collection.Map[String, ForeignKeys], additionalKeys :List[AdditionalForeignKey]) : List[String]
-
-    val cache = new DatabaseWorkerCache()
-    cache.cachedPrimaryKeys("user", new PrimaryKeys(List(PrimaryKey("key1", List("lastName")))))
-    val keys = cache.cachedPrimaryKeys("user", new PrimaryKeys(List(PrimaryKey("key2", List("lastName")))))
-	assert("key1" === keys.keys.head.keyName)
-
+  "the intersection with an empty additional key list" should "give an empty list" in {
+    val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysByTable, List.empty)
+    assert(intersection.isEmpty)
   }
-    */
+
+  "the intersection with a non matching additional key list" should "give an empty list" in {
+    val additionalKeys = List(
+      AdditionalForeignKey("add1", FieldsOnTable("Album", List("CustomerId")), FieldsOnTable("Customer", List("CustomerId")))
+      )
+    val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysByTable, additionalKeys)
+    assert(intersection.isEmpty)
+  }
+
+  "the intersection with a matching additional key list from=from a d to=to" should "give the matcihing key" in {
+    val additionalKeys = List(
+      AdditionalForeignKey("add1", FieldsOnTable("Album", List("ArtistId")), FieldsOnTable("Artist", List("ArtistId")))
+      )
+    val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysByTable, additionalKeys)
+    assert(intersection === List("add1"))
+  }
+
+  "the intersection with a matching additional key list from=to a d to=from" should "give the matcihing key" in {
+    val additionalKeys = List(
+      AdditionalForeignKey("add1", FieldsOnTable("Artist", List("ArtistId")), FieldsOnTable("Album", List("ArtistId")))
+      )
+    val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysByTable, additionalKeys)
+    assert(intersection === List("add1"))
+  }
 }

@@ -3,7 +3,7 @@ package dbtarzan.db.foreignkeys
 import spray.json._
 import dbtarzan.db.util.FileReadWrite
 import dbtarzan.db.{ FieldsOnTable, AdditionalForeignKey }
-import java.nio.file.{Path, Paths}
+import java.nio.file.Path
 
 object AdditionalForeignKeysJsonProtocol extends DefaultJsonProtocol {
   implicit val fieldsOnTableFormat = jsonFormat(FieldsOnTable, "table", "fields" )	

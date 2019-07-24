@@ -1,7 +1,6 @@
 package dbtarzan.db.actor
 
 import org.scalatest.FlatSpec
-import dbtarzan.db.actor.DatabaseWorkerCache
 import dbtarzan.db._
 
 
