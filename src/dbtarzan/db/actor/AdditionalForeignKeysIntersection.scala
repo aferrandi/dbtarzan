@@ -15,11 +15,14 @@ object AdditionalForeignKeysIntersection {
 			(equalsIgnoreCase(k.from, additionalKey.from) && equalsIgnoreCase(k.to, additionalKey.to)) || 
 			(equalsIgnoreCase(k.from, additionalKey.to) && equalsIgnoreCase(k.to, additionalKey.from))
 			)
-	
+			
+	private def extractForeignKeysForTable(foreignKeysByTable: scala.collection.Map[String, ForeignKeys], table : String) : List[ForeignKey] = 
+		foreignKeysByTable.get(table).map(_.keys).getOrElse(List.empty)
 
-	def intersection(foreignKeysForCache: scala.collection.Map[String, ForeignKeys], additionalKeys :List[AdditionalForeignKey]) : List[String] = 
-			 additionalKeys.filter(ak => 
-			 		intersectionOneTable(ak, foreignKeysForCache.get(ak.from.table).map(_.keys).getOrElse(List.empty)) ||
-			 		intersectionOneTable(ak, foreignKeysForCache.get(ak.to.table).map(_.keys).getOrElse(List.empty))
-				).map(_.name)
+	def intersection(foreignKeysByTable: scala.collection.Map[String, ForeignKeys], additionalKeys :List[AdditionalForeignKey]) : List[String] = 
+			 additionalKeys.filter(ak => {
+				 	val foreignKeysFrom = extractForeignKeysForTable(foreignKeysByTable, ak.from.table)
+					val foreignKeysTo = extractForeignKeysForTable(foreignKeysByTable, ak.to.table)
+			 		intersectionOneTable(ak, foreignKeysFrom) || intersectionOneTable(ak, foreignKeysTo)
+				}).map(_.name)
 }

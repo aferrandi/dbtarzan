@@ -5,6 +5,7 @@ import akka.actor.Actor
 import akka.actor.ActorRef
 import java.time.LocalDateTime
 import scala.collection.mutable.HashMap
+import java.nio.file.Path
 
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.config.connections.ConnectionData
@@ -18,7 +19,8 @@ class DatabaseWorker(
 	encryptionKey : EncryptionKey, 
 	data : ConnectionData, 
 	guiActor : ActorRef, 
-	localization: Localization
+	localization: Localization,
+	keyFilesDirPath: Path
 	) extends Actor {
 	def databaseName = data.name
 	def databaseId = DatabaseId(data.name)	
@@ -26,8 +28,8 @@ class DatabaseWorker(
 	val log = new Logger(guiActor)
 	var optCore :Option[DatabaseWorkerCore] = buildCore()
 	val cache = new DatabaseWorkerCache()
-	val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, log)
-	val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, log)
+	val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
+	val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
 	val foreignKeysForCache  : HashMap[String, ForeignKeys] = HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*) 	
 	var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
 	var additionalForeignKeysExploded : Map[String, ForeignKeys] = buildKeys(additionalForeignKeys) 		

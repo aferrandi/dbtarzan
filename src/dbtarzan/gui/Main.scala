@@ -23,7 +23,7 @@ object Main extends JFXApp {
   val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, openWeb, closeApp)
   val actors = new ActorHandler(
     () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, localization), 
-    guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization)
+    guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization, configPaths.keyFilesDirPath)
     ) 
   mainGUI.setActors(actors.guiActor, actors.connectionsActor)
   val log = new Logger(actors.guiActor)
@@ -47,7 +47,7 @@ object Main extends JFXApp {
       +" globalConfigPath:"+globalConfigPath
       +" connectionsConfigPath:"+connectionsConfigPath
       )
-    ConfigPath(globalConfigPath, connectionsConfigPath)
+    ConfigPath(globalConfigPath, connectionsConfigPath, Paths.get(configsPath))
   }
 
   private def readConnectionDatas(connectionsConfigPath: Path) : ConnectionDatas = {

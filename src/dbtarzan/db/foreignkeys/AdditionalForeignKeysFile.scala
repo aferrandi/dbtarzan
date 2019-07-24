@@ -12,10 +12,10 @@ object AdditionalForeignKeysJsonProtocol extends DefaultJsonProtocol {
 
 
 /* to write and read the additional foreign keys from a file. */
-class AdditionalForeignKeysFile(databaseName : String) {
+class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
 	import AdditionalForeignKeysJsonProtocol._
 
-  val fileName : Path = Paths.get(databaseName+".fak")
+  val fileName : Path = dirPath.resolve(databaseName+".fak")
 
 	def toFile(list : List[AdditionalForeignKey]) : Unit =  
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)

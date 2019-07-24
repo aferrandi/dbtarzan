@@ -25,10 +25,10 @@ object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
 }
 
 
-class ForeignKeysFile(databaseName : String) {
+class ForeignKeysFile(dirPath: Path, databaseName : String) {
 	import ForeignKeysForTableJsonProtocol._
 
-  val fileName : Path = Paths.get(databaseName+".fgk")
+  val fileName : Path = dirPath.resolve(databaseName+".fgk")
 
 	def toFile(list : ForeignKeysForTableList) : Unit =  
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)

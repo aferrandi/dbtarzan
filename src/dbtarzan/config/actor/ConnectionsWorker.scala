@@ -4,6 +4,7 @@ import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.routing.Broadcast
 import scala.collection.mutable.HashMap
+import java.nio.file.Path
 
 import dbtarzan.messages._
 import dbtarzan.config.connections.ConnectionsConfig
@@ -12,7 +13,7 @@ import dbtarzan.db.{ConnectionBuilder, DatabaseId }
 import dbtarzan.localization.Localization
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
-class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localization : Localization) extends Actor {
+class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localization : Localization, 	keyFilesDirPath : Path) extends Actor {
 	 private val mapDBWorker = HashMap.empty[DatabaseId, ActorRef]
 	 private var connectionsConfig = new ConnectionsConfig(datas.datas)
 	 private val log = new Logger(guiActor)
@@ -20,7 +21,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	 /* creates the actors to serve the queries for a database */
 	 private def getDBWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey) : ActorRef = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-		val dbActor = ConnectionBuilder.buildDBWorker(data, encriptionKey, guiActor, context, localization)
+		val dbActor = ConnectionBuilder.buildDBWorker(data, encriptionKey, guiActor, context, localization, keyFilesDirPath)
 		mapDBWorker += databaseId -> dbActor
 		dbActor
 	 } 
@@ -28,7 +29,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	/* creates the actor to serve the creation of foreign keys text files and start the copy */
 	 private def startCopyWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey) : Unit = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-		val copyActor = ConnectionBuilder.buildCopyWorker(data, encriptionKey, guiActor, context, localization)
+		val copyActor = ConnectionBuilder.buildCopyWorker(data, encriptionKey, guiActor, context, localization, keyFilesDirPath)
 		copyActor ! CopyToFile
 	 } 
 

@@ -1,5 +1,7 @@
 package dbtarzan.db.actor
 
+import java.nio.file.Path
+
 import dbtarzan.db._
 import dbtarzan.db.foreignkeys.{ForeignKeysFile, AdditionalForeignKeysFile }
 import dbtarzan.localization.Localization
@@ -9,10 +11,11 @@ import dbtarzan.db.ForeignKeys
 class DatabaseWorkerKeysFromFile(
 	databaseName : String, 
 	localization: Localization,
+	keyFilesDirPath : Path,
 	log : Logger
 	) {
     def loadForeignKeysFromFile() : Map[String, ForeignKeys] = {
-		val foreignKeysFile =  new ForeignKeysFile(databaseName)
+		val foreignKeysFile =  new ForeignKeysFile(keyFilesDirPath, databaseName)
         if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
 			try {
@@ -31,7 +34,7 @@ class DatabaseWorkerKeysFromFile(
 
 
     def loadAdditionalForeignKeysFromFile() : List[AdditionalForeignKey] = {
-        val foreignKeysFile =  new AdditionalForeignKeysFile(databaseName)
+        val foreignKeysFile =  new AdditionalForeignKeysFile(keyFilesDirPath, databaseName)
 		if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
 			try {

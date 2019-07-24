@@ -9,6 +9,7 @@ object StringUtil {
         else
             text.take(maxLength)
 
+    /* to include a text in a string depening by a condition */
     def textIf(condition : Boolean, builder: () => String) : String = 
       if(condition) 
         builder() 

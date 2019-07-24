@@ -15,7 +15,7 @@ case class AdditionalKeysVerificationResult(nameEmpty: Boolean, nameNewRow: Bool
         relationDuplicates.isEmpty
 }
 
-/* checks for additional foreign keys problems, included duplications and missing data */
+/* checks for additional foreign keys problems before saving them, included duplications and missing data */
 class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
     private def nameEmpty() : Boolean = 
         keys.map(_.name).exists(_.trim.isEmpty)

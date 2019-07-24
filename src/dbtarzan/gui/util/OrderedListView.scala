@@ -10,7 +10,7 @@ import scalafx.beans.property.BooleanProperty
 import scalafx.event.ActionEvent
 
 /**
-  A list of the errors happened in the application, last error first
+  a list of items selected from a combo box. Eech item is displayed with buttons to move it  up and down  or to remove it
 */
 class OrderedListView[T](show : T => String, addButtonLabel : String) {
   val comboBuffer = ObservableBuffer.empty[T] 

@@ -2,7 +2,7 @@ package dbtarzan.db.actor
 
 import akka.actor.Actor
 import akka.actor.ActorRef
-
+import java.nio.file.Path
 import scala.collection.mutable.ListBuffer
 
 import dbtarzan.config.connections.ConnectionData
@@ -19,14 +19,14 @@ import dbtarzan.localization.Localization
 	The file is then used by DatabaseWorker instead of reading the foreign keys fron the database, 
 	thus avoiding delays when reading foreign keys from the database is slow (Oracle) 
 */
-class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : ActorRef, localization: Localization) extends Actor {
+class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : ActorRef, localization: Localization, keyFilesDirPath : Path) extends Actor {
 	val log = new Logger(guiActor)
 	val driverManger = new DriverManagerWithEncryption(encryptionKey)
 	val connection = driverManger.getConnection(data)
 	def databaseName = data.name
 	val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
 	val queryLoader = new QueryLoader(connection)
-	val foreignKeysFile = new ForeignKeysFile(databaseName)
+	val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseName)
 	
 	/* gets all the tables in the database/schema from the database metadata */
 	private def tableNames() : List[String] = {
