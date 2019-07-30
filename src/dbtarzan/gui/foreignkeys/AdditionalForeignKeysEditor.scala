@@ -55,7 +55,7 @@ class AdditionalForeignKeysEditor(
           }
         } else 
           JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", 
-            localization.errorAFKVerification + 
+            localization.errorAFKVerification + " " + 
             StringUtil.textIf(res.nameEmpty, () => localization.errorAFKEmptyNames +". ") +
             StringUtil.textIf(res.nameNewRow, () => localization.errorAFKNameNewRow +". ") +
             StringUtil.textIf(!res.noColumns.isEmpty, () => localization.errorAFKNoColumns(res.noColumns) +". ") +

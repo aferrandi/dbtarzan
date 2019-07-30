@@ -115,7 +115,7 @@ class Spanish extends Localization {
     def errorAFKNameNewRow = "Nombres inválidos"
     def errorAFKNoColumns(noColumns: List[String]) = "Faltan columnas en "+noColumns.mkString(", ")
     def errorAFKSameColumns(sameColumns: List[String]) = "Mismas columnas de y a en "+sameColumns.mkString(", ")
-    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) = "De y acon diferente número de columnas "+differentColumnsNumber.mkString(", ")
+    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) = "De y acon diferente número de columnas en "+differentColumnsNumber.mkString(", ")
     def errorAFKDuplicateNames(nameDuplicates: List[String]) = "Nombres duplicados: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Reacciones duplicadas: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "Las claves externas adicionales "+names.mkString(", ")+" ya existen como claves externas"

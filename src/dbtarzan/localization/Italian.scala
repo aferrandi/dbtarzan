@@ -115,7 +115,7 @@ class Italian extends Localization {
     def errorAFKNameNewRow = "Nomi non validi"
     def errorAFKNoColumns(noColumns: List[String]) = "Mancano colonne in "+noColumns.mkString(", ")
     def errorAFKSameColumns(sameColumns: List[String]) = "Stesse colonne da e a in "+sameColumns.mkString(", ")
-    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) = "Da e a con diverso numero di colonne "+differentColumnsNumber.mkString(", ")
+    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) = "Da e a con diverso numero di colonne in "+differentColumnsNumber.mkString(", ")
     def errorAFKDuplicateNames(nameDuplicates: List[String]) = " Nomi duplicati: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Ralazioni duplicate: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "Le chiavi esterne aggiuntive "+names.mkString(", ")+" esistono gia' come chiavi esterne"
