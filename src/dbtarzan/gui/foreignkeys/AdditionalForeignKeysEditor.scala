@@ -60,6 +60,7 @@ class AdditionalForeignKeysEditor(
             StringUtil.textIf(res.nameNewRow, () => localization.errorAFKNameNewRow +". ") +
             StringUtil.textIf(!res.noColumns.isEmpty, () => localization.errorAFKNoColumns(res.noColumns) +". ") +
             StringUtil.textIf(!res.sameColumns.isEmpty, () => localization.errorAFKSameColumns(res.sameColumns) +". ") +
+            StringUtil.textIf(!res.differentColumnsNumber.isEmpty, () => localization.errorAFKDifferentColumnsNumber(res.differentColumnsNumber) +". ") +
             StringUtil.textIf(!res.nameDuplicates.isEmpty, () => localization.errorAFKDuplicateNames(res.nameDuplicates) +". ") +
             StringUtil.textIf(!res.relationDuplicates.isEmpty, () => localization.errorAFKDuplicateRelations(res.relationDuplicates) +". ")
           )

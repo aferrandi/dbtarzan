@@ -115,6 +115,7 @@ trait Localization {
     def errorAFKNameNewRow: String
     def errorAFKNoColumns(noColumns: List[String]) : String
     def errorAFKSameColumns(sameColumns: List[String]) : String
+    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) : String
     def errorAFKDuplicateNames(nameDuplicates: List[String]) : String
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) : String
     def errorAFKAlreadyExisting(names : List[String]) : String
