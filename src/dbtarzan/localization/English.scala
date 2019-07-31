@@ -74,12 +74,18 @@ class English extends Localization {
     def originalEncryptionKey = "Original"
     def newEncryptionKey1 = "New"
     def newEncryptionKey2 = "New again"
+    def tableFrom = "Table from"
+    def tableTo = "Table to"
+    def columnsFrom = "Columns from"
+    def columnsTo = "Columns to"
+    def openAdditionalForeignKeys = "Additional foreign keys"
     def writingFile(fileName : Path) = "Writing file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" written"
     def connectedTo(databaseName : String) = "Connected to "+databaseName
     def loadedTables(amount : Int, databaseName : String) = "Loaded "+amount+" tables from the database "+databaseName
     def openingDatabase(databaseName : String) = "Opening database "+databaseName
-    def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName    
+    def loadingForeignKeys(fileName : String) = "Loading foreign keys from the database file "+fileName   
+    def savingForeignKeys(fileName : String)  = "Saving foreign keys to the database file "+fileName   
     def noRowsFromForeignKey(keyName : String, keyToTable : String) = "No rows selected with key "+keyName+". Open table "+keyToTable+" without filter."
     def unorderedQueryResults = "Unordered query results?"
     def globalChangesAfterRestart = "Please restart the application to activate these changes"
@@ -92,6 +98,7 @@ class English extends Localization {
     def errorCopyingSelection = "Copying selection to the clipboard got "
     def errorCopyingSQL = "Copying SQL to the clipboard got "
     def errorReadingKeys(databaseName : String) = "Reading the keys file for database "+databaseName+" got the following error. Delete the file if it is corrupted or of an old version of the application."
+    def errorWritingKeys(databaseName : String) = "Writing the keys file for database "+databaseName+" got the following error. Check that the file is not open in another application"
     def errorDisplayingConnections = "Displaying connections got"
     def errorSavingConnections = "Saving the connections got"
     def errorSavingGlobalSettings = "Saving the global settings got"
@@ -103,4 +110,14 @@ class English extends Localization {
     def errorTableMessage(msg : TWithQueryId) = "Table message "+msg+" not recognized"    
     def errorNoTables(databaseName : String, schemasText : String) = "No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText
     def errorDisplayingRows = "Displaying the table rows got"
+    def errorAFKVerification= "Wrong additional foreign keys."
+    def errorAFKEmptyNames = "Empty names"
+    def errorAFKNameNewRow = "Not valid names"
+    def errorAFKNoColumns(noColumns: List[String]) = "Missing columns in "+noColumns.mkString(", ")
+    def errorAFKSameColumns(sameColumns: List[String]) = "Same from and to columns in "+sameColumns.mkString(", ")
+    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) = "From and to with different columns number in "+differentColumnsNumber.mkString(", ")
+    def errorAFKDuplicateNames(nameDuplicates: List[String]) = " Duplicate names: "+nameDuplicates.mkString(", ")
+    def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Duplicate relations: "+relationDuplicates.mkString(", ")
+    def errorAFKAlreadyExisting(names : List[String]) = "The additional foreign keys "+names.mkString(", ")+" already exist as foreign keys"
 }
+

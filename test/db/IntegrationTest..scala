@@ -4,6 +4,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.BeforeAndAfter
 import java.sql.Connection
 import java.sql.DriverManager
+import dbtarzan.db.foreignkeys.{ FKRow, ForeignKeyCriteria, ForeignKeyLoader }
 import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader} 
 import dbtarzan.localization.English
 

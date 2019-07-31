@@ -1,5 +1,6 @@
 package dbtarzan.gui
 
+import scalafx.stage.Stage
 import scalafx.scene.control.{ SplitPane, MenuBar, Menu, MenuItem, Label, TextField }
 import scalafx.scene.layout.{ BorderPane, FlowPane }
 import scalafx.scene.Parent
@@ -8,6 +9,7 @@ import akka.actor.ActorRef
 import scalafx.event.ActionEvent
 import scalafx.geometry.Insets
 
+import dbtarzan.gui.foreignkeys. { AdditionalForeignKeysEditorStarter, AdditionalForeignKeysEditor }
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.db.{ DatabaseId, TableId }
@@ -18,6 +20,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val log = new Logger(guiActor)
   private val tableList = new TableList()
   private val tableTabs = new TableTabs(dbActor, guiActor, databaseId, localization)  
+  private var additionalForeignKeyEditor : Option[AdditionalForeignKeysEditor] = Option.empty
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
   private val filterText = new TextField() { 
     promptText = localization.filter
@@ -50,14 +53,31 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 		        onAction = {
 		          e: ActionEvent => dbActor ! QueryReset(databaseId)
 		        }
-		      }
-		    )
-		  }
+		      },
+		      new MenuItem(localization.openAdditionalForeignKeys) {
+		        onAction = {
+		          e: ActionEvent => {
+                additionalForeignKeyEditor = Some(AdditionalForeignKeysEditorStarter.openAdditionalForeignKeysEditor(
+                  stage(),                 
+                  dbActor, 
+                  guiActor,
+                  databaseId,
+                  tableList.tableNames,
+                  localization
+                  ))
+              }
+            }
+          }
+        )
+      }
     )
     stylesheets += "orderByMenuBar.css"
   }
 
   def control : Parent = pane
+
+  private def stage() : Stage = 
+    new Stage(pane.scene.window().asInstanceOf[javafx.stage.Stage])
 
   def handleQueryIdMessage(msg: TWithQueryId) : Unit = 
     tableTabs.handleQueryIdMessage(msg)
@@ -65,7 +85,9 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTables => tableList.addTableNames(tables.names)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
+    case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableName, columns.columns)) 
     case request : RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
+    case additionalKeys: ResponseAdditionalForeignKeys =>  additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
     case _ => log.error(localization.errorDatabaseMessage(msg))
   }  
 
@@ -75,9 +97,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case _ => log.error(localization.errorTableMessage(msg))
   }  
 
-
   def getId : DatabaseId = databaseId
 
-  def currentTableId : Option[QueryId] = 
-    tableTabs.currentTableId  
+  def currentTableId : Option[QueryId] =  tableTabs.currentTableId  
 }

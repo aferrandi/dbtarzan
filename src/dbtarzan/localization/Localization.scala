@@ -74,12 +74,18 @@ trait Localization {
     def originalEncryptionKey : String
     def newEncryptionKey1 : String
     def newEncryptionKey2 : String
+    def tableFrom : String
+    def tableTo : String
+    def columnsFrom : String
+    def columnsTo : String
+    def openAdditionalForeignKeys: String
     def writingFile(fileName : Path) : String
     def fileWritten(fileName : Path) : String
     def connectedTo(databaseName : String) : String
     def loadedTables(amount : Int, databaseName : String)  : String
     def openingDatabase(databaseName : String) : String
     def loadingForeignKeys(fileName : String) : String
+    def savingForeignKeys(fileName : String) : String
     def noRowsFromForeignKey(keyName : String, keyToTable : String) : String
     def unorderedQueryResults : String
     def globalChangesAfterRestart : String
@@ -92,6 +98,7 @@ trait Localization {
     def errorCopyingSelection : String
     def errorCopyingSQL : String
     def errorReadingKeys(databaseName : String) : String
+    def errorWritingKeys(databaseName : String) : String
     def errorDisplayingConnections : String
     def errorSavingConnections: String
     def errorSavingGlobalSettings: String
@@ -103,4 +110,13 @@ trait Localization {
     def errorTableMessage(msg : TWithQueryId) : String
     def errorNoTables(databaseName : String, schemasText : String) : String
     def errorDisplayingRows: String
+    def errorAFKVerification: String
+    def errorAFKEmptyNames: String
+    def errorAFKNameNewRow: String
+    def errorAFKNoColumns(noColumns: List[String]) : String
+    def errorAFKSameColumns(sameColumns: List[String]) : String
+    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) : String
+    def errorAFKDuplicateNames(nameDuplicates: List[String]) : String
+    def errorAFKDuplicateRelations(relationDuplicates: List[String]) : String
+    def errorAFKAlreadyExisting(names : List[String]) : String
 }

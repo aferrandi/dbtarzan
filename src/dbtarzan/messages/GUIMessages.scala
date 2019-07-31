@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.{Rows, Fields, Field, ForeignKeys, FollowKey, QueryAttributes, PrimaryKeys, DatabaseId, TableId, TableNames, DBTableStructure }
+import dbtarzan.db._
 import akka.actor.ActorRef
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
@@ -23,6 +23,9 @@ case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId])
 
 case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
+
+case class  ResponseColumnsForForeignKeys(databaseId : DatabaseId, tableName: String, columns : Fields) 
+    extends TWithDatabaseId
 
 case class ResponsePrimaryKeys(queryId : QueryId, keys : PrimaryKeys) 
     extends TWithQueryId
@@ -72,3 +75,6 @@ case class RequestOrderByEditor(queryId : QueryId)
 case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
 case class DatabaseIds(names : List[DatabaseId])
+
+case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
+    extends TWithDatabaseId

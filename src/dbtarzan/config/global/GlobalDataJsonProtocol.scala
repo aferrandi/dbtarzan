@@ -2,7 +2,7 @@ package dbtarzan.config.global
 
 import spray.json._
 
-import dbtarzan.config.PasswordJsonProtocol
+import dbtarzan.config.password.PasswordJsonProtocol
 
 object LanguageJsonProtocol extends DefaultJsonProtocol {
 import dbtarzan.localization.Language
@@ -11,7 +11,7 @@ import dbtarzan.localization.Language
 
 object VerificationKeyJsonProtocol extends DefaultJsonProtocol {
   import PasswordJsonProtocol._
-  import dbtarzan.config.VerificationKey
+  import dbtarzan.config.password.VerificationKey
   implicit object VerificationKeyFormat extends JsonFormat[VerificationKey] {
     def write(verificationKey: VerificationKey) = PasswordFormat.write(verificationKey.password)
     def read(json: JsValue): VerificationKey = VerificationKey(PasswordFormat.read(json))

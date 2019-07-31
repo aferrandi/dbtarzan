@@ -1,6 +1,6 @@
 package dbtarzan.config.connections
 
-import dbtarzan.config.{ EncryptionKey, PasswordEncryption, Password }
+import dbtarzan.config.password.{ EncryptionKey, PasswordEncryption, Password }
 import java.nio.file.Path
 
 case class EncryptionKeyChange(

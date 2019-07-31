@@ -1,6 +1,7 @@
-package dbtarzan.db
+package dbtarzan.db.foreignkeys
 
 import org.scalatest.FlatSpec
+import dbtarzan.db.{ IdentifierDelimiters, QueryAttributes, Field, FieldWithValue, FieldType, DBDefinition }
 
 class ForeignKeyTextBuilderTest extends FlatSpec {
   "building foreign key query with delimiters" should "give a query with delimiters" in {

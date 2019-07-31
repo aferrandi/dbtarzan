@@ -5,7 +5,7 @@ import scalafx.scene.layout.BorderPane
 import scalafx.scene.Parent
 
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.EncryptionKey
+import dbtarzan.config.password.EncryptionKey
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization

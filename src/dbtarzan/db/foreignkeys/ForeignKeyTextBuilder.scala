@@ -1,5 +1,6 @@
-package dbtarzan.db
+package dbtarzan.db.foreignkeys
 
+import dbtarzan.db.{ FieldWithValue, FieldType, Field, QueryAttributesApplier, QueryAttributes }
 
 case class FKRow(values : List[FieldWithValue])
 
@@ -8,7 +9,7 @@ case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field])
 /**
 	Builds the query clause related to the selected foreign key
 */
-class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes :  QueryAttributes) {
+class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAttributes) {
 	val mapColumnTypes = criteria.columns.map(field => (field.name.toUpperCase, field.fieldType)).toMap
 	 def buildClause() : String = {
 		val filter = buildFilter(criteria.fkRows)

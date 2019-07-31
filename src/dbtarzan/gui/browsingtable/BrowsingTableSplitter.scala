@@ -1,7 +1,6 @@
 package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.SplitPane
-import scalafx.scene.layout.BorderPane
 import scalafx.Includes._
 
 import dbtarzan.gui.Table

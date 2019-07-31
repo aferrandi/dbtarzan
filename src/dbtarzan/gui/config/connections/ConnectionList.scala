@@ -8,7 +8,7 @@ import scalafx.Includes._
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.localization.Localization
-import dbtarzan.config.Password
+import dbtarzan.config.password.Password
 
 case class ConnectionDataErrors(name : String, errors : List[String])
 

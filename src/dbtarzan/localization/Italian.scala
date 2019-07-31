@@ -74,12 +74,18 @@ class Italian extends Localization {
     def originalEncryptionKey = "Originale"
     def newEncryptionKey1 = "Nuova"
     def newEncryptionKey2 = "Nuova, ancora"
+    def tableFrom = "Tabella da"
+    def tableTo = "Tabella a"
+    def columnsFrom = "Colonne da"
+    def columnsTo = "Colonne a"
+    def openAdditionalForeignKeys = "Chiavi esterne aggiuntive"
     def writingFile(fileName : Path) = "Sto scrivendo il file "+fileName
     def fileWritten(fileName : Path) = "File "+fileName+" scritto"
     def connectedTo(databaseName: String) = "Connesso a "+databaseName
     def loadedTables(amount : Int, databaseName : String) = "Caricate "+amount+" tabelle dal database "+databaseName
     def openingDatabase(databaseName : String) = "Sto aprendo il database "+databaseName
     def loadingForeignKeys(fileName : String) = "Sto caricando le chiavi esterne dal file dei database "+fileName    
+    def savingForeignKeys(fileName : String)  = "Sto salvando le chiavi esterne nel file dei database "+fileName   
     def noRowsFromForeignKey(keyName : String, keyToTable : String) = "Nessuna riga selezionata con la chiave "+keyName+". Tabella "+keyToTable+" aperta senza filtro."
     def unorderedQueryResults = "Risultati non ordinati?"
     def globalChangesAfterRestart = "Riavviare l'applicazione per attivare queste modifiche"
@@ -92,6 +98,7 @@ class Italian extends Localization {
     def errorCopyingSelection = "La copia della selezione e' fallita a causa di "
     def errorCopyingSQL = "La copia dell'SQL e' fallita a causa di "
     def errorReadingKeys(databaseName : String) = "Nella lettiura del file delle chiavi esterne del database "+databaseName+" si e' avuto il seguente errore. Cancella il file se e' corrotto o di una vecchia versione dell'applicazione."
+    def errorWritingKeys(databaseName : String) = "Nella scrittura del file delle chiavi esterne del database  "+databaseName+" si e' avuto il seguente errore. Verifica che il file non sia aperto in un'altra applicazione"
     def errorDisplayingConnections = "La visualizzazione delle connessioni e' fallita a causa di"
     def errorSavingConnections = "Il salvataggio delle connessioni e' fallito a causa di"
     def errorSavingGlobalSettings = "Il salvataggio delle opzioni globali e' fallito a causa di"
@@ -103,4 +110,14 @@ class Italian extends Localization {
     def errorTableMessage(msg : TWithQueryId) = "Messaggio dalla tabella "+msg+" non riconosciuto"
     def errorNoTables(databaseName : String, schemasText : String) = "Nessuna tabella letta dal database "+databaseName+". Schema errato? Schemi disponibili: "+schemasText
     def errorDisplayingRows = "La visualizzazione delle righe della tabella e' fallita a causa di"
+    def errorAFKVerification= "Chiavi esterne aggiuntive errate."
+    def errorAFKEmptyNames = "Nomi vuoti"
+    def errorAFKNameNewRow = "Nomi non validi"
+    def errorAFKNoColumns(noColumns: List[String]) = "Mancano colonne in "+noColumns.mkString(", ")
+    def errorAFKSameColumns(sameColumns: List[String]) = "Stesse colonne da e a in "+sameColumns.mkString(", ")
+    def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]) = "Da e a con diverso numero di colonne in "+differentColumnsNumber.mkString(", ")
+    def errorAFKDuplicateNames(nameDuplicates: List[String]) = " Nomi duplicati: "+nameDuplicates.mkString(", ")
+    def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Ralazioni duplicate: "+relationDuplicates.mkString(", ")
+    def errorAFKAlreadyExisting(names : List[String]) = "Le chiavi esterne aggiuntive "+names.mkString(", ")+" esistono gia' come chiavi esterne"
+
 }

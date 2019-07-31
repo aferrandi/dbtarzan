@@ -1,4 +1,4 @@
-package dbtarzan.config
+package dbtarzan.config.password
 
 case class Password(key : String)
 

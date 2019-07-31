@@ -10,6 +10,7 @@ target
 *.sql
 !src/test/resources/sampledb/**/*.sql
 *.~
+*.fak
 *.fgk
 *.lock
 togit
@@ -22,6 +23,10 @@ mksnap/snap
 mksnap/*
 !mksnap/**/snapcraft.mod
 !mksnap/**/*.sh
+jre11
+wget-log*
 global.config
 connections (copy).config
 build (copy).sbt
+macosx/jre11.tar.gz
+macosx/._jdk*

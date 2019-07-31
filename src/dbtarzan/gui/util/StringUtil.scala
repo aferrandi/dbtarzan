@@ -8,4 +8,11 @@ object StringUtil {
             text.take(maxLength - 3)+"..."
         else
             text.take(maxLength)
+
+    /* to include a text in a string depening by a condition */
+    def textIf(condition : Boolean, builder: () => String) : String = 
+      if(condition) 
+        builder() 
+      else 
+        ""            
 }

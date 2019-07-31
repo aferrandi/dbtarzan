@@ -2,8 +2,7 @@ package dbtarzan.config.connections
 
 import org.scalatest.FlatSpec
 import spray.json._
-
-import dbtarzan.config.Password
+import dbtarzan.config.password.Password
 
 class ConnectionDataReaderTest extends FlatSpec {
    import ConnectionDataJsonProtocol._

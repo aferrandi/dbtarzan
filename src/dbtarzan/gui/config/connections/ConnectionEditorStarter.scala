@@ -8,7 +8,7 @@ import java.nio.file.Path
 
 import dbtarzan.config.connections.{ ConnectionDataReader, ConnectionDataWriter, ConnectionData }
 import dbtarzan.messages.ConnectionDatas
-import dbtarzan.config.EncryptionKey
+import dbtarzan.config.password.EncryptionKey
 import dbtarzan.localization.Localization
 
 /* to start the connection editor. It handles all the cancel/closing/save events */

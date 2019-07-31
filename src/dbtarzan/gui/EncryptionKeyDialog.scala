@@ -8,7 +8,7 @@ import scalafx.stage.Stage
 import scalafx.scene.control._
 import scalafx.scene.layout.GridPane
 
-import dbtarzan.config.{ EncryptionKey, VerificationKey, EncryptionVerification }
+import dbtarzan.config.password.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.localization.Localization
 
 class EncryptionKeyDialog(stage : Stage, localization: Localization)  {

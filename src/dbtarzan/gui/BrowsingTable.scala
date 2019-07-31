@@ -11,7 +11,7 @@ import akka.actor.ActorRef
 import dbtarzan.db.{ DBTable, DBTableStructure, SqlBuilder, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, TableId }
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
-import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText, ForeignKeysInfoSplitter}
+import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText, ForeignKeysInfoSplitter, TableMenu}
 import dbtarzan.gui.info.{ ColumnsTable, Info, QueryInfo }
 import dbtarzan.messages._
 import dbtarzan.localization.Localization

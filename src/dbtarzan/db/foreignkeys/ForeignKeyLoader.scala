@@ -1,10 +1,11 @@
-package dbtarzan.db
+package dbtarzan.db.foreignkeys
 
 import java.sql.{ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
 
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db.util.ExceptionToText
+import dbtarzan.db.{ DBDefinition, ForeignKey, FieldsOnTable, ForeignKeyDirection, ForeignKeys }
 
 import dbtarzan.localization.Localization
 
