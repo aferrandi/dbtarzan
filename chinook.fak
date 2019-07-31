@@ -8,14 +8,4 @@
     "table": "Artist",
     "fields": ["Name"]
   }
-}, {
-  "name": "albumartist",
-  "from": {
-    "table": "Artist",
-    "fields": ["ArtistId"]
-  },
-  "to": {
-    "table": "Album",
-    "fields": ["ArtistId"]
-  }
 }]
