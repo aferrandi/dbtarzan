@@ -32,7 +32,7 @@ the tab shows the rows in the table CITIES that result from filtering the rows o
 
 ### Foreign key tags
 
-The [Foreign Keys panel](GUI-Structure) on the right side of a table shows a list of foreign keys that goes from that table to other tables in the database.
+The [Foreign Keys panel](GUI-Structure) on the right side of a table shows a list of foreign keys that goes from that table to other tables in the database, including the [additional foreign keys](AdditionalForeignKeys).
 Each foreign key is displayed as follows:
 
 * **<** if the foreign key is owned by this table, **>** if the foreign key is owned by the other table. In general this means that for **<** the relation is one-to-many (one row of the current table results in 0-n rows in the other table), for **>** if the relation is many-to-one (many row in this table results in one row in the other table).
