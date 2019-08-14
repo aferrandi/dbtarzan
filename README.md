@@ -3,7 +3,7 @@ DbTarzan
 
 [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](https://aferrandi.github.io/dbtarzan)[![Join the chat at https://gitter.im/aferrandi/dbtarzan](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aferrandi/dbtarzan?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[Cross platform](https://aferrandi.github.io/dbtarzan/Installation.html) database browser.
+[Cross platform](https://aferrandi.github.io/dbtarzan/Installation.html) database **browser**.
 
 Explore the tables of a **relational database** following the relations defined in their **foreign keys**.
 
