@@ -12,8 +12,8 @@ If it is the first time you are looking into a database, with DbTarzan you get i
 
 ![DbTarzan](docs/images/window.png?raw=true)
 
-Foreign keys are used as constraints, but they contain information about the relationships among tables. 
-DbTarzan uses this information to traverse the tables of a database.
+Foreign keys are used as constraints, but they contain information about the relationships among tables.   
+DbTarzan uses this information to traverse the tables of a database.  
 If foreign keys are missing, DBTarzan can use [locally stored surrogate keys](https://aferrandi.github.io/dbtarzan/AdditionalForeignKeys.html) instead.
 
 The following videos show examples of database exploration, the first one is a simple exploration, the second uses queries and order by:
