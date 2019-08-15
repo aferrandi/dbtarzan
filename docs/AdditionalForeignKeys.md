@@ -20,6 +20,7 @@ It will store the keys in a file and load them every time you open the database,
 The additional foreign keys will then be used to go from rows of the **from** table to the related ones in the **to** table, but also the **inverse** is possible, so you can go from rows of the **to** table to rows for the **from** table.
 
 
+![Additiional foreign keys](images/additionalForeignKeys.png)
 
 
 
