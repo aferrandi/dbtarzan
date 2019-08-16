@@ -16,7 +16,7 @@ If this is not enough you can see additional errors and logs running the executa
 
 If you have any non-trivial problem, please report it as an [issue](https://github.com/aferrandi/dbtarzan/issues).
 
-If opening tabs is very slow it can be that reading the foreign keys from the database is too slow. [Preloading the foreign keys](Foreign-keys-preloading) is the solution in this case.
+If opening tabs is very slow it can be that reading the [foreign keys](ForeignKeys) from the database is too slow. [Preloading the foreign keys](Foreign-keys-preloading) is the solution in this case.
 
 
 A special case is when the database closes automatically the connection after a certain period to free resources (e.g. Azure SQL Server). To reopen the connection, on the Tables menu click **Connection Reset**. The connection will be reopened.

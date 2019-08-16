@@ -13,7 +13,7 @@ categories: [Other]
 
 ![DBTarzan](images/window.png)
 
-With DBTarzan you can browse the tables of a database using the relations in their **foreign keys**. 
+With DBTarzan you can browse the tables of a database using the relations in their [foreign keys](ForeignKeys). 
 
 And if the database is missing a foreign key you can [simulate its existence](AdditionalForeignKeysEditor). 
 

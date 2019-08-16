@@ -9,7 +9,7 @@ categories: [GUI]
 
 ## Table Information
 
-When you open a table tab, DBTarzan shows the content of the table, and on the right a panel with the **foreign keys** of that table.
+When you open a table tab, DBTarzan shows the content of the table, and on the right a panel with the  [foreign keys](ForeignKeys) of that table.
 Under the foreign keys table there is another panel, showing **additional table information**.
 This panel is divided in two tabs:
   
