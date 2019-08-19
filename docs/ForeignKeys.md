@@ -9,8 +9,8 @@ categories: [Other]
 
 ## Foreign keys
 
-DBTrarzan is a database browser that uses foreign keys to traverse the tables of a relational database.
-Foreign keys are used as constraints, but they contain information about the relationships among tables.
+DBTrarzan is a database browser that uses foreign keys to **traverse** the tables of a relational database.
+Foreign keys are used in the database as constraints, but they contain information about the relationships among tables.
 DBTarzan sees a foreign key as a directed relation between 2 tables, composed by:
 
 - a **owner table** (the table containing the foreign key, also called child)
