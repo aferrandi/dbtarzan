@@ -9,7 +9,7 @@ categories: [Other]
 
 ## Additional foreign keys
 
-DBTarzan uses the [foreign keys](ForeignKeys.html) in the database to walk from rows in a table to the related rows in aother one.
+DBTarzan uses the [foreign keys](ForeignKeys) in the database to walk from rows in a table to the related rows in aother one.
 But what if the foreign keys are **missing**?
 May be the database administrator forgot to add the foreign key and there is no fast way to add it.
 Or may be the database just does not support foreign keys (No SQL).
