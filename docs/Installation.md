@@ -14,7 +14,7 @@ DBTarzan works in these [environments](Tested-databases-and-operating-systems).
 To install DBTarzan is very easy, since it is one executable file. 
 [Download](https://github.com/aferrandi/dbtarzan/releases);
 
-### **dbTarzan_XXX.exe** for Windows. 
+### **DBTarzan-Install-XXX.exe** for Windows. 
 
 An **installer** for Windows. Download it and execute it. If you get the message "Windows Smartscreen Defender prevented an unrecognized app from starting" click on **MoreInfo** and then **Run anyway** to run it.
 The DBTarzan application is built directly from the code in https://github.com/aferrandi/dbtarzan and does not attempt to violate the security of your system.
@@ -30,10 +30,12 @@ The file is not signed, therefore you need to confirm you want to open it. Move 
 
 The installation file is a simple zip file containing the DBtarzan app directory. The directory contains the DBTarzan jar (dbtarzan-XXX-assembly.jar), the [launcher script universalJavaApplicationStub](https://github.com/tofi86/universalJavaApplicationStub) and a configuration file (Info.plist). The app is built using [jar2app](https://github.com/Jorl17/jar2app).
 
-### **dbtarzan-XXX-assembly.jar** file for the other OSes. 
+### **dbtarzan-XXX-assembly_YYY.jar** file for the other OSes. 
 
+XXX is the version and YYY is the OS (windows, linux, mac).
 Create a directory and move the downloaded file to it. In this case you need to [install](https://www.java.com/en/download/manual.jsp) Java yourself if it is not installed. Being this a simple jar file, it should be just a matter of double-clicking on it to let it start.
 It can also be used to [solve problems](Troubleshooting) connecting to databases.
+
 
 ### Snap 
 
