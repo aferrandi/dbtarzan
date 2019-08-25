@@ -24,11 +24,11 @@ This installation file was created with [Launch4j](http://launch4j.sourceforge.n
 
 This installs as a Debian package automatically insuring that all the dependencies are instaled as well. 
 
-### **DBTarzan-xxx.app.zip** for MacOS. (not available in version 1.20)
+### **DBTarzan-xxx.app.zip** for MacOS.
 
-The file is not signed, therefore you need to confirm you want to open it. Move the downloaded file to the directory where it is supposed to be executed; in the [finder](https://www.lifewire.com/use-mac-finder-2260739) open the context menu with the right mouse button on the DBTarzan app file and press **Open**. When the file is opened in this way, the dialog that appears needs you to confirm that you want to open the file, but allows you to open it. After this it will be possible to open it just by double-clicking on it. This installation does not include a [Java 8 runtime](http://java.com/en/download/), therefore if it is not installed you need to [install](https://www.java.com/en/download/manual.jsp) it yourself,
+The file is not signed, therefore you need to confirm you want to open it. Move the downloaded file to the directory where it is supposed to be executed; in the [finder](https://www.lifewire.com/use-mac-finder-2260739) open the context menu with the right mouse button on the DBTarzan app file and press **Open**. When the file is opened in this way, the dialog that appears needs you to confirm that you want to open the file, but allows you to open it. After this it will be possible to open it just by double-clicking on it. 
 
-The installation file is a simple zip file containing the DBtarzan app directory. The directory contains the DBTarzan jar (dbtarzan-XXX-assembly.jar), the [launcher script universalJavaApplicationStub](https://github.com/tofi86/universalJavaApplicationStub) and a configuration file (Info.plist). The app is built using [jar2app](https://github.com/Jorl17/jar2app).
+The installation file is a simple zip file containing the DBtarzan app directory. The directory contains the DBTarzan jar (dbtarzan-XXX-assembly.jar), a Java 11 jre installation, the [launcher script universalJavaApplicationStub](https://github.com/tofi86/universalJavaApplicationStub) and a configuration file (Info.plist). The app is built using [jar2app](https://github.com/Jorl17/jar2app).
 
 ### **dbtarzan-XXX-assembly_YYY.jar** file for the other OSes. 
 
