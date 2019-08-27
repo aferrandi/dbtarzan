@@ -17,6 +17,7 @@ apps:
         FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf    
         # Standard libraries for Java
         JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+        JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON"        
         PATH: $SNAP/usr/lib/jvm/java-11-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/bin:$PATH
         LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/
     plugs: [home, unity7, x11, wayland, network]
