@@ -59,8 +59,19 @@ class OneConnectionEditor(
       }}
    }
 
+  val txtQueryTimeoutInSeconds = new TextField {
+    text = ""
+    /* only digits allowed (or empty string) */
+    text.onChange { (_, oldValue, newValue) => {
+         if (!isAllDigits(newValue))
+            text = oldValue
+      }}
+   }
+ 
+
   val lblDelimiters = new Label { text = localization.delimiters+":" }
   val lblMaxRows = new Label { text = localization.maxRows+":" }
+  val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
   val lblCatalog = new Label { text = localization.catalog+":" }   
   val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
@@ -93,9 +104,11 @@ class OneConnectionEditor(
     add(cmbDelimiters.control, 1, 8)
     add(lblMaxRows, 0, 9)
     add(txtMaxRows, 1, 9)
-    add(lblCatalog, 0, 10)
-    add(txtCatalog, 1, 10)    
-    add(linkToJdbcUrls, 1, 11)
+    add(lblQueryTimeoutInSeconds, 0, 10)
+    add(txtQueryTimeoutInSeconds, 1, 10)    
+    add(lblCatalog, 0, 11)
+    add(txtCatalog, 1, 11)    
+    add(linkToJdbcUrls, 1, 12)
     GridPane.setHalignment(linkToJdbcUrls, HPos.RIGHT) 
     padding = Insets(10)
     vgap = 10
@@ -122,6 +135,7 @@ class OneConnectionEditor(
     txtSchema.text = noneToEmpty(data.schema)
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
+    txtQueryTimeoutInSeconds.text = noneToEmpty(data.queryTimeoutInSeconds.map(_.toString))
     txtCatalog.text = noneToEmpty(data.catalog)
     chkAdvanced.selected = false
     changeAdvancedVisibility(false)
@@ -138,6 +152,8 @@ class OneConnectionEditor(
       cmbDelimiters.control,
       lblMaxRows,
       txtMaxRows,
+      lblQueryTimeoutInSeconds,
+      txtQueryTimeoutInSeconds,
       lblCatalog,
       txtCatalog
     )
@@ -164,6 +180,7 @@ class OneConnectionEditor(
       None,
       cmbDelimiters.toDelimiters(),
       emptyToNone(txtMaxRows.text()).map(_.toInt), // it can only be None or Int
+      emptyToNone(txtQueryTimeoutInSeconds.text()).map(_.toInt), // it can only be None or Int
       emptyToNone(txtCatalog.text())
   )}
 
@@ -178,6 +195,7 @@ class OneConnectionEditor(
       txtUser.text,
       txtPassword.text,
       txtMaxRows.text,
+      txtQueryTimeoutInSeconds.text,
       txtCatalog.text
     ).foreach(_.onChange(safe.onChange(() => useData(toData()))))
     jarSelector.onChange(safe.onChange(() => useData(toData())))

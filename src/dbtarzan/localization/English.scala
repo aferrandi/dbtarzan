@@ -23,6 +23,7 @@ class English extends Localization {
     def catalog = "Catalog"    
     def delimiters = "Delimiters"
     def maxRows = "Max Rows"
+    def queryTimeoutInSeconds = "Query timeout in seconds"
     def tables = "Tables"
     def databases = "Databases"
     def foreignKeys = "Foreign keys"

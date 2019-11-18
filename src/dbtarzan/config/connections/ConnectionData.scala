@@ -28,6 +28,8 @@ case class ConnectionData(
 	identifierDelimiters: Option[IdentifierDelimiters],
 	/* the path of the jar file of the driver */
 	maxRows : Option[Int],
+	/* the max time a query can take in seconds */
+	queryTimeoutInSeconds : Option[Int],
 	/* the catalog of the database containing the data, used when the schema is not enough (table user n MySQL)  */
 	catalog: Option[String]
 	)

@@ -23,6 +23,7 @@ class Spanish extends Localization {
     def catalog = "catálogo"        
     def delimiters = "Separadores"
     def maxRows = "Máximo de filas"    
+    def queryTimeoutInSeconds = "tiempo de espera de consulta en segundos"
     def tables = "Tablas"    
     def databases = "Base de datos"
     def foreignKeys = "Llaves extranjeras"

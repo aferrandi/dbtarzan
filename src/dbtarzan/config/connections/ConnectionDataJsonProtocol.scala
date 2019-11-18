@@ -27,6 +27,7 @@ import PasswordJsonProtocol._
   	"instances", 
   	"identifierDelimiters",
     "maxRows",
+		"queryTimeoutInSeconds",
 		"catalog"
   	)
 }

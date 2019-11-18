@@ -33,6 +33,7 @@ class ConnectionDataPasswordChanger(change : EncryptionKeyChange) {
             original.instances,
             original.identifierDelimiters,
             original.maxRows,
+            original.queryTimeoutInSeconds,
             original.catalog
             )
 

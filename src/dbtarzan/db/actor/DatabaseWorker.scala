@@ -96,9 +96,9 @@ class DatabaseWorker(
 		guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
 	})
 
-	private def queryRows(qry: QueryRows, maxRows: Option[Int]) : Unit = withCore(
+	private def queryRows(qry: QueryRows, maxRows: Option[Int], queryTimeoutInSeconds: Option[Int]) : Unit = withCore(
 		e => qry.original.foreach(original => guiActor ! ErrorRows(original.queryId, e)), 
-		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500),  rows => 
+		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeoutInSeconds.getOrElse(5000),  rows => 
 			guiActor ! ResponseRows(qry.queryId, qry.structure, rows, qry.original)
 		)
 	)
@@ -166,7 +166,7 @@ class DatabaseWorker(
   }
 
 	def receive = {
-		case qry : QueryRows => queryRows(qry, data.maxRows)
+		case qry : QueryRows => queryRows(qry, data.maxRows, data.queryTimeoutInSeconds)
 		case qry : QueryClose => close() 	    
 		case qry : QueryReset => reset() 	    
 		case qry : QueryTables => queryTables(qry) 

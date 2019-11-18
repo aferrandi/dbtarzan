@@ -23,6 +23,7 @@ trait Localization {
     def catalog : String
     def delimiters : String
     def maxRows : String
+    def queryTimeoutInSeconds : String
     def tables: String
     def databases: String
     def foreignKeys: String

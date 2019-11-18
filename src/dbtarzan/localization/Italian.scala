@@ -23,6 +23,7 @@ class Italian extends Localization {
     def catalog = "Catalogo"
     def delimiters = "Separatori"
     def maxRows = "Max Righe"    
+    def queryTimeoutInSeconds = "Timeout query in secondi"
     def tables = "Tabelle"    
     def databases = "Database"
     def foreignKeys = "Chiavi esterne"
