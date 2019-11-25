@@ -15,7 +15,10 @@ case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : 
 case class ErrorRows(queryId : QueryId,  ex: Exception) 
     extends TWithQueryId
 
-case class ResponseTables(databaseId : DatabaseId, names: TableNames) 
+case class ResponseTables(databaseId : DatabaseId, names: TableNames, dbActor : ActorRef) 
+    extends TWithDatabaseId
+
+case class ResponseTablesByPattern(databaseId : DatabaseId, names: TableNames) 
     extends TWithDatabaseId
 
 case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId]) 

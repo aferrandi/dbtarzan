@@ -3,7 +3,7 @@ package dbtarzan.db
 import java.sql.{ResultSet, SQLException, Statement}
 import scala.collection.immutable.Vector
 
-import dbtarzan.db.util.ExceptionToText
+import dbtarzan.db.util.{ ExceptionToText, ExecutionTime }
 import dbtarzan.db.util.ResourceManagement.using
 
 /** The part of the database actor that runs the table queries */
@@ -22,13 +22,14 @@ class QueryLoader(connection : java.sql.Connection) {
 
 	private def queryWithStatement(statement: Statement, qry : QuerySql, maxRows: Int, queryTimeoutInSeconds: Int, use : Rows => Unit) : Unit = try {
 		statement.setQueryTimeout(queryTimeoutInSeconds);
+		val executionTime = new ExecutionTime(queryTimeoutInSeconds * 1000)
 		val rs = statement.executeQuery(qry.sql)
 		val meta = rs.getMetaData()
 		val columnCount = meta.getColumnCount()
 		println("Column count:"+columnCount+". Rows to read :"+maxRows)
 		var rows = Vector.empty[Row]
 		var i = 0
-		while(rs.next() && i < maxRows) {
+		while(rs.next() && i < maxRows && !executionTime.isOver()) {
 			rows = rows :+ nextRow(rs, columnCount)
 			if(rows.length >= 20) {
 				use(Rows(rows.toList))

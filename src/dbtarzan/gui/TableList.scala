@@ -7,8 +7,8 @@ import dbtarzan.gui.util.JFXUtil
 import scalafx.scene.Parent
 
 /* The list of tables to choose from */
-class TableList extends TControlBuilder {
-  private val buffer = ObservableBuffer.empty[String] 
+class TableList(names : TableNames) extends TControlBuilder {
+  private val buffer = ObservableBuffer(names.tableNames)
   private val list = new ListView[String](buffer)
 
   def addTableNames(names : TableNames) : Unit = {

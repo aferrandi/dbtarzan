@@ -1,24 +1,23 @@
 package dbtarzan.gui
 
 import scalafx.stage.Stage
-import scalafx.scene.control.{ SplitPane, MenuBar, Menu, MenuItem, Label, TextField }
-import scalafx.scene.layout.{ BorderPane, FlowPane }
+import scalafx.scene.control.{Label, Menu, MenuBar, MenuItem, SplitPane, TextField}
+import scalafx.scene.layout.{BorderPane, FlowPane}
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
 import scalafx.event.ActionEvent
 import scalafx.geometry.Insets
-
-import dbtarzan.gui.foreignkeys. { AdditionalForeignKeysEditorStarter, AdditionalForeignKeysEditor }
+import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.db.{ DatabaseId, TableId }
+import dbtarzan.db.{DatabaseId, TableId, TableNames}
 import dbtarzan.localization.Localization
 
 /* A panel containing all the tabs related to a database */
-class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization) extends TControlBuilder {
+class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableNames: TableNames) extends TControlBuilder {
   private val log = new Logger(guiActor)
-  private val tableList = new TableList()
+  private val tableList = new TableList(tableNames)
   private val tableTabs = new TableTabs(dbActor, guiActor, databaseId, localization)  
   private var additionalForeignKeyEditor : Option[AdditionalForeignKeysEditor] = Option.empty
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
@@ -83,10 +82,10 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     tableTabs.handleQueryIdMessage(msg)
 
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
-    case tables : ResponseTables => tableList.addTableNames(tables.names)
+    case tables : ResponseTablesByPattern => tableList.addTableNames(tables.names)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
     case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableName, columns.columns)) 
-    case request : RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
+    case _: RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
     case additionalKeys: ResponseAdditionalForeignKeys =>  additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
     case _ => log.error(localization.errorDatabaseMessage(msg))
   }  

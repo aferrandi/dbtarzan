@@ -112,12 +112,12 @@ class DatabaseWorker(
 				val schemasText = schemas.schemas.map(_.name).mkString(", ")
 				log.warning(localization.errorNoTables(databaseName, schemasText))
 			}
-    		guiActor ! ResponseTables(qry.databaseId, names)
+    		guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
 		})
 
 	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(logError, core => { 
 			val names = core.tablesLoader.tablesByPattern(qry.pattern)
-    		guiActor ! ResponseTables(qry.databaseId, names)
+    		guiActor ! ResponseTablesByPattern(qry.databaseId, names)
 		})
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(logError, core => {

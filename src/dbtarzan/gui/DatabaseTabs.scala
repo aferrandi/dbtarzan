@@ -7,7 +7,7 @@ import scalafx.Includes._
 import scalafx.event.Event
 import akka.actor.ActorRef
 import dbtarzan.messages._
-import dbtarzan.db.{DatabaseId, TableId}
+import dbtarzan.db.{DatabaseId, TableId, TableNames}
 import dbtarzan.localization.Localization
 
 case class DatabaseWithTab(database : Database, tab : Tab)
@@ -24,11 +24,11 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
       this.connectionsActor = Some(connectionsActor)
   } 
 
-  private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId) : Database = {
+  private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableNames : TableNames) : Database = {
     println("add database tab for "+databaseId.databaseName)
     guiActor match {
       case Some(ga) => {
-        val database = new Database(dbActor, ga, databaseId, localization)
+        val database = new Database(dbActor, ga, databaseId, localization, tableNames)
         val tab = buildTab(database)
         tabs += tab
         selectTab(tab)
@@ -73,18 +73,16 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case rsp : ResponseCloseDatabase => removeDatabase(rsp.databaseId)
     case rsp : ResponseDatabase => addDatabase(rsp.dbActor, rsp.databaseId) 
+    case rsp : ResponseTables => addDatabaseTab(rsp.dbActor, rsp.databaseId, rsp.names)
     case _ => withDatabaseId(msg.databaseId, database => database.handleDatabaseIdMessage(msg))
   }
 
   def handleTableIdMessage(msg: TWithTableId) : Unit = 
     withTableId(msg.tableId, database => database.handleTableIdMessage(msg))
 
-
   /* received the data of a database, to open a database tab */
-  def addDatabase(dbActor : ActorRef, databaseId : DatabaseId) : Unit = {
-    val database = addDatabaseTab(dbActor, databaseId)
-    dbActor ! QueryTables(database.getId)
-  }
+  def addDatabase(dbActor : ActorRef, databaseId : DatabaseId) : Unit =
+    dbActor ! QueryTables(databaseId, dbActor)
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
   private def getTabByDatabaseId(databaseId : DatabaseId) = 
