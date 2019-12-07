@@ -21,11 +21,11 @@ class QueryLoader(connection : java.sql.Connection) {
 		Row(Range(1, columnCount+1).map(i => rs.getString(i)).toList)
 
 	private def queryWithStatement(statement: Statement, qry : QuerySql, maxRows: Int, queryTimeoutInSeconds: Int, use : Rows => Unit) : Unit = try {
-		statement.setQueryTimeout(queryTimeoutInSeconds);
+		statement.setQueryTimeout(queryTimeoutInSeconds)
 		val executionTime = new ExecutionTime(queryTimeoutInSeconds * 1000)
 		val rs = statement.executeQuery(qry.sql)
-		val meta = rs.getMetaData()
-		val columnCount = meta.getColumnCount()
+		val meta = rs.getMetaData
+		val columnCount = meta.getColumnCount
 		println("Column count:"+columnCount+". Rows to read :"+maxRows)
 		var rows = Vector.empty[Row]
 		var i = 0
@@ -38,7 +38,9 @@ class QueryLoader(connection : java.sql.Connection) {
 			i += 1
 		}
 		use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
-		println("Query terminated")
+    if(executionTime.isOver())
+      throw new Exception("timeout (over "+queryTimeoutInSeconds+" seconds)")
+    println("Query terminated")
 	}			
 	catch {
 		case se : SQLException  => throw new Exception("With query "+qry.sql+" got "+ExceptionToText.sqlExceptionText(se), se)

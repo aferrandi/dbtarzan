@@ -32,7 +32,7 @@ object JFXUtil {
 
 	private def focusedItem[T](list : ListView[T]) = list.focusModel().focusedItem()    
 	def onAction[T](list : ListView[T] , action : (T, Boolean) => Unit) = {
-		list.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.PRIMARY) 
+		list.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.Primary)
 			action(focusedItem(list), ev.controlDown)
 		list.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 			action(focusedItem(list), ev.controlDown)
@@ -40,7 +40,7 @@ object JFXUtil {
 
 	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()    
 	def onAction[T](table : TableView[T] , action : (T, Boolean) => Unit) = {
-		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.PRIMARY) 
+		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.Primary)
 			action(focusedItem(table), ev.controlDown)
 		table.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 			action(focusedItem(table), ev.controlDown)

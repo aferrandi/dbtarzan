@@ -1,6 +1,7 @@
 package dbtarzan.gui
 
 import akka.actor.{ ActorSystem, Props, ActorRef, Actor }
+import scala.language.postfixOps
 
 /* crates and keeps track of the main actors in this application */
 class ActorHandler (guiActorSupplier : () =>  Actor, configActorSupplier: ActorRef => Actor) {

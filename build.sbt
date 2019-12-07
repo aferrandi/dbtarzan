@@ -3,10 +3,10 @@ import scala.sys.process._
 fork := true
 
 lazy val standardLibraries = Seq(
-  "io.spray" %%  "spray-json" % "1.3.4",
-  "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test",
-  "org.scalafx" %% "scalafx" % "11-R16",
-  "com.typesafe.akka" %% "akka-actor" % "2.5.11",
+  "io.spray" %%  "spray-json" % "1.3.5",
+  "org.scalatest" % "scalatest_2.13" % "3.1.0" % "test",
+  "org.scalafx" % "scalafx_2.13" % "12.0.2-R18",
+  "com.typesafe.akka" %% "akka-actor" % "2.6.0",
   "com.h2database" % "h2" % "1.4.197"
 )
 
@@ -16,15 +16,15 @@ lazy val commonConfiguration = Seq(
 
   maintainer := "Andrea Ferrandi",
 
-  version := "1.20",
+  version := "1.21",
 
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.13.1",
 
   mainClass in Compile := Some("dbtarzan.gui.Main"),
 
-  scalaSource in Compile := baseDirectory.value / ".." / "src",
+  scalaSource in Compile := baseDirectory.value / ".." / "src" / "main" / "scala",
 
-  scalaSource in Test := baseDirectory.value / ".." / "test",
+  scalaSource in Test := baseDirectory.value / ".." / "src" / "test" / "scala",
 
   resourceDirectory in Compile := baseDirectory.value / ".." / "src" / "main" / "resources",
 
@@ -52,7 +52,7 @@ def buildProject(name: String) = {
     .settings(commonConfiguration)
     .settings(
       libraryDependencies ++= standardLibraries ++ javaFXModules.map( module => 
-        "org.openjfx" % s"javafx-$module" % "11" classifier name
+        "org.openjfx" % s"javafx-$module" % "12" classifier name
       )
     )
 }

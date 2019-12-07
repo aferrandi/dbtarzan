@@ -1,18 +1,18 @@
 package dbtarzan.db.actor
 
-import java.sql.SQLException
-import akka.actor.Actor
-import akka.actor.ActorRef
-import java.time.LocalDateTime
-import scala.collection.mutable.HashMap
 import java.nio.file.Path
+import java.sql.SQLException
+import java.time.LocalDateTime
 
-import dbtarzan.db.util.ExceptionToText
+import akka.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db._
-import dbtarzan.messages._
+import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
+import dbtarzan.messages._
+
+import scala.collection.mutable
 
 /* The actor that reads data from the database */
 class DatabaseWorker(
@@ -22,17 +22,17 @@ class DatabaseWorker(
 	localization: Localization,
 	keyFilesDirPath: Path
 	) extends Actor {
-	def databaseName = data.name
-	def databaseId = DatabaseId(data.name)	
-	val createConnection = new DriverManagerWithEncryption(encryptionKey)
-	val log = new Logger(guiActor)
-	var optCore :Option[DatabaseWorkerCore] = buildCore()
-	val cache = new DatabaseWorkerCache()
-	val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
-	val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
-	val foreignKeysForCache  : HashMap[String, ForeignKeys] = HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*) 	
-	var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
-	var additionalForeignKeysExploded : Map[String, ForeignKeys] = buildKeys(additionalForeignKeys) 		
+	private def databaseName = data.name
+  private def databaseId = DatabaseId(data.name)
+  private val createConnection = new DriverManagerWithEncryption(encryptionKey)
+  private val log = new Logger(guiActor)
+  private var optCore :Option[DatabaseWorkerCore] = buildCore()
+  private val cache = new DatabaseWorkerCache()
+  private val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
+  private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
+  private val foreignKeysForCache  : mutable.HashMap[String, ForeignKeys] = mutable.HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*)
+  private var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
+  private var additionalForeignKeysExploded : Map[String, ForeignKeys] = buildKeys(additionalForeignKeys)
 
 	private def buildCore() : Option[DatabaseWorkerCore] = try {
 			val connection = createConnection.getConnection(data)
@@ -81,7 +81,7 @@ class DatabaseWorker(
 	private def reset() : Unit = handleErr(logError, {
 		println("Reseting the connection of the worker for "+databaseName)
 		optCore.foreach(core =>
-			try { core.closeConnection() } catch { case e : Throwable => {} }
+			try { core.closeConnection() } catch { case e : Throwable => }
 			)
 		optCore = buildCore()
 		log.info(localization.connectionResetted(databaseName))
@@ -97,15 +97,21 @@ class DatabaseWorker(
 	})
 
 	private def queryRows(qry: QueryRows, maxRows: Option[Int], queryTimeoutInSeconds: Option[Int]) : Unit = withCore(
-		e => qry.original.foreach(original => guiActor ! ErrorRows(original.queryId, e)), 
-		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeoutInSeconds.getOrElse(5000),  rows => 
+		e => queryRowsHandleErr(qry, e),
+		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeoutInSeconds.getOrElse(10),  rows =>
 			guiActor ! ResponseRows(qry.queryId, qry.structure, rows, qry.original)
 		)
 	)
 
-	private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => { 
+  private def queryRowsHandleErr(qry: QueryRows, e: Exception): Unit =
+    qry.original match {
+    case Some(original) => guiActor ! ErrorRows(original.queryId, e)
+    case None => log.error(localization.errorQueryingDatabase(databaseName), e)
+  }
+
+  private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => {
 			val names = core.tablesLoader.tableNames()
-			if(!names.tableNames.isEmpty)
+			if(names.tableNames.nonEmpty)
 				log.info(localization.loadedTables(names.tableNames.size, databaseName))
 			else {
 				val schemas = core.schemasLoader.schemasNames()
@@ -155,14 +161,14 @@ class DatabaseWorker(
 			additionalForeignKeysExploded = buildKeys(update.keys) 
 			toFile.saveAdditionalForeignKeys(update.keys)
 			val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysForCache, additionalForeignKeys)
-			if(!intersection.isEmpty)
+			if(intersection.nonEmpty)
 				log.error(localization.errorAFKAlreadyExisting(intersection)) 
 	}
 
   private def buildKeys(keys: List[AdditionalForeignKey]) : Map[String, ForeignKeys] = {
     val keysStraight = keys.map(k => ForeignKey(k.name+"_straight", k.from, k.to, ForeignKeyDirection.STRAIGHT))
     val keysTurned = keys.map(k => ForeignKey(k.name+"_turned", k.to, k.from, ForeignKeyDirection.TURNED))
-    (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys(_))
+    (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys(_)).toMap
   }
 
 	def receive = {
