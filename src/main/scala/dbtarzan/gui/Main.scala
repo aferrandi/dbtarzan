@@ -66,6 +66,6 @@ object Main extends JFXApp {
       case e: Throwable =>  new ProcessBuilder("x-www-browser", url).start()
     }
   
-  private def versionFromManifest() = Option(getClass().getPackage().getImplementationVersion()).getOrElse("")
+  private def versionFromManifest() = Option(getClass.getPackage.getImplementationVersion).getOrElse("")
 }
 

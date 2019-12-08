@@ -1,28 +1,24 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ SplitPane, MenuItem, Menu, MenuBar }
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.scene.Scene
-import scalafx.scene.input.KeyEvent
-import scalafx.scene.image.Image
-import scalafx.stage.Screen
-import scalafx.Includes._
-import scalafx.event.ActionEvent
-import scalafx.geometry.Orientation
-import scalafx.scene.layout.BorderPane
 import akka.actor.ActorRef
-
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.gui.config.connections.ConnectionEditorStarter
-import dbtarzan.config.password.{EncryptionKey, VerificationKey, PasswordEncryption}
-import dbtarzan.gui.browsingtable.TableMenu
-import dbtarzan.gui.config.global.GlobalEditorStarter
-import dbtarzan.types.ConfigPath
-import dbtarzan.messages.Logger
+import dbtarzan.config.password.{EncryptionKey, PasswordEncryption, VerificationKey}
 import dbtarzan.db.DatabaseId
+import dbtarzan.gui.browsingtable.TableMenu
+import dbtarzan.gui.config.connections.ConnectionEditorStarter
+import dbtarzan.gui.config.global.GlobalEditorStarter
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-
-
+import dbtarzan.messages.Logger
+import dbtarzan.types.ConfigPath
+import scalafx.Includes._
+import scalafx.application.JFXApp.PrimaryStage
+import scalafx.geometry.Orientation
+import scalafx.scene.Scene
+import scalafx.scene.control.{Menu, MenuBar, SplitPane}
+import scalafx.scene.image.Image
+import scalafx.scene.input.KeyEvent
+import scalafx.scene.layout.BorderPane
+import scalafx.stage.Screen
 
 /* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle.
 	the actors are still not been created when calling the constructor, therefore they are passed as functions.
@@ -62,7 +58,11 @@ class MainGUI(
 		extractEncryptionKey().foreach(use) 
 
 	def onDatabaseSelected(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
-		databaseList.onDatabaseSelected(databaseId => withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey)))
+		databaseList.onDatabaseSelected(databaseId => {
+      if(!databaseTabs.showDatabase(databaseId))
+        withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey))
+      }
+    )
 
 	def onForeignKeyToFile(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
 		databaseList.onForeignKeyToFile(databaseId => withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey)))
@@ -76,7 +76,7 @@ class MainGUI(
 	        	databaseTabs.sendCloseToAllOpen()
 	        	closeApp() 
 	        }
-		}
+		  }
 	}
 
 	private def handleShortcut(ev : KeyEvent) : Unit = 
@@ -93,29 +93,17 @@ class MainGUI(
 	}
 
 	private def buildSettingsMenu() = new Menu(localization.settings) {
-		    items = List(
-		      new MenuItem(localization.globalSettings) {
-		        onAction = {
-		          e: ActionEvent => { openGlobalEditor()	}
-		        }
-		      },					
-		      new MenuItem(localization.editConnections) {
-		        onAction = {
-		          e: ActionEvent => { openConnectionsEditor()	}
-		        }
-		      }
-		    )
-		  }
+    items = List(
+      JFXUtil.menuItem(localization.globalSettings, openGlobalEditor),
+      JFXUtil.menuItem(localization.editConnections, openConnectionsEditor)
+    )
+  }
 
 	private def buildHelpMenu() = new Menu(localization.help) {
-		    items = List(
-		      new MenuItem(localization.documentation) {
-		        onAction = {		        	
-		          e: ActionEvent =>  openWeb("https://aferrandi.github.io/dbtarzan/") 
-		        }
-		      }
-		    )
-		  }
+    items = List(
+      JFXUtil.menuItem(localization.documentation, () => openWeb("https://aferrandi.github.io/dbtarzan/")),
+    )
+  }
 
 	private def buildMainView() = new BorderPane {
 		top = buildMenu() 
@@ -123,7 +111,7 @@ class MainGUI(
 	}
 
   private def buildDatabaseSplitPane() = new SplitPane {
-		val databaseListWithTitle = JFXUtil.withTitle(databaseList.control, localization.databases)
+		val databaseListWithTitle: BorderPane = JFXUtil.withTitle(databaseList.control, localization.databases)
 		items.addAll(databaseListWithTitle, databaseTabs.control)
 		dividerPositions = 0.2
 		SplitPane.setResizableWithParent(databaseListWithTitle, false)
@@ -136,7 +124,7 @@ class MainGUI(
 		SplitPane.setResizableWithParent(logList.control, false)
 	}
   
-	private def appIcon() = new Image(getClass().getResourceAsStream("monkey-face-cartoon.png"))
+	private def appIcon() = new Image(getClass.getResourceAsStream("monkey-face-cartoon.png"))
 
 	private def openConnectionsEditor() : Unit = {
 		guiActor match {
@@ -153,7 +141,7 @@ class MainGUI(
 	}
 
 	private def extractEncryptionKey() : Option[EncryptionKey] = {
-		if(!encryptionKey.isDefined) 
+		if(encryptionKey.isEmpty)
 			encryptionKey  = verificationKey.map(
 				vkey => encryptionKeyDialog.showDialog(vkey)
 				).getOrElse(

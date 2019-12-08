@@ -85,8 +85,8 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
     dbActor ! QueryTables(databaseId, dbActor)
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
-  private def getTabByDatabaseId(databaseId : DatabaseId) = 
-    tabs.tabs.filter(_.text == databaseId.databaseName).headOption
+  private def getTabByDatabaseId(databaseId : DatabaseId) =
+    tabs.tabs.filter(_.text() == databaseId.databaseName).headOption
 
   /* selects and shows the content of a database tab */
   private def selectTab(tab : Tab) : Unit = 
@@ -100,9 +100,11 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
    }
   
   /* shows the tab of a database */
-  def showDatabase(databaseId : DatabaseId) : Unit = {
+  def showDatabase(databaseId : DatabaseId) : Boolean = {
     val optTab = getTabByDatabaseId(databaseId)
-     optTab.foreach(tab => selectTab(tab))
+    println("database "+databaseId+" tab "+optTab)
+    optTab.foreach(tab => selectTab(tab))
+    optTab.isDefined
   }
 
   def control : Parent = tabs

@@ -31,7 +31,7 @@ object JFXUtil {
 	}
 
 	private def focusedItem[T](list : ListView[T]) = list.focusModel().focusedItem()    
-	def onAction[T](list : ListView[T] , action : (T, Boolean) => Unit) = {
+	def onAction[T](list : ListView[T] , action : (T, Boolean) => Unit): Unit = {
 		list.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.Primary)
 			action(focusedItem(list), ev.controlDown)
 		list.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
@@ -39,14 +39,14 @@ object JFXUtil {
 	}
 
 	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()    
-	def onAction[T](table : TableView[T] , action : (T, Boolean) => Unit) = {
+	def onAction[T](table : TableView[T] , action : (T, Boolean) => Unit): Unit = {
 		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.Primary)
 			action(focusedItem(table), ev.controlDown)
 		table.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 			action(focusedItem(table), ev.controlDown)
 	}
 
-	def onContextMenu[T](menu : MenuItem, list : ListView[T] , action : T => Unit) = 
+	def onContextMenu[T](menu : MenuItem, list : ListView[T] , action : T => Unit): Unit =
 		menu.onAction = (ev: ActionEvent) => action(focusedItem(list))
 
 	def copyTextToClipboard(text : String) : Unit = {
@@ -67,7 +67,7 @@ object JFXUtil {
 		b ++= l
 	}
 
-	def areYouSure(text : String, header: String) = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
+	def areYouSure(text : String, header: String): Boolean = new Alert(AlertType.Confirmation, text, ButtonType.Yes, ButtonType.No ) {
 		headerText = header
 	}.showAndWait() match {
 		case Some(ButtonType.Yes) => true
@@ -85,15 +85,21 @@ object JFXUtil {
 
 	def loadIcon(fileName: String) : Image = 
 		// println(this.getClass().getResource("").getPath())
-	    new Image(getClass().getResourceAsStream(fileName))
+	    new Image(getClass.getResourceAsStream(fileName))
 
 	
-    def averageCharacterSize() : Double = {
-			val s = "XXXXX"
-			val text = new Text(s);
-			text.getBoundsInLocal().getWidth() / s.length;        
-    }	
-   
+  def averageCharacterSize() : Double = {
+    val s = "XXXXX"
+    val text = new Text(s)
+    text.getBoundsInLocal.getWidth / s.length;
+  }
+
+  def menuItem(text: String, action:() => Unit) = new MenuItem(text) {
+    onAction = {
+      e: ActionEvent => { action()	}
+    }
+  }
+
     /* invisible controls don't use space in the layout */
 	def changeControlsVisibility(visible : Boolean, nodes: javafx.scene.Node*) {
 		nodes.foreach(node => {
