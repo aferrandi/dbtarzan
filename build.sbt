@@ -2,6 +2,9 @@ import scala.sys.process._
 
 fork := true
 
+val versionNymber = "1.21"
+version := versionNymber
+
 lazy val standardLibraries = Seq(
   "io.spray" %%  "spray-json" % "1.3.5",
   "org.scalatest" % "scalatest_2.13" % "3.1.0" % "test",
@@ -16,7 +19,7 @@ lazy val commonConfiguration = Seq(
 
   maintainer := "Andrea Ferrandi",
 
-  version := "1.21",
+  version := versionNymber,
 
   scalaVersion := "2.13.1",
 
@@ -87,7 +90,7 @@ lazy val packageSnap = taskKey[Unit]("Packages Snap")
 packageSnap := {
   val rootDir = baseDirectory.value
   (linux/assembly).value // dependency
-  "mksnap/create.sh "+rootDir+" "+version.value !
+  "mksnap/create.sh "+rootDir+" "+ version.value !
 }
 
 addCommandAlias("packageAll", 
