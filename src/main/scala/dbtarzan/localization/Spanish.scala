@@ -13,6 +13,7 @@ class Spanish extends Localization {
     def remove = "Eliminar"
     def delete = "Cancelar"
     def duplicate = "Duplicar"
+    def test = "Test"
     def cancel = "Anular"
     def save = "Guardar"
     def name = "Nombre"

@@ -2,6 +2,7 @@ package dbtarzan.messages
 
 import dbtarzan.db._
 import akka.actor.ActorRef
+import dbtarzan.config.connections.ConnectionData
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
 
@@ -81,3 +82,5 @@ case class DatabaseIds(names : List[DatabaseId])
 
 case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
     extends TWithDatabaseId
+
+case class ResponseTest(data : ConnectionData,  ex: Option[Exception])

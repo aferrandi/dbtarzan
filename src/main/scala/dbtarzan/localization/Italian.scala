@@ -13,6 +13,7 @@ class Italian extends Localization {
     def remove = "Rimuovi"
     def delete = "Cancella"
     def duplicate = "Duplica"
+    def test = "Test"
     def cancel = "Annulla"
     def save = "Salva"
     def name = "Nome"

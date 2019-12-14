@@ -105,9 +105,9 @@ class DatabaseWorker(
 
   private def queryRowsHandleErr(qry: QueryRows, e: Exception): Unit =
     qry.original match {
-    case Some(original) => guiActor ! ErrorRows(original.queryId, e)
-    case None => log.error(localization.errorQueryingDatabase(databaseName), e)
-  }
+      case Some(original) => guiActor ! ErrorRows(original.queryId, e)
+      case None => log.error(localization.errorQueryingDatabase(databaseName), e)
+    }
 
   private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => {
 			val names = core.tablesLoader.tableNames()
@@ -118,12 +118,12 @@ class DatabaseWorker(
 				val schemasText = schemas.schemas.map(_.name).mkString(", ")
 				log.warning(localization.errorNoTables(databaseName, schemasText))
 			}
-    		guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
+    	guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
 		})
 
 	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(logError, core => { 
 			val names = core.tablesLoader.tablesByPattern(qry.pattern)
-    		guiActor ! ResponseTablesByPattern(qry.databaseId, names)
+    	guiActor ! ResponseTablesByPattern(qry.databaseId, names)
 		})
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(logError, core => {
@@ -168,7 +168,7 @@ class DatabaseWorker(
   private def buildKeys(keys: List[AdditionalForeignKey]) : Map[String, ForeignKeys] = {
     val keysStraight = keys.map(k => ForeignKey(k.name+"_straight", k.from, k.to, ForeignKeyDirection.STRAIGHT))
     val keysTurned = keys.map(k => ForeignKey(k.name+"_turned", k.to, k.from, ForeignKeyDirection.TURNED))
-    (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys(_)).toMap
+    (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys).toMap
   }
 
 	def receive = {

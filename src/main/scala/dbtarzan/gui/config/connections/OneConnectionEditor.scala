@@ -13,7 +13,7 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{ EncryptionKey, PasswordEncryption, Password }
 import dbtarzan.localization.Localization
 
-/* The list of database to choose from */
+/* The editor for one single connection */
 class OneConnectionEditor(
   openWeb : String => Unit, 
   encryptionKey : EncryptionKey,
@@ -21,36 +21,36 @@ class OneConnectionEditor(
   ) extends TControlBuilder {
   val passwordEncryption = new PasswordEncryption(encryptionKey)
   val safe = new OnChangeSafe()
-  val txtName = new TextField {
-    text = ""
-  } 
-  val jarSelector = new JarSelector(localization)
-  val txtUrl = new TextField {
+  private val txtName = new TextField {
     text = ""
   }
-  val txtDriver = new TextField {
+  private val jarSelector = new JarSelector(localization)
+  private val txtUrl = new TextField {
     text = ""
   }
-  val txtUser = new TextField {
-    text = ""
-  }  
-  val txtPassword = new PasswordField {
+  private val txtDriver = new TextField {
     text = ""
   }
-  val txtSchema = new TextField {
+  private val txtUser = new TextField {
     text = ""
   }
-   val txtCatalog = new TextField {
+  private val txtPassword = new PasswordField {
     text = ""
   }
-  val chkAdvanced = new CheckBox {
+  private val txtSchema = new TextField {
+    text = ""
+  }
+  private val txtCatalog = new TextField {
+    text = ""
+  }
+  private val chkAdvanced = new CheckBox {
     text = localization.advanced
     selected.onChange((_, _, newValue) => changeAdvancedVisibility(newValue))
-  }    
+  }
 
-  val cmbDelimiters = new ComboDelimiters()
+  private val cmbDelimiters = new ComboDelimiters()
 
-  val txtMaxRows = new TextField {
+  private val txtMaxRows = new TextField {
     text = ""
     /* only digits allowed (or empty string) */
     text.onChange { (_, oldValue, newValue) => {
@@ -59,7 +59,7 @@ class OneConnectionEditor(
       }}
    }
 
-  val txtQueryTimeoutInSeconds = new TextField {
+  private val txtQueryTimeoutInSeconds = new TextField {
     text = ""
     /* only digits allowed (or empty string) */
     text.onChange { (_, oldValue, newValue) => {
@@ -67,17 +67,16 @@ class OneConnectionEditor(
             text = oldValue
       }}
    }
- 
 
-  val lblDelimiters = new Label { text = localization.delimiters+":" }
-  val lblMaxRows = new Label { text = localization.maxRows+":" }
-  val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
-  val lblCatalog = new Label { text = localization.catalog+":" }   
-  val linkToJdbcUrls = new Hyperlink {
+
+  private val lblDelimiters = new Label { text = localization.delimiters+":" }
+  private val lblMaxRows = new Label { text = localization.maxRows+":" }
+  private val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
+  private val lblCatalog = new Label { text = localization.catalog+":" }
+  private val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
     onAction = (event: ActionEvent)  => openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
   }
-    def isAllDigits(x: String) = x forall Character.isDigit
 
   private val grid =  new GridPane {
     columnConstraints = List(
@@ -125,6 +124,8 @@ class OneConnectionEditor(
       else
         password
 
+  def isAllDigits(x: String): Boolean = x forall Character.isDigit
+
   def show(data : ConnectionData) : Unit = safe.noChangeEventDuring(() => {
     txtName.text = data.name
     jarSelector.show(Some(data.jar))
@@ -167,22 +168,21 @@ class OneConnectionEditor(
     }
 
 
-  def toData() = {
-    ConnectionData(
-      jarSelector.jarFilePath(), 
-      txtName.text(), 
-      txtDriver.text(), 
-      txtUrl.text(),
-      emptyToNone(txtSchema.text()),
-      txtUser.text(), 
-      encryptPassword(Password(txtPassword.text())),
-      Some(true),
-      None,
-      cmbDelimiters.toDelimiters(),
-      emptyToNone(txtMaxRows.text()).map(_.toInt), // it can only be None or Int
-      emptyToNone(txtQueryTimeoutInSeconds.text()).map(_.toInt), // it can only be None or Int
-      emptyToNone(txtCatalog.text())
-  )}
+  def toData(): ConnectionData = ConnectionData(
+        jarSelector.jarFilePath(),
+        txtName.text(),
+        txtDriver.text(),
+        txtUrl.text(),
+        emptyToNone(txtSchema.text()),
+        txtUser.text(),
+        encryptPassword(Password(txtPassword.text())),
+        Some(true),
+        None,
+        cmbDelimiters.toDelimiters(),
+        emptyToNone(txtMaxRows.text()).map(_.toInt), // it can only be None or Int
+        emptyToNone(txtQueryTimeoutInSeconds.text()).map(_.toInt), // it can only be None or Int
+        emptyToNone(txtCatalog.text())
+    )
 
   def control : Parent = grid
 

@@ -24,8 +24,8 @@ class ConnectionEditor(
     center = buildSplitPane()
     bottom = buttons.control
   }
-  connection.onChanged(list.changeSelected(_))
-  list.onConnectionSelected(showConnection(_))
+  connection.onChanged(list.changeSelected)
+  list.onConnectionSelected(showConnection)
   buttons.onNew(() => list.addNew())
   buttons.onRemove(() => list.removeCurrent())
   buttons.onDuplicate(() => list.duplicateCurrent())
@@ -53,8 +53,7 @@ class ConnectionEditor(
         catch {
           case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
         }
-    }
-    else 
+    } else
       showConnectionDataErrors(errors)
   }
 
@@ -67,6 +66,9 @@ class ConnectionEditor(
     val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
     JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", errorText)
   }
+
+  def onTestConnection(test : ConnectionData  => Unit): Unit =
+    buttons.onTest(() => test(connection.toData()))
 
   def onSave(save : List[ConnectionData]  => Unit): Unit =
     buttons.onSave(() => saveIfPossible(save))

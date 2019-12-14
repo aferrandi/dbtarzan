@@ -13,11 +13,11 @@ import dbtarzan.localization.Localization
 
 /* The list of database to choose from*/
 class JarSelector(localization : Localization) extends TControlBuilder {
-  var optJarFilePath : Option[String] = None
-  val txtJar = new TextField {
+  private var optJarFilePath : Option[String] = None
+  private val txtJar = new TextField {
     text = ""
   } 
-  val btnFile = new Button {
+  private val btnFile = new Button {
     text = "..."
     onAction = (event: ActionEvent)  => { chooseFile() }
   }
@@ -61,6 +61,6 @@ class JarSelector(localization : Localization) extends TControlBuilder {
 
   def onChange[J1 >: String](op: ⇒ Unit): Unit = txtJar.text.onChange(op)
 
-    def control : Parent = grid
+  def control : Parent = grid
 }
 

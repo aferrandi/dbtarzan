@@ -27,7 +27,7 @@ class GlobalEditor(
   private val log = new Logger(guiActor)
   private val languages = ObservableBuffer(Languages.languages)
 
-  val cmbLanguages = new ComboBox[Language] {
+  private val cmbLanguages = new ComboBox[Language] {
     items = languages
     editable = false
     value = data.language
@@ -71,7 +71,7 @@ class GlobalEditor(
           val data = encryptionEditor.toData()
           save(
             GlobalData(
-              cmbLanguages.getSelectionModel().selectedItem(),
+              cmbLanguages.getSelectionModel.selectedItem(),
               data.newEncryptionData
             ),
             data.change

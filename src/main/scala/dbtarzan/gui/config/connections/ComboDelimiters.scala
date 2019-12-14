@@ -8,16 +8,14 @@ import dbtarzan.db.IdentifierDelimiters
 import dbtarzan.gui.TControlBuilder
 import scalafx.event.ActionEvent
 
-/**
-  A combo box from which to select the identfier delimiters that get stored in the configuration file
-*/
+/* A combo box from which to select the identfier delimiters that get stored in the configuration file */
 class ComboDelimiters() extends TControlBuilder {
- val possibleDelimiters = ObservableBuffer(List(
+  private val possibleDelimiters = ObservableBuffer(List(
     None,
     Some(IdentifierDelimiters('[', ']')),
     Some(IdentifierDelimiters('"', '"'))
   ))
-  val cmbDelimiters = new ComboBox[Option[IdentifierDelimiters]] {
+  private val cmbDelimiters = new ComboBox[Option[IdentifierDelimiters]] {
     items = possibleDelimiters
     editable = false
     value = None
@@ -38,7 +36,7 @@ class ComboDelimiters() extends TControlBuilder {
     cmbDelimiters.value = delimiters; 
   }
 
-  def toDelimiters() : Option[IdentifierDelimiters] = cmbDelimiters.getSelectionModel().selectedItem()
+  def toDelimiters() : Option[IdentifierDelimiters] = cmbDelimiters.getSelectionModel.selectedItem()
 
   def control : Parent = cmbDelimiters
 

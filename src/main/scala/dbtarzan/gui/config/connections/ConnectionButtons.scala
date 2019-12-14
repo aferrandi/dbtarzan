@@ -11,30 +11,43 @@ import dbtarzan.localization.Localization
 
 
 class ConnectionButtons(localization: Localization) extends TControlBuilder {
-  val buttonNew = new Button {
+  private val buttonNew = new Button {
     text = localization.new_
   }
-  
-  val buttonRemove = new Button {
+
+  private val buttonRemove = new Button {
     text = localization.remove
   }
 
-  val buttonDuplicate = new Button {
+  private val buttonDuplicate = new Button {
     text = localization.duplicate
   }
 
-  val buttonCancel = new Button {
+  private val buttonTest = new Button {
+    text = localization.test
+  }
+
+  private val buttonCancel = new Button {
     text = localization.cancel
     alignmentInParent = Pos.CENTER_RIGHT
   }
 
-  val buttonSave = new Button {
+  private val buttonSave = new Button {
     text = localization.save
     alignmentInParent = Pos.CENTER_RIGHT
   }
 
 	private val layout = new HBox {
-    children = List(buttonNew, buttonRemove, buttonDuplicate, new Region() { hgrow = Priority.Always }, buttonSave, buttonCancel )
+    children = List(
+      buttonNew,
+      buttonRemove,
+      buttonDuplicate,
+      new Region() { hgrow = Priority.Always },
+      buttonTest,
+      new Region() { hgrow = Priority.Always },
+      buttonSave,
+      buttonCancel
+    )
   	padding = Insets(10)
   	spacing = 10
   }
@@ -47,6 +60,9 @@ class ConnectionButtons(localization: Localization) extends TControlBuilder {
 
   def onDuplicate(action : () => Unit ): Unit =
     buttonDuplicate.onAction = (event: ActionEvent)  => action()
+
+  def onTest(action : () => Unit ): Unit =
+    buttonTest.onAction = (event: ActionEvent)  => action()
 
   def onSave(action : () => Unit ): Unit =
     buttonSave.onAction = (event: ActionEvent)  => action()

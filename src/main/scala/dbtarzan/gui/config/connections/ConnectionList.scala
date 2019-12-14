@@ -15,7 +15,7 @@ case class ConnectionDataErrors(name : String, errors : List[String])
 /* The list of database to choose from */
 class ConnectionList(connectionDatasRead : List[ConnectionData], localization : Localization) extends TControlBuilder {
   private val connectionDatas = ObservableBuffer(
-    if(!connectionDatasRead.isEmpty) connectionDatasRead else List(newData())
+    if(connectionDatasRead.nonEmpty) connectionDatasRead else List(newData())
   )
   private val menuAddConnection = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
@@ -80,7 +80,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   def validate() : List[ConnectionDataErrors] = {
     println("Validate")
     connectionDatas.toList.map(data => ConnectionDataErrors(data.name, ConnectionDataValidation.validate(data)))
-      .filter(!_.errors.isEmpty)
+      .filter(_.errors.nonEmpty)
   }
 
 

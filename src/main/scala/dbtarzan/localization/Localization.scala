@@ -14,6 +14,7 @@ trait Localization {
     def delete : String
     def duplicate : String
     def cancel : String
+    def test: String
     def save : String
     def name : String
     def user : String

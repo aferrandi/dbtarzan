@@ -24,27 +24,27 @@ class EncryptionKeyEditor(
     encryptionData : Option[EncryptionData],
     localization: Localization
     ) extends TControlBuilder {
-  val chkEncryptionKey = new CheckBox {
+  private val chkEncryptionKey = new CheckBox {
     text = localization.changeEncryptionKey+": "+EncryptionVerification.possibleEncryptionKeyLength.map(_.toString).mkString(",")
     selected.onChange((_, _, newValue) => changeVisibility(newValue))
-  }    
+  }
 
-  val lblOriginalEncryptionKey = new Label { text = localization.originalEncryptionKey+":" }
-  val pwdOriginalEncryptionKey = new PasswordField {
+  private val lblOriginalEncryptionKey = new Label { text = localization.originalEncryptionKey+":" }
+  private val pwdOriginalEncryptionKey = new PasswordField {
     text.onChange { (_, _, _) => passwordTextChanged = true	}
 	}
 
-  val lblNewEncryptionKey1 = new Label { text = localization.newEncryptionKey1+":" }
-  val pwdNewEncryptionKey1 = new PasswordField {
+  private val lblNewEncryptionKey1 = new Label { text = localization.newEncryptionKey1+":" }
+  private val pwdNewEncryptionKey1 = new PasswordField {
     text.onChange { (_, _, _) => passwordTextChanged = true	}
 	}
 
-  val lblNewEncryptionKey2 = new Label { text = localization.newEncryptionKey2+":" }
-  val pwdNewEncryptionKey2 = new PasswordField {
+  private val lblNewEncryptionKey2 = new Label { text = localization.newEncryptionKey2+":" }
+  private val pwdNewEncryptionKey2 = new PasswordField {
     text.onChange { (_, _, _) => passwordTextChanged = true	}
   }
 
-  var passwordTextChanged = false
+  private var passwordTextChanged = false
 
   private val grid =  new GridPane {
     columnConstraints = List(
@@ -121,12 +121,12 @@ class EncryptionKeyEditor(
   }  
 
   private def calcVerificationKey() : Option[VerificationKey] = 
-    Option(newEncryptionKey1()).map(EncryptionVerification.toVerification(_))
+    Option(newEncryptionKey1()).map(EncryptionVerification.toVerification)
 
   def toData() : EncryptionKeyEditorData = 
     if(chkEncryptionKey.selected() && passwordTextChanged)
       EncryptionKeyEditorData(
-        calcVerificationKey().map(EncryptionData(_)), 
+        calcVerificationKey().map(EncryptionData),
         EncryptionKeyChange(
           encryptionData.map(ed => originalEncryptionKey()),
           Some(newEncryptionKey1())

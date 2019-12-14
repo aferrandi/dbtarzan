@@ -12,3 +12,6 @@ case class QueryDatabase(databaseId : DatabaseId, encryptionKey : EncryptionKey)
 case class CopyToFile(databaseId : DatabaseId, encryptionKey : EncryptionKey)
 
 case class ConnectionDatas(datas : List[ConnectionData])
+
+case class TestConnection(data : ConnectionData)
+

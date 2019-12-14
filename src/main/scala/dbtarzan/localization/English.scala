@@ -13,6 +13,7 @@ class English extends Localization {
     def remove = "Remove"
     def delete = "Delete"
     def duplicate = "Duplicate"
+    def test = "Test"
     def cancel = "Cancel"
     def save = "Save"
     def name = "Name"
