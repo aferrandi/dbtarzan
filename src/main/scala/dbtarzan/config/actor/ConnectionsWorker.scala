@@ -66,7 +66,8 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
   def testConnection(data: ConnectionData, encryptionKey : EncryptionKey): Unit = try {
     println("Testing "+data)
       RegisterDriver.registerDriver(DriverSpec(data.jar, data.driver))
-      new DriverManagerWithEncryption(encryptionKey).getConnection(data)
+      val connection = new DriverManagerWithEncryption(encryptionKey).getConnection(data)
+      connection.close()
       guiActor ! ResponseTestConnection(data, None)
   } catch {
     case e: Exception => {

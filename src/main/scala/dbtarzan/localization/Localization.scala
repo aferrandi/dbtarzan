@@ -93,6 +93,9 @@ trait Localization {
     def globalChangesAfterRestart : String
     def connectionResetted(databaseName : String) : String
     def databaseAlreadyOpen(databaseName : String) : String
+    def connectionRefused: String
+    def connectionSuccessful: String
+    def connectionToDatabaseSuccesful(databaseName: String): String
     def editingConnectionFile(fileName: Path) : String
     def errorConnectingToDatabase(databaseName : String) : String 
     def errorQueryingDatabase(databaseName : String) : String

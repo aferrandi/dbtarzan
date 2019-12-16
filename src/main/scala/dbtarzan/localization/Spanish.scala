@@ -92,6 +92,9 @@ class Spanish extends Localization {
     def unorderedQueryResults = "Resultados no ordenadas?"
     def globalChangesAfterRestart = "Reinicie la aplicación para activar estos cambios"
     def connectionResetted(databaseName : String) = "Conexión de base de datos "+databaseName+" restablecida"
+    def connectionRefused = "Conexión rifiutata"
+    def connectionSuccessful = "Conexión riuscita"
+    def connectionToDatabaseSuccesful(databaseName: String) = "Conexión de base de datos "+databaseName+" e' riuscita"
     def databaseAlreadyOpen(databaseName : String) =  "La base de datos "+databaseName+" ya está abierta"
     def editingConnectionFile(fileName: Path) = "Estoy editando el archivo de configuración de las conexiones " + fileName
     def errorConnectingToDatabase(databaseName : String) = "La conexión a la base de datos "+databaseName+" y 'fallado debido a"

@@ -93,6 +93,9 @@ class English extends Localization {
     def globalChangesAfterRestart = "Please restart the application to activate these changes"
     def connectionResetted(databaseName : String) = "Connection to the database "+databaseName+" resetted"
     def databaseAlreadyOpen(databaseName : String) =  "Database "+databaseName+" already open"
+    def connectionRefused = "Connection refused"
+    def connectionSuccessful = "Connection success"
+    def connectionToDatabaseSuccesful(databaseName: String) = "Connection to database "+databaseName+" successful"
     def editingConnectionFile(fileName: Path) = "Editing connections configuration file " + fileName
     def errorConnectingToDatabase(databaseName : String) = "Cronnecting to the database "+databaseName+" got"
     def errorQueryingDatabase(databaseName : String) = "Querying the database "+databaseName+" got"

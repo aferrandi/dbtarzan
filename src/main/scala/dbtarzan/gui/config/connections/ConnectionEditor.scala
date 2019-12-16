@@ -5,7 +5,7 @@ import dbtarzan.config.password.EncryptionKey
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.ResponseTestConnection
+import dbtarzan.messages.{ExceptionText, ResponseTestConnection}
 import scalafx.scene.Parent
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.{Alert, SplitPane}
@@ -79,10 +79,10 @@ class ConnectionEditor(
 
   def testConnectionResult(rsp : ResponseTestConnection) : Unit = {
     rsp.ex match {
-      case Some(ex) => JFXUtil.showErrorAlert("Error connecting to " + rsp.data.name, ex.getMessage)
+      case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, localization.errorConnectingToDatabase(rsp.data.name)+ExceptionText.extractWholeExceptionText(ex))
       case None => new Alert(AlertType.Information) {
-        headerText= localization.editGlobalSettings
-        contentText= localization.globalChangesAfterRestart
+        headerText= localization.connectionSuccessful
+        contentText= localization.connectionToDatabaseSuccesful(rsp.data.name)
       }.showAndWait()
     }
   }
