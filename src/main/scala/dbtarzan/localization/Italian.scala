@@ -95,7 +95,7 @@ class Italian extends Localization {
     def databaseAlreadyOpen(databaseName : String) =  "Il database "+databaseName+" e' gia' aperto"
     def connectionRefused = "Connessione rifiutata"
     def connectionSuccessful = "Connessione riuscita"
-    def connectionToDatabaseSuccesful(databaseName: String) = "La connessione al "+databaseName+" e' riuscita"
+    def connectionToDatabaseSuccesful(databaseName: String) = "La connessione al database "+databaseName+" e' riuscita"
     def editingConnectionFile(fileName: Path) = "Sto editando il file di configurazione delle connessioni " + fileName
     def errorConnectingToDatabase(databaseName : String) = "La connessione al database "+databaseName+" e' fallita a causa di"
     def errorQueryingDatabase(databaseName : String) = "L'apertura del database "+databaseName+" e' fallita a causa di"
