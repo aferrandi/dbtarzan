@@ -1,14 +1,15 @@
 package dbtarzan.gui.config.connections
 
-import scalafx.scene.control.SplitPane
-import scalafx.scene.layout.BorderPane
-import scalafx.scene.Parent
-
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.messages.ResponseTestConnection
+import scalafx.scene.Parent
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.{Alert, SplitPane}
+import scalafx.scene.layout.BorderPane
 
 /* table + constraint input box + foreign keys */
 class ConnectionEditor(
@@ -75,6 +76,16 @@ class ConnectionEditor(
 
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
+
+  def testConnectionResult(rsp : ResponseTestConnection) : Unit = {
+    rsp.ex match {
+      case Some(ex) => JFXUtil.showErrorAlert("Error connecting to " + rsp.data.name, ex.getMessage)
+      case None => new Alert(AlertType.Information) {
+        headerText= localization.editGlobalSettings
+        contentText= localization.globalChangesAfterRestart
+      }.showAndWait()
+    }
+  }
 
   def control : Parent = layout
 }

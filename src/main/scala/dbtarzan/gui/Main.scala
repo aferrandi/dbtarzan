@@ -15,14 +15,14 @@ import dbtarzan.localization.Localizations
 /** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp {
   println("Named commend line arguments:"+ parameters.named.mkString(","))
-  val version = versionFromManifest()
-  val configPaths = extractConnectionsConfigPath()
-  val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
-  val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
-  val localization = Localizations.of(globalData.language)
+  private val version = versionFromManifest()
+  private val configPaths = extractConnectionsConfigPath()
+  private val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
+  private val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
+  private val localization = Localizations.of(globalData.language)
   val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, openWeb, closeApp)
   val actors = new ActorHandler(
-    () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, localization), 
+    () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization),
     guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization, configPaths.keyFilesDirPath)
     ) 
   mainGUI.setActors(actors.guiActor, actors.connectionsActor)

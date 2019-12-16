@@ -37,15 +37,17 @@ class MainGUI(
 	val logList = new LogList(localization)
 	/* the database/connection list on the left side */
 	val databaseList = new DatabaseList(localization)
+
+  val global = new Global();
 	/* how big is the screen */
 	private val screenBounds = Screen.primary.visualBounds
 	/* the gui */
 	private val stage = buildStage() 
 	private var guiActor: Option[ActorRef]  = None
-	private var connectionsActor: Option[ActorRef] = None 
+	private var connectionsActor: Option[ActorRef] = None
 	private var encryptionKey : Option[EncryptionKey] = None
 	private val encryptionKeyDialog  = new EncryptionKeyDialog(stage, localization)
-	
+
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
   def setActors(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
@@ -133,7 +135,7 @@ class MainGUI(
 		}		 
 		extractEncryptionKey() match {
 			case Some(key) => connectionsActor match {
-					case Some(ca) => ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, key, localization)
+					case Some(ca) => global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, key, localization))
 					case None => println("MainGUI: connectionsActor not defined") 
 				}
 			case None => println("MainGUI: encryptionKey not entered")

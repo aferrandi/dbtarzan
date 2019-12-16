@@ -2,24 +2,24 @@ package dbtarzan.gui.actor
 
 import akka.actor.Actor
 import scalafx.application.Platform
-
-import dbtarzan.gui.{ TDatabases, TLogs, TDatabaseList}
+import dbtarzan.gui.{TDatabaseList, TDatabases, TLogs, TGlobal}
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
 /* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */
 class GUIWorker(
-     databases : TDatabases,
-     logs : TLogs,
-     dbList : TDatabaseList,
-     localization : Localization
+                 databases : TDatabases,
+                 logs : TLogs,
+                 dbList : TDatabaseList,
+                 main: TGlobal,
+                 localization : Localization
    ) extends Actor {
   private var log = new Logger(self)  
   def receive = {
         case rsp: TWithQueryId => Platform.runLater { databases.handleQueryIdMessage(rsp) }
         case rsp: TWithDatabaseId => Platform.runLater { databases.handleDatabaseIdMessage(rsp) }
         case rsp: TWithTableId => Platform.runLater { databases.handleTableIdMessage(rsp) }
-        case rsp: ResponseTest => Platform.runLater {  }
+        case rsp: ResponseTestConnection => Platform.runLater { main.handleTestConnectionResponse(rsp) }
         case msg: TLogMessage => Platform.runLater { logs.addLogMessage(msg) }
         case msg: DatabaseIds => Platform.runLater { 
             println("Delivery databases "+msg)

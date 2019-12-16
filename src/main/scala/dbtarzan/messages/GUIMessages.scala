@@ -83,4 +83,4 @@ case class DatabaseIds(names : List[DatabaseId])
 case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
     extends TWithDatabaseId
 
-case class ResponseTest(data : ConnectionData,  ex: Option[Exception])
+case class ResponseTestConnection(data : ConnectionData,  ex: Option[Exception])

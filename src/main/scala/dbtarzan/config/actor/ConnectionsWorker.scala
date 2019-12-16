@@ -1,13 +1,12 @@
 package dbtarzan.config.actor
 
 import java.nio.file.Path
-import java.sql.DriverManager
 
 import akka.actor.{Actor, ActorRef}
 import akka.routing.Broadcast
 import dbtarzan.config.connections.{ConnectionData, ConnectionsConfig}
 import dbtarzan.config.password.EncryptionKey
-import dbtarzan.db.{ConnectionBuilder, DatabaseId}
+import dbtarzan.db.{ConnectionBuilder, DatabaseId, DriverManagerWithEncryption, DriverSpec, RegisterDriver}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
 
@@ -64,12 +63,14 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
       guiActor ! DatabaseIds(connectionsConfig.connections().map(DatabaseId))
 	 }
 
-  def testConnection(data: ConnectionData): Unit = try {
-      DriverManager.getConnection(data.url, data.user, data.password.key)
-      guiActor ! ResponseTest(data, None)
+  def testConnection(data: ConnectionData, encryptionKey : EncryptionKey): Unit = try {
+    println("Testing "+data)
+      RegisterDriver.registerDriver(DriverSpec(data.jar, data.driver))
+      new DriverManagerWithEncryption(encryptionKey).getConnection(data)
+      guiActor ! ResponseTestConnection(data, None)
   } catch {
     case e: Exception => {
-      guiActor ! ResponseTest(data, Some(e))
+      guiActor ! ResponseTestConnection(data, Some(e))
     }
   }
 
@@ -77,7 +78,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
       case qry : QueryDatabase => queryDatabase(qry.databaseId, qry.encryptionKey)
 	    case qry : QueryClose => queryClose(qry.databaseId)
 	    case cpy : CopyToFile => startCopyWorker(cpy.databaseId, cpy.encryptionKey)
-      case tst: TestConnection => testConnection(tst.data)
+      case tst: TestConnection => testConnection(tst.data, tst.encryptionKey)
 	    case datas: ConnectionDatas => newConnections(datas)
 	}
 }

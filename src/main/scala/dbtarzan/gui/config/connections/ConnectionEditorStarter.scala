@@ -1,13 +1,13 @@
 package dbtarzan.gui.config.connections
 
-import scalafx.stage.{ Stage, StageStyle, WindowEvent }
+import scalafx.stage.{Stage, StageStyle, WindowEvent}
 import scalafx.scene.Scene
 import scalafx.Includes._
 import akka.actor.ActorRef
 import java.nio.file.Path
 
-import dbtarzan.config.connections.{ ConnectionDataReader, ConnectionDataWriter, ConnectionData }
-import dbtarzan.messages.ConnectionDatas
+import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader, ConnectionDataWriter}
+import dbtarzan.messages.{ConnectionDatas, TestConnection}
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.localization.Localization
 
@@ -20,8 +20,10 @@ object ConnectionEditorStarter
     configPath: Path, 
     openWeb : String => Unit, 
     encryptionKey : EncryptionKey,
-    localization: Localization) : Unit = {
-    println("open connections editor")  
+    localization: Localization) : ConnectionEditor = {
+    println("open connections editor")
+    val connectionData: List[ConnectionData] = ConnectionDataReader.read(configPath)
+    val editor = new ConnectionEditor(connectionData, openWeb, encryptionKey, localization)
     val connectionStage = new Stage {
       title = localization.editConnections
       width = 800
@@ -36,10 +38,9 @@ object ConnectionEditorStarter
         def onCancel() : Unit = 
           window().hide()
 
-        val connectionData: List[ConnectionData] = ConnectionDataReader.read(configPath)
-        val editor = new ConnectionEditor(connectionData, openWeb, encryptionKey, localization)
         editor.onSave(onSave)
         editor.onCancel(() => onCancel())
+        editor.onTestConnection(data => connectionsWorker ! TestConnection(data, encryptionKey))
         onCloseRequest = (event : WindowEvent) => { 
           event.consume()
           editor.cancelIfPossible(() => onCancel()) 
@@ -50,5 +51,6 @@ object ConnectionEditorStarter
     connectionStage.initOwner(parentStage)    
     connectionStage.initStyle(StageStyle.UTILITY)
     connectionStage.show()
+    editor
   }
 }
