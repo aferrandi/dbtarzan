@@ -7,8 +7,7 @@ import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{ExceptionText, ResponseTestConnection}
 import scalafx.scene.Parent
-import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.{Alert, SplitPane}
+import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
 
 /* table + constraint input box + foreign keys */
@@ -77,15 +76,11 @@ class ConnectionEditor(
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
 
-  def testConnectionResult(rsp : ResponseTestConnection) : Unit = {
+  def testConnectionResult(rsp : ResponseTestConnection) : Unit =
     rsp.ex match {
-      case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, localization.errorConnectingToDatabase(rsp.data.name)+ExceptionText.extractWholeExceptionText(ex))
-      case None => new Alert(AlertType.Information) {
-        headerText= localization.connectionSuccessful
-        contentText= localization.connectionToDatabaseSuccesful(rsp.data.name)
-      }.showAndWait()
+      case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, localization.errorConnectingToDatabase(rsp.data.name) + " " + ExceptionText.extractMessageText(ex))
+      case None => JFXUtil.showInfoAlert(localization.connectionSuccessful, localization.connectionToDatabaseSuccesful(rsp.data.name))
     }
-  }
 
   def control : Parent = layout
 }

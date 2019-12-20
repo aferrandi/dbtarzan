@@ -74,7 +74,13 @@ object JFXUtil {
 		case _ => false
 	}
 
-	def showErrorAlert(header : String, error : String) : Unit =
+  def showInfoAlert(header : String, info : String) : Unit =
+    new Alert(AlertType.Information) {
+      headerText= header
+      contentText= info
+    }.showAndWait()
+
+  def showErrorAlert(header : String, error : String) : Unit =
 		new Alert(AlertType.Error) { 
 			headerText= header
 			contentText= error

@@ -63,15 +63,22 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
       guiActor ! DatabaseIds(connectionsConfig.connections().map(DatabaseId))
 	 }
 
-  def testConnection(data: ConnectionData, encryptionKey : EncryptionKey): Unit = try {
-    println("Testing "+data)
+  def testConnection(data: ConnectionData, encryptionKey : EncryptionKey): Unit = {
+    try {
       RegisterDriver.registerDriver(DriverSpec(data.jar, data.driver))
-      val connection = new DriverManagerWithEncryption(encryptionKey).getConnection(data)
-      connection.close()
-      guiActor ! ResponseTestConnection(data, None)
-  } catch {
-    case e: Exception => {
-      guiActor ! ResponseTestConnection(data, Some(e))
+      try {
+        val connection = new DriverManagerWithEncryption(encryptionKey).getConnection(data)
+        connection.close()
+        guiActor ! ResponseTestConnection(data, None)
+      } catch {
+        case e: Throwable => {
+          guiActor ! ResponseTestConnection(data, Some(new Exception("Opening the connection got" , e)))
+        }
+      }
+    } catch {
+      case e: Throwable => {
+        guiActor ! ResponseTestConnection(data, Some(new Exception("Registering the driver got" , e)))
+      }
     }
   }
 
