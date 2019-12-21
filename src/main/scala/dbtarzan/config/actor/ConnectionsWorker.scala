@@ -16,12 +16,13 @@ import scala.collection.mutable
 class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localization : Localization, 	keyFilesDirPath : Path) extends Actor {
 	 private val mapDBWorker = mutable.HashMap.empty[DatabaseId, ActorRef]
 	 private var connectionsConfig = new ConnectionsConfig(datas.datas)
+   private val registerDriver = new RegisterDriver()
 	 private val log = new Logger(guiActor)
 
 	 /* creates the actors to serve the queries for a database */
 	 private def getDBWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey) : ActorRef = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-      val dbActor = ConnectionBuilder.buildDBWorker(data, encriptionKey, guiActor, context, localization, keyFilesDirPath)
+      val dbActor = ConnectionBuilder.buildDBWorker(registerDriver, data, encriptionKey, guiActor, context, localization, keyFilesDirPath)
       mapDBWorker += databaseId -> dbActor
       dbActor
 	 } 
@@ -29,7 +30,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	/* creates the actor to serve the creation of foreign keys text files and start the copy */
 	 private def startCopyWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey) : Unit = {
     	val data = connectionsConfig.connect(databaseId.databaseName)
-      val copyActor = ConnectionBuilder.buildCopyWorker(data, encriptionKey, guiActor, context, localization, keyFilesDirPath)
+      val copyActor = ConnectionBuilder.buildCopyWorker(registerDriver, data, encriptionKey, guiActor, context, localization, keyFilesDirPath)
       copyActor ! CopyToFile
 	 } 
 
@@ -65,7 +66,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 
   def testConnection(data: ConnectionData, encryptionKey : EncryptionKey): Unit = {
     try {
-      RegisterDriver.registerDriver(DriverSpec(data.jar, data.driver))
+      registerDriver.registerDriverIfNeeded(DriverSpec(data.jar, data.driver))
       try {
         val connection = new DriverManagerWithEncryption(encryptionKey).getConnection(data)
         connection.close()

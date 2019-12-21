@@ -9,9 +9,9 @@ import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.actor.{CopyWorker, DatabaseWorker}
 import dbtarzan.localization.Localization
 
-private class ConnectionBuilder(data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization, keyFilesDirPath: Path) {	
+private class ConnectionBuilder(registerDriver: RegisterDriver, data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization, keyFilesDirPath: Path) {
 	def buildDBWorker() : ActorRef = try {
-    RegisterDriver.registerDriver(DriverSpec(data.jar, data.driver))
+    registerDriver.registerDriverIfNeeded(DriverSpec(data.jar, data.driver))
 		val instances = data.instances.getOrElse(1)
 		context.actorOf(RoundRobinPool(instances).props(buildSubWorkerProps()))
 	} catch {
@@ -20,7 +20,7 @@ private class ConnectionBuilder(data : ConnectionData, encriptionKey : Encryptio
 	}
 
 	def buildCopyWorker() : ActorRef = try {
-    RegisterDriver.registerDriver(DriverSpec(data.jar, data.driver))
+    registerDriver.registerDriverIfNeeded(DriverSpec(data.jar, data.driver))
 		val name = "copyworker" + data.name		
 		context.actorOf(Props(new CopyWorker(data, encriptionKey, guiActor, localization, keyFilesDirPath)).withDispatcher("my-pinned-dispatcher"), name)
 	} catch { 
@@ -39,9 +39,9 @@ private class ConnectionBuilder(data : ConnectionData, encriptionKey : Encryptio
 }
 
 object ConnectionBuilder {
-	def buildDBWorker(data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization, keyFilesDirPath: Path) : ActorRef = 
-		new ConnectionBuilder(data, encriptionKey, guiActor, context, localization, keyFilesDirPath).buildDBWorker()
+	def buildDBWorker(registerDriver: RegisterDriver, data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization, keyFilesDirPath: Path) : ActorRef =
+		new ConnectionBuilder(registerDriver, data, encriptionKey, guiActor, context, localization, keyFilesDirPath).buildDBWorker()
 
-	def buildCopyWorker(data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization, keyFilesDirPath: Path) : ActorRef = 
-		new ConnectionBuilder(data, encriptionKey, guiActor, context, localization, keyFilesDirPath).buildCopyWorker()
+	def buildCopyWorker(registerDriver: RegisterDriver, data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, context : ActorContext, localization : Localization, keyFilesDirPath: Path) : ActorRef =
+		new ConnectionBuilder(registerDriver, data, encriptionKey, guiActor, context, localization, keyFilesDirPath).buildCopyWorker()
 }
