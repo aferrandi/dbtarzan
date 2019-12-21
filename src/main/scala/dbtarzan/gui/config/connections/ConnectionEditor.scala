@@ -78,7 +78,7 @@ class ConnectionEditor(
 
   def testConnectionResult(rsp : ResponseTestConnection) : Unit =
     rsp.ex match {
-      case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, localization.errorConnectingToDatabase(rsp.data.name) + " " + ExceptionText.extractMessageText(ex))
+      case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, ExceptionText.extractMessageText(ex))
       case None => JFXUtil.showInfoAlert(localization.connectionSuccessful, localization.connectionToDatabaseSuccesful(rsp.data.name))
     }
 

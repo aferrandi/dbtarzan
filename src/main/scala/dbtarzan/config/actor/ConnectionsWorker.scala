@@ -71,14 +71,12 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
         connection.close()
         guiActor ! ResponseTestConnection(data, None)
       } catch {
-        case e: Throwable => {
-          guiActor ! ResponseTestConnection(data, Some(new Exception("Opening the connection got" , e)))
-        }
+        case e: Throwable =>
+          guiActor ! ResponseTestConnection(data, Some(new Exception(localization.errorConnectingToDatabase(data.name) , e)))
       }
     } catch {
-      case e: Throwable => {
-        guiActor ! ResponseTestConnection(data, Some(new Exception("Registering the driver got" , e)))
-      }
+      case e: Throwable =>
+        guiActor ! ResponseTestConnection(data, Some(new Exception(localization.errorRegisteringDriver(data.name) , e)))
     }
   }
 

@@ -124,4 +124,5 @@ class Spanish extends Localization {
     def errorAFKDuplicateNames(nameDuplicates: List[String]) = "Nombres duplicados: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Reacciones duplicadas: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "Las claves externas adicionales "+names.mkString(", ")+" ya existen como claves externas"
+    def errorRegisteringDriver(databaseName: String) = "El registro a la base de datos "+databaseName+" y 'fallado debido a"
 }

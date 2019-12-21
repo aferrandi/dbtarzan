@@ -124,5 +124,5 @@ class Italian extends Localization {
     def errorAFKDuplicateNames(nameDuplicates: List[String]) = " Nomi duplicati: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Ralazioni duplicate: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "Le chiavi esterne aggiuntive "+names.mkString(", ")+" esistono gia' come chiavi esterne"
-
+    def errorRegisteringDriver(databaseName: String) = "La registrazione del database "+databaseName+" e' fallita a causa di"
 }

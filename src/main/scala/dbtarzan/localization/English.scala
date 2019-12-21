@@ -124,5 +124,6 @@ class English extends Localization {
     def errorAFKDuplicateNames(nameDuplicates: List[String]) = " Duplicate names: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Duplicate relations: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "The additional foreign keys "+names.mkString(", ")+" already exist as foreign keys"
+    def errorRegisteringDriver(databaseName: String) = "Registering to the database "+databaseName+" got"
 }
 
