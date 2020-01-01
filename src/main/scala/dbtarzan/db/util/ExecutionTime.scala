@@ -1,8 +1,10 @@
 package dbtarzan.db.util
 
-/* To check that the time of a query does not exceed a special threshold */
-class ExecutionTime(thresholdInMilliseconds : Long) {
-	val startTime = System.currentTimeMillis
+import scala.concurrent.duration.Duration
 
-    def isOver() : Boolean = System.currentTimeMillis - startTime > thresholdInMilliseconds
+/* To check that the time of a query does not exceed a special threshold */
+class ExecutionTime(threshold : Duration) {
+	private val maxEndTime = System.currentTimeMillis + threshold.toMillis
+
+  def isOver: Boolean = System.currentTimeMillis  > maxEndTime
 }

@@ -13,6 +13,9 @@ import dbtarzan.localization.Localization
 import dbtarzan.messages._
 
 import scala.collection.mutable
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /* The actor that reads data from the database */
 class DatabaseWorker(
@@ -56,7 +59,7 @@ class DatabaseWorker(
 	      case e : Exception => errHandler(e)
 	    }
 
-	/* if conneced execure the operation, otherwise send an error to the GUI */
+	/* if connected execure the operation, otherwise send an error to the GUI */
 	private def withCore[R](errHandler : Exception => Unit, operation: DatabaseWorkerCore => R): Unit =
 		optCore match {
 			case Some(core) => handleErr(errHandler, operation(core))
@@ -96,9 +99,9 @@ class DatabaseWorker(
 		guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
 	})
 
-	private def queryRows(qry: QueryRows, maxRows: Option[Int], queryTimeoutInSeconds: Option[Int]) : Unit = withCore(
+	private def queryRows(qry: QueryRows, maxRows: Option[Int], queryTimeout: Option[Duration]) : Unit = withCore(
 		e => queryRowsHandleErr(qry, e),
-		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeoutInSeconds.getOrElse(10),  rows =>
+		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeout.getOrElse(10 seconds),  rows =>
 			guiActor ! ResponseRows(qry.queryId, qry.structure, rows, qry.original)
 		)
 	)
@@ -172,7 +175,7 @@ class DatabaseWorker(
   }
 
 	def receive = {
-		case qry : QueryRows => queryRows(qry, data.maxRows, data.queryTimeoutInSeconds)
+		case qry : QueryRows => queryRows(qry, data.maxRows, data.queryTimeoutInSeconds.map(_.seconds))
 		case qry : QueryClose => close() 	    
 		case qry : QueryReset => reset() 	    
 		case qry : QueryTables => queryTables(qry) 
