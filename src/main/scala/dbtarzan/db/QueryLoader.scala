@@ -31,7 +31,7 @@ class QueryLoader(connection : java.sql.Connection) {
 		println("Column count:"+columnCount+". Rows to read :"+maxRows)
 		var rows = Vector.empty[Row]
 		var i = 0
-		while(rs.next() && i < maxRows && !executionTime.isOver) {
+		while(i < maxRows && !executionTime.isOver && rs.next()) {
 			rows = rows :+ nextRow(rs, columnCount)
 			if(rows.length >= 20) {
 				use(Rows(rows.toList))
@@ -41,7 +41,7 @@ class QueryLoader(connection : java.sql.Connection) {
 		}
 		use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
     if(executionTime.isOver)
-      throw new Exception("timeout (over "+queryTimeout.toSeconds+" seconds)")
+      throw new Exception("timeout reading rows (over "+queryTimeout.toSeconds+" seconds)")
     println("Query terminated")
 	}			
 	catch {
