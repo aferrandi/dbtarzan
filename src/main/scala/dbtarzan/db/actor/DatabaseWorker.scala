@@ -30,6 +30,8 @@ class DatabaseWorker(
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
   private val log = new Logger(guiActor)
   private var optCore :Option[DatabaseWorkerCore] = buildCore()
+  if(optCore.isEmpty)
+    context.stop(self)
   private val cache = new DatabaseWorkerCache()
   private val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
   private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
@@ -75,22 +77,27 @@ class DatabaseWorker(
 	private def close() : Unit = handleErr(logError, {
 		println("Closing the worker for "+databaseName)
 		guiActor ! ResponseCloseDatabase(databaseId)
-		optCore.foreach(core =>
-			core.closeConnection()
-		)
+    closeCore()
 		context.stop(self)
 	})
 
 	private def reset() : Unit = handleErr(logError, {
 		println("Reseting the connection of the worker for "+databaseName)
-		optCore.foreach(core =>
-			try { core.closeConnection() } catch { case e : Throwable => }
-			)
+		closeCore()
 		optCore = buildCore()
 		log.info(localization.connectionResetted(databaseName))
-	})		
+	})
 
-	private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(logError, core => {
+  private def closeCore(): Unit =
+    optCore.foreach(core =>
+      try {
+        core.closeConnection()
+      } catch {
+        case e: Throwable =>
+      }
+    )
+
+  private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(logError, core => {
 		val tableName = qry.queryId.tableId.tableName
 		val foreignKeys = ForeignKeys(
 				foreignKeysForCache.getOrElseUpdate(tableName, 
@@ -113,15 +120,15 @@ class DatabaseWorker(
     }
 
   private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => {
-			val names = core.tablesLoader.tableNames()
-			if(names.tableNames.nonEmpty)
-				log.info(localization.loadedTables(names.tableNames.size, databaseName))
-			else {
-				val schemas = core.schemasLoader.schemasNames()
-				val schemasText = schemas.schemas.map(_.name).mkString(", ")
-				log.warning(localization.errorNoTables(databaseName, schemasText))
-			}
-    	guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
+      val names = core.tablesLoader.tableNames()
+      if (names.tableNames.nonEmpty)
+        log.info(localization.loadedTables(names.tableNames.size, databaseName))
+      else {
+        val schemas = core.schemasLoader.schemasNames()
+        val schemasText = schemas.schemas.map(_.name).mkString(", ")
+        log.warning(localization.errorNoTables(databaseName, schemasText))
+      }
+      guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
 		})
 
 	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(logError, core => { 

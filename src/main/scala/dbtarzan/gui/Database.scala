@@ -30,7 +30,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
       }}
   }
   private val pane = new SplitPane {
-    val tableListWithTitle = new BorderPane {
+    private val tableListWithTitle = new BorderPane {
       top = new FlowPane {
         children = List(buildMenu(), new Label(localization.tables))
       }

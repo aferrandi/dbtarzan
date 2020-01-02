@@ -7,6 +7,8 @@ import java.sql.DriverManager
 import dbtarzan.db.foreignkeys.{ FKRow, ForeignKeyCriteria, ForeignKeyLoader }
 import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader} 
 import dbtarzan.localization.English
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 class IntegrationTest extends FlatSpec with BeforeAndAfter {
   var connection: Connection = _
@@ -91,7 +93,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
     )
     val sql = SqlBuilder.buildSql(structure)
     var rows : Rows = Rows(List())
-    new QueryLoader(connection).query(sql, 500, 10, rs => rows = rs)
+    new QueryLoader(connection).query(sql, 500, 10 seconds, rs => rows = rs)
     assert(Rows(List(Row(List("1", "1232", "500", "64", "5.0", "12x", "600.0")), Row(List("7", "1232", "500", "32", "10.0", "12x", "400.0"))))  === rows)
   }
 
@@ -106,7 +108,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
       )
     val sql = SqlBuilder.buildSql(structure)
     var rows : Rows = Rows(List())
-    new QueryLoader(connection).query(sql, 3, 10, rs => rows = rs)
+    new QueryLoader(connection).query(sql, 3, 10 seconds, rs => rows = rs)
     assert(3  === rows.rows.length)
   }
 
