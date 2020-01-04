@@ -29,9 +29,7 @@ class DatabaseWorker(
   private def databaseId = DatabaseId(data.name)
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
   private val log = new Logger(guiActor)
-  private var optCore :Option[DatabaseWorkerCore] = buildCore()
-  if(optCore.isEmpty)
-    context.stop(self)
+  private var optCore : Option[DatabaseWorkerCore] = Some(buildCore())
   private val cache = new DatabaseWorkerCache()
   private val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
   private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
@@ -39,23 +37,30 @@ class DatabaseWorker(
   private var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
   private var additionalForeignKeysExploded : Map[String, ForeignKeys] = buildKeys(additionalForeignKeys)
 
-	private def buildCore() : Option[DatabaseWorkerCore] = try {
-			val connection = createConnection.getConnection(data)
-			log.info(localization.connectedTo(databaseName)) 
-			Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), localization))
-		} 
-		catch { 
-			case se : SQLException => { 
-				log.error(localization.errorConnectingToDatabase(databaseName)+" "+ExceptionToText.sqlExceptionText(se), se) 
-				None
-			}
-			case e : Exception => { 
-				log.error(localization.errorConnectingToDatabase(databaseName), e) 
-				None
-			}
-		}
+  private def buildCore() : DatabaseWorkerCore = {
+    val connection = createConnection.getConnection(data)
+    log.info(localization.connectedTo(databaseName))
+    new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), localization)
+  }
 
-	/* handles the exceptions sending the exception messages to the GUI */
+  private def rebuildCore() : Option[DatabaseWorkerCore] = try {
+    val connection = createConnection.getConnection(data)
+    log.info(localization.connectedTo(databaseName))
+    Some(buildCore())
+  }
+  catch {
+    case se : SQLException => {
+      log.error(localization.errorConnectingToDatabase(databaseName)+" "+ExceptionToText.sqlExceptionText(se), se)
+      None
+    }
+    case e : Exception => {
+      log.error(localization.errorConnectingToDatabase(databaseName), e)
+      None
+    }
+  }
+
+
+  /* handles the exceptions sending the exception messages to the GUI */
 	private def handleErr[R](errHandler : Exception => Unit, operation: => R): Unit = 
 	    try { operation } catch {
 	      case e : Exception => errHandler(e)
@@ -84,7 +89,7 @@ class DatabaseWorker(
 	private def reset() : Unit = handleErr(logError, {
 		println("Reseting the connection of the worker for "+databaseName)
 		closeCore()
-		optCore = buildCore()
+		optCore = rebuildCore()
 		log.info(localization.connectionResetted(databaseName))
 	})
 
@@ -92,6 +97,7 @@ class DatabaseWorker(
     optCore.foreach(core =>
       try {
         core.closeConnection()
+        optCore = None
       } catch {
         case e: Throwable =>
       }

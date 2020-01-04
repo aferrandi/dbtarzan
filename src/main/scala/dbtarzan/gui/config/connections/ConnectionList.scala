@@ -59,7 +59,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   /* there must be always at least one connection */
   def removeCurrent() : Unit = 
-    if(connectionDatas.length > 1) 
+    if(connectionDatas.nonEmpty)
       getSelectedIndex().foreach(selectedIndex => {
         println("Remove current")
         connectionDatas.remove(selectedIndex)
@@ -67,7 +67,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
       })
 
   def duplicateCurrent() : Unit = 
-    if(connectionDatas.length > 1) 
+    if(connectionDatas.nonEmpty)
       getSelectedIndex().foreach(selectedIndex => {
         println("Duplicate current")
         val toDuplicate = connectionDatas(selectedIndex)
