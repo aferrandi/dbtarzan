@@ -44,8 +44,6 @@ class DatabaseWorker(
   }
 
   private def rebuildCore() : Option[DatabaseWorkerCore] = try {
-    val connection = createConnection.getConnection(data)
-    log.info(localization.connectedTo(databaseName))
     Some(buildCore())
   }
   catch {
@@ -58,7 +56,6 @@ class DatabaseWorker(
       None
     }
   }
-
 
   /* handles the exceptions sending the exception messages to the GUI */
 	private def handleErr[R](errHandler : Exception => Unit, operation: => R): Unit = 
