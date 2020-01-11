@@ -40,7 +40,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	    	try {
 	    		if(!mapDBWorker.isDefinedAt(databaseId)) {
             val dbWorker = getDBWorker(databaseId, encriptionKey)
-            guiActor ! ResponseDatabase(databaseId, dbWorker)
+            dbWorker ! QueryTables(databaseId, dbWorker)
 				  } else
 	    			guiActor ! ErrorDatabaseAlreadyOpen(databaseId)
 			} catch {

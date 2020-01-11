@@ -40,9 +40,6 @@ case class ResponseForeignKeys(queryId : QueryId, keys : ForeignKeys)
 case class ResponseColumnsFollow(tableId: TableId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
-case class ResponseDatabase(databaseId : DatabaseId, dbActor : ActorRef) 
-    extends TWithDatabaseId
-
 case class ResponseCloseDatabase(databaseId : DatabaseId) 
     extends TWithDatabaseId
 

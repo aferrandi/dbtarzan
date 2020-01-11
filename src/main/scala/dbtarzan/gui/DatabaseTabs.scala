@@ -72,17 +72,12 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
 
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case rsp : ResponseCloseDatabase => removeDatabase(rsp.databaseId)
-    case rsp : ResponseDatabase => addDatabase(rsp.dbActor, rsp.databaseId) 
     case rsp : ResponseTables => addDatabaseTab(rsp.dbActor, rsp.databaseId, rsp.names)
     case _ => withDatabaseId(msg.databaseId, database => database.handleDatabaseIdMessage(msg))
   }
 
   def handleTableIdMessage(msg: TWithTableId) : Unit = 
     withTableId(msg.tableId, database => database.handleTableIdMessage(msg))
-
-  /* received the data of a database, to open a database tab */
-  def addDatabase(dbActor : ActorRef, databaseId : DatabaseId) : Unit =
-    dbActor ! QueryTables(databaseId, dbActor)
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
   private def getTabByDatabaseId(databaseId : DatabaseId) =
