@@ -31,10 +31,8 @@ class DatabaseWorker(
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
   private val log = new Logger(guiActor)
   private var optCore : Option[DatabaseWorkerCore] = buildCore()
-  if(optCore.isEmpty) {
-    println("Send QueryClose to connection actor")
-    connectionActor ! QueryClose(databaseId)
-  }
+  if(optCore.isEmpty)
+    closeThisDBWorker()
   private val cache = new DatabaseWorkerCache()
   private val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
   private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
@@ -64,7 +62,7 @@ class DatabaseWorker(
 	    }
 
 	/* if connected execure the operation, otherwise send an error to the GUI */
-	private def withCore[R](errHandler : Exception => Unit, operation: DatabaseWorkerCore => R): Unit =
+	private def withCore[R](operation: DatabaseWorkerCore => Any, errHandler: Exception => Unit): Unit =
 		optCore match {
 			case Some(core) => handleErr(errHandler, operation(core))
 			case None => guiActor ! Error(LocalDateTime.now, "Database not connected", None)
@@ -100,21 +98,18 @@ class DatabaseWorker(
       }
     )
 
-  private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(logError, core => {
-		val tableName = qry.queryId.tableId.tableName
-		val foreignKeys = ForeignKeys(
-				foreignKeysForCache.getOrElseUpdate(tableName, 
-						cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
-				).keys ++ additionalForeignKeysExploded.get(tableName).map(_.keys).getOrElse(List.empty))
-		guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
-	})
+  private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(core => {
+      val tableName = qry.queryId.tableId.tableName
+      val foreignKeys = ForeignKeys(
+          foreignKeysForCache.getOrElseUpdate(tableName,
+              cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
+          ).keys ++ additionalForeignKeysExploded.get(tableName).map(_.keys).getOrElse(List.empty))
+      guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
+    }, logError)
 
-	private def queryRows(qry: QueryRows, maxRows: Option[Int], queryTimeout: Option[Duration]) : Unit = withCore(
-		e => queryRowsHandleErr(qry, e),
-		core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeout.getOrElse(10 seconds),  rows =>
-			guiActor ! ResponseRows(qry.queryId, qry.structure, rows, qry.original)
-		)
-	)
+	private def queryRows(qry: QueryRows, maxRows: Option[Int], queryTimeout: Option[Duration]) : Unit = withCore(core => core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeout.getOrElse(10 seconds),  rows =>
+        guiActor ! ResponseRows(qry.queryId, qry.structure, rows, qry.original)
+      ), e => queryRowsHandleErr(qry, e))
 
   private def queryRowsHandleErr(qry: QueryRows, e: Exception): Unit =
     qry.original match {
@@ -122,46 +117,54 @@ class DatabaseWorker(
       case None => log.error(localization.errorQueryingDatabase(databaseName), e)
     }
 
-  private def queryTables(qry: QueryTables) : Unit = withCore(logError, core => {
-      val names = core.tablesLoader.tableNames()
-      if (names.tableNames.nonEmpty)
-        log.info(localization.loadedTables(names.tableNames.size, databaseName))
-      else {
-        val schemas = core.schemasLoader.schemasNames()
-        val schemasText = schemas.schemas.map(_.name).mkString(", ")
-        log.warning(localization.errorNoTables(databaseName, schemasText))
-      }
-      guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
-		})
+  private def queryTables(qry: QueryTables) : Unit = withCore(core => {
+        val names = core.tablesLoader.tableNames()
+        if (names.tableNames.nonEmpty)
+          log.info(localization.loadedTables(names.tableNames.size, databaseName))
+        else {
+          val schemas = core.schemasLoader.schemasNames()
+          val schemasText = schemas.schemas.map(_.name).mkString(", ")
+          log.warning(localization.errorNoTables(databaseName, schemasText))
+        }
+        guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
+      }, ex => {
+      logError(ex)
+      closeThisDBWorker()
+    })
 
-	private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(logError, core => { 
-			val names = core.tablesLoader.tablesByPattern(qry.pattern)
-    	guiActor ! ResponseTablesByPattern(qry.databaseId, names)
-		})
+  private def closeThisDBWorker(): Unit = {
+    println("Send QueryClose to connection actor to close this DBWorker")
+    connectionActor ! QueryClose(databaseId)
+  }
 
-	private def queryColumns(qry: QueryColumns) : Unit = withCore(logError, core => {
-			val tableName = qry.tableId.tableName
-			val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-    		guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
-		})
+  private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(core => {
+        val names = core.tablesLoader.tablesByPattern(qry.pattern)
+        guiActor ! ResponseTablesByPattern(qry.databaseId, names)
+      }, logError)
 
-	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(logError, core => {
-			val tableName = qry.tableId.tableName
-			val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-    		guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, queryAttributes())
-    	})		
+	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
+        val tableName = qry.tableId.tableName
+        val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+          guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
+      }, logError)
 
-	private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = withCore(logError, core => {
-			val tableName = qry.tableName
-			val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-    		guiActor ! ResponseColumnsForForeignKeys(qry.databaseId, tableName, columns)
-		})
+	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
+        val tableName = qry.tableId.tableName
+        val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+          guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, queryAttributes())
+        }, logError)
 
-	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(logError, core => {
-			val tableName = qry.queryId.tableId.tableName
-			val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
-    		guiActor ! ResponsePrimaryKeys(qry.queryId, primaryKeys)
-    	})
+	private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = withCore(core => {
+        val tableName = qry.tableName
+        val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+          guiActor ! ResponseColumnsForForeignKeys(qry.databaseId, tableName, columns)
+      }, logError)
+
+	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {
+        val tableName = qry.queryId.tableId.tableName
+        val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
+          guiActor ! ResponsePrimaryKeys(qry.queryId, primaryKeys)
+        }, logError)
 
 	private def queryAttributes() =  QueryAttributes(data.identifierDelimiters, DBDefinition(data.schema, data.catalog))
 
