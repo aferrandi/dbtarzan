@@ -1,8 +1,8 @@
 package dbtarzan.db.actor
 
-import dbtarzan.db.{ PrimaryKeys, Fields, ForeignKeys }
+import dbtarzan.db.{Fields, ForeignKeys, PrimaryKeys}
 
-import scala.collection.mutable.HashMap
+import scala.collection.mutable
 
 /* 
     a single table is opened normally several times in DBTarzan, with different queries. This cache prevents DBTarzan to re-request columns, 
@@ -10,9 +10,9 @@ import scala.collection.mutable.HashMap
     Don't confuse this with  DatabseWorker.foreignKeysFromFile, which contains the foreign keys read from a file 
 */
 class DatabaseWorkerCache {
-    private val primaryKeys = HashMap.empty[String, PrimaryKeys]
-    private val fields = HashMap.empty[String, Fields]
-    private val foreignKeys = HashMap.empty[String, ForeignKeys]
+    private val primaryKeys = mutable.HashMap.empty[String, PrimaryKeys]
+    private val fields = mutable.HashMap.empty[String, Fields]
+    private val foreignKeys = mutable.HashMap.empty[String, ForeignKeys]
 
     def cachedPrimaryKeys(tableName : String, extract : => PrimaryKeys) : PrimaryKeys = 
         primaryKeys.getOrElseUpdate(tableName, extract)

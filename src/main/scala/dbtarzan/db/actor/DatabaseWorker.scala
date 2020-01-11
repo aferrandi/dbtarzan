@@ -21,7 +21,8 @@ import scala.language.postfixOps
 class DatabaseWorker(
 	encryptionKey : EncryptionKey, 
 	data : ConnectionData, 
-	guiActor : ActorRef, 
+	guiActor : ActorRef,
+  connectionActor: ActorRef,
 	localization: Localization,
 	keyFilesDirPath: Path
 	) extends Actor {
@@ -29,7 +30,11 @@ class DatabaseWorker(
   private def databaseId = DatabaseId(data.name)
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
   private val log = new Logger(guiActor)
-  private var optCore : Option[DatabaseWorkerCore] = Some(buildCore())
+  private var optCore : Option[DatabaseWorkerCore] = buildCore()
+  if(optCore.isEmpty) {
+    println("Send QueryClose to connection actor")
+    connectionActor ! QueryClose(databaseId)
+  }
   private val cache = new DatabaseWorkerCache()
   private val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
   private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
@@ -37,16 +42,11 @@ class DatabaseWorker(
   private var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
   private var additionalForeignKeysExploded : Map[String, ForeignKeys] = buildKeys(additionalForeignKeys)
 
-  private def buildCore() : DatabaseWorkerCore = {
+  private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
     log.info(localization.connectedTo(databaseName))
-    new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), localization)
-  }
-
-  private def rebuildCore() : Option[DatabaseWorkerCore] = try {
-    Some(buildCore())
-  }
-  catch {
+    Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), localization))
+  } catch {
     case se : SQLException => {
       log.error(localization.errorConnectingToDatabase(databaseName)+" "+ExceptionToText.sqlExceptionText(se), se)
       None
@@ -77,16 +77,16 @@ class DatabaseWorker(
 	}
 
 	private def close() : Unit = handleErr(logError, {
-		println("Closing the worker for "+databaseName)
+		println("Closing the database worker for "+databaseName)
 		guiActor ! ResponseCloseDatabase(databaseId)
     closeCore()
 		context.stop(self)
 	})
 
 	private def reset() : Unit = handleErr(logError, {
-		println("Reseting the connection of the worker for "+databaseName)
+		println("Reseting the connection of the database worker for "+databaseName)
 		closeCore()
-		optCore = rebuildCore()
+		optCore = buildCore()
 		log.info(localization.connectionResetted(databaseName))
 	})
 

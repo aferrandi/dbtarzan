@@ -86,7 +86,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
   private def getTabByDatabaseId(databaseId : DatabaseId) =
-    tabs.tabs.filter(_.text() == databaseId.databaseName).headOption
+    tabs.tabs.find(_.text() == databaseId.databaseName)
 
   /* selects and shows the content of a database tab */
   private def selectTab(tab : Tab) : Unit = 

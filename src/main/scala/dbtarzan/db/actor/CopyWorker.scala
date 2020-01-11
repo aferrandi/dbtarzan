@@ -20,17 +20,17 @@ import dbtarzan.localization.Localization
 	thus avoiding delays when reading foreign keys from the database is slow (Oracle) 
 */
 class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : ActorRef, localization: Localization, keyFilesDirPath : Path) extends Actor {
-	val log = new Logger(guiActor)
-	val driverManger = new DriverManagerWithEncryption(encryptionKey)
-	val connection = driverManger.getConnection(data)
-	def databaseName = data.name
-	val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
-	val queryLoader = new QueryLoader(connection)
-	val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseName)
+	private val log = new Logger(guiActor)
+  private val driverManger = new DriverManagerWithEncryption(encryptionKey)
+  private val connection = driverManger.getConnection(data)
+  private def databaseName = data.name
+  private val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
+  private val queryLoader = new QueryLoader(connection)
+  private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseName)
 	
 	/* gets all the tables in the database/schema from the database metadata */
 	private def tableNames() : List[String] = {
-		val meta = connection.getMetaData()
+		val meta = connection.getMetaData
 		using(meta.getTables(data.catalog.orNull, data.schema.orNull, "%", Array("TABLE"))) { rs =>
 			val list = new ListBuffer[String]()
 			while(rs.next) {
