@@ -40,6 +40,10 @@ The new definition is immediately selected, showing its definition on the left.
 The only field with some content is the Name, showing the <NEW> name. <NEW> is just a temporary name that needs to be changed. 
 Change the name of the connection and fill the other field, then click on **Save**. The connection is added to the list and immediately displayed on the main window.
 
+Connections can be **tested** directly in this editor, selecting a connection from the list and clicking on the **Test** button, which displays a success message if it wes able to connect to the database, a detailed error in the case it was not.
+
 To **remove** a connection, select it and click on the button **Remove**. The connection disappears from the list. Clicking on Save, the file is updated and reloaded in the main window without the removed connection. 
 
 It is also possible to **duplicate** a connection (button **Duplicate**), because in real life connection definitions tend to be similar (same server, same database with different user, same driver). The new connection will have the same definition as the original but no name.
+
+
