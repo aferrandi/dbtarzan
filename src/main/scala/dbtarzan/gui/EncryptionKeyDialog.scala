@@ -13,21 +13,21 @@ import dbtarzan.localization.Localization
 
 class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
   class Content(verificationKey : VerificationKey) {
-    val dialog = new Dialog[EncryptionKey]() {
+    private val dialog = new Dialog[EncryptionKey]() {
       initOwner(stage)
       title = localization.encryptionKey
     }
-    val btnTypeEnter = buildButtonTypeEnter()
-    val btnEnter = buildButtonEnter()
-    val pwdEncryptionKey = new PasswordField() {
+    private val btnTypeEnter = buildButtonTypeEnter()
+    private val btnEnter = buildButtonEnter()
+    private val pwdEncryptionKey = new PasswordField() {
       promptText = localization.encryptionKey
       text.onChange { (_, _, newValue) => btnEnter.disable = newValue.trim().isEmpty}
     }
-    val lblError = new Label() {
+    private val lblError = new Label() {
       wrapText = true
       minWidth = 400
     }
-    val grid = buildGrid()
+    private val grid = buildGrid()
     dialog.dialogPane().content = grid
     Platform.runLater(pwdEncryptionKey.requestFocus())
     dialog.resultConverter = dialogButton =>

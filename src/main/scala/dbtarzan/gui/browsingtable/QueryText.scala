@@ -16,7 +16,7 @@ class QueryText {
 	def onEnter(useText : (String, Boolean) => Unit) : Unit = {
 			textBox.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
 				useText(textBox.text(), ev.controlDown)
-      //textBox.onAction = (ev: ActionEvent)  => { useText(textBox.text(), ev.controlDown) }
-    }
-	def showError() : Unit = textBox.changeTextColorTo("red")
+  }
+
+	def showError(): Unit = textBox.changeTextColorTo("red")
 }

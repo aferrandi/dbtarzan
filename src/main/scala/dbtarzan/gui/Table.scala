@@ -1,17 +1,19 @@
 package dbtarzan.gui
 
+import java.lang
+
 import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView, SelectionMode}
+import scalafx.scene.control.{SelectionMode, TableColumn, TableView}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.image.ImageView
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-import dbtarzan.db.{Field, Row, Rows, DBEnumsText, PrimaryKeys, ForeignKeys, DBTable}
+import dbtarzan.db.{DBEnumsText, DBTable, Field, ForeignKeys, PrimaryKeys, Row, Rows}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, TableColumnsHeadings, TableContextMenu, HeadingText, TableColumnsFitter}
+import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, HeadingText, TableColumnsFitter, TableColumnsHeadings, TableContextMenu}
 import dbtarzan.messages.Logger
 import dbtarzan.localization.Localization
 
@@ -43,11 +45,11 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
 
 
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
-  def buildTable() = new TableView[CheckedRow](buffer) {
+  def buildTable(): TableView[CheckedRow] = new TableView[CheckedRow](buffer) {
     columns += buildCheckColumn()
     columns ++= names.zipWithIndex.map({ case (field, i) => buildColumn(field, i) })
     editable = true
-    selectionModel().selectionMode() = SelectionMode.MULTIPLE
+    selectionModel().selectionMode() = SelectionMode.Multiple
     selectionModel().selectedItem.onChange(
       (_, _, row) => 
         Option(row).map(_.row).foreach(rowValues =>
@@ -57,7 +59,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
     contextMenu = new TableContextMenu(queryId, guiActor, localization).buildContextMenu()
   }
 
-  private def checkedIfOnlyOne() =
+  private def checkedIfOnlyOne(): Unit =
     if(buffer.length == 1)
       checkAll(true)    
 
@@ -66,14 +68,14 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
     buffer.foreach(row => row.checked.value = check)
 
  /* gets the nth column from the database row */
-  def buildColumn(field : Field, index : Int) = new TableColumn[CheckedRow,String]() {
+  def buildColumn(field : Field, index : Int): TableColumn[CheckedRow,String] = new TableColumn[CheckedRow,String]() {
 		text = field.name
 		cellValueFactory = { _.value.values(index) } // when showing a row, shows the value for the column field
     prefWidth = 180
 	}.delegate
 
   /* the ckeck box column is special */
-  def buildCheckColumn() =  {
+  def buildCheckColumn(): TableColumn[CheckedRow, lang.Boolean] =  {
     val checkColumn = new TableColumn[CheckedRow, java.lang.Boolean] {
         text = ""
         cellValueFactory = { _.value.checked.delegate  }
@@ -119,11 +121,11 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   }
 
   /* the unique id for the table */
-  def getId = queryId
+  def getId: QueryId = queryId
 
-  def getCheckedRows = checkedRows.rows
+  def getCheckedRows: List[Row] = checkedRows.rows
 
-  def rowsNumber = buffer.length
+  def rowsNumber: Int = buffer.length
 
   /* converts the selected part of the table to a string that can be written to the clipboard */
   private def selectedRowsToString() : String = {
@@ -135,10 +137,10 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
 
   def copySelectionToClipboard(includeHeaders : Boolean) : Unit = 
     try {
-      includeHeaders match {
-        case true => JFXUtil.copyTextToClipboard(headersToString()+ "\n" + selectedRowsToString()) 
-        case false => JFXUtil.copyTextToClipboard(selectedRowsToString())
-      } 
+      if (includeHeaders)
+        JFXUtil.copyTextToClipboard(headersToString() + "\n" + selectedRowsToString())
+      else
+        JFXUtil.copyTextToClipboard(selectedRowsToString())
       log.info(localization.selectionCopied)
     } catch {
       case ex : Exception => log.error(localization.errorCopyingSelection, ex)
