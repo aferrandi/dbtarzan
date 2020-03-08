@@ -16,17 +16,17 @@ import scalafx.scene.layout.Region
 object JFXUtil {
 	def threeLines : String = "\u2630"
 
-	def withTitle(graphic : Node, title : String) = new BorderPane {
+	def withTitle(graphic : Node, title : String): BorderPane = new BorderPane {
 	    top = buildTitle(title)
 	    center = graphic
 	}
 
-	def withLeftTitle(graphic : Node, title : String) = new BorderPane {
+	def withLeftTitle(graphic : Node, title : String): BorderPane = new BorderPane {
 	    left = buildTitle(title)
 	    center = graphic
 	}
 
-	def buildTitle(title : String) = new Label(title) {
+	def buildTitle(title : String): Label = new Label(title) {
 		margin = Insets(5)
 	}
 
@@ -100,7 +100,7 @@ object JFXUtil {
     text.getBoundsInLocal.getWidth / s.length;
   }
 
-  def menuItem(text: String, action:() => Unit) = new MenuItem(text) {
+  def menuItem(text: String, action:() => Unit): MenuItem = new MenuItem(text) {
     onAction = {
       e: ActionEvent => { action()	}
     }
