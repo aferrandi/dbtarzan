@@ -47,6 +47,7 @@ class English extends Localization {
     def direction = "Direction"
     def editGlobalSettings = "Edit Global Settings"   
     def addConnection = "Add Connection"
+    def closeThisTab = "Close this tab"
     def closeTabsBeforeThis = "Close tabs before this"
     def closeTabsAfterThis = "Close tabs after this"
     def closeAllTabs = "Close all tabs"

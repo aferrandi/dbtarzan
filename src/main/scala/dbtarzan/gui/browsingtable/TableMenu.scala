@@ -12,6 +12,7 @@ import dbtarzan.localization.Localization
 
 /* the code to build the tabs menu and the related key combinations */ 
 object TableMenu {
+    val CLOSE_THIS_TAB = new KeyCodeCombination(KeyCode.Delete, KeyCombination.ControlDown)
     val CLOSE_TAB_BEFORE_KEY = new KeyCodeCombination(KeyCode.B, KeyCombination.ControlDown, KeyCombination.ShiftDown)
     val CLOSE_TAB_AFTER_KEY = new KeyCodeCombination(KeyCode.F, KeyCombination.ControlDown, KeyCombination.ShiftDown)
     val CHECK_ALL_KEY = new KeyCodeCombination(KeyCode.A, KeyCombination.ControlDown, KeyCombination.ShiftDown)
@@ -31,10 +32,11 @@ object TableMenu {
             onAction = ev
         }
 
-    def buildMainMenu(guiActor: ActorRef, queryId : QueryId, localization : Localization) = new MenuBar {
+    def buildMainMenu(guiActor: ActorRef, queryId : QueryId, localization : Localization): MenuBar = new MenuBar {
         menus = List(
             new Menu(JFXUtil.threeLines) {
                 items = List(
+                    menuItem(localization.closeThisTab, CLOSE_THIS_TAB, (ev: ActionEvent) => guiActor ! RequestRemovalThisTab(queryId)),
                     menuItem(localization.closeTabsBeforeThis, CLOSE_TAB_BEFORE_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
                     menuItem(localization.closeTabsAfterThis, CLOSE_TAB_AFTER_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
                     menuItem(localization.closeAllTabs, (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
@@ -49,7 +51,8 @@ object TableMenu {
     /* to get the tableid is an expensive operation, therefore we use it as a closure */
     def handleKeyCombination(guiActor: ActorRef, ev: KeyEvent, tableId : () => Option[QueryId]) : Unit =
         if(ev.controlDown) {
-            if(CLOSE_TAB_BEFORE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsBefore(id))
+            if(CLOSE_THIS_TAB.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalThisTab(id))
+            else if(CLOSE_TAB_BEFORE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsBefore(id))
             else if(CLOSE_TAB_AFTER_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsAfter(id))
             else if(CHECK_ALL_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CheckAllTableRows(id))
             else if(CHECK_NONE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CheckNoTableRows(id))
