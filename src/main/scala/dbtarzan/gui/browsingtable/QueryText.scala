@@ -1,15 +1,17 @@
 package dbtarzan.gui.browsingtable
 
-import scalafx.scene.control.TextField
-import scalafx.scene.input.{ KeyEvent, KeyCode }
+import dbtarzan.db.Fields
+import dbtarzan.gui.util.AutoComplete
 import scalafx.Includes._
+import scalafx.scene.input.{KeyCode, KeyEvent}
 
 /* the constraint text box (where:) */
-class QueryText {
-	val textBox = new TextField {
+class QueryText(columns : Fields) {
+	val textBox = new AutoComplete(columns.fields.map(_.name), 10) {
 		text = ""
-		text.onChange { (_, _, _) => changeTextColorTo("black")}	
-		def changeTextColorTo(color : String) : Unit =
+		text.onChange { (_, _, _) => changeTextColorTo("black")}
+
+    def changeTextColorTo(color : String) : Unit =
 			style = "-fx-text-inner-color: "+color+";"
 	}
 

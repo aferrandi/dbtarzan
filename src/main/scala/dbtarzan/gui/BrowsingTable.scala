@@ -31,7 +31,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private var useNewTable : (DBTableStructure, Boolean) => Unit = (table, closeCurrentTab) => {}
   private var rowDetailsView : Option[RowDetailsView] = None
   table.setRowClickListener(row => rowDetailsView.foreach(details => details.displayRow(row)))
-  private val queryText = new QueryText() { 
+  private val queryText = new QueryText(structure.columns) {
     onEnter((text, closeCurrentTab) => {
         val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
         useNewTable(tableWithFilters, closeCurrentTab)
