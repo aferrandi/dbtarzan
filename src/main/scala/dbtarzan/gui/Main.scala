@@ -1,16 +1,16 @@
 package dbtarzan.gui
 
-import scalafx.application.JFXApp
-import java.nio.file.{ Paths, Path }
+import java.nio.file.{Path, Paths}
 
+import dbtarzan.config.actor.ConnectionsWorker
 import dbtarzan.config.connections.ConnectionDataReader
 import dbtarzan.config.global.GlobalDataReader
-import dbtarzan.gui.actor.GUIWorker
-import dbtarzan.config.actor.ConnectionsWorker
-import dbtarzan.types.ConfigPath
-import dbtarzan.messages.{QueryDatabase, CopyToFile, DatabaseIds, ConnectionDatas, Logger }
 import dbtarzan.db.DatabaseId
+import dbtarzan.gui.actor.GUIWorker
 import dbtarzan.localization.Localizations
+import dbtarzan.messages._
+import dbtarzan.types.ConfigPath
+import scalafx.application.JFXApp
 
 /** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp {
@@ -60,12 +60,18 @@ object Main extends JFXApp {
     System.exit(0)
   })
 
-  private def openWeb(url : String) : Unit = try
-    {  hostServices.showDocument(url) }
-    catch {
-      case e: Throwable =>  new ProcessBuilder("x-www-browser", url).start()
-    }
-  
   private def versionFromManifest() = Option(getClass.getPackage.getImplementationVersion).getOrElse("")
+
+  private def openWeb(url : String) : Unit = openWebTry1(url)
+
+  private def openWebTry1(url: String): Unit = try {
+      val p = new ProcessBuilder("xdg-open", url).start()
+      if (!p.isAlive)
+        openWebTry2(url)
+    }
+    catch { case e: Throwable => openWebTry2(url) }
+
+  private def openWebTry2(url: String): Unit =
+    hostServices.showDocument(url)
 }
 
