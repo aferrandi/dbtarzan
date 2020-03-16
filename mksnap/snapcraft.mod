@@ -14,13 +14,12 @@ apps:
     environment:        
         # If it does not find the fonts configuration it gives an error.
         XDG_DATA_HOME: $SNAP/usr/share
-        FONTCONFIG_PATH: $SNAP/etc/fonts/config.d
-        FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf
+        FONTCONFIG_PATH: "$SNAP/etc/fonts"
         # Standard libraries for Java
         JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
         JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON -Djdk.gtk.version=2"        
         PATH: $SNAP/usr/lib/jvm/java-11-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/bin:$PATH
-        LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/lib/amd64/
+        LD_LIBRARY_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/lib/amd64/
     plugs: [home, x11, wayland, network, network-bind]
 
 parts:
