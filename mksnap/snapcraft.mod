@@ -14,14 +14,14 @@ apps:
     environment:        
         # If it does not find the fonts configuration it gives an error.
         XDG_DATA_HOME: $SNAP/usr/share
-        #FONTCONFIG_PATH: $SNAP/etc/fonts/config.d
-        #FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf
+        FONTCONFIG_PATH: $SNAP/etc/fonts/config.d
+        FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf
         # Standard libraries for Java
         JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
         JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON -Djdk.gtk.version=2"        
         PATH: $SNAP/usr/lib/jvm/java-11-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/bin:$PATH
         LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/lib/amd64/
-    plugs: [home, unity7, x11, wayland, network, network-bind]
+    plugs: [home, x11, wayland, network, network-bind]
 
 parts:
   # one part for the java libraries and dependencies, one for the jar itself
@@ -29,7 +29,7 @@ parts:
     plugin: dump
     source: .
     # without libcamberra... it complains that canberra-gtk is not available.
-    stage-packages: [libc6, openjdk-11-jre, zlib1g, fonts-ubuntu, libcanberra-gtk-module, libcanberra-gtk3-module]
+    stage-packages: [libc6, openjdk-11-jre, zlib1g, libcanberra-gtk-module, libcanberra-gtk3-module]
   dbtarzan:
     source: source/
     plugin: dump
