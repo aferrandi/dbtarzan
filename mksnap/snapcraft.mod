@@ -20,7 +20,7 @@ apps:
         JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON -Djdk.gtk.version=2"        
         PATH: $SNAP/usr/lib/jvm/java-11-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/bin:$PATH
         LD_LIBRARY_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/lib/amd64/
-    plugs: [home, x11, wayland, network, network-bind]
+    plugs: [desktop, home, x11, wayland, network, network-bind]
 
 parts:
   # one part for the java libraries and dependencies, one for the jar itself
