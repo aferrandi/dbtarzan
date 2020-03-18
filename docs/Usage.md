@@ -37,9 +37,4 @@ DbTarzan shows the original rows in the table filtered with the where clause:
 
 Every time you follow a foreign key or filter the table with a where clause DbTarzan opens a **new tab** leaving the original one immutated.
 
-Errors in the where clause cause the where clause text color to turn red:
-
-![Where Error](images/errorwhere.png)
-
-
 You can also **order** the rows of the table, using the [Order By](Order-By) menu,

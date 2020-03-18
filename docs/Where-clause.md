@@ -20,4 +20,7 @@ If you choose one of them, it is appended to the where clause.
  
 Once your where clause is complete, you can query the database with it pressing Enter. 
 
+Errors in the where clause cause the where clause text color to turn red:
+
+![Where Error](images/errorwhere.png)
  
