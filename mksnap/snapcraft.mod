@@ -28,6 +28,7 @@ parts:
     plugin: dump
     source: .
     # without libcamberra... it complains that canberra-gtk is not available.
+    build-packages: [ca-certificates, ca-certificates-java, openjdk-11-jre]
     stage-packages: [openjdk-11-jre, zlib1g, libcanberra-gtk-module, libcanberra-gtk3-module]
   dbtarzan:
     source: source/
