@@ -1,7 +1,7 @@
 ---
 
 layout: default
-title: Cconnect to a database
+title: Connect to a database
 resource: true
 categories: [Other]
 

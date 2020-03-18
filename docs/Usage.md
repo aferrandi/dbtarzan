@@ -27,7 +27,7 @@ If you select some rows (like in the previous image) and double-click on a [fore
 
 ![Derived](images/derived.png)
 
-You can select specific rows of the table specifying a **where clause**:
+You can select specific rows of the table specifying a [where clause](Where-clause):
 
 ![Where](images/where.png)
 
