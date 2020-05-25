@@ -11,6 +11,14 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 DBTarzan changelog
 =================
 
+- Release 1.22
+
+Fields/columns suggestions in the where clause text box
+
+Ctrl-Del closes the current tab
+
+DBTarzan as snap now opens the browser to show the help/documentation
+
 - Release 1.21
 
 upgraded to JavaFX 12
@@ -21,12 +29,4 @@ Does not open the database tab if the database connection fails.
 
 Timeout when querying a table
 
-
-- Release 1.20
-
-Upgraded to Java 11 and JavaFX 11
-
-Shows table fields and types on the right side of the application window, together with the query that generated the table
-
-Adeded additional keys editor, to use "fake" foreign keys when they are missing from the database, to better explore it.
 

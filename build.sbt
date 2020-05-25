@@ -2,13 +2,13 @@ import scala.sys.process._
 
 fork := true
 
-val versionNymber = "1.22"
-version := versionNymber
+val versionNumber = "1.23"
+version := versionNumber
 
 lazy val standardLibraries = Seq(
   "io.spray" %%  "spray-json" % "1.3.5",
   "org.scalatest" % "scalatest_2.13" % "3.1.0" % "test",
-  "org.scalafx" % "scalafx_2.13" % "12.0.2-R18",
+  "org.scalafx" % "scalafx_2.13" % "14-R19",
   "com.typesafe.akka" %% "akka-actor" % "2.6.0",
   "com.h2database" % "h2" % "1.4.197"
 )
@@ -19,7 +19,7 @@ lazy val commonConfiguration = Seq(
 
   maintainer := "Andrea Ferrandi",
 
-  version := versionNymber,
+  version := versionNumber,
 
   scalaVersion := "2.13.1",
 
@@ -55,7 +55,7 @@ def buildProject(name: String) = {
     .settings(commonConfiguration)
     .settings(
       libraryDependencies ++= standardLibraries ++ javaFXModules.map( module => 
-        "org.openjfx" % s"javafx-$module" % "12" classifier name
+        "org.openjfx" % s"javafx-$module" % "14" classifier name
       )
     )
 }

@@ -1,18 +1,14 @@
 package dbtarzan.gui.info
 
-import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView }
-import scalafx.collections.ObservableBuffer
-import scalafx.beans.property.{ StringProperty }
-import scalafx.scene.Parent
-import scalafx.Includes._
 import akka.actor.ActorRef
-
-import dbtarzan.db.{ Fields, Field }
-import dbtarzan.messages._
-import dbtarzan.messages.Logger
-import dbtarzan.localization.Localization
+import dbtarzan.db.{Field, Fields}
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.localization.Localization
+import dbtarzan.messages.Logger
+import scalafx.beans.property.StringProperty
+import scalafx.collections.ObservableBuffer
+import scalafx.scene.Parent
+import scalafx.scene.control.{TableColumn, TableView}
 
 
 /** The GUI table control showing the description of the columns of a database table */
@@ -25,7 +21,7 @@ class ColumnsTable(fields: Fields, guiActor : ActorRef, localization : Localizat
 
 
   /* builds table with the two columns (name and description) */ 
-  def buildTable() = new TableView[Field](buffer) {
+  def buildTable(): TableView[Field] = new TableView[Field](buffer) {
     columns ++= List ( nameColumn(), descriptionColumn())
     editable = false
     columnResizePolicy = TableView.ConstrainedResizePolicy
@@ -48,7 +44,8 @@ class ColumnsTable(fields: Fields, guiActor : ActorRef, localization : Localizat
   /* adds the database rows (the database table fields) to the table */
   def addRows() : Unit = 
     buffer ++= fields.fields
-    
 
   def control : Parent = table
+
+
 }

@@ -13,7 +13,7 @@ import akka.actor.ActorRef
 import dbtarzan.db.{DBEnumsText, DBTable, Field, ForeignKeys, PrimaryKeys, Row, Rows}
 import dbtarzan.messages._
 import dbtarzan.gui.util.JFXUtil
-import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, HeadingText, TableColumnsFitter, TableColumnsHeadings, TableContextMenu}
+import dbtarzan.gui.table.{CheckedRow, CheckedRowFromRow, CheckedRowsBuffer, HeadingText, TableColumnsFitter, TableColumnsHeadings, TableContextMenu, TableToClipboard}
 import dbtarzan.messages.Logger
 import dbtarzan.localization.Localization
 
@@ -127,20 +127,10 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
 
   def rowsNumber: Int = buffer.length
 
-  /* converts the selected part of the table to a string that can be written to the clipboard */
-  private def selectedRowsToString() : String = {
-    selectedRows().map(cellsInRow => cellsInRow.values.map(cell => cell()).mkString("\t") ).mkString("\n")
-  }
-
-  private def headersToString() : String =
-    names.map(_.name).mkString("\t")
-
   def copySelectionToClipboard(includeHeaders : Boolean) : Unit = 
     try {
-      if (includeHeaders)
-        JFXUtil.copyTextToClipboard(headersToString() + "\n" + selectedRowsToString())
-      else
-        JFXUtil.copyTextToClipboard(selectedRowsToString())
+      val toClipboard = new TableToClipboard(selectedRows(), names)
+      toClipboard.copySelectionToClipboard(includeHeaders)
       log.info(localization.selectionCopied)
     } catch {
       case ex : Exception => log.error(localization.errorCopyingSelection, ex)
