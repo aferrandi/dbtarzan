@@ -67,6 +67,7 @@ class English extends Localization {
     def selectionCopied = "Selection copied"
     def sqlCopied = "SQL copied"
     def copySelectionToClipboard = "Copy selection to clipboard"
+    def copyContentToClipboard = "Copy content to clipboard"
     def onlyCells = "Only cells"
     def cellsWithHeaders = "Cells with headers"
     def chooseOrderByColumns = "Choose OrderBy Columns"

@@ -3,6 +3,7 @@ package dbtarzan.gui.info
 import akka.actor.ActorRef
 import dbtarzan.db.{Field, Fields}
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
 import scalafx.beans.property.StringProperty
@@ -41,11 +42,15 @@ class ColumnsTable(fields: Fields, guiActor : ActorRef, localization : Localizat
     resizable = true
   }
 
+  private def contentAsText() : String =
+    "Name\tDescription\n" +  fields.fields.map(f => s"${f.name}\t${f.typeDescription}").mkString("\n")
+
+  def contentToClipboard(): Unit =
+    JFXUtil.copyTextToClipboard(contentAsText())
+
   /* adds the database rows (the database table fields) to the table */
   def addRows() : Unit = 
     buffer ++= fields.fields
 
   def control : Parent = table
-
-
 }

@@ -67,6 +67,7 @@ trait Localization {
   def sqlCopied: String
   def saveOrder: String
   def copySelectionToClipboard : String
+  def copyContentToClipboard : String
   def onlyCells: String
   def chooseOrderByColumns: String
   def cellsWithHeaders: String

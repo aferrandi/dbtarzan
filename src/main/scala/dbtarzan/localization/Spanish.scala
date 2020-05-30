@@ -67,6 +67,7 @@ class Spanish extends Localization {
     def saveOrder = "Guardar orden"
     def sqlCopied = "SQL copiado"
     def copySelectionToClipboard = "Copiar selección al portapapeles"
+    def copyContentToClipboard = "Copiar contenido al portapapeles"
     def onlyCells = "Solo las celdas"
     def cellsWithHeaders = "Celdas con titulos"
     def chooseOrderByColumns = "Elige las columnas para ordenar"

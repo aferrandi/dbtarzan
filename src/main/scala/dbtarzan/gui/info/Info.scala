@@ -1,10 +1,12 @@
 package dbtarzan.gui.info
 
-import scalafx.scene.control.{ TabPane, Tab }
-import scalafx.scene.Parent
-import scalafx.Includes._
-
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import scalafx.event.ActionEvent
+import scalafx.scene.Parent
+import scalafx.scene.control._
+import scalafx.scene.layout.BorderPane
+import scalafx.Includes._
 
 /* the info box on the right bottom, which shows the information views as tabs  */
 class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, localization : Localization) {
@@ -21,8 +23,24 @@ class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, localization : Loc
       },
       new Tab() {      
         text = localization.columnsDescription
-        content = columnsTable.control     
+        content = new BorderPane {
+          top = buildMenu()
+          center = columnsTable.control
+        }
       }
     )
   }
+  private def buildMenu() = new MenuBar {
+    menus = List(
+      new Menu(JFXUtil.threeLines) {
+        items = List(
+          new MenuItem(localization.copyContentToClipboard) {
+            onAction = {
+              e: ActionEvent => columnsTable.contentToClipboard()
+            }
+          })
+        })
+    stylesheets += "orderByMenuBar.css"
+  }
+
 }
