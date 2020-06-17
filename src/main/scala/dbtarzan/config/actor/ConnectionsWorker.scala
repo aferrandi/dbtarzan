@@ -6,6 +6,7 @@ import akka.actor.{Actor, ActorRef}
 import akka.routing.Broadcast
 import dbtarzan.config.connections.{ConnectionData, ConnectionsConfig}
 import dbtarzan.config.password.EncryptionKey
+import dbtarzan.db.basicmetadata.MetadataSchemasLoader
 import dbtarzan.db.{ConnectionBuilder, DatabaseId, DriverManagerWithEncryption, DriverSpec, RegisterDriver}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
@@ -36,7 +37,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 
 	 /* if no actors are serving the queries to a specific database, creates them */
 	 private def queryDatabase(databaseId : DatabaseId, encriptionKey : EncryptionKey) : Unit = {
-	    	println("Querying the database "+databaseId.databaseName)
+	    	println("Querying the tables of the database "+databaseId.databaseName)
 	    	try {
 	    		if(!mapDBWorker.isDefinedAt(databaseId)) {
             val dbWorker = getDBWorker(databaseId, encriptionKey)
@@ -51,6 +52,23 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 			}	 	
 	 }
 
+  def extractSchemas(data: ConnectionData, encryptionKey : EncryptionKey): Unit = {
+    try {
+      registerDriver.registerDriverIfNeeded(DriverSpec(data.jar, data.driver))
+      try {
+        val connection = new DriverManagerWithEncryption(encryptionKey).getConnection(data)
+        val schemas = new MetadataSchemasLoader(connection.getMetaData()).schemasNames()
+        connection.close()
+        guiActor ! ResponseSchemaExtraction(data, Some(schemas), None)
+      } catch {
+        case e: Throwable =>
+          guiActor ! ResponseSchemaExtraction(data, None, Some(new Exception(localization.errorConnectingToDatabase(data.name) , e)))
+      }
+    } catch {
+      case e: Throwable =>
+        guiActor ! ResponseSchemaExtraction(data, None, Some(new Exception(localization.errorRegisteringDriver(data.name) , e)))
+    }
+  }
 	 /* closes all the database actors that serve the queries to a specific database */
 	 private def queryClose(databaseId : DatabaseId) : Unit = {
 	    println("Closing the database "+databaseId.databaseName) 
@@ -86,6 +104,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 	    case qry : QueryClose => queryClose(qry.databaseId)
 	    case cpy : CopyToFile => startCopyWorker(cpy.databaseId, cpy.encryptionKey)
       case tst: TestConnection => testConnection(tst.data, tst.encryptionKey)
+      case ext: ExtractSchemas => extractSchemas(ext.data, ext.encryptionKey)
 	    case datas: ConnectionDatas => newConnections(datas)
 	}
 }

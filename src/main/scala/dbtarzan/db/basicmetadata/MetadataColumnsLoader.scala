@@ -10,7 +10,7 @@ import dbtarzan.db.{ Fields, Field, FieldType, DBDefinition }
 class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 	/* gets the columns of a table from the database metadata */
 	def columnNames(tableName : String) : Fields = try {
-		using(meta.getColumns(definition.catalog.orNull, definition.schema.orNull, tableName, "%")) { rs =>
+		using(meta.getColumns(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName, "%")) { rs =>
 			val list = readColumns(rs) 
 			println("Columns with schema "+definition+" loaded")
 			Fields(list)

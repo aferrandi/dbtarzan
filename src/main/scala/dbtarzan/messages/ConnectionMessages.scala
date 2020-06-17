@@ -15,3 +15,5 @@ case class ConnectionDatas(datas : List[ConnectionData])
 
 case class TestConnection(data : ConnectionData, encryptionKey : EncryptionKey)
 
+case class ExtractSchemas(data : ConnectionData, encryptionKey : EncryptionKey)
+

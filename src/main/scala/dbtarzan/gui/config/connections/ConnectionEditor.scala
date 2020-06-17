@@ -5,7 +5,7 @@ import dbtarzan.config.password.EncryptionKey
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{ExceptionText, ResponseTestConnection}
+import dbtarzan.messages.{ExceptionText, ResponseSchemaExtraction, ResponseTestConnection}
 import scalafx.scene.Parent
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
@@ -68,7 +68,7 @@ class ConnectionEditor(
   }
 
   def onTestConnection(test : ConnectionData  => Unit): Unit =
-    buttons.onTest(() => test(connection.toData()))
+    buttons.onTest(() => test(connection.toData))
 
   def onSave(save : List[ConnectionData]  => Unit): Unit =
     buttons.onSave(() => saveIfPossible(save))
@@ -76,11 +76,29 @@ class ConnectionEditor(
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
 
+  def onSchemasLoad(schemasLoad : ConnectionData  => Unit): Unit = {
+    println("onSchemasLoad")
+    connection.onSchemasLoad(() => {
+      println("Schemas load")
+      schemasLoad(connection.toData)
+    })
+  }
+
   def testConnectionResult(rsp : ResponseTestConnection) : Unit =
     rsp.ex match {
       case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, ExceptionText.extractMessageText(ex))
       case None => JFXUtil.showInfoAlert(localization.connectionSuccessful, localization.connectionToDatabaseSuccesful(rsp.data.name))
     }
+
+  def schemaExtractionResult(rsp: ResponseSchemaExtraction): Unit =
+    rsp.schemas match {
+      case Some(schemas)  => connection.schemasToChooseFrom(schemas)
+      case None => rsp.ex match {
+        case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, ExceptionText.extractMessageText(ex))
+        case None =>   JFXUtil.showErrorAlert(localization.connectionRefused, "")
+      }
+    }
+
 
   def control : Parent = layout
 }

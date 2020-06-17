@@ -1,7 +1,7 @@
 package dbtarzan.config.connections
 
 import dbtarzan.config.password.Password
-import dbtarzan.db.IdentifierDelimiters
+import dbtarzan.db.{IdentifierDelimiters, Schema}
 
 
 /* JDBC configuration for a database */
@@ -15,7 +15,7 @@ case class ConnectionData(
 	/* the JDBC url used to connect*/
 	url: String,
 	/* the schema containing the data, in multi-schema databases (Oracle) */
-	schema: Option[String],
+	schema: Option[Schema],
 	/* the user id to login to the database */
 	user: String, 
 	/* the password to login to the database */

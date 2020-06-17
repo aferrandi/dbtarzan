@@ -132,6 +132,14 @@ class DatabaseWorker(
       closeThisDBWorker()
     })
 
+  private def querySchemas(qry: QuerySchemas) : Unit = withCore(core => {
+    val schemas = core.schemasLoader.schemasNames()
+    guiActor ! ResponseSchemas(qry.databaseId, schemas)
+  }, ex => {
+    logError(ex)
+    closeThisDBWorker()
+  })
+
   private def closeThisDBWorker(): Unit = {
     println("Send QueryClose to connection actor to close this DBWorker")
     connectionActor ! QueryClose(databaseId)
@@ -197,8 +205,9 @@ class DatabaseWorker(
 		case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
 		case qry : QueryColumnsForForeignKeys => queryColumnsForForeignKeys(qry) 
 		case qry : QueryForeignKeys => queryForeignKeys(qry)    	
-		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)    	
-		case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
+		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
+    case qry : QuerySchemas => querySchemas(qry)
+    case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
 		case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
 	}
 }

@@ -13,10 +13,10 @@ class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 	/* gets the tables whose names or whose column names match a pattern */
 	def tablesByPattern(pattern : String) : TableNames = try {
 			val uppercasePattern = pattern.toUpperCase		
-			val allStandardTables = using(meta.getTables(definition.catalog.orNull, definition.schema.orNull, "%", Array("TABLE"))) { rs =>
+			val allStandardTables = using(meta.getTables(definition.catalog.orNull, definition.schema.map(_.name).orNull, "%", Array("TABLE"))) { rs =>
 				readTableAndSchemas(rs)
 			}
-			val tablesByColumnPattern = using(meta.getColumns(definition.catalog.orNull, definition.schema.orNull, "%", "%"+uppercasePattern+"%")) { rs =>
+			val tablesByColumnPattern = using(meta.getColumns(definition.catalog.orNull, definition.schema.map(_.name).orNull, "%", "%"+uppercasePattern+"%")) { rs =>
 				readTableAndSchemas(rs)
 			}.map(toUpperCase).toSet
 			val matchingTables = allStandardTables.filter(t => {
@@ -31,7 +31,7 @@ class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 
 	/* gets all the tables in the database/schema from the database metadata */
 	def tableNames() : TableNames = try {
-			using(meta.getTables(definition.catalog.orNull, definition.schema.orNull, "%", Array("TABLE"))) { rs =>
+			using(meta.getTables(definition.catalog.orNull, definition.schema.map(_.name).orNull, "%", Array("TABLE"))) { rs =>
 				toTableNames(readTableNames(rs))
 			}
 		} catch {

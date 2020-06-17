@@ -11,7 +11,7 @@ class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaDat
     private case class PrimaryKeyField(keyName : String, fieldName : String)
 
 	def primaryKeys(tableName : String) : PrimaryKeys = try {
-			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schema.orNull, tableName)) { rs =>
+			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
 				val list = readPrimaryKeys(rs)
 				println("Primary keys ("+list.size+") loaded")
 				val keys =list.groupBy(_.keyName).map({ 

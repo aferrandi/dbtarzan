@@ -7,7 +7,7 @@ import akka.actor.ActorRef
 import java.nio.file.Path
 
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader, ConnectionDataWriter}
-import dbtarzan.messages.{ConnectionDatas, TestConnection}
+import dbtarzan.messages.{ConnectionDatas, ExtractSchemas, TestConnection}
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.localization.Localization
 
@@ -41,7 +41,8 @@ object ConnectionEditorStarter
         editor.onSave(onSave)
         editor.onCancel(() => onCancel())
         editor.onTestConnection(data => connectionsWorker ! TestConnection(data, encryptionKey))
-        onCloseRequest = (event : WindowEvent) => { 
+        editor.onSchemasLoad(data => connectionsWorker ! ExtractSchemas(data, encryptionKey))
+        onCloseRequest = (event : WindowEvent) => {
           event.consume()
           editor.cancelIfPossible(() => onCancel()) 
           }

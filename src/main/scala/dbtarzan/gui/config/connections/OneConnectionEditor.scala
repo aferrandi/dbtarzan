@@ -1,16 +1,16 @@
 package dbtarzan.gui.config.connections
 
-import scalafx.scene.control.{ TextField, Label, PasswordField, Hyperlink, CheckBox }
-import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
+import scalafx.scene.control.{Button, CheckBox, Hyperlink, Label, PasswordField, TextField}
+import scalafx.scene.layout.{ColumnConstraints, GridPane, Priority}
 import scalafx.scene.Parent
 import scalafx.event.ActionEvent
-import scalafx.geometry.{ Insets, HPos }
+import scalafx.geometry.{HPos, Insets}
 import scalafx.Includes._
-
-import dbtarzan.gui.util.{ OnChangeSafe, JFXUtil }
+import dbtarzan.gui.util.{JFXUtil, OnChangeSafe}
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.password.{ EncryptionKey, PasswordEncryption, Password }
+import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
+import dbtarzan.db.Schemas
 import dbtarzan.localization.Localization
 
 /* The editor for one single connection */
@@ -37,8 +37,9 @@ class OneConnectionEditor(
   private val txtPassword = new PasswordField {
     text = ""
   }
-  private val txtSchema = new TextField {
-    text = ""
+  private val cmbSchemas = new ComboSchemas()
+  private val btnSchemas =   new Button {
+    text = localization.schema
   }
   private val txtCatalog = new TextField {
     text = ""
@@ -97,7 +98,8 @@ class OneConnectionEditor(
     add(new Label { text = localization.password+":" }, 0, 5)
     add(txtPassword, 1, 5)
     add(new Label { text = localization.schema+":" }, 0, 6)
-    add(txtSchema, 1, 6)
+    add(cmbSchemas.control, 1, 6)
+    add(btnSchemas, 2, 6)
     add(chkAdvanced, 0, 7)
     add(lblDelimiters, 0, 8)
     add(cmbDelimiters.control, 1, 8)
@@ -133,7 +135,7 @@ class OneConnectionEditor(
     txtDriver.text = data.driver
     txtUser.text = data.user
     txtPassword.text = decryptPasswordIfNeeded(data.password, data.passwordEncrypted.getOrElse(false)).key
-    txtSchema.text = noneToEmpty(data.schema)
+    cmbSchemas.show(data.schema)
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
     txtQueryTimeoutInSeconds.text = noneToEmpty(data.queryTimeoutInSeconds.map(_.toString))
@@ -168,12 +170,12 @@ class OneConnectionEditor(
     }
 
 
-  def toData(): ConnectionData = ConnectionData(
+  def toData: ConnectionData = ConnectionData(
         jarSelector.jarFilePath(),
         txtName.text(),
         txtDriver.text(),
         txtUrl.text(),
-        emptyToNone(txtSchema.text()),
+        cmbSchemas.toSchema(),
         txtUser.text(),
         encryptPassword(Password(txtPassword.text())),
         Some(true),
@@ -191,15 +193,24 @@ class OneConnectionEditor(
       txtName.text,
       txtDriver.text,
       txtUrl.text,
-      txtSchema.text,
       txtUser.text,
       txtPassword.text,
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
       txtCatalog.text
-    ).foreach(_.onChange(safe.onChange(() => useData(toData()))))
-    jarSelector.onChange(safe.onChange(() => useData(toData())))
-    cmbDelimiters.onChanged(() => safe.onChange(() => useData(toData())))
+    ).foreach(_.onChange(safe.onChange(() => useData(toData))))
+    jarSelector.onChange(safe.onChange(() => useData(toData)))
+    List(
+      cmbDelimiters,
+      cmbSchemas
+    ).foreach(_.onChanged(() => safe.onChange(() => useData(toData))))
   }
+
+  def schemasToChooseFrom(schemas: Schemas) : Unit =
+    cmbSchemas.schemasToChooseFrom(schemas)
+
+
+  def onSchemasLoad(action : () => Unit ): Unit =
+    btnSchemas.onAction = (event: ActionEvent)  => action()
 }
 

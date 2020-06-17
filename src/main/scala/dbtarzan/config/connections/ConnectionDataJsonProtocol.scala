@@ -12,9 +12,20 @@ import dbtarzan.db.IdentifierDelimiters
   	)
 }
 
+object SchemaJsonProtocol extends DefaultJsonProtocol {
+  import dbtarzan.db.Schema
+  implicit object SchemaFormat extends JsonFormat[Schema] {
+    def write(schema: Schema) = JsString(schema.name)
+    def read(json: JsValue): Schema = json match {
+      case JsString(key) => Schema(key)
+    }
+  }
+}
+
 object ConnectionDataJsonProtocol extends DefaultJsonProtocol {
 import IdentifierDelimitersJsonProtocol._
 import PasswordJsonProtocol._
+import SchemaJsonProtocol._
   implicit val connectionDataFormat = jsonFormat(ConnectionData, 
   	"jar", 
   	"name", 

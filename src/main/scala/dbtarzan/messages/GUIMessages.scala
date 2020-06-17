@@ -25,6 +25,9 @@ case class ResponseTablesByPattern(databaseId : DatabaseId, names: TableNames)
 case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId]) 
     extends TWithDatabaseId
 
+case class ResponseSchemas(databaseId : DatabaseId, schemas: Schemas)
+  extends TWithDatabaseId
+
 case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
@@ -81,3 +84,5 @@ case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[Ad
     extends TWithDatabaseId
 
 case class ResponseTestConnection(data : ConnectionData,  ex: Option[Exception])
+
+case class ResponseSchemaExtraction(data : ConnectionData,  schemas: Option[Schemas],  ex: Option[Exception])

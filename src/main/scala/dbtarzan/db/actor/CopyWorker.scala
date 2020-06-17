@@ -31,7 +31,7 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
 	/* gets all the tables in the database/schema from the database metadata */
 	private def tableNames() : List[String] = {
 		val meta = connection.getMetaData
-		using(meta.getTables(data.catalog.orNull, data.schema.orNull, "%", Array("TABLE"))) { rs =>
+		using(meta.getTables(data.catalog.orNull, data.schema.map(_.name).orNull, "%", Array("TABLE"))) { rs =>
 			val list = new ListBuffer[String]()
 			while(rs.next) {
 				list += rs.getString("TABLE_NAME")			

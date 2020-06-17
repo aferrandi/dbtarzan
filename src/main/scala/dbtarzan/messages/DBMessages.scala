@@ -20,7 +20,9 @@ case class QueryColumnsFollow(tableId: TableId, follow : FollowKey)
 
 case class QueryPrimaryKeys(queryId : QueryId) 
 
-case class QueryForeignKeys(queryId : QueryId) 
+case class QueryForeignKeys(queryId : QueryId)
+
+case class QuerySchemas(databaseId : DatabaseId)
 
 case class QueryReset(databaseId : DatabaseId) 
 

@@ -67,9 +67,9 @@ class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinitio
 	*/
 	def foreignKeys(tableName : String) : ForeignKeys = try {
 			var meta = connection.getMetaData()
-			using(meta.getImportedKeys(definition.catalog.orNull, definition.schema.orNull, tableName)) { rs =>
+			using(meta.getImportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
 				val keysImported = rsToForeignKeys(rs) 
-				using(meta.getExportedKeys(definition.catalog.orNull, definition.schema.orNull, tableName)) { rs =>
+				using(meta.getExportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
 					val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
 					println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 					val keys = keysImported ++ keysExported
