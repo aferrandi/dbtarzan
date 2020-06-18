@@ -45,6 +45,7 @@ class English extends Localization {
     def field = "Field"
     def description = "Description"
     def direction = "Direction"
+    def choices = "Choices"
     def editGlobalSettings = "Edit Global Settings"   
     def addConnection = "Add Connection"
     def closeThisTab = "Close this tab"

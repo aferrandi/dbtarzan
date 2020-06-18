@@ -1,7 +1,7 @@
 package dbtarzan.gui.config.connections
 
 import scalafx.scene.control.{Button, CheckBox, Hyperlink, Label, PasswordField, TextField}
-import scalafx.scene.layout.{ColumnConstraints, GridPane, Priority}
+import scalafx.scene.layout.{ColumnConstraints, GridPane, HBox, Priority}
 import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import scalafx.geometry.{HPos, Insets}
@@ -38,8 +38,8 @@ class OneConnectionEditor(
     text = ""
   }
   private val cmbSchemas = new ComboSchemas()
-  private val btnSchemas =   new Button {
-    text = localization.schema
+  private val btnSchemaChoices =   new Button {
+    text = localization.choices
   }
   private val txtCatalog = new TextField {
     text = ""
@@ -98,8 +98,10 @@ class OneConnectionEditor(
     add(new Label { text = localization.password+":" }, 0, 5)
     add(txtPassword, 1, 5)
     add(new Label { text = localization.schema+":" }, 0, 6)
-    add(cmbSchemas.control, 1, 6)
-    add(btnSchemas, 2, 6)
+    add(new HBox {
+      children = List(cmbSchemas.control, btnSchemaChoices)
+      spacing = 10
+    }, 1, 6)
     add(chkAdvanced, 0, 7)
     add(lblDelimiters, 0, 8)
     add(cmbDelimiters.control, 1, 8)
@@ -211,6 +213,6 @@ class OneConnectionEditor(
 
 
   def onSchemasLoad(action : () => Unit ): Unit =
-    btnSchemas.onAction = (event: ActionEvent)  => action()
+    btnSchemaChoices.onAction = (event: ActionEvent)  => action()
 }
 

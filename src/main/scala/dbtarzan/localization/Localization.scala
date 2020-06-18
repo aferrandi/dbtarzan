@@ -45,6 +45,7 @@ trait Localization {
   def field: String
   def description: String
   def direction : String
+  def choices: String
   def editGlobalSettings: String
   def addConnection: String
   def closeThisTab: String
