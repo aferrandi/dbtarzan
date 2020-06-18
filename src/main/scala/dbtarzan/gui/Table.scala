@@ -90,11 +90,16 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   private def selectedRows() : ObservableBuffer[CheckedRow]  = table.selectionModel().selectedItems
   
   /* the first row in the selection (if any), the row you want to display in the RowDetailsView */
-  def firstSelectedRow() : Option[Row] = selectedRows().headOption.map(_.row) 
+  def firstSelectedRow() : Option[Row] = selectedRows().headOption.map(_.row)
+
+  def selectOneIfNoneSelected(): Unit =
+    if (buffer.length > 0 && selectedRows().isEmpty)
+      table.selectionModel().select(0)
 
   /* adds the database rows to the table */
   def addRows(rows : Rows) : Unit = try { 
     buffer ++= fromRow(rows, names)
+    selectOneIfNoneSelected()
     checkedIfOnlyOne()
     tableFit.addRows(rows.rows)
     } catch {
