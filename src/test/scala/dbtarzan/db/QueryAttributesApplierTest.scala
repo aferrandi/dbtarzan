@@ -4,7 +4,7 @@ import org.scalatest.FlatSpec
 
 class QueryAttributesApplierTest extends FlatSpec {
   "applying both delimiters and schema" should "give a table with delimeters and schema" in {
-	val applier = QueryAttributesApplier.from(QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(Some("TST"), None)))
+	val applier = QueryAttributesApplier.from(QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(Some(Schema("TST")), None)))
 	assert("[TST].[TBL]" === applier.applyBoth("TBL"))
   }
 
@@ -14,7 +14,7 @@ class QueryAttributesApplierTest extends FlatSpec {
   }
 
   "applying only schmea" should "give a table with only schema" in {
-	val applier = QueryAttributesApplier.from(QueryAttributes(None, DBDefinition(Some("TST"), None)))
+	val applier = QueryAttributesApplier.from(QueryAttributes(None, DBDefinition(Some(Schema("TST")), None)))
 	assert("TST.TBL" === applier.applyBoth("TBL"))
   }
 

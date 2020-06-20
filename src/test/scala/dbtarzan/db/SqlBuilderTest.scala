@@ -18,7 +18,7 @@ class SqlBuilderTest extends FlatSpec {
   }
 
   "a simple table with delimiters" should "give a query with delimiters" in {
-    val attributes = QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(Some("TST"), None))
+    val attributes = QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(Some(Schema("TST")), None))
     val structure = DBTableStructure(
         buildDescription(),
         noFields(),
