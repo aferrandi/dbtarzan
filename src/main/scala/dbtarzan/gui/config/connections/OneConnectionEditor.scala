@@ -138,6 +138,7 @@ class OneConnectionEditor(
     txtUser.text = data.user
     txtPassword.text = decryptPasswordIfNeeded(data.password, data.passwordEncrypted.getOrElse(false)).key
     cmbSchemas.show(data.schema)
+    cmbSchemas.clearSchemasToChooseFrom()
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
     txtQueryTimeoutInSeconds.text = noneToEmpty(data.queryTimeoutInSeconds.map(_.toString))

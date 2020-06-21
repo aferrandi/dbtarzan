@@ -40,6 +40,9 @@ class ComboSchemas() extends TControlBuilder with TCombo {
     schemas.addAll(newSchemas.schemas.map(Some(_)))
   }
 
+  def clearSchemasToChooseFrom() : Unit =
+    schemas.clear()
+
   def show(schema : Option[Schema]) : Unit =
     cmbSchemas.value = schema
 
