@@ -19,5 +19,5 @@ To copy some rows of a **table**, select the rows, right click on them and click
 
 To copy individual fields from a table row, use the [Vertical row view](Vertical-row-view).
 
-
+It is also possible to copy the **table structure** (fields+types) from the [table info](TableInformation)
 

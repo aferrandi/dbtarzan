@@ -11,6 +11,17 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 DBTarzan changelog
 =================
 
+- Release 1.23
+
+Upgraded to JavaFX 14
+
+Adding a connection to the database now you can select the schema from the list of the available ones
+
+Possibility to copy the column names of the table from the "columns description table"
+
+Have always a row selected in an open table, so that it is possible to show a vertical row view.
+
+
 - Release 1.22
 
 Fields/columns suggestions in the where clause text box
@@ -18,15 +29,5 @@ Fields/columns suggestions in the where clause text box
 Ctrl-Del closes the current tab
 
 DBTarzan as snap now opens the browser to show the help/documentation
-
-- Release 1.21
-
-upgraded to JavaFX 12
-
-Possibility to test the connection to the database from the connections editor
-
-Does not open the database tab if the database connection fails.
-
-Timeout when querying a table
 
 

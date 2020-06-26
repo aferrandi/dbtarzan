@@ -22,7 +22,7 @@ Once a connection is chosen on the list, the right side of the editor shows the 
 * **Url**, the JDBC url used to connect to the specific database
 * **Driver**, the driver class used to connect to the database, included in the jar file.
 * **User and password**, difining the login account to connect to the database. 
-* **Schema**. For databases that require the indication of a schema when connecting to them, like for example Oracle and SQL server.
+* **Schema**. For databases that require the indication of a schema when connecting to them, like for example Oracle and SQL server. When the database allows it, show a list of all available schemas in the combo box pressing the **Choices** button on the right side.
 
 And optionally (generally not needed):
 * **Delimiters**. If the database contains tables or columns that have as name reserved words in the database (like GROUP or RULE), queries don't work unless these names are delimited with special characters. These characters vary between databases, but they are either double quotes or squared brackets. 

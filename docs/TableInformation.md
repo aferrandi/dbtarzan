@@ -28,3 +28,5 @@ So you can for example run the query in **other applications**.
 Shows the structure of a table in terms of its **fields**, e.g. the name of the fields and their type.
 This can be used for example to write a program that reads the content of the table; 
 you need to know for example if the fields are texts of numbers, if they are nullable.
+
+The **copy content to clipboard menu** copies the whole table structure (fields names and types) to the clipboard, in a tabular format.
