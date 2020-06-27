@@ -10,7 +10,7 @@ categories: [GUI]
 ## Connections editor
 
 DbTarzan includes a connection editor. With it it is possible to add, update and remove connections to databases.
-The editor actually just changes the [connections.config file](The-database-connections-configuration-file), which is used by dbtarzan to display the list of available database connections.
+The editor actually just changes the connections.config file, which is used by dbtarzan to display the list of available database connections.
 
 ![Connections editor](images/editConnections.png)
 
