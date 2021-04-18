@@ -6,7 +6,7 @@ import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db.{ PrimaryKeys, PrimaryKey, DBDefinition }
 
-/* to read the basic methadata (tables and columns) from the dataase */
+/* to read the basic metadata (tables and columns) from the database */
 class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData) {
     private case class PrimaryKeyField(keyName : String, fieldName : String)
 
@@ -24,8 +24,8 @@ class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaDat
 			case ex : Throwable => throw new Exception("Reading the primary keys of the "+tableName +" table got", ex)
 		}
     
-    private def cleanFieldName(fieldNameRaw: String) : String = 
-        fieldNameRaw.trim.stripPrefix("[").stripSuffix("]")
+  private def cleanFieldName(fieldNameRaw: String) : String =
+      fieldNameRaw.trim.stripPrefix("[").stripSuffix("]")
 
 	private def readPrimaryKeys(rs : ResultSet) : List[PrimaryKeyField] = 
 		ResultSetReader.readRS(rs, r => {
@@ -34,5 +34,4 @@ class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaDat
 			val fieldName = cleanFieldName(fieldNameRaw)
 			PrimaryKeyField(keyName, fieldName)
 		})
-
 }

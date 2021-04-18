@@ -24,6 +24,7 @@ class QueryLoader(connection : java.sql.Connection) {
 
 	private def queryWithStatement(statement: Statement, qry : QuerySql, maxRows: Int, queryTimeout: Duration, use : Rows => Unit) : Unit = try {
 		statement.setQueryTimeout(queryTimeout.toSeconds.toInt)
+    statement.setMaxFieldSize(500);
 		val executionTime = new ExecutionTime(queryTimeout)
 		val rs = statement.executeQuery(qry.sql)
 		val meta = rs.getMetaData
