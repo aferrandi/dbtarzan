@@ -10,9 +10,9 @@ import dbtarzan.localization.Localization
 class DatabaseWorkerCore(connection : java.sql.Connection, definition: DBDefinition, localization: Localization) {
 	val foreignKeyLoader = new ForeignKeyLoader(connection, definition, localization)
 	val queryLoader = new QueryLoader(connection)
-	val tablesLoader = new MetadataTablesLoader(definition, connection.getMetaData())
-	val columnsLoader = new MetadataColumnsLoader(definition, connection.getMetaData())
-	val primaryKeysLoader = new MetadataPrimaryKeysLoader(definition, connection.getMetaData())
-	val schemasLoader = new MetadataSchemasLoader(connection.getMetaData())
+	val tablesLoader = new MetadataTablesLoader(definition, connection.getMetaData)
+	val columnsLoader = new MetadataColumnsLoader(definition, connection.getMetaData)
+	val primaryKeysLoader = new MetadataPrimaryKeysLoader(definition, connection.getMetaData)
+	val schemasLoader = new MetadataSchemasLoader(connection.getMetaData)
 	def closeConnection(): Unit = connection.close()
 }

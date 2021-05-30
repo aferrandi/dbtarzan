@@ -6,7 +6,7 @@ import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import scalafx.geometry.{HPos, Insets}
 import scalafx.Includes._
-import dbtarzan.gui.util.{JFXUtil, OnChangeSafe}
+import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
@@ -51,28 +51,15 @@ class OneConnectionEditor(
 
   private val cmbDelimiters = new ComboDelimiters()
 
-  private val txtMaxRows = new TextField {
-    text = ""
-    /* only digits allowed (or empty string) */
-    text.onChange { (_, oldValue, newValue) => {
-         if (!isAllDigits(newValue))
-            text = oldValue
-      }}
-   }
-
-  private val txtQueryTimeoutInSeconds = new TextField {
-    text = ""
-    /* only digits allowed (or empty string) */
-    text.onChange { (_, oldValue, newValue) => {
-         if (!isAllDigits(newValue))
-            text = oldValue
-      }}
-   }
+  private val txtMaxRows = JFXUtil.numTextField()
+  private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
+  private val txtMaxFieldSize = JFXUtil.numTextField()
 
 
   private val lblDelimiters = new Label { text = localization.delimiters+":" }
   private val lblMaxRows = new Label { text = localization.maxRows+":" }
   private val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
+  private val lblMaxFieldSize = new Label { text = localization.maxFieldSize+":" }
   private val lblCatalog = new Label { text = localization.catalog+":" }
   private val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
@@ -108,10 +95,12 @@ class OneConnectionEditor(
     add(lblMaxRows, 0, 9)
     add(txtMaxRows, 1, 9)
     add(lblQueryTimeoutInSeconds, 0, 10)
-    add(txtQueryTimeoutInSeconds, 1, 10)    
-    add(lblCatalog, 0, 11)
-    add(txtCatalog, 1, 11)    
-    add(linkToJdbcUrls, 1, 12)
+    add(txtQueryTimeoutInSeconds, 1, 10)
+    add(lblMaxFieldSize, 0, 11)
+    add(txtMaxFieldSize, 1, 11)
+    add(lblCatalog, 0, 12)
+    add(txtCatalog, 1, 12)
+    add(linkToJdbcUrls, 1, 13)
     GridPane.setHalignment(linkToJdbcUrls, HPos.RIGHT) 
     padding = Insets(10)
     vgap = 10
@@ -128,7 +117,7 @@ class OneConnectionEditor(
       else
         password
 
-  def isAllDigits(x: String): Boolean = x forall Character.isDigit
+
 
   def show(data : ConnectionData) : Unit = safe.noChangeEventDuring(() => {
     txtName.text = data.name
@@ -140,17 +129,15 @@ class OneConnectionEditor(
     cmbSchemas.show(data.schema)
     cmbSchemas.clearSchemasToChooseFrom()
     cmbDelimiters.show(data.identifierDelimiters)
-    txtMaxRows.text = noneToEmpty(data.maxRows.map(_.toString))
-    txtQueryTimeoutInSeconds.text = noneToEmpty(data.queryTimeoutInSeconds.map(_.toString))
-    txtCatalog.text = noneToEmpty(data.catalog)
+    txtMaxRows.fromOptInt(data.maxRows)
+    txtQueryTimeoutInSeconds.fromOptInt(data.queryTimeoutInSeconds)
+    txtMaxFieldSize.fromOptInt(data.maxFieldSize)
+    txtCatalog.text = StringUtil.noneToEmpty(data.catalog)
     chkAdvanced.selected = false
     changeAdvancedVisibility(false)
   })
 
-  private def noneToEmpty(optS : Option[String]) : String = 
-    optS.getOrElse("")
-  private def emptyToNone(s : String) : Option[String] =
-    Option(s).filter(_.trim.nonEmpty)
+
 
   private def changeAdvancedVisibility(visible : Boolean) : Unit = {
     JFXUtil.changeControlsVisibility(visible,
@@ -160,6 +147,8 @@ class OneConnectionEditor(
       txtMaxRows,
       lblQueryTimeoutInSeconds,
       txtQueryTimeoutInSeconds,
+      lblMaxFieldSize,
+      txtMaxFieldSize,
       lblCatalog,
       txtCatalog
     )
@@ -184,9 +173,10 @@ class OneConnectionEditor(
         Some(true),
         None,
         cmbDelimiters.toDelimiters(),
-        emptyToNone(txtMaxRows.text()).map(_.toInt), // it can only be None or Int
-        emptyToNone(txtQueryTimeoutInSeconds.text()).map(_.toInt), // it can only be None or Int
-        emptyToNone(txtCatalog.text())
+        txtMaxRows.toOptInt(),
+        txtQueryTimeoutInSeconds.toOptInt(),
+        txtMaxFieldSize.toOptInt(),
+        StringUtil.emptyToNone(txtCatalog.text())
     )
 
   def control : Parent = grid
@@ -200,6 +190,7 @@ class OneConnectionEditor(
       txtPassword.text,
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
+      txtMaxFieldSize.text,
       txtCatalog.text
     ).foreach(_.onChange(safe.onChange(() => useData(toData))))
     jarSelector.onChange(safe.onChange(() => useData(toData)))
