@@ -49,7 +49,7 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
 		foreignKeysFile.writeAsFile(ForeignKeysForTableList(keysForTables))
 	}
 
-  	def receive = {
+  	def receive: Receive = {
 	    case CopyToFile => {
 	    	log.info(localization.writingFile(foreignKeysFile.fileName))
 	    	loadAllKeysAndWriteThemToFile()
