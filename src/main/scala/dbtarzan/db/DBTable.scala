@@ -12,13 +12,15 @@ class DBTable (structure : DBTableStructure) {
 
 	/* to accumulate the existing filter + the new filter in the table that gets created with the new filter */
 	private def addFilterToExisting(additionalFilter : Filter) : Filter = 
-		structure.genericFilter.map("(" + _.text + ")\nAND (" + additionalFilter.text + ")").map(Filter(_))
+		structure.genericFilter
+      .map("(" + _.text + ")\nAND (" + additionalFilter.text + ")")
+      .map(Filter)
 			.getOrElse(additionalFilter)
 
-	def withAdditionalFilter(additionalFilter : Filter) =
+	def withAdditionalFilter(additionalFilter : Filter): DBTableStructure =
 		DBTableStructure(structure.description, structure.columns, structure.foreignFilter, Some(addFilterToExisting(additionalFilter)), structure.orderByFields, structure.attributes)
 
-	def withOrderByFields(newOrderByFields : OrderByFields) = 
+	def withOrderByFields(newOrderByFields : OrderByFields): DBTableStructure =
 		DBTableStructure(structure.description, structure.columns, structure.foreignFilter, structure.genericFilter, Some(newOrderByFields), structure.attributes)
 }
 

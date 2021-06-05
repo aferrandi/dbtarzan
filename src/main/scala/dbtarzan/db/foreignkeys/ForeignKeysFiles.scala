@@ -30,10 +30,10 @@ class ForeignKeysFile(dirPath: Path, databaseName : String) {
 
   val fileName : Path = dirPath.resolve(databaseName+".fgk")
 
-	def toFile(list : ForeignKeysForTableList) : Unit =  
+	def writeAsFile(list : ForeignKeysForTableList) : Unit =
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
 	
-	def fromFile() : ForeignKeysForTableList = {
+	def readFromFile() : ForeignKeysForTableList = {
 		val text = FileReadWrite.readFile(fileName)
 		text.parseJson.convertTo[ForeignKeysForTableList]
 	}

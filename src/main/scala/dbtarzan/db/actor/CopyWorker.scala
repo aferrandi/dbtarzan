@@ -46,7 +46,7 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
 		val keysForTables = names.map(name => 
 			ForeignKeysForTable(name, foreignKeyLoader.foreignKeys(name))
 			)
-		foreignKeysFile.toFile(ForeignKeysForTableList(keysForTables))
+		foreignKeysFile.writeAsFile(ForeignKeysForTableList(keysForTables))
 	}
 
   	def receive = {
