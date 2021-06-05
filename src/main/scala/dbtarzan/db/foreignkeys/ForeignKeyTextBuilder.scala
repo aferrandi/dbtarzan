@@ -10,7 +10,7 @@ case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field])
 	Builds the query clause related to the selected foreign key
 */
 class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAttributes) {
-	val mapColumnTypes = criteria.columns.map(field => (field.name.toUpperCase, field.fieldType)).toMap
+	val mapColumnTypes: Map[String, FieldType] = criteria.columns.map(field => (field.name.toUpperCase, field.fieldType)).toMap
 	 def buildClause() : String = {
 		val filter = buildFilter(criteria.fkRows)
 		println("Filter: "+filter)

@@ -66,11 +66,11 @@ class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinitio
 		All the foreign keys from the table and TO the table (used in reverse order)
 	*/
 	def foreignKeys(tableName : String) : ForeignKeys = try {
-			var meta = connection.getMetaData()
+			var meta = connection.getMetaData
 			using(meta.getImportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
 				val keysImported = rsToForeignKeys(rs) 
 				using(meta.getExportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
-					val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
+					val keysExported = rsToForeignKeys(rs).map(turnForeignKey)
 					println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 					val keys = keysImported ++ keysExported
 					val keysSorted = keys.sortBy(key => (key.to.table, key.name) )
