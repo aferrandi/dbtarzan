@@ -1,10 +1,11 @@
 package dbtarzan.gui.table
 
-import scala.collection.mutable.Map
-import scala.collection.immutable.BitSet
+import dbtarzan.db._
 import dbtarzan.gui.util.JFXUtil
 import scalafx.scene.image.Image
-import dbtarzan.db._
+
+import scala.collection.immutable.BitSet
+import scala.collection.mutable
 
 object TableColumnsHeadings {
   val PRIMARYKEY_STATE = 1
@@ -21,7 +22,7 @@ case class HeadingText(index: Int, text: String, icon : Option[Image])
 class TableColumnsHeadings(columnNames : List[Field]) {
   private val columnNamesLowerCase = columnNames.map(_.name.toLowerCase)
   private val indexByKey = columnNamesLowerCase.zipWithIndex.toMap
-  private val keysAttributes = Map(columnNamesLowerCase.map(n => (n, BitSet.empty)) : _*)
+  private val keysAttributes = mutable.Map(columnNamesLowerCase.map(n => (n, BitSet.empty)) : _*)
     
   def addPrimaryKeys(keys : PrimaryKeys) : List[HeadingText] = {
     val fieldNames = keys.keys.flatMap(_.fields)

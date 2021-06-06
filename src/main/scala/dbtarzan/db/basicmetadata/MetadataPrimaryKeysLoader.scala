@@ -12,18 +12,22 @@ class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaDat
 
 	def primaryKeys(tableName : String) : PrimaryKeys = try {
 			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
-				val list = readPrimaryKeys(rs)
-				println("Primary keys ("+list.size+") loaded")
-				val keys =list.groupBy(_.keyName).map({ 
-					case (keyName, fields) => PrimaryKey(keyName, fields.toList.map(_.fieldName))
-				}).toList
-				PrimaryKeys(keys)
-			} 
+				val rawKeysFields = readPrimaryKeys(rs)
+				println("Primary keys ("+rawKeysFields.size+") loaded")
+        buildPrimaryKeysFromFields(rawKeysFields)
+      }
 		} catch {
 			case se : SQLException  => throw new Exception("Reading the primary keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
 			case ex : Throwable => throw new Exception("Reading the primary keys of the "+tableName +" table got", ex)
 		}
-    
+
+  private def buildPrimaryKeysFromFields(rawKeysFields: List[PrimaryKeyField]): PrimaryKeys = {
+    val keys = rawKeysFields.groupBy(_.keyName).map({
+      case (keyName, fields) => PrimaryKey(keyName, fields.toList.map(_.fieldName))
+    }).toList
+    PrimaryKeys(keys)
+  }
+
   private def cleanFieldName(fieldNameRaw: String) : String =
       fieldNameRaw.trim.stripPrefix("[").stripSuffix("]")
 
