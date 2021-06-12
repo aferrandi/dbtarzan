@@ -6,7 +6,7 @@ import akka.actor.{ActorContext, ActorRef, Props}
 import akka.routing.RoundRobinPool
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
-import dbtarzan.db.actor.{CopyWorker, DatabaseWorker}
+import dbtarzan.db.actor.{CopyWorker, DatabaseActor}
 import dbtarzan.localization.Localization
 
 private class ConnectionBuilder(registerDriver: RegisterDriver, data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path) {
@@ -29,7 +29,7 @@ private class ConnectionBuilder(registerDriver: RegisterDriver, data : Connectio
 	}
 
 	private def buildSubWorkerProps() : Props = {
-		Props(classOf[DatabaseWorker], encriptionKey, data, guiActor, connectionContext.self, localization, keyFilesDirPath).withDispatcher("my-pinned-dispatcher")
+		Props(classOf[DatabaseActor], encriptionKey, data, guiActor, connectionContext.self, localization, keyFilesDirPath).withDispatcher("my-pinned-dispatcher")
 	}	
 
 	private def buildSubWorkerName(index : Int) : String = {

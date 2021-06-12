@@ -13,7 +13,7 @@ class QueryLoader(connection : java.sql.Connection, log: Logger) {
 	/* does the queries in the database. Sends them back to the GUI in packets of 20 lines 
 	   QueryRows gives the SQL query and tells how many rows must be read in total */
 	def query(qry : QuerySql, maxRows: Int, queryTimeout: Duration, maxFieldSize: Option[Int], use : Rows => Unit) : Unit = {
-		  log.info("SQL:"+qry.sql)
+		  log.debug("SQL:"+qry.sql)
   		using(connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) { statement =>
 			  queryWithStatement(statement, qry, maxRows, queryTimeout, maxFieldSize, use)
 		  }
@@ -29,7 +29,7 @@ class QueryLoader(connection : java.sql.Connection, log: Logger) {
 		val rs = statement.executeQuery(qry.sql)
 		val meta = rs.getMetaData
 		val columnCount = meta.getColumnCount
-    log.info("Column count:"+columnCount+". Rows to read :"+maxRows)
+    log.debug("Column count:"+columnCount+". Rows to read :"+maxRows)
 		var rows = Vector.empty[Row]
 		var i = 0
 		while(i < maxRows && !executionTime.isOver && rs.next()) {
@@ -43,7 +43,7 @@ class QueryLoader(connection : java.sql.Connection, log: Logger) {
 		use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
     if(executionTime.isOver)
       throw new Exception("timeout reading rows (over "+queryTimeout.toSeconds+" seconds)")
-    log.info("Query terminated")
+    log.debug("Query terminated")
 	}			
 	catch {
 		case se : SQLException  => throw new Exception("With query "+qry.sql+" got "+ExceptionToText.sqlExceptionText(se), se)

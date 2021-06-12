@@ -12,7 +12,7 @@ class MetadataSchemasLoader(meta : DatabaseMetaData, log: Logger) {
 	def schemasNames() : Schemas = try {
 		using(meta.getSchemas()) { rs =>
 			val list = readSchemas(rs) 
-			log.info("Schemas loaded")
+			log.debug("Schemas loaded")
 			Schemas(list)
 		}
 	} catch {

@@ -14,7 +14,7 @@ import dbtarzan.messages._
 import scala.collection.mutable
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
-class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localization : Localization, 	keyFilesDirPath : Path) extends Actor {
+class ConnectionsActor(datas : ConnectionDatas, guiActor : ActorRef, localization : Localization, keyFilesDirPath : Path) extends Actor {
 	 private val mapDBWorker = mutable.HashMap.empty[DatabaseId, ActorRef]
 	 private var connectionsConfig = new ConnectionsConfig(datas.datas)
    private val registerDriver = new RegisterDriver()
@@ -37,7 +37,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
 
 	 /* if no actors are serving the queries to a specific database, creates them */
 	 private def queryDatabase(databaseId : DatabaseId, encriptionKey : EncryptionKey) : Unit = {
-	    	println("Querying the tables of the database "+databaseId.databaseName)
+	    	log.debug("Querying the tables of the database "+databaseId.databaseName)
 	    	try {
 	    		if(!mapDBWorker.isDefinedAt(databaseId)) {
             val dbWorker = getDBWorker(databaseId, encriptionKey)
@@ -71,7 +71,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
   }
 	 /* closes all the database actors that serve the queries to a specific database */
 	 private def queryClose(databaseId : DatabaseId) : Unit = {
-	    println("Closing the database "+databaseId.databaseName) 
+	    log.debug("Closing the database "+databaseId.databaseName)
       mapDBWorker.remove(databaseId).foreach(
         dbActor => dbActor ! Broadcast(QueryClose(databaseId)) // routed to all dbWorkers of the router
         )

@@ -5,6 +5,9 @@ import java.time.LocalDateTime
 
 /* acts as a classic "Logger" class, but sends the messages to the guiActor */
 class Logger(guiActor : ActorRef) {
+    def debug(text : String) : Unit =
+      println(text)
+
     def info(text : String) : Unit =
         guiActor ! Info(LocalDateTime.now, text)
 

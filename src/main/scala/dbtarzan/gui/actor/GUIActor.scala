@@ -7,7 +7,7 @@ import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
 /* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */
-class GUIWorker(
+class GUIActor(
                  databases : TDatabases,
                  logs : TLogs,
                  dbList : TDatabaseList,

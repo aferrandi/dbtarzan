@@ -6,15 +6,12 @@ case class FKRow(values : List[FieldWithValue])
 
 case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field]) 
 
-/**
-	Builds the query clause related to the selected foreign key
-*/
+/* Builds the query clause related to the selected foreign key */
 class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAttributes) {
   val sqlFieldBuilder = new SqlFieldBuilder(criteria.columns, attributes)
 
 	def buildClause() : String = {
 		val filter = buildFilter(criteria.fkRows)
-		println("Filter: "+filter)
 		filter
 	}
 

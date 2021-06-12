@@ -18,7 +18,7 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /* The actor that reads data from the database */
-class DatabaseWorker(
+class DatabaseActor(
 	encryptionKey : EncryptionKey, 
 	data : ConnectionData, 
 	guiActor : ActorRef,
@@ -71,18 +71,18 @@ class DatabaseWorker(
 	private def logError(e: Exception) : Unit = log.error("dbWorker", e)
 	
 	override def  postStop() : Unit = {
-		log.info("Actor for "+databaseName+" stopped")
+		log.debug("Actor for "+databaseName+" stopped")
 	}
 
 	private def close() : Unit = handleErr(logError, {
-		log.info("Closing the database worker for "+databaseName)
+		log.debug("Closing the database worker for "+databaseName)
 		guiActor ! ResponseCloseDatabase(databaseId)
     closeCore()
 		context.stop(self)
 	})
 
 	private def reset() : Unit = handleErr(logError, {
-		log.info("Reseting the connection of the database worker for "+databaseName)
+		log.debug("Reseting the connection of the database worker for "+databaseName)
 		closeCore()
 		optCore = buildCore()
 		log.info(localization.connectionResetted(databaseName))
@@ -142,7 +142,7 @@ class DatabaseWorker(
   })
 
   private def closeThisDBWorker(): Unit = {
-    log.info("Send QueryClose to connection actor to close this DBWorker")
+    log.debug("Send QueryClose to connection actor to close this DBWorker")
     connectionActor ! QueryClose(databaseId)
   }
 

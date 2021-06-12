@@ -103,7 +103,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
               
   def switchRowDetailsView() : Unit = {
     rowDetailsView = rowDetailsView match {
-      case None => table.firstSelectedRow.map(row => {
+      case None => table.firstSelectedRow().map(row => {
           val view = new RowDetailsView(dbTable)
           openRowDisplay(row)
           view
@@ -158,7 +158,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     
   def getId : QueryId = queryId
 
-  def rowsNumber = table.rowsNumber
+  def rowsNumber: Int = table.rowsNumber
 
   def control : Parent = layout
 }
