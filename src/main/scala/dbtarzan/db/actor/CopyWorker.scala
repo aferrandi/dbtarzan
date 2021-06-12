@@ -25,7 +25,7 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
   private val connection = driverManger.getConnection(data)
   private def databaseName = data.name
   private val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
-  private val queryLoader = new QueryLoader(connection)
+  // private val queryLoader = new QueryLoader(connection, log)
   private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseName)
 	
 	/* gets all the tables in the database/schema from the database metadata */

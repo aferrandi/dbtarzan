@@ -3,7 +3,6 @@ package dbtarzan.gui.table
 import dbtarzan.db._
 import scala.util.Random
 
-
 class TableColumnsMaxSizes(columns : List[Field], rnd : Random) {
     private var lengths = rowLengths(columns.map(_.name))
 

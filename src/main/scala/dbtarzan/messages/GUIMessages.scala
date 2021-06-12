@@ -16,6 +16,9 @@ case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : 
 case class ErrorRows(queryId : QueryId,  ex: Exception) 
     extends TWithQueryId
 
+case class ResponseOneRow(queryId : QueryId, structure : DBRowStructure, row : Row)
+  extends TWithQueryId
+
 case class ResponseTables(databaseId : DatabaseId, names: TableNames, dbActor : ActorRef) 
     extends TWithDatabaseId
 

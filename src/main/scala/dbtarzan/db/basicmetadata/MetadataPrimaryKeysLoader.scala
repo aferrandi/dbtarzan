@@ -1,19 +1,19 @@
 package dbtarzan.db.basicmetadata
 
-import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
-
-import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
+import java.sql.{DatabaseMetaData, ResultSet, SQLException}
+import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ PrimaryKeys, PrimaryKey, DBDefinition }
+import dbtarzan.db.{DBDefinition, PrimaryKey, PrimaryKeys}
+import dbtarzan.messages.Logger
 
 /* to read the basic metadata (tables and columns) from the database */
-class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData) {
+class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData, log: Logger) {
     private case class PrimaryKeyField(keyName : String, fieldName : String)
 
 	def primaryKeys(tableName : String) : PrimaryKeys = try {
 			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
 				val rawKeysFields = readPrimaryKeys(rs)
-				println("Primary keys ("+rawKeysFields.size+") loaded")
+				log.info("Primary keys ("+rawKeysFields.size+") loaded")
         buildPrimaryKeysFromFields(rawKeysFields)
       }
 		} catch {

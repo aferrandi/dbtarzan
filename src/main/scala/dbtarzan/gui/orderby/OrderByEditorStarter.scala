@@ -37,7 +37,7 @@ object OrderByEditorStarter
         window().hide()
       }
 
-      val editor = new OrderByEditor(dbTable.columnNames, dbTable.orderBys, onSave(_), () => onCancel(), localization)
+      val editor = new OrderByEditor(dbTable.fields, dbTable.orderBys, onSave(_), () => onCancel(), localization)
 
       root = editor.control
   }

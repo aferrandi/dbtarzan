@@ -43,7 +43,7 @@ class DatabaseWorker(
   private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
     log.info(localization.connectedTo(databaseName))
-    Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), localization))
+    Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), localization, log))
   } catch {
     case se : SQLException => {
       log.error(localization.errorConnectingToDatabase(databaseName)+" "+ExceptionToText.sqlExceptionText(se), se)
@@ -71,18 +71,18 @@ class DatabaseWorker(
 	private def logError(e: Exception) : Unit = log.error("dbWorker", e)
 	
 	override def  postStop() : Unit = {
-		println("Actor for "+databaseName+" stopped")
+		log.info("Actor for "+databaseName+" stopped")
 	}
 
 	private def close() : Unit = handleErr(logError, {
-		println("Closing the database worker for "+databaseName)
+		log.info("Closing the database worker for "+databaseName)
 		guiActor ! ResponseCloseDatabase(databaseId)
     closeCore()
 		context.stop(self)
 	})
 
 	private def reset() : Unit = handleErr(logError, {
-		println("Reseting the connection of the database worker for "+databaseName)
+		log.info("Reseting the connection of the database worker for "+databaseName)
 		closeCore()
 		optCore = buildCore()
 		log.info(localization.connectionResetted(databaseName))
@@ -142,7 +142,7 @@ class DatabaseWorker(
   })
 
   private def closeThisDBWorker(): Unit = {
-    println("Send QueryClose to connection actor to close this DBWorker")
+    log.info("Send QueryClose to connection actor to close this DBWorker")
     connectionActor ! QueryClose(databaseId)
   }
 
@@ -196,8 +196,14 @@ class DatabaseWorker(
     (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys).toMap
   }
 
-	def receive = {
+  def queryOneRow(qry: QueryOneRow, queryTimeout: Option[FiniteDuration]): Unit = withCore(core =>
+    core.queryLoader.query(SqlBuilder.buildSql(qry.structure), 1, queryTimeout.getOrElse(10 seconds),  None, rows =>
+      guiActor ! ResponseOneRow(qry.queryId, qry.structure, rows.rows.head)
+    ), e => guiActor ! ErrorRows(qry.queryId, e))
+
+  def receive = {
 		case qry : QueryRows => queryRows(qry, data.maxRows, data.queryTimeoutInSeconds.map(_.seconds), data.maxFieldSize)
+    case qry : QueryOneRow => queryOneRow(qry, data.queryTimeoutInSeconds.map(_.seconds))  
 		case qry : QueryClose => close() 	    
 		case qry : QueryReset => reset() 	    
 		case qry : QueryTables => queryTables(qry) 

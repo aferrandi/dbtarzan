@@ -1,18 +1,17 @@
 package dbtarzan.gui
 
 import scalafx.stage.Stage
-import scalafx.scene.control.{MenuItem, Menu, MenuBar }
+import scalafx.scene.control.{Menu, MenuBar, MenuItem}
 import scalafx.scene.layout.BorderPane
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
 import scalafx.Includes._
 import akka.actor.ActorRef
-
-import dbtarzan.db.{ DBTable, DBTableStructure, SqlBuilder, ForeignKey, Field, Filter, FollowKey, OrderByField, OrderByFields, OrderByDirection, TableId }
+import dbtarzan.db.{DBTable, DBTableStructure, Field, Filter, FollowKey, ForeignKey, OrderByDirection, OrderByField, OrderByFields, Row, SqlBuilder, TableId}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
-import dbtarzan.gui.browsingtable.{ BrowsingTableSplitter, RowDetailsView, TableProgressBar, QueryText, ForeignKeysInfoSplitter, TableMenu}
-import dbtarzan.gui.info.{ ColumnsTable, Info, QueryInfo }
+import dbtarzan.gui.browsingtable.{BrowsingTableSplitter, ForeignKeysInfoSplitter, QueryText, RowDetailsApplicant, RowDetailsView, TableMenu, TableProgressBar}
+import dbtarzan.gui.info.{ColumnsTable, Info, QueryInfo}
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -30,13 +29,15 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val splitter = new BrowsingTableSplitter(table, foreignKeysInfoSplitter)
   private var useNewTable : (DBTableStructure, Boolean) => Unit = (table, closeCurrentTab) => {}
   private var rowDetailsView : Option[RowDetailsView] = None
-  table.setRowClickListener(row => rowDetailsView.foreach(details => details.displayRow(row)))
+  private val rowDetailsApplicant = new RowDetailsApplicant(structure)
   private val queryText = new QueryText(structure.columns) {
     onEnter((text, closeCurrentTab) => {
-        val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
-        useNewTable(tableWithFilters, closeCurrentTab)
+      val tableWithFilters = dbTable.withAdditionalFilter(Filter(text))
+      useNewTable(tableWithFilters, closeCurrentTab)
     })
   }
+  table.setRowClickListener(row => openRowDisplay(row))
+
   splitter.fillSplitPanel(rowDetailsView)
   private val progressBar = new TableProgressBar(removeProgressBar)
   private val layout = new BorderPane {
@@ -46,6 +47,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   }
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
+  private def openRowDisplay(row: Row): Unit = {
+    rowDetailsApplicant.buildRowQueryFromRow(row).foreach(rowStructure => dbActor ! QueryOneRow(queryId, rowStructure))
+  }
 
   def orderByField(field : Field) : Unit = {
     val orderByFields = OrderByFields(List(OrderByField(field, OrderByDirection.ASC)))
@@ -64,7 +68,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     new Stage(layout.scene.window().asInstanceOf[javafx.stage.Stage])
 
   private def buildOrderByMenu() = new Menu(localization.orderBy) {
-      items = dbTable.columnNames.map(f => 
+      items = dbTable.fields.map(f =>
         new MenuItem(f.name) {
             onAction = { e: ActionEvent => guiActor ! RequestOrderByField(queryId, f) }
         }) :+ new MenuItem(localization.more) {
@@ -79,7 +83,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
       val checkedRows = table.getCheckedRows
       val foreignTableId = TableId(queryId.tableId.databaseId, key.to.table)
       if(checkedRows.nonEmpty) {
-        dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.columnNames, key, checkedRows))
+        dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.fields, key, checkedRows))
       } else {
         dbActor ! QueryColumns(foreignTableId)
         log.warning(localization.noRowsFromForeignKey(key.name, key.to.table))
@@ -89,6 +93,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private def buildTop() : BorderPane = new BorderPane {        
     stylesheets += "orderByMenuBar.css"
     left = TableMenu.buildMainMenu(guiActor, queryId, localization)
+    print("Localization"+localization)
     center = JFXUtil.withLeftTitle(queryText.textBox, localization.where+":")
     right =new MenuBar {
       menus = List(buildOrderByMenu())
@@ -98,10 +103,14 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
               
   def switchRowDetailsView() : Unit = {
     rowDetailsView = rowDetailsView match {
-      case None => Some(new RowDetailsView(dbTable, table.firstSelectedRow()))
+      case None => table.firstSelectedRow.map(row => {
+          val view = new RowDetailsView(dbTable)
+          openRowDisplay(row)
+          view
+        })
       case Some(_) => None
     }
-    splitter.fillSplitPanel(rowDetailsView)  
+    splitter.fillSplitPanel(rowDetailsView)
   }
 
   /* if someone enters a query in the text box on the top of the table it creates a new table that depends by this query */
@@ -113,6 +122,13 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   def addRows(rows : ResponseRows) : Unit  = { 
     table.addRows(rows.rows)
     progressBar.receivedRows()
+  }
+
+  def addOneRow(oneRow: ResponseOneRow): Unit =
+    displayRow(oneRow.row)
+
+  private def displayRow(row: Row): Unit = {
+    rowDetailsView.foreach(details => details.displayRow(row))
   }
 
   def rowsError(ex : Exception) : Unit = queryText.showError()
@@ -128,6 +144,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit = {
     table.addPrimaryKeys(keys.keys)
     progressBar.receivedPrimaryKeys()
+    rowDetailsApplicant.addPrimaryKeys(keys.keys)
   }
 
   def copySelectionToClipboard(includeHeaders : Boolean) : Unit = 

@@ -57,7 +57,7 @@ class ConnectionsWorker(datas : ConnectionDatas, guiActor : ActorRef, localizati
       registerDriver.registerDriverIfNeeded(DriverSpec(data.jar, data.driver))
       try {
         val connection = new DriverManagerWithEncryption(encryptionKey).getConnection(data)
-        val schemas = new MetadataSchemasLoader(connection.getMetaData()).schemasNames()
+        val schemas = new MetadataSchemasLoader(connection.getMetaData, log).schemasNames()
         connection.close()
         guiActor ! ResponseSchemaExtraction(data, Some(schemas), None)
       } catch {

@@ -8,12 +8,12 @@ import scala.collection.immutable.BitSet
 import scala.collection.mutable
 
 object TableColumnsHeadings {
-  val PRIMARYKEY_STATE = 1
-  val FOREIGNKEY_STATE = 2
-  val BOTHKEYS_STATE = PRIMARYKEY_STATE + FOREIGNKEY_STATE 
-  val PRIMARYKEY_ICON = JFXUtil.loadIcon("primaryKey.png")
-  val FOREIGNKEY_ICON = JFXUtil.loadIcon("foreignKey.png")
-  val BOTHKEYS_ICON = JFXUtil.loadIcon("bothKeys.png")
+  val PRIMARYKEY_STATE: Int = 1
+  val FOREIGNKEY_STATE: Int = 2
+  val BOTHKEYS_STATE: Int = PRIMARYKEY_STATE + FOREIGNKEY_STATE
+  val PRIMARYKEY_ICON: Image = JFXUtil.loadIcon("primaryKey.png")
+  val FOREIGNKEY_ICON: Image = JFXUtil.loadIcon("foreignKey.png")
+  val BOTHKEYS_ICON: Image = JFXUtil.loadIcon("bothKeys.png")
 }
 
 case class HeadingText(index: Int, text: String, icon : Option[Image])
@@ -38,9 +38,9 @@ class TableColumnsHeadings(columnNames : List[Field]) {
 
   private def addKeys(fieldNames : List[String], state : Int) : List[HeadingText] = {
     def addKeyAttribute(key : String) : Unit = 
-      keysAttributes.update(key, keysAttributes.get(key).get + state)
+      keysAttributes.update(key, keysAttributes(key) + state)
     def toHeadingText(kl : KeyAndLabel) = 
-      HeadingText(indexByKey.get(kl.key).get, kl.label, bitsetToIcon(kl.key))
+      HeadingText(indexByKey(kl.key), kl.label, bitsetToIcon(kl.key))
 
     val keysAndLabels = fieldNames.map(n => KeyAndLabel(n.toLowerCase, n))
     keysAndLabels.foreach(kl => addKeyAttribute(kl.key))
@@ -54,7 +54,7 @@ class TableColumnsHeadings(columnNames : List[Field]) {
         case TableColumnsHeadings.BOTHKEYS_STATE => Some(TableColumnsHeadings.BOTHKEYS_ICON)
         case _ => None
     }
-    val bitset = keysAttributes.get(fieldName.toLowerCase).get
+    val bitset = keysAttributes(fieldName.toLowerCase)
     toIcon(bitset.sum) 
   }
 }

@@ -1,10 +1,10 @@
 package dbtarzan.db
 
-/* Represents the table of a database */
+/* Represents the table of a database, or better the result of a query (where, order by) on a single table in the database */
 class DBTable (structure : DBTableStructure) {
 	def tableDescription : TableDescription = structure.description
 
-	def columnNames : List[Field] = structure.columns.fields
+	def fields : List[Field] = structure.columns.fields
 
 	def hasOrderBy : Boolean = structure.orderByFields.isDefined
 
