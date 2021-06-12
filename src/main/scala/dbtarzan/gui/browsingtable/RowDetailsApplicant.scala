@@ -10,9 +10,9 @@ class RowDetailsApplicant(tableStructure: DBTableStructure) {
     bestPrimaryKey = chooseBestPrimaryKey.bestPrimaryKey(keys)
 
   def buildRowQueryFromRow(row: Row): Option[DBRowStructure] = {
-    val valueByName = tableStructure.columns.fields.map(_.name).zip(row.values).toMap
+    val valueByName = tableStructure.columns.fields.map(_.name.toUpperCase()).zip(row.values).toMap
     val filter = bestPrimaryKey.map(
-      primaryKey => primaryKey.fields.map(field => FieldWithValue(field, valueByName(field)))
+      primaryKey => primaryKey.fields.map(field => FieldWithValue(field, valueByName(field.toUpperCase())))
     )
     filter.map(DBRowStructure(tableStructure.description.name, tableStructure.columns, _, tableStructure.attributes))
   }

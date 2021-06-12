@@ -6,7 +6,7 @@ import akka.actor.{ActorContext, ActorRef, Props}
 import akka.routing.RoundRobinPool
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
-import dbtarzan.db.actor.{CopyWorker, DatabaseActor}
+import dbtarzan.db.actor.{CopyActor, DatabaseActor}
 import dbtarzan.localization.Localization
 
 private class ConnectionBuilder(registerDriver: RegisterDriver, data : ConnectionData, encriptionKey : EncryptionKey, guiActor : ActorRef, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path) {
@@ -22,7 +22,7 @@ private class ConnectionBuilder(registerDriver: RegisterDriver, data : Connectio
 	def buildCopyWorker() : ActorRef = try {
     registerDriver.registerDriverIfNeeded(DriverSpec(data.jar, data.driver))
 		val name = "copyworker" + data.name
-    connectionContext.actorOf(Props(new CopyWorker(data, encriptionKey, guiActor, localization, keyFilesDirPath)).withDispatcher("my-pinned-dispatcher"), name)
+    connectionContext.actorOf(Props(new CopyActor(data, encriptionKey, guiActor, localization, keyFilesDirPath)).withDispatcher("my-pinned-dispatcher"), name)
 	} catch { 
 		case c: ClassNotFoundException => throw new Exception("Getting the copyworker with the driver "+data.driver+" got ClassNotFoundException:",c)
 		case t: Throwable => throw new Exception("Getting the copyworker with the driver "+data.driver+" got the exception of type "+t.getClass.getCanonicalName+":",t)

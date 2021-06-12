@@ -48,7 +48,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
   private def openRowDisplay(row: Row): Unit = {
-    rowDetailsApplicant.buildRowQueryFromRow(row).foreach(rowStructure => dbActor ! QueryOneRow(queryId, rowStructure))
+    if(structure.attributes.definition.maxFieldSize.isEmpty)
+      displayRow(row)
+    else
+      rowDetailsApplicant.buildRowQueryFromRow(row).foreach(rowStructure => dbActor ! QueryOneRow(queryId, rowStructure))
   }
 
   def orderByField(field : Field) : Unit = {
