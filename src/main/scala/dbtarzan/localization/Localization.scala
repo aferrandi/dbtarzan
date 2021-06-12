@@ -129,4 +129,5 @@ trait Localization {
   def errorAFKDuplicateRelations(relationDuplicates: List[String]) : String
   def errorAFKAlreadyExisting(names : List[String]) : String
   def errorRegisteringDriver(name: String): String
+  def warningNoPrimaryKeyInTable(tableName: String): String
 }

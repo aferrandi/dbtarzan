@@ -50,8 +50,16 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private def openRowDisplay(row: Row): Unit = {
     if(structure.attributes.definition.maxFieldSize.isEmpty)
       displayRow(row)
-    else
-      rowDetailsApplicant.buildRowQueryFromRow(row).foreach(rowStructure => dbActor ! QueryOneRow(queryId, rowStructure))
+    else {
+      val query = rowDetailsApplicant.buildRowQueryFromRow(row)
+      query match {
+        case Some(rowStructure) => dbActor ! QueryOneRow(queryId, rowStructure)
+        case None => {
+          log.warning(localization.warningNoPrimaryKeyInTable(structure.description.name))
+          displayRow(row)
+        }
+      }
+    }
   }
 
   def orderByField(field : Field) : Unit = {

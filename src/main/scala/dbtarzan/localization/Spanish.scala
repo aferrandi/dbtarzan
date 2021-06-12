@@ -81,7 +81,7 @@ class Spanish extends Localization {
     def newEncryptionKey1 = "Nueva"
     def newEncryptionKey2 = "Nueva, una vez mas"
     def tableFrom = "Tablas de"
-    def tableTo = "Tabella a"
+    def tableTo = "Tabla a"
     def columnsFrom = "Columnas de"
     def columnsTo = "Columnas a"
     def openAdditionalForeignKeys = "Claves externas adicionales"
@@ -129,4 +129,5 @@ class Spanish extends Localization {
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Reacciones duplicadas: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "Las claves externas adicionales "+names.mkString(", ")+" ya existen como claves externas"
     def errorRegisteringDriver(databaseName: String) = "El registro a la base de datos "+databaseName+" y 'fallado debido a"
+    def warningNoPrimaryKeyInTable(tableName: String): String = "La tabla "+tableName+" no tiene una clave primaria"
 }
