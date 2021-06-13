@@ -70,7 +70,7 @@ class OneConnectionEditor(
     columnConstraints = List(
       new ColumnConstraints() {},
       new ColumnConstraints() {
-        hgrow = Priority.ALWAYS
+        hgrow = Priority.Always
       })
     add(new Label { text = localization.name+":" }, 0, 0)
     add(txtName, 1, 0)
@@ -93,15 +93,15 @@ class OneConnectionEditor(
     add(lblDelimiters, 0, 8)
     add(cmbDelimiters.control, 1, 8)
     add(lblMaxRows, 0, 9)
-    add(txtMaxRows, 1, 9)
+    add(new HBox { children = List(txtMaxRows)}, 1, 9)
     add(lblQueryTimeoutInSeconds, 0, 10)
-    add(txtQueryTimeoutInSeconds, 1, 10)
+    add(new HBox { children = List(txtQueryTimeoutInSeconds)}, 1, 10)
     add(lblMaxFieldSize, 0, 11)
-    add(txtMaxFieldSize, 1, 11)
+    add(new HBox { children = List(txtMaxFieldSize)}, 1, 11)
     add(lblCatalog, 0, 12)
     add(txtCatalog, 1, 12)
     add(linkToJdbcUrls, 1, 13)
-    GridPane.setHalignment(linkToJdbcUrls, HPos.RIGHT) 
+    GridPane.setHalignment(linkToJdbcUrls, HPos.Right)
     padding = Insets(10)
     vgap = 10
     hgap = 10
