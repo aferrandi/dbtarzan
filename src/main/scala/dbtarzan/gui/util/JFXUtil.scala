@@ -116,7 +116,9 @@ object JFXUtil {
         text = oldValue
     }}
     def toOptInt: Option[Int] = StringUtil.emptyToNone(text()).map(_.toInt) // it can only be None or Int
-    def fromOptInt(optInt: Option[Int]): Unit  = StringUtil.noneToEmpty(optInt.map(_.toString))
+    def fromOptInt(optInt: Option[Int]): Unit  = {
+      text = StringUtil.noneToEmpty(optInt.map(_.toString))
+    }
   }
 
   def numTextField(): NumTextField = new NumTextField()
