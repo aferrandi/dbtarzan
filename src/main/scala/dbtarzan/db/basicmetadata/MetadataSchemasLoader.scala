@@ -1,13 +1,14 @@
 package dbtarzan.db.basicmetadata
 
-import java.sql.{DatabaseMetaData, ResultSet, SQLException}
-import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
 import dbtarzan.db.util.ResourceManagement.using
+import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
 import dbtarzan.db.{Schema, Schemas}
-import dbtarzan.messages.Logger
+import dbtarzan.messages.TLogger
+
+import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 /* to read the basic methadata (tables and columns) from the dataase */
-class MetadataSchemasLoader(meta : DatabaseMetaData, log: Logger) {
+class MetadataSchemasLoader(meta : DatabaseMetaData, log: TLogger) {
 	/* gets the columns of a table from the database metadata */
 	def schemasNames() : Schemas = try {
 		using(meta.getSchemas()) { rs =>

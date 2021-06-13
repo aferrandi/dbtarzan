@@ -18,7 +18,7 @@ import dbtarzan.localization.Localization
 /* table + constraint input box + foreign keys */
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
-  private val foreignKeyList = new ForeignKeyList()
+  private val foreignKeyList = new ForeignKeyList(log)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, guiActor, localization)
   private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure), localization)
@@ -88,7 +88,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     }
 
   private def openTableConnectedByForeignKey(key : ForeignKey, closeCurrentTab : Boolean) : Unit = {
-      println("Selected "+key)
+      log.debug("Selected "+key)
       if(closeCurrentTab)
         guiActor ! RequestRemovalThisTab(queryId) 
       val checkedRows = table.getCheckedRows

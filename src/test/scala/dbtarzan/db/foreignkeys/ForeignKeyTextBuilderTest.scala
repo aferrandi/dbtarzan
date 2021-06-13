@@ -7,7 +7,7 @@ class ForeignKeyTextBuilderTest extends FlatSpec {
   "building foreign key query with delimiters" should "give a query with delimiters" in {
   	val rows = List(buildRow("John", "23"))
 	  val criteria = ForeignKeyCriteria(rows, buildColumns())
-	  val attributes = QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(None, None))
+	  val attributes = QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(None, None, None))
   	val text = ForeignKeyTextBuilder.buildClause(criteria, attributes)
   	assert("([name]='John' AND [age]=23)" === text)
   }
@@ -33,7 +33,7 @@ class ForeignKeyTextBuilderTest extends FlatSpec {
   	assert("(name='John' AND age=23)\nOR (name='Jane' AND age=33)" === text)
   }
 
-  private def noneAttributes() = QueryAttributes(None, DBDefinition(None, None))
+  private def noneAttributes() = QueryAttributes(None, DBDefinition(None, None, None))
 
   private def buildColumns() = List(
 	Field("name", FieldType.STRING, ""),

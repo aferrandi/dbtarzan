@@ -1,13 +1,14 @@
 package dbtarzan.db.basicmetadata
 
-import java.sql.{DatabaseMetaData, ResultSet, SQLException}
-import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
 import dbtarzan.db.util.ResourceManagement.using
+import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
 import dbtarzan.db.{DBDefinition, PrimaryKey, PrimaryKeys}
-import dbtarzan.messages.Logger
+import dbtarzan.messages.TLogger
+
+import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 /* to read the basic metadata (tables and columns) from the database */
-class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData, log: Logger) {
+class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData, log: TLogger) {
     private case class PrimaryKeyField(keyName : String, fieldName : String)
 
 	def primaryKeys(tableName : String) : PrimaryKeys = try {

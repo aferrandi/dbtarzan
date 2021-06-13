@@ -115,7 +115,7 @@ object JFXUtil {
       if (!StringUtil.isAllDigits(newValue))
         text = oldValue
     }}
-    def toOptInt(): Option[Int] = StringUtil.emptyToNone(text()).map(_.toInt) // it can only be None or Int
+    def toOptInt: Option[Int] = StringUtil.emptyToNone(text()).map(_.toInt) // it can only be None or Int
     def fromOptInt(optInt: Option[Int]): Unit  = StringUtil.noneToEmpty(optInt.map(_.toString))
   }
 

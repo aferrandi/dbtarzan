@@ -20,7 +20,7 @@ import java.lang
 class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   val fields : List[Field] = dbTable.fields
-  println("ColumnNames: "+fields.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
+  log.debug("ColumnNames: "+fields.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
   /* the content of the table in terms of rows. Updated by the table itself */
   private val buffer = ObservableBuffer.empty[CheckedRow]
   /* keeps track of the rows that have the check box turned on */
@@ -80,7 +80,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
         prefWidth = 40
         editable = true
     }
-    println("Check column created")
+    log.debug("Check column created")
     checkColumn.setCellFactory(CheckBoxTableCell.forTableColumn(checkColumn))
     checkColumn
   }

@@ -173,9 +173,9 @@ class OneConnectionEditor(
         Some(true),
         None,
         cmbDelimiters.toDelimiters(),
-        txtMaxRows.toOptInt(),
-        txtQueryTimeoutInSeconds.toOptInt(),
-        txtMaxFieldSize.toOptInt(),
+        txtMaxRows.toOptInt,
+        txtQueryTimeoutInSeconds.toOptInt,
+        txtMaxFieldSize.toOptInt,
         StringUtil.emptyToNone(txtCatalog.text())
     )
 
