@@ -23,7 +23,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   /* create a table that is given by following a foreign key of a table */  
   private def createTableFollow(columns : Fields, follow : FollowKey, attributes : QueryAttributes) : DBTableStructure = {
-    println("table follow created "+columns)
+    log.debug("table follow created "+columns)
     ForeignKeyMapper.toFollowTable(follow, columns, attributes) 
   }
 

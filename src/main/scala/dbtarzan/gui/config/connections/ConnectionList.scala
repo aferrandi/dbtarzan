@@ -20,7 +20,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   private val menuAddConnection = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
   private val list = new ListView[ConnectionData](connectionDatas) {
-  	SplitPane.setResizableWithParent(this, false) 
+  	SplitPane.setResizableWithParent(this, value = false)
   	contextMenu = new ContextMenu(menuAddConnection, menuSave)   
     cellFactory = { _ => buildCell() }
   }
@@ -35,9 +35,9 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   private def selectionModel() = list.selectionModel() 
 
-  def newData() = ConnectionData("", "<NEW>", "","",None,"", Password(""),None, None, None, None, None, None, None)
+  def newData(): ConnectionData = ConnectionData("", "<NEW>", "","",None,"", Password(""),None, None, None, None, None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
-  def getSelectedIndex() = {
+  def getSelectedIndex(): Option[Int] = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
     // println("Selected index:"+index)
     index
@@ -98,7 +98,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
     getSelectedIndex().foreach(selectedIndex => {
       // println("Before setconnectionDatas of "+selectedIndex+":"+data)
       connectionDatas.update(selectedIndex, data)
-      selectionModel.select(selectedIndex) // patch to avoid deselection when changing data    
+      selectionModel().select(selectedIndex) // patch to avoid deselection when changing data
       // println("After setconnectionDatas")
     })
 

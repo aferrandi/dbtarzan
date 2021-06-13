@@ -49,7 +49,7 @@ object ConnectionEditorStarter
       }
     }
     connectionStage.initOwner(parentStage)    
-    connectionStage.initStyle(StageStyle.UTILITY)
+    connectionStage.initStyle(StageStyle.Utility)
     connectionStage.show()
     editor
   }
