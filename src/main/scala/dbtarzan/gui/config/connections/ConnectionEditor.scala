@@ -30,6 +30,7 @@ class ConnectionEditor(
   buttons.onRemove(() => list.removeCurrent())
   buttons.onDuplicate(() => list.duplicateCurrent())
   list.selectFirst()
+
     /* builds the split panel containing the table and the foreign keys list */
   private def buildSplitPane() = new SplitPane {
     maxHeight = Double.MaxValue
@@ -77,9 +78,7 @@ class ConnectionEditor(
     buttons.onCancel(() => cancelIfPossible(cancel))
 
   def onSchemasLoad(schemasLoad : ConnectionData  => Unit): Unit = {
-    println("onSchemasLoad")
     connection.onSchemasLoad(() => {
-      println("Schemas load")
       schemasLoad(connection.toData)
     })
   }
@@ -98,7 +97,6 @@ class ConnectionEditor(
         case None =>   JFXUtil.showErrorAlert(localization.connectionRefused, "")
       }
     }
-
 
   def control : Parent = layout
 }

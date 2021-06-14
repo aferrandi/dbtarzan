@@ -19,7 +19,4 @@ object SqlPartsBuilder {
     else
       ""
   }
-
-
-
 }
