@@ -48,7 +48,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
   private def openRowDisplay(row: Row): Unit = {
-    if(structure.attributes.definition.maxFieldSize.isEmpty)
+    if(structure.attributes.maxFieldSize.isEmpty)
       displayRow(row)
     else {
       val query = rowDetailsApplicant.buildRowQueryFromRow(row)

@@ -134,7 +134,7 @@ class SqlBuilderTest extends FlatSpec {
   private def buildRow(name : String, age: String) = FKRow(buildFields(name, age))
 
   private def buildAttributes() = {
-    QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(Some(Schema("TST")), None, None))
+    QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(Some(Schema("TST")), None), None)
   }
 
   private def buildFields(name: String, age: String) = {

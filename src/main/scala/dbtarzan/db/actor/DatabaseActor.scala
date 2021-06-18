@@ -43,7 +43,7 @@ class DatabaseActor(
   private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
     log.info(localization.connectedTo(databaseName))
-    Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog, data.maxFieldSize), localization, log))
+    Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), data.maxFieldSize, localization, log))
   } catch {
     case se : SQLException => {
       log.error(localization.errorConnectingToDatabase(databaseName)+" "+ExceptionToText.sqlExceptionText(se), se)
@@ -176,7 +176,7 @@ class DatabaseActor(
         }, logError)
 
 	private def queryAttributes() =
-    QueryAttributes(data.identifierDelimiters, DBDefinition(data.schema, data.catalog, data.maxFieldSize))
+    QueryAttributes(data.identifierDelimiters, DBDefinition(data.schema, data.catalog), data.maxFieldSize)
 
 	private def requestAdditionalForeignKeys(request : RequestAdditionalForeignKeys) : Unit = {
 		guiActor ! ResponseAdditionalForeignKeys(databaseId, additionalForeignKeys)

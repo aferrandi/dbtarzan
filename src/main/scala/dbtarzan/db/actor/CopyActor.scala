@@ -24,7 +24,7 @@ class CopyActor(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : 
   private val driverManger = new DriverManagerWithEncryption(encryptionKey)
   private val connection = driverManger.getConnection(data)
   private def databaseName = data.name
-  private val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog, data.maxFieldSize), localization, log)
+  private val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization, log)
   // private val queryLoader = new QueryLoader(connection, log)
   private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseName)
 	

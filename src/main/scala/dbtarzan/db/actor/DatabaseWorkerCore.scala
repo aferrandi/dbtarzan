@@ -8,7 +8,7 @@ import dbtarzan.messages.TLogger
 
 /* to be able to reset the connection we need to close the original and create a new one. This puts together the connection
 	and everything is dependent by it, so we need only one "var" variable */
-class DatabaseWorkerCore(connection : java.sql.Connection, definition: DBDefinition, localization: Localization, log: TLogger) {
+class DatabaseWorkerCore(connection : java.sql.Connection, definition: DBDefinition, maxFieldSize: Option[Int], localization: Localization, log: TLogger) {
 	val foreignKeyLoader = new ForeignKeyLoader(connection, definition, localization, log)
 	val queryLoader = new QueryLoader(connection, log)
 	val tablesLoader = new MetadataTablesLoader(definition, connection.getMetaData)

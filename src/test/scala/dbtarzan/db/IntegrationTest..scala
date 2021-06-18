@@ -18,14 +18,14 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
 
 
   "tablenames" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None, None), connection.getMetaData)
+    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tableNames()
   	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableNames)
   }
 
 
   "columnNames of LAPTOP" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataColumnsLoader(DBDefinition(None, None, None), connection.getMetaData, new FakeLogger())
+    val metadataLoader = new MetadataColumnsLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
     val columnNames = metadataLoader.columnNames("LAPTOP")
   	assert(
       List(
@@ -47,20 +47,20 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
 
 
   "tablesByPattern" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None, None), connection.getMetaData)
+    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tablesByPattern("PRI")
   	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.tableNames)
   }
 
 
   "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
-    val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(None, None, None), connection.getMetaData, new FakeLogger())
+    val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
     val primaryKeys = metadataLoader.primaryKeys("LAPTOP")
   	assert(List(PrimaryKey("PK_LAPTOP", List("CODE"))) === primaryKeys.keys)
   }
 
  "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None, None), new English(), new FakeLogger())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English(), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys("LAPTOP")
   	assert(
       List(
@@ -70,7 +70,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   }
 
    "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None, None), new English(), new FakeLogger())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English(), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys("PRODUCT")
   	assert(
       List(
