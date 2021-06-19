@@ -38,7 +38,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   }
   table.setRowClickListener(row => openRowDisplay(row))
 
-  splitter.fillSplitPanel(rowDetailsView)
+  splitter.splitPanelWithoutRowDetailsView()
   private val progressBar = new TableProgressBar(removeProgressBar)
   private val layout = new BorderPane {
     top = buildTop()
@@ -48,19 +48,27 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
   private def openRowDisplay(row: Row): Unit = {
-    if(structure.attributes.maxFieldSize.isEmpty)
-      displayRow(row)
-    else {
-      val query = rowDetailsApplicant.buildRowQueryFromRow(row)
-      query match {
-        case Some(rowStructure) => dbActor ! QueryOneRow(queryId, rowStructure)
-        case None => {
-          log.warning(localization.warningNoPrimaryKeyInTable(structure.description.name))
-          displayRow(row)
-        }
+    rowDetailsView.foreach(details => {
+      if (noMaxFieldSize())
+        details.displayRow(row)
+      else
+        requestRowToDisplayInDetailsView(row, details)
+    })
+  }
+
+  private def requestRowToDisplayInDetailsView(row: Row, details: RowDetailsView): Unit = {
+    val query = rowDetailsApplicant.buildRowQueryFromRow(row)
+    query match {
+      case Some(rowStructure) => dbActor ! QueryOneRow(queryId, rowStructure)
+      case None => {
+        log.warning(localization.warningNoPrimaryKeyInTable(structure.description.name))
+        details.displayRow(row)
       }
     }
   }
+
+  private def noMaxFieldSize(): Boolean =
+    structure.attributes.maxFieldSize.isEmpty
 
   def orderByField(field : Field) : Unit = {
     val orderByFields = OrderByFields(List(OrderByField(field, OrderByDirection.ASC)))
@@ -104,7 +112,6 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private def buildTop() : BorderPane = new BorderPane {        
     stylesheets += "orderByMenuBar.css"
     left = TableMenu.buildMainMenu(guiActor, queryId, localization)
-    print("Localization"+localization)
     center = JFXUtil.withLeftTitle(queryText.textBox, localization.where+":")
     right =new MenuBar {
       menus = List(buildOrderByMenu())
@@ -113,15 +120,18 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 	}
               
   def switchRowDetailsView() : Unit = {
-    rowDetailsView = rowDetailsView match {
-      case None => table.firstSelectedRow().map(row => {
+    rowDetailsView match {
+      case None => table.firstSelectedRow().foreach(row => {
           val view = new RowDetailsView(dbTable)
+          splitter.splitPanelWithRowDetailsView(view)
+          rowDetailsView = Some(view)
           openRowDisplay(row)
-          view
         })
-      case Some(_) => None
+      case Some(_) => {
+        splitter.splitPanelWithoutRowDetailsView()
+        rowDetailsView = None
+      }
     }
-    splitter.fillSplitPanel(rowDetailsView)
   }
 
   /* if someone enters a query in the text box on the top of the table it creates a new table that depends by this query */
@@ -136,11 +146,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   }
 
   def addOneRow(oneRow: ResponseOneRow): Unit =
-    displayRow(oneRow.row)
-
-  private def displayRow(row: Row): Unit = {
-    rowDetailsView.foreach(details => details.displayRow(row))
-  }
+    rowDetailsView.foreach(details => details.displayRow(oneRow.row))
 
   def rowsError(ex : Exception) : Unit = queryText.showError()
 

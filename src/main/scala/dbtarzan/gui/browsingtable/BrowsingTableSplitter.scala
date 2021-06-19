@@ -16,18 +16,17 @@ class BrowsingTableSplitter(table : Table, foreignKeysAndInfo: ForeignKeysInfoSp
     center.items ++= items
   }
 
-  def fillSplitPanel(rowDetailsView : Option[RowDetailsView]) : Unit = rowDetailsView match { 
-    case Some(details) => {
-        setSplitCenterItems(List(table.control, details.control, foreignKeysAndInfo.control))
-        center.dividerPositions_=(0.6, 0.8)      
-    }
-    case None => {
-        setSplitCenterItems(List(table.control,  foreignKeysAndInfo.control))
-        center.dividerPositions = 0.8            
-    }
+  def splitPanelWithRowDetailsView(details: RowDetailsView): Unit = {
+    setSplitCenterItems(List(table.control, details.control, foreignKeysAndInfo.control))
+    center.dividerPositions_=(0.6, 0.8)
   }
 
-   /* builds the split panel containing the table and the foreign keys list */
+  def splitPanelWithoutRowDetailsView() = {
+    setSplitCenterItems(List(table.control, foreignKeysAndInfo.control))
+    center.dividerPositions = 0.8
+  }
+
+  /* builds the split panel containing the table and the foreign keys list */
   private def buildCenter() = new SplitPane {
     maxHeight = Double.MaxValue
     maxWidth = Double.MaxValue
