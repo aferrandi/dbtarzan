@@ -33,7 +33,6 @@ object OrderByEditorStarter
       }
 
       def onCancel() : Unit = {
-        println("cancel")
         window().hide()
       }
 

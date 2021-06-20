@@ -1,18 +1,16 @@
 package dbtarzan.gui.foreignkeys
 
-import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView, TableCell, Button }
+import akka.actor.ActorRef
+import dbtarzan.db.{AdditionalForeignKey, FieldsOnTable}
+import dbtarzan.gui.TControlBuilder
+import dbtarzan.localization.Localization
+import dbtarzan.messages.Logger
+import scalafx.Includes._
+import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
-import scalafx.beans.property.{ StringProperty, ObjectProperty }
-import scalafx.Includes._
-import akka.actor.ActorRef
-
-import dbtarzan.db.{ AdditionalForeignKey, FieldsOnTable }
-import dbtarzan.messages._
-import dbtarzan.messages.Logger
-import dbtarzan.localization.Localization
-import dbtarzan.gui.TControlBuilder
+import scalafx.scene.control.TableColumn._
+import scalafx.scene.control.{Button, TableCell, TableColumn, TableView}
 
 
 object ForeignKeysTable {
@@ -91,7 +89,7 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
 
   /* adds an empty foreign key */
   def addEmptyRow() : Unit = {
-    println("Adding row")
+    log.debug("Adding row")
     buffer += AdditionalForeignKey(ForeignKeysTable.newRowName,  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty))
     table.selectionModel().selectLast()
   }

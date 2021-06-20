@@ -26,7 +26,6 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   }
 
   def addNew():Unit={
-    println("addNew")
     connectionDatas.append(newData())
     selectionModel().selectLast()   
   }
@@ -61,7 +60,6 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   def removeCurrent() : Unit = 
     if(connectionDatas.nonEmpty)
       getSelectedIndex().foreach(selectedIndex => {
-        println("Remove current")
         connectionDatas.remove(selectedIndex)
         newSelectedIndex(selectedIndex).foreach(selectionModel().select(_))
       })
@@ -69,16 +67,13 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   def duplicateCurrent() : Unit = 
     if(connectionDatas.nonEmpty)
       getSelectedIndex().foreach(selectedIndex => {
-        println("Duplicate current")
         val toDuplicate = connectionDatas(selectedIndex)
         connectionDatas += toDuplicate.copy(name = "<NEW>")
         selectionModel().selectLast()   
       })
 
-  
   /* returns errors validating the items in the list */
   def validate() : List[ConnectionDataErrors] = {
-    println("Validate")
     connectionDatas.toList.map(data => ConnectionDataErrors(data.name, ConnectionDataValidation.validate(data)))
       .filter(_.errors.nonEmpty)
   }
