@@ -38,7 +38,7 @@ class DatabaseWorkerKeysFromFile(
 		if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
 			try {
-				foreignKeysFile.fromFile()
+				foreignKeysFile.readFromFile()
 			} catch { 
 				case e : Exception => {
 					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString()), e) 

@@ -7,7 +7,7 @@ import java.nio.file.{Files, Path}
 
 /* simple functions to read, write and check the existance of a small (configuration) file */
 object FileReadWrite {
-	def fileExist(name : Path) = name.toFile().canRead()
+	def fileExist(name : Path): Boolean = name.toFile().canRead()
 
 	def writeFile(name : Path, content : String) : Unit = {
 		println("Creating:"+name)
