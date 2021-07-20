@@ -2,7 +2,7 @@ import scala.sys.process._
 
 fork := true
 
-val versionNumber = "1.23"
+val versionNumber = "1.24"
 version := versionNumber
 
 lazy val standardLibraries = Seq(
