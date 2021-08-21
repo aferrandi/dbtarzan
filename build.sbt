@@ -13,7 +13,6 @@ lazy val standardLibraries = Seq(
   "com.h2database" % "h2" % "1.4.197"
 )
 
-
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",
 
@@ -35,31 +34,46 @@ lazy val commonConfiguration = Seq(
 
   scalacOptions in Compile ++= Seq("-Ywarn-unused:imports"),
   scalacOptions in Compile --= Seq("-Xfatal-warnings"),
+  buildStrategy(),
+// scalacOptions += "-Ylog-classpath"
+  maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
+  packageSummary := "DBTarzan Package",
+  packageDescription := "DBTarzan, the database browser"
+
+)
+
+def buildStrategy() = {
   assemblyMergeStrategy in assembly := {
     case "module-info.class" => MergeStrategy.discard
     case x => {
       val oldStrategy = (assemblyMergeStrategy in assembly).value
       oldStrategy(x)
     }
-  },
-// scalacOptions += "-Ylog-classpath"
-  maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
-  packageSummary := "DBTarzan Package",
-  packageDescription := "DBTarzan, the database browser"
-
-) 
+  }
+}
 
 def buildProject(name: String) = {
   val javaFXModules = Seq("base", "controls", "graphics", "media")
+  val javaFXLibraries = javaFXModules.map(module =>
+    "org.openjfx" % s"javafx-$module" % "14" classifier name
+  )
   Project(name, file(s"prj${name}"))
-    .settings(commonConfiguration)
+    .settings( commonConfiguration)
     .settings(
-      libraryDependencies ++= standardLibraries ++ javaFXModules.map( module => 
-        "org.openjfx" % s"javafx-$module" % "14" classifier name
-      )
+      libraryDependencies ++= standardLibraries ++ javaFXLibraries
+    )
+    .settings(
+      excludeDependenciesOfOtherOses(name)
     )
 }
 
+def excludeDependenciesOfOtherOses(name: String) = {
+  assemblyExcludedJars in assembly ++= {
+    val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
+    val cp = (fullClasspath in assembly).value
+    cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) }
+  }
+}
 
 lazy val linux = buildProject("linux")
     .settings(Seq(
