@@ -16,12 +16,12 @@ class ForeignKeyDirectionFormat extends RootJsonFormat[ForeignKeyDirection] {
 }
 
 object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
-  implicit val foreignKeyDirectionFormat = new ForeignKeyDirectionFormat()  
-  implicit val fieldsOnTableFormat = jsonFormat(FieldsOnTable, "table", "fields" )	
-  implicit val foreignKeyFormat = jsonFormat(ForeignKey, "name", "from", "to", "direction")
-  implicit val foreignKeysFormat = jsonFormat(ForeignKeys, "keys")
-  implicit val foreignKeysForTableFormat = jsonFormat(ForeignKeysForTable, "name", "keys")
-  implicit val foreignKeysForTableListFormat = jsonFormat(ForeignKeysForTableList, "keys")
+  implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
+  implicit val fieldsOnTableFormat: RootJsonFormat[FieldsOnTable] = jsonFormat(FieldsOnTable, "table", "fields" )
+  implicit val foreignKeyFormat: RootJsonFormat[ForeignKey] = jsonFormat(ForeignKey, "name", "from", "to", "direction")
+  implicit val foreignKeysFormat: RootJsonFormat[ForeignKeys] = jsonFormat(ForeignKeys, "keys")
+  implicit val foreignKeysForTableFormat: RootJsonFormat[ForeignKeysForTable] = jsonFormat(ForeignKeysForTable, "name", "keys")
+  implicit val foreignKeysForTableListFormat: RootJsonFormat[ForeignKeysForTableList] = jsonFormat(ForeignKeysForTableList, "keys")
 }
 
 
@@ -30,10 +30,10 @@ class ForeignKeysFile(dirPath: Path, databaseName : String) {
 
   val fileName : Path = dirPath.resolve(databaseName+".fgk")
 
-	def toFile(list : ForeignKeysForTableList) : Unit =  
+	def writeAsFile(list : ForeignKeysForTableList) : Unit =
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
 	
-	def fromFile() : ForeignKeysForTableList = {
+	def readFromFile() : ForeignKeysForTableList = {
 		val text = FileReadWrite.readFile(fileName)
 		text.parseJson.convertTo[ForeignKeysForTableList]
 	}

@@ -1,16 +1,16 @@
 package dbtarzan.gui.util
 
 import scalafx.scene.Node
-import scalafx.scene.control.{ ListView, TableView, Label, Alert, MenuItem, ButtonType}
+import scalafx.scene.control.{Alert, ButtonType, Label, ListView, MenuItem, TableView, TextField}
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.image.Image
 import scalafx.scene.text.Text
 import scalafx.geometry.Insets
-import scalafx.scene.input.{ MouseEvent, MouseButton, KeyEvent, KeyCode, Clipboard, ClipboardContent }
+import scalafx.scene.input.{Clipboard, ClipboardContent, KeyCode, KeyEvent, MouseButton, MouseEvent}
 import scalafx.Includes._
 import scalafx.event.ActionEvent
 import scalafx.scene.control.Alert.AlertType
-import scalafx.collections.ObservableBuffer 
+import scalafx.collections.ObservableBuffer
 import scalafx.scene.layout.Region
 
 object JFXUtil {
@@ -30,7 +30,8 @@ object JFXUtil {
 		margin = Insets(5)
 	}
 
-	private def focusedItem[T](list : ListView[T]) = list.focusModel().focusedItem()    
+	private def focusedItem[T](list : ListView[T]) = list.focusModel().focusedItem()
+
 	def onAction[T](list : ListView[T] , action : (T, Boolean) => Unit): Unit = {
 		list.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.Primary)
 			action(focusedItem(list), ev.controlDown)
@@ -38,7 +39,8 @@ object JFXUtil {
 			action(focusedItem(list), ev.controlDown)
 	}
 
-	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()    
+	private def focusedItem[T](table : TableView[T]) = table.focusModel().focusedItem()
+
 	def onAction[T](table : TableView[T] , action : (T, Boolean) => Unit): Unit = {
 		table.onMouseClicked = (ev: MouseEvent) =>  if(ev.clickCount == 2 && ev.button == MouseButton.Primary)
 			action(focusedItem(table), ev.controlDown)
@@ -105,6 +107,21 @@ object JFXUtil {
       e: ActionEvent => { action()	}
     }
   }
+
+  class NumTextField extends TextField {
+    text = ""
+    /* only digits allowed (or empty string) */
+    text.onChange { (_, oldValue, newValue) => {
+      if (!StringUtil.isAllDigits(newValue))
+        text = oldValue
+    }}
+    def toOptInt: Option[Int] = StringUtil.emptyToNone(text()).map(_.toInt) // it can only be None or Int
+    def fromOptInt(optInt: Option[Int]): Unit  = {
+      text = StringUtil.noneToEmpty(optInt.map(_.toString))
+    }
+  }
+
+  def numTextField(): NumTextField = new NumTextField()
 
     /* invisible controls don't use space in the layout */
 	def changeControlsVisibility(visible : Boolean, nodes: javafx.scene.Node*) {

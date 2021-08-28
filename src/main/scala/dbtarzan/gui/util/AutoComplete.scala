@@ -12,7 +12,7 @@ class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextF
   text.onChange { (_, _, newText) => showSuggestions(newText) }
 
   private def showSuggestions(newText: String): Unit = {
-    if (!newText.isEmpty)
+    if (newText.nonEmpty)
       showSuggestionsForText(newText)
     else
       sugestionsPopup.hide()
@@ -20,7 +20,7 @@ class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextF
 
   private def showSuggestionsForText(newText: String): Unit = {
     val (last, before) = lastWordAndBefore(newText)
-    if(!last.isEmpty && Character.isAlphabetic(last.charAt(0))) {
+    if(last.nonEmpty && Character.isAlphabetic(last.charAt(0))) {
       val lastLower = last.toLowerCase()
       val searchResult = suggestionsSet.range(lastLower, lastLower + Character.MAX_VALUE)
       if (searchResult.nonEmpty) {
@@ -36,7 +36,7 @@ class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextF
   }
 
   private def caretPosition(len: Int): Double =
-    AutoComplete.super.skin.value.asInstanceOf[javafx.scene.control.skin.TextFieldSkin].getCharacterBounds(len).getMaxX()
+    AutoComplete.super.skin.value.asInstanceOf[javafx.scene.control.skin.TextFieldSkin].getCharacterBounds(len).getMaxX
 
   private def lastWordAndBefore(newText: String): (String, String) = {
     val lastSpace = newText.lastIndexOf(' ')

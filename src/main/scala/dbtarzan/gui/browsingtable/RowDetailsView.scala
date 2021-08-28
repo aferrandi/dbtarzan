@@ -8,14 +8,12 @@ import scalafx.scene.control.ScrollPane
 import scalafx.scene.layout.VBox
 
 /* displays one single line of the table, as a vertical list of the fields */
-class RowDetailsView(dbTable : DBTable, initialRow: Option[Row]) extends TControlBuilder {
-    private val names = dbTable.columnNames
+class RowDetailsView(dbTable : DBTable) extends TControlBuilder {
+    private val names = dbTable.fields
     /* the cell components */
     private val cells : List[RowDetailsCell] = names.map({ case (field) => new RowDetailsCell(field)})
 
     private val cellsContainer = buildCellsContainer()
-
-    initialRow.foreach(displayRow)
 
     private def buildCellsContainer() = new ScrollPane {
         content = new VBox {
@@ -31,7 +29,6 @@ class RowDetailsView(dbTable : DBTable, initialRow: Option[Row]) extends TContro
         fitToWidth = true
     }
 
-    
     def displayRow(row : Row) : Unit = {
         row.values.zip(cells).foreach({ case (value, cell) => cell.showText(value)})
     }

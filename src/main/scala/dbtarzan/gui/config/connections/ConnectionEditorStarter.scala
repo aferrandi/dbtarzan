@@ -21,7 +21,6 @@ object ConnectionEditorStarter
     openWeb : String => Unit, 
     encryptionKey : EncryptionKey,
     localization: Localization) : ConnectionEditor = {
-    println("open connections editor")
     val connectionData: List[ConnectionData] = ConnectionDataReader.read(configPath)
     val editor = new ConnectionEditor(connectionData, openWeb, encryptionKey, localization)
     val connectionStage = new Stage {
@@ -50,7 +49,7 @@ object ConnectionEditorStarter
       }
     }
     connectionStage.initOwner(parentStage)    
-    connectionStage.initStyle(StageStyle.UTILITY)
+    connectionStage.initStyle(StageStyle.Utility)
     connectionStage.show()
     editor
   }

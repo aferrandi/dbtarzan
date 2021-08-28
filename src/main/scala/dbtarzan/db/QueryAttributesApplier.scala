@@ -9,7 +9,7 @@ class QueryAttributesApplier(queryAttributes: QueryAttributes) {
 	def applySchema(identifier: String) : String = 	
 		queryAttributes.definition.schema.map(s => applyDelimiters(s.name)+"."+identifier).getOrElse(identifier)
 
-	def applyBoth(identifier: String) : String = 	
+	def applySchemaAndDelimiters(identifier: String) : String =
 		applySchema(applyDelimiters(identifier))
 }
 
@@ -17,6 +17,6 @@ class QueryAttributesApplier(queryAttributes: QueryAttributes) {
 object QueryAttributesApplier {
 	def from(queryAttributes: QueryAttributes) = new QueryAttributesApplier(queryAttributes)
 
-	def none(): QueryAttributesApplier = from(QueryAttributes(None, DBDefinition(None, None)))
+	def none(): QueryAttributesApplier = from(QueryAttributes(None, DBDefinition(None, None), None))
 } 
 

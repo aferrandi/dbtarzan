@@ -3,7 +3,7 @@ package dbtarzan.gui.util
 import scalafx.collections.ObservableBuffer 
 import scalafx.scene.control.{ListView, Button, Label, ListCell, ComboBox}
 import scalafx.scene.layout.{ HBox, BorderPane }
-import scalafx.geometry.{ Pos }
+import scalafx.geometry.Pos
 import scalafx.Includes._
 import scalafx.scene.Parent
 import scalafx.beans.property.BooleanProperty
@@ -13,7 +13,7 @@ import scalafx.event.ActionEvent
   a list of items selected from a combo box. Eech item is displayed with buttons to move it  up and down  or to remove it
 */
 class OrderedListView[T](show : T => String, addButtonLabel : String) {
-  val comboBuffer = ObservableBuffer.empty[T] 
+  val comboBuffer: ObservableBuffer[T] = ObservableBuffer.empty[T]
   private val listBuffer = ObservableBuffer.empty[T]
   private val emptyCombo = new BooleanProperty { value = comboBuffer.isEmpty }
   private val buttonDisabled = new BooleanProperty { value = comboBuffer.isEmpty }
@@ -27,7 +27,7 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
       emptyCombo.value = buffer.isEmpty  
   )
 
-  val comboAdd = new ComboBox[T] {
+  val comboAdd: ComboBox[T] = new ComboBox[T] {
     items = comboBuffer
     editable = false
     buttonCell = buildComboCell()
@@ -40,7 +40,7 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
         buttonDisabled.value = !buttonEnabled 
     })
   
-  val buttonAdd = new Button {
+  val buttonAdd: Button = new Button {
     text = addButtonLabel
     disable <==>  buttonDisabled
   }

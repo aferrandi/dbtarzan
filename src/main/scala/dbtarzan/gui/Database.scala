@@ -41,7 +41,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     }
     items.addAll(tableListWithTitle, tableTabs.control)
     dividerPositions = 0.20
-    SplitPane.setResizableWithParent(tableListWithTitle, false)
+    SplitPane.setResizableWithParent(tableListWithTitle, value = false)
   }
 
 	private def buildMenu() = new MenuBar {

@@ -19,7 +19,7 @@ class DatabaseWorkerKeysFromFile(
         if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
 			try {
-				val tablesKeys = foreignKeysFile.fromFile()
+				val tablesKeys = foreignKeysFile.readFromFile()
 				tablesKeys.keys.map(tableKeys => tableKeys.table -> tableKeys.keys).toMap
 			} catch { 
 				case e : Exception => {
@@ -38,7 +38,7 @@ class DatabaseWorkerKeysFromFile(
 		if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
 			try {
-				foreignKeysFile.fromFile()
+				foreignKeysFile.readFromFile()
 			} catch { 
 				case e : Exception => {
 					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString()), e) 

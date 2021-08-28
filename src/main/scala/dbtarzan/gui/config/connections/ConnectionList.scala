@@ -20,13 +20,12 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   private val menuAddConnection = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
   private val list = new ListView[ConnectionData](connectionDatas) {
-  	SplitPane.setResizableWithParent(this, false) 
+  	SplitPane.setResizableWithParent(this, value = false)
   	contextMenu = new ContextMenu(menuAddConnection, menuSave)   
     cellFactory = { _ => buildCell() }
   }
 
   def addNew():Unit={
-    println("addNew")
     connectionDatas.append(newData())
     selectionModel().selectLast()   
   }
@@ -35,9 +34,9 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   private def selectionModel() = list.selectionModel() 
 
-  def newData() = ConnectionData("", "<NEW>", "","",None,"", Password(""),None, None, None, None, None, None)
+  def newData(): ConnectionData = ConnectionData("", "<NEW>", "","",None,"", Password(""),None, None, None, None, None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
-  def getSelectedIndex() = {
+  def getSelectedIndex(): Option[Int] = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
     // println("Selected index:"+index)
     index
@@ -61,7 +60,6 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   def removeCurrent() : Unit = 
     if(connectionDatas.nonEmpty)
       getSelectedIndex().foreach(selectedIndex => {
-        println("Remove current")
         connectionDatas.remove(selectedIndex)
         newSelectedIndex(selectedIndex).foreach(selectionModel().select(_))
       })
@@ -69,16 +67,13 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   def duplicateCurrent() : Unit = 
     if(connectionDatas.nonEmpty)
       getSelectedIndex().foreach(selectedIndex => {
-        println("Duplicate current")
         val toDuplicate = connectionDatas(selectedIndex)
         connectionDatas += toDuplicate.copy(name = "<NEW>")
         selectionModel().selectLast()   
       })
 
-  
   /* returns errors validating the items in the list */
   def validate() : List[ConnectionDataErrors] = {
-    println("Validate")
     connectionDatas.toList.map(data => ConnectionDataErrors(data.name, ConnectionDataValidation.validate(data)))
       .filter(_.errors.nonEmpty)
   }
@@ -98,7 +93,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
     getSelectedIndex().foreach(selectedIndex => {
       // println("Before setconnectionDatas of "+selectedIndex+":"+data)
       connectionDatas.update(selectedIndex, data)
-      selectionModel.select(selectedIndex) // patch to avoid deselection when changing data    
+      selectionModel().select(selectedIndex) // patch to avoid deselection when changing data
       // println("After setconnectionDatas")
     })
 

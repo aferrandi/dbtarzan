@@ -15,5 +15,5 @@ object DBTableStructure {
 	def build(description : TableDescription, columns : Fields, attributes : QueryAttributes) : DBTableStructure =
 		DBTableStructure(description, columns, None, None, None, attributes)
 
-    def hasFilter(structure : DBTableStructure) : Boolean = structure.genericFilter.isDefined
+  def hasFilter(structure : DBTableStructure) : Boolean = structure.genericFilter.isDefined
 }

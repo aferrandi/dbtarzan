@@ -1,21 +1,22 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ TabPane, Tab }
-import scalafx.scene.Parent
-import scala.collection.mutable.HashMap
-import scalafx.Includes._
-import scalafx.event.Event
 import akka.actor.ActorRef
-import dbtarzan.messages._
 import dbtarzan.db.{DatabaseId, TableId, TableNames}
 import dbtarzan.localization.Localization
+import dbtarzan.messages._
+import scalafx.Includes._
+import scalafx.event.Event
+import scalafx.scene.Parent
+import scalafx.scene.control.{Tab, TabPane}
+
+import scala.collection.mutable
 
 case class DatabaseWithTab(database : Database, tab : Tab)
 
 /** All the tabs with one database for each*/
 class DatabaseTabs(localization : Localization) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
-  private val databaseById = HashMap.empty[DatabaseId, DatabaseWithTab]
+  private val databaseById = mutable.HashMap.empty[DatabaseId, DatabaseWithTab]
   private var guiActor: Option[ActorRef]  = None
   private var connectionsActor: Option[ActorRef] = None 
 
@@ -27,16 +28,18 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableNames : TableNames) : Database = {
     println("add database tab for "+databaseId.databaseName)
     guiActor match {
-      case Some(ga) => {
-        val database = new Database(dbActor, ga, databaseId, localization, tableNames)
-        val tab = buildTab(database)
-        tabs += tab
-        selectTab(tab)
-        databaseById += databaseId -> DatabaseWithTab(database, tab)
-        database
-      }
+      case Some(ga) => addDatabaseTabWithGUIActor(dbActor, ga, databaseId, tableNames)
       case None => throw new Exception("guiActor is not defined")
     }
+  }
+
+  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, someGuiActor: ActorRef, databaseId: DatabaseId, tableNames: TableNames) = {
+    val database = new Database(dbActor, someGuiActor, databaseId, localization, tableNames)
+    val tab = buildTab(database)
+    tabs += tab
+    selectTab(tab)
+    databaseById += databaseId -> DatabaseWithTab(database, tab)
+    database
   }
 
   /* requests to close the connection to the database to the central database actor */
@@ -105,7 +108,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   def control : Parent = tabs
 
   def currentTableId : Option[QueryId] = {
-    val currentTab = tabs.selectionModel().selectedItem()
-    databaseById.values.find(_.tab == currentTab).map(_.database.currentTableId).flatten  
+    val currentTab: javafx.scene.control.Tab = tabs.selectionModel().selectedItem()
+    databaseById.values.find(_.tab == currentTab).flatMap(_.database.currentTableId)
   }
 }

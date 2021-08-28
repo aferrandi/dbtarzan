@@ -18,12 +18,11 @@ class TableList(names : TableNames) extends TControlBuilder {
 
   def onTableSelected(useTable : String => Unit) : Unit = {
       JFXUtil.onAction(list, { (selectedTable : String, _) =>
-        println("Selected "+selectedTable)      
         useTable(selectedTable)
         })
     }
   def control : Parent = list
 
-  def tableNames = TableNames(buffer.toList)
+  def tableNames: TableNames = TableNames(buffer.toList)
 }
 

@@ -1,18 +1,19 @@
 package dbtarzan.db.basicmetadata
 
-import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
-
-import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ Fields, Field, FieldType, DBDefinition }
+import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
+import dbtarzan.db.{DBDefinition, Field, FieldType, Fields}
+import dbtarzan.messages.TLogger
+
+import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 /* to read the basic methadata (tables and columns) from the dataase */
-class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData) {
+class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, log: TLogger) {
 	/* gets the columns of a table from the database metadata */
 	def columnNames(tableName : String) : Fields = try {
 		using(meta.getColumns(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName, "%")) { rs =>
 			val list = readColumns(rs) 
-			println("Columns with schema "+definition+" loaded")
+			log.debug("Columns with schema "+definition+" loaded")
 			Fields(list)
 		}
 	} catch {
@@ -36,7 +37,7 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 			.map(_.filter(isValidSize))
 			.takeWhile(_.isDefined)
 			.flatten
-		if(!validSizes.isEmpty)
+		if(validSizes.nonEmpty)
 			Some(validSizes.mkString("[", ",", "]"))
 		else
 			None

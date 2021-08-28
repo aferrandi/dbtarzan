@@ -1,20 +1,20 @@
 package dbtarzan.db.foreignkeys
 
+import dbtarzan.db.util.ExceptionToText
+import dbtarzan.db.util.ResourceManagement.using
+import dbtarzan.db._
+import dbtarzan.localization.Localization
+import dbtarzan.messages.TLogger
+
 import java.sql.{ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
-
-import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.util.ExceptionToText
-import dbtarzan.db.{ DBDefinition, ForeignKey, FieldsOnTable, ForeignKeyDirection, ForeignKeys }
-
-import dbtarzan.localization.Localization
 
 
 /**
 	The part of the database actor that reads the foreign keys
 	schema is the database schema (in case of Oracle and SQL server)
 */
-class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinition, localization: Localization) {
+class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinition, localization: Localization, log: TLogger) {
 	/* the foreign key between two tables, has a name */
 	case class ForeignKeyKey(name: String, fromTable : String, toTable : String)
 	/* a column of the foreign key */
@@ -66,12 +66,12 @@ class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinitio
 		All the foreign keys from the table and TO the table (used in reverse order)
 	*/
 	def foreignKeys(tableName : String) : ForeignKeys = try {
-			var meta = connection.getMetaData()
+			var meta = connection.getMetaData
 			using(meta.getImportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
 				val keysImported = rsToForeignKeys(rs) 
 				using(meta.getExportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
-					val keysExported = rsToForeignKeys(rs).map(turnForeignKey(_)) 
-					println("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
+					val keysExported = rsToForeignKeys(rs).map(turnForeignKey)
+					log.debug("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 					val keys = keysImported ++ keysExported
 					val keysSorted = keys.sortBy(key => (key.to.table, key.name) )
 					ForeignKeys(keysSorted)
@@ -82,6 +82,4 @@ class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinitio
 			case se : SQLException  => throw new Exception("Reading the foreign keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
 			case ex : Throwable => throw new Exception("Reading the foreign keys of the "+tableName +" table got", ex)
 		}
-
-
 }

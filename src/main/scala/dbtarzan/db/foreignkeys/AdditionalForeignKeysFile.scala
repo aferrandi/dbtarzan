@@ -17,10 +17,10 @@ class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
 
   val fileName : Path = dirPath.resolve(databaseName+".fak")
 
-	def toFile(list : List[AdditionalForeignKey]) : Unit =  
+	def writeAsFile(list : List[AdditionalForeignKey]) : Unit =
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
 	
-	def fromFile() : List[AdditionalForeignKey] = {
+	def readFromFile() : List[AdditionalForeignKey] = {
 		val text = FileReadWrite.readFile(fileName)
 		text.parseJson.convertTo[List[AdditionalForeignKey]]
 	}

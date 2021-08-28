@@ -6,7 +6,9 @@ import dbtarzan.config.connections.ConnectionData
 /* verify if a connection data can be saved */
 object ConnectionDataValidation
 {
-	  def validate(data : ConnectionData) : List[String] = 
+  private val MAXFIELDSIZE_MIN = 200
+
+  def validate(data : ConnectionData) : List[String] =
     List(
       Some("Empty name").filter(_ => data.name.isEmpty),
       Some("Name cannot contain spaces").filter(_ => Validation.containsWhitespace(data.name)), 
@@ -19,6 +21,7 @@ object ConnectionDataValidation
       // Some("Empty password").filter(_ => data.password.isEmpty),
       // Some("Password cannot contain spaces").filter(_ => Validation.containsWhtitespace(data.password)),
       Some("Empty jar").filter(_ => data.jar.isEmpty),
-      Some("Jar cannot contain spaces").filter(_ => Validation.containsWhitespace(data.jar))
+      Some("Jar cannot contain spaces").filter(_ => Validation.containsWhitespace(data.jar)),
+      Some("Max field size should be over "+MAXFIELDSIZE_MIN).filter(_ => !Validation.isMoreThan(data.maxFieldSize, MAXFIELDSIZE_MIN))
     ).flatten 
 }

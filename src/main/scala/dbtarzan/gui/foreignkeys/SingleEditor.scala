@@ -1,19 +1,17 @@
 package dbtarzan.gui.foreignkeys
 
-import scalafx.scene.control.{ TextField, Label, ComboBox, ListCell }
-import scalafx.scene.layout.{ GridPane, ColumnConstraints }
-import scalafx.scene.Parent
-import scalafx.collections.ObservableBuffer
-import scalafx.geometry.{ Insets }
-import scalafx.beans.property.{ ObjectProperty, BooleanProperty }
-import scalafx.Includes._
 import akka.actor.ActorRef
-
-import dbtarzan.gui.util.{ OnChangeSafe, OrderedListView }
+import dbtarzan.db._
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.db.{TableNames, AdditionalForeignKey, FieldsOnTable, Fields, DatabaseId }
-import dbtarzan.messages.QueryColumnsForForeignKeys
+import dbtarzan.gui.util.{OnChangeSafe, OrderedListView}
 import dbtarzan.localization.Localization
+import dbtarzan.messages.QueryColumnsForForeignKeys
+import scalafx.beans.property.{BooleanProperty, ObjectProperty}
+import scalafx.collections.ObservableBuffer
+import scalafx.geometry.Insets
+import scalafx.scene.Parent
+import scalafx.scene.control.{ComboBox, Label, ListCell, TextField}
+import scalafx.scene.layout.{ColumnConstraints, GridPane}
 
 /* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
@@ -126,7 +124,6 @@ class SingleEditor(
 
   def handleColumns(tableName : String, columns : Fields) : Unit = {
     safe.onChange(() => {
-      println("handleColumns "+tableName)
       handleColumnsForTable(tableName, columns, comboTableFrom, orderedListColumnsFrom)
       handleColumnsForTable(tableName, columns, comboTableTo, orderedListColumnsTo)
     })

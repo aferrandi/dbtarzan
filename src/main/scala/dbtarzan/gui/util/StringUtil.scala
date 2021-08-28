@@ -14,5 +14,12 @@ object StringUtil {
       if(condition) 
         builder() 
       else 
-        ""            
+        ""
+
+  def isAllDigits(x: String): Boolean = x forall Character.isDigit
+
+  def noneToEmpty(optS : Option[String]) : String =
+    optS.getOrElse("")
+  def emptyToNone(s : String) : Option[String] =
+    Option(s).filter(_.trim.nonEmpty)
 }
