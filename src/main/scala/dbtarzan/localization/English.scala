@@ -25,6 +25,7 @@ class English extends Localization {
     def delimiters = "Delimiters"
     def maxRows = "Max Rows"
     def queryTimeoutInSeconds = "Query timeout in seconds"
+    def maxFieldSize = "Max field size"
     def tables = "Tables"
     def databases = "Databases"
     def foreignKeys = "Foreign keys"
@@ -128,5 +129,6 @@ class English extends Localization {
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Duplicate relations: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "The additional foreign keys "+names.mkString(", ")+" already exist as foreign keys"
     def errorRegisteringDriver(databaseName: String) = "Registering to the database "+databaseName+" got"
+    def warningNoPrimaryKeyInTable(tableName: String): String = "No primary key in the table "+tableName
 }
 

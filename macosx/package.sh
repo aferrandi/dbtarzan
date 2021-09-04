@@ -1,3 +1,4 @@
+#!/bin/bash
 DIR=$1
 VERSION=$2
 SCALA_VERSION=2.13
@@ -17,6 +18,7 @@ cp $DIR/../prjmac/target/scala-$SCALA_VERSION/dbtarzan-assembly-$VERSION.jar $DI
 # fix executable (https://github.com/tofi86/universalJavaApplicationStub)
 cp $DIR/universalJavaApplicationStub $DIR/$APP/Contents/MacOS
 #unzip -d $DIR/$APP/Contents/PlugIns/jre11/Contents/Home/lib $DIR/dbtarzan-assembly-$VERSION.jar  "*.dylib"
+# python must be available as "python". Use a link if it is called "python3"
 chmod a+x $DIR/$APP/Contents/MacOS/universalJavaApplicationStub
 # fix space in the Info.plist configuration directory  
 sed -i 's/ApplicationSupport/Application Support/g' $DIR/$APP/Contents/Info.plist

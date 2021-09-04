@@ -5,7 +5,7 @@ import dbtarzan.db.{ FollowKey, Fields, QueryAttributes, DBTableStructure, Table
 
 /* builds the table that is the result of using a foreign key of another table*/
 class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : QueryAttributes) {
-	val mapNameToIndex = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
+	val mapNameToIndex: Map[String, Int] = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
 
 	private def toFollowTable() : DBTableStructure = {
 		val fkRows= follow.rows.map(row => buildKeyValuesForRow(row))

@@ -23,7 +23,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   /* create a table that is given by following a foreign key of a table */  
   private def createTableFollow(columns : Fields, follow : FollowKey, attributes : QueryAttributes) : DBTableStructure = {
-    println("table follow created "+columns)
+    log.debug("table follow created "+columns)
     ForeignKeyMapper.toFollowTable(follow, columns, attributes) 
   }
 
@@ -89,6 +89,9 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     table.tab.tooltip.value.text = table.table.rowsNumber+" rows"
   }
 
+  private def addOneRow(table: BrowsingTable, oneRow : ResponseOneRow) : Unit =
+    table.addOneRow(oneRow)
+
   private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
     table.rowsError(error.ex)
     log.error(localization.errorRequestingTheRows(error.queryId), error.ex)
@@ -129,15 +132,20 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
     case rows : ResponseRows => { 
       tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))
-      rows.original.foreach(original => {
-            if(original.close)
-              guiActor ! RequestRemovalThisTab(original.queryId)
-        })
+      closeOriginalTabIfAny(rows)
       }
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
+    case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
     case _ => log.error(localization.errorTableMessage(msg))
-  }    
-  
+  }
+
+  private def closeOriginalTabIfAny(rows: ResponseRows): Unit = {
+    rows.original.foreach(original => {
+      if (original.closeCurrentTab)
+        guiActor ! RequestRemovalThisTab(original.queryId)
+    })
+  }
+
   def control : Parent = tabs
 
   def currentTableId : Option[QueryId] = {

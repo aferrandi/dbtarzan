@@ -152,7 +152,6 @@ class MainGUI(
 		encryptionKey
 	}
 
-
 	private def openGlobalEditor() : Unit = {
 		guiActor match {
 			case Some(ga) => {

@@ -13,7 +13,7 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
   private val menuForeignKeyToFile = new MenuItem(localization.buildForeignKeysFile)
   private val buffer = ObservableBuffer.empty[DatabaseId]
   private val list = new ListView[DatabaseId](buffer) {
-  	SplitPane.setResizableWithParent(this, false) 
+  	SplitPane.setResizableWithParent(this, value = false)
   	contextMenu = new ContextMenu(menuForeignKeyToFile)   
     cellFactory = { _ => buildCell() }
   }

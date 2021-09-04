@@ -17,7 +17,6 @@ import dbtarzan.types.ConfigPath
 object GlobalEditorStarter
 {
     def openGlobalEditor(parentStage : Stage, configPaths: ConfigPath, localization : Localization, guiActor : ActorRef) : Unit = {
-        println("open global editor")  
         val globalStage = new Stage {
             title = localization.editGlobalSettings
             width = 500

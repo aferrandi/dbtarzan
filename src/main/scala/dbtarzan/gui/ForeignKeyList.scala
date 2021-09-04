@@ -1,16 +1,17 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ ListView, ListCell, Tooltip}
-import scalafx.scene.Parent
-import scalafx.collections.ObservableBuffer 
-import dbtarzan.db.{ForeignKey, FieldsOnTable, ForeignKeys, ForeignKeyDirection}
+import dbtarzan.db.{FieldsOnTable, ForeignKey, ForeignKeyDirection, ForeignKeys}
 import dbtarzan.gui.util.JFXUtil
+import dbtarzan.messages.TLogger
+import scalafx.collections.ObservableBuffer
+import scalafx.scene.Parent
+import scalafx.scene.control.{ListCell, ListView, Tooltip}
 
 /* if the table has 2 or more foreign keys to the same table, we want to give more information to the user, so that he can understand which one to use */ 
 case class ForeignKeyWithSharingCheck(key: ForeignKey, sharesToTable : Boolean)
 
 /**	foreign keys list */
-class ForeignKeyList() extends TControlBuilder {
+class ForeignKeyList(log: TLogger) extends TControlBuilder {
 	private val buffer = ObservableBuffer.empty[ForeignKeyWithSharingCheck]
 	private val list = new ListView[ForeignKeyWithSharingCheck](buffer) {
 	    cellFactory = { _ => buildCell() }
@@ -27,7 +28,7 @@ class ForeignKeyList() extends TControlBuilder {
 	  
 	def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
 		def moreThanOneItem(l : List[_]) = l.length > 1
-		println("newForeignKeys "+newForeignKeys)
+		log.debug("newForeignKeys "+newForeignKeys)
 		val allForeignKeys = buffer.toList.map(_.key) ++ newForeignKeys.keys
 		val groupedByToTableInsensitive = allForeignKeys.groupBy(_.to.table.toUpperCase()).values
 		val withSharingCheck = groupedByToTableInsensitive.flatMap(ks => ks.map(ForeignKeyWithSharingCheck(_, moreThanOneItem(ks))))
@@ -59,7 +60,7 @@ class ForeignKeyList() extends TControlBuilder {
 	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */
   	def onForeignKeySelected(useKey : (ForeignKey, Boolean)  => Unit) : Unit =
 	     JFXUtil.onAction(list, { (selectedKey : ForeignKeyWithSharingCheck, ctrlDown) =>
-	        println("Selected "+selectedKey)      
+	        log.debug("Selected "+selectedKey)
 					Option(selectedKey).foreach(k => useKey(k.key, ctrlDown))
 	      })
 

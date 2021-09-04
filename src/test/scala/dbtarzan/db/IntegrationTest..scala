@@ -2,11 +2,14 @@ package dbtarzan.db
 
 import org.scalatest.FlatSpec
 import org.scalatest.BeforeAndAfter
+
 import java.sql.Connection
 import java.sql.DriverManager
-import dbtarzan.db.foreignkeys.{ FKRow, ForeignKeyCriteria, ForeignKeyLoader }
-import dbtarzan.db.basicmetadata.{MetadataTablesLoader, MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader} 
+import dbtarzan.db.foreignkeys.{FKRow, ForeignKeyCriteria, ForeignKeyLoader}
+import dbtarzan.db.basicmetadata.{MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader, MetadataTablesLoader}
 import dbtarzan.localization.English
+import dbtarzan.testutil.FakeLogger
+
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -15,14 +18,14 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
 
 
   "tablenames" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData())
+    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tableNames()
   	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableNames)
   }
 
 
   "columnNames of LAPTOP" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataColumnsLoader(DBDefinition(None, None), connection.getMetaData())
+    val metadataLoader = new MetadataColumnsLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
     val columnNames = metadataLoader.columnNames("LAPTOP")
   	assert(
       List(
@@ -37,27 +40,27 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   }
 
   "schemaNames" should "give a list of the schemas in the database" in {
-    val metadataLoader = new MetadataSchemasLoader(connection.getMetaData())
+    val metadataLoader = new MetadataSchemasLoader(connection.getMetaData, new FakeLogger())
     val schemasNames = metadataLoader.schemasNames()
   	assert(List(Schema("INFORMATION_SCHEMA"), Schema("PUBLIC")) === schemasNames.schemas)
   }
 
 
   "tablesByPattern" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData())
+    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tablesByPattern("PRI")
   	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.tableNames)
   }
 
 
   "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
-    val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(None, None), connection.getMetaData())
+    val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
     val primaryKeys = metadataLoader.primaryKeys("LAPTOP")
   	assert(List(PrimaryKey("PK_LAPTOP", List("CODE"))) === primaryKeys.keys)
   }
 
  "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English(), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys("LAPTOP")
   	assert(
       List(
@@ -67,7 +70,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
   }
 
    "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English(), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys("PRODUCT")
   	assert(
       List(
@@ -93,7 +96,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
     )
     val sql = SqlBuilder.buildSql(structure)
     var rows : Rows = Rows(List())
-    new QueryLoader(connection).query(sql, 500, 10 seconds, rs => rows = rs)
+    new QueryLoader(connection, new FakeLogger()).query(sql, 500, 10 seconds, None, rs => rows = rs)
     assert(Rows(List(Row(List("1", "1232", "500", "64", "5.0", "12x", "600.0")), Row(List("7", "1232", "500", "32", "10.0", "12x", "400.0"))))  === rows)
   }
 
@@ -108,7 +111,7 @@ class IntegrationTest extends FlatSpec with BeforeAndAfter {
       )
     val sql = SqlBuilder.buildSql(structure)
     var rows : Rows = Rows(List())
-    new QueryLoader(connection).query(sql, 3, 10 seconds, rs => rows = rs)
+    new QueryLoader(connection, new FakeLogger()).query(sql, 3, 10 seconds, None, rs => rows = rs)
     assert(3  === rows.rows.length)
   }
 

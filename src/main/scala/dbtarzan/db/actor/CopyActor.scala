@@ -19,13 +19,13 @@ import dbtarzan.localization.Localization
 	The file is then used by DatabaseWorker instead of reading the foreign keys fron the database, 
 	thus avoiding delays when reading foreign keys from the database is slow (Oracle) 
 */
-class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : ActorRef, localization: Localization, keyFilesDirPath : Path) extends Actor {
+class CopyActor(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : ActorRef, localization: Localization, keyFilesDirPath : Path) extends Actor {
 	private val log = new Logger(guiActor)
   private val driverManger = new DriverManagerWithEncryption(encryptionKey)
   private val connection = driverManger.getConnection(data)
   private def databaseName = data.name
-  private val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization)
-  private val queryLoader = new QueryLoader(connection)
+  private val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization, log)
+  // private val queryLoader = new QueryLoader(connection, log)
   private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseName)
 	
 	/* gets all the tables in the database/schema from the database metadata */
@@ -46,10 +46,10 @@ class CopyWorker(data : ConnectionData, encryptionKey: EncryptionKey, guiActor :
 		val keysForTables = names.map(name => 
 			ForeignKeysForTable(name, foreignKeyLoader.foreignKeys(name))
 			)
-		foreignKeysFile.toFile(ForeignKeysForTableList(keysForTables))
+		foreignKeysFile.writeAsFile(ForeignKeysForTableList(keysForTables))
 	}
 
-  	def receive = {
+  	def receive: Receive = {
 	    case CopyToFile => {
 	    	log.info(localization.writingFile(foreignKeysFile.fileName))
 	    	loadAllKeysAndWriteThemToFile()

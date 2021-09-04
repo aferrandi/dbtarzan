@@ -30,19 +30,20 @@ class ConnectionEditor(
   buttons.onRemove(() => list.removeCurrent())
   buttons.onDuplicate(() => list.duplicateCurrent())
   list.selectFirst()
+
     /* builds the split panel containing the table and the foreign keys list */
   private def buildSplitPane() = new SplitPane {
     maxHeight = Double.MaxValue
     maxWidth = Double.MaxValue
     items.addAll(list.control, connection.control)
     dividerPositions = 0.3
-    SplitPane.setResizableWithParent(list.control, false)
+    SplitPane.setResizableWithParent(list.control, value = false)
   }
 
   private def showConnection(data : ConnectionData) : Unit = try {
       connection.show(data)
     } catch {
-      case ex : Exception => JFXUtil.showErrorAlert(localization.errorDisplayingConnections+": ", ex.getMessage())
+      case ex : Exception => JFXUtil.showErrorAlert(localization.errorDisplayingConnections+": ", ex.getMessage)
     } 
 
   private def saveIfPossible(save : List[ConnectionData]  => Unit) : Unit = {
@@ -51,7 +52,7 @@ class ConnectionEditor(
       if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
         try { save(list.content()) } 
         catch {
-          case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage())
+          case ex : Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", ex.getMessage)
         }
     } else
       showConnectionDataErrors(errors)
@@ -77,9 +78,7 @@ class ConnectionEditor(
     buttons.onCancel(() => cancelIfPossible(cancel))
 
   def onSchemasLoad(schemasLoad : ConnectionData  => Unit): Unit = {
-    println("onSchemasLoad")
     connection.onSchemasLoad(() => {
-      println("Schemas load")
       schemasLoad(connection.toData)
     })
   }
@@ -98,7 +97,6 @@ class ConnectionEditor(
         case None =>   JFXUtil.showErrorAlert(localization.connectionRefused, "")
       }
     }
-
 
   def control : Parent = layout
 }

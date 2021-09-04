@@ -1,10 +1,10 @@
 package dbtarzan.gui.config.connections
 
-import scalafx.scene.control.{ ComboBox, ListCell }
+import scalafx.scene.control.{ComboBox, ListCell}
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
-import dbtarzan.db.IdentifierDelimiters
+import dbtarzan.db.{IdentifierDelimiters, IdentifierDelimitersValues}
 import dbtarzan.gui.TControlBuilder
 import scalafx.event.ActionEvent
 
@@ -12,8 +12,8 @@ import scalafx.event.ActionEvent
 class ComboDelimiters() extends TControlBuilder with TCombo {
   private val possibleDelimiters = ObservableBuffer(List(
     None,
-    Some(IdentifierDelimiters('[', ']')),
-    Some(IdentifierDelimiters('"', '"'))
+    Some(IdentifierDelimitersValues.squareBrackets),
+    Some(IdentifierDelimitersValues.doubleQuotes)
   ))
   private val cmbDelimiters = new ComboBox[Option[IdentifierDelimiters]] {
     items = possibleDelimiters

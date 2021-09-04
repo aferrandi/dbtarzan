@@ -17,7 +17,7 @@ class RowDetailsCell(field: Field) {
     private var alreadyMultiline = false;
     private var textControl = buildControl()
     /* a label on top of a text field */
-    val content = new VBox {
+    val content: VBox = new VBox {
         children = buildChildren()
         fillWidth = true
     }
@@ -26,9 +26,10 @@ class RowDetailsCell(field: Field) {
         List(new Label(field.name), textControl)
 
 
-    private def buildControl() : TextInputControl = alreadyMultiline match {
-        case false => buildControlSingleLine()
-        case true => buildControlMultiLine()
+    private def buildControl() : TextInputControl = if (alreadyMultiline) {
+      buildControlMultiLine()
+    } else {
+      buildControlSingleLine()
     }
 
     private def buildControlSingleLine() : TextInputControl =
@@ -48,7 +49,7 @@ class RowDetailsCell(field: Field) {
     }
 
     private def isMultiline(s : String) : Boolean =
-        Option(s).map(_.contains('\n')).getOrElse(false)
+        Option(s).exists(_.contains('\n'))
 
     def showText(text : String) : Unit = {
         if(field.fieldType == FieldType.STRING && !alreadyMultiline && isMultiline(text))

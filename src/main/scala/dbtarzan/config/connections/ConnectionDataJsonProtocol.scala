@@ -39,6 +39,7 @@ import SchemaJsonProtocol._
   	"identifierDelimiters",
     "maxRows",
 		"queryTimeoutInSeconds",
+    "maxFieldSize",
 		"catalog"
   	)
 }

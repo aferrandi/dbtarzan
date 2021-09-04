@@ -18,14 +18,13 @@ class SqlBuilderTest extends FlatSpec {
   }
 
   "a simple table with delimiters" should "give a query with delimiters" in {
-    val attributes = QueryAttributes(Some(IdentifierDelimiters('[', ']')), DBDefinition(Some(Schema("TST")), None))
     val structure = DBTableStructure(
         buildDescription(),
         noFields(),
         None,
         None,
         None,
-        attributes
+        buildAttributes()
         )
     val sql = SqlBuilder.buildSql(structure)
     assert("SELECT * FROM [TST].[customer]" === sql.sql)
@@ -86,6 +85,29 @@ class SqlBuilderTest extends FlatSpec {
     assert("SELECT * FROM customer" === sql.sql)
   }
 
+  "a row structure with no attributes" should "give a simple query" in {
+    val structure = DBRowStructure(
+      tableName,
+      Fields(buildColumns()),
+      buildFields("John", "23"),
+      QueryAttributes.none()
+    )
+    val sql = SqlBuilder.buildSql(structure)
+    assert("SELECT * FROM customer WHERE (\nname='John') AND (\nage=23)" === sql.sql)
+  }
+
+  "a row structure with attributes" should "give a simple query" in {
+    val structure = DBRowStructure(
+      tableName,
+      Fields(buildColumns()),
+      buildFields("John", "23"),
+      buildAttributes()
+    )
+    val sql = SqlBuilder.buildSql(structure)
+    assert("SELECT * FROM [TST].[customer] WHERE (\n[name]='John') AND (\n[age]=23)" === sql.sql)
+  }
+
+
   private def buildForeignKeyCriteria() = {
     val rows = List(buildRow("John", "23"))
     ForeignKeyCriteria(rows, buildColumns())
@@ -101,14 +123,24 @@ class SqlBuilderTest extends FlatSpec {
       )
 
   private def buildDescription() =
-    TableDescription("customer", None, None)
+    TableDescription(tableName, None, None)
 
-  private def noFields() = Fields(List()) 
+  private def tableName = {
+    "customer"
+  }
 
-  private def buildRow(name : String, age: String) = FKRow(
+  private def noFields() = Fields(List())
+
+  private def buildRow(name : String, age: String) = FKRow(buildFields(name, age))
+
+  private def buildAttributes() = {
+    QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(Some(Schema("TST")), None), None)
+  }
+
+  private def buildFields(name: String, age: String) = {
     List(
       FieldWithValue("name", name),
       FieldWithValue("age", age)
-    ))
-
+    )
+  }
 }

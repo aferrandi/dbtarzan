@@ -16,7 +16,7 @@ class DatabaseWorkerKeysToFile(
     private def saveForeignKeysToFile(foreignKeysFile : AdditionalForeignKeysFile, keys : List[AdditionalForeignKey]): Unit = {
 		log.info(localization.savingForeignKeys(foreignKeysFile.fileName.toString))
 		try {
-			foreignKeysFile.toFile(keys)
+			foreignKeysFile.writeAsFile(keys)
 		} catch { 
 			case e : Exception => log.error(localization.errorWritingKeys(foreignKeysFile.fileName.toString), e)
     }

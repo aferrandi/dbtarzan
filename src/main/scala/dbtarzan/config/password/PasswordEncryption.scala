@@ -12,5 +12,5 @@ class PasswordEncryption(key : EncryptionKey) {
 }
 
 object PasswordEncryption {
-	val defaultEncryptionKey = EncryptionKey("1gCDuAntiQiFPHIT")
+	val defaultEncryptionKey: EncryptionKey = EncryptionKey("1gCDuAntiQiFPHIT")
 }

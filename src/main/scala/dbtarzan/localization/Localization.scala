@@ -25,6 +25,7 @@ trait Localization {
   def delimiters : String
   def maxRows : String
   def queryTimeoutInSeconds : String
+  def maxFieldSize: String
   def tables: String
   def databases: String
   def foreignKeys: String
@@ -128,4 +129,5 @@ trait Localization {
   def errorAFKDuplicateRelations(relationDuplicates: List[String]) : String
   def errorAFKAlreadyExisting(names : List[String]) : String
   def errorRegisteringDriver(name: String): String
+  def warningNoPrimaryKeyInTable(tableName: String): String
 }

@@ -1,12 +1,14 @@
 package dbtarzan.messages
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DBTableStructure, DatabaseId, FollowKey, TableId}
+import dbtarzan.db.{AdditionalForeignKey, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, TableId}
 
 
-case class OriginalQuery(queryId : QueryId, close : Boolean)
+case class OriginalQuery(queryId : QueryId, closeCurrentTab : Boolean)
 
-case class QueryRows(queryId : QueryId, original : Option[OriginalQuery], structure : DBTableStructure) 
+case class QueryRows(queryId : QueryId, original : Option[OriginalQuery], structure : DBTableStructure)
+
+case class QueryOneRow(queryId : QueryId, structure : DBRowStructure)
 
 case class QueryTables(databaseId : DatabaseId, dbActor : ActorRef)
 

@@ -25,7 +25,8 @@ class Italian extends Localization {
     def delimiters = "Separatori"
     def maxRows = "Max Righe"    
     def queryTimeoutInSeconds = "Timeout query in secondi"
-    def tables = "Tabelle"    
+    def maxFieldSize = "Max dimensione campo"
+    def tables = "Tabelle"
     def databases = "Database"
     def foreignKeys = "Chiavi esterne"
     def connectionReset = "Resetta connessione"
@@ -128,4 +129,5 @@ class Italian extends Localization {
     def errorAFKDuplicateRelations(relationDuplicates: List[String]) = "Ralazioni duplicate: "+relationDuplicates.mkString(", ")
     def errorAFKAlreadyExisting(names : List[String]) = "Le chiavi esterne aggiuntive "+names.mkString(", ")+" esistono gia' come chiavi esterne"
     def errorRegisteringDriver(databaseName: String) = "La registrazione del database "+databaseName+" e' fallita a causa di"
+    def warningNoPrimaryKeyInTable(tableName: String): String = "La tabella "+tableName+" non ha chiavi primarie"
 }

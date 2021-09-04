@@ -2,11 +2,11 @@ package dbtarzan.gui
 
 import java.nio.file.{Path, Paths}
 
-import dbtarzan.config.actor.ConnectionsWorker
+import dbtarzan.config.actor.ConnectionsActor
 import dbtarzan.config.connections.ConnectionDataReader
 import dbtarzan.config.global.GlobalDataReader
 import dbtarzan.db.DatabaseId
-import dbtarzan.gui.actor.GUIWorker
+import dbtarzan.gui.actor.GUIActor
 import dbtarzan.localization.Localizations
 import dbtarzan.messages._
 import dbtarzan.types.ConfigPath
@@ -22,8 +22,8 @@ object Main extends JFXApp {
   private val localization = Localizations.of(globalData.language)
   val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, openWeb, closeApp)
   val actors = new ActorHandler(
-    () => new GUIWorker(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization),
-    guiActor => new ConnectionsWorker(connectionDatas, guiActor, localization, configPaths.keyFilesDirPath)
+    () => new GUIActor(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization),
+    guiActor => new ConnectionsActor(connectionDatas, guiActor, localization, configPaths.keyFilesDirPath)
     ) 
   mainGUI.setActors(actors.guiActor, actors.connectionsActor)
   val log = new Logger(actors.guiActor)
