@@ -28,7 +28,8 @@ And optionally (generally not needed):
 * **Delimiters**. If the database contains tables or columns that have as name reserved words in the database (like GROUP or RULE), queries don't work unless these names are delimited with special characters. These characters vary between databases, but they are either double quotes or squared brackets. 
 * **Query timeout in seconds**: for each query (a new tab) sets a maximum limit to the query duration in seconds. This timeout acts both in the query execution itself and in loading the query result. If not specified, this timeout is 10 seconds.
 * **Max rows**. The number of rows resulting from queries are limited to 500 by default: you don't want to use local memory, network and database resources to read many table rows, not to mention the queries performance. If you want to see other rows, it is generally enough to change the query parameters or the order of the resulting rows. But there are some cases in which you want to have a larger rows number limit. 
- * **Catalog**. similar concept to the schema, used to identify a specific database, added to solve issue [#78](https://github.com/aferrandi/dbtarzan/issues/78).
+* **Max field size**. Used to improve the performance of queries on tables with large content columns, for example large strings (kilobytes or more). Setting the max field size on a database limits the amount of data (in bytes) read for each column in the normal query, showing only the start of it when it is too long. To see the whole column content display a specific row in the [Vertical row view](Vertical-row-view), which does not limit the size of the columns' content.
+* **Catalog**. similar concept to the schema, used to identify a specific database, added to solve issue [#78](https://github.com/aferrandi/dbtarzan/issues/78).
 
 
 To **update** the definition of a database connection:

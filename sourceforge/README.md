@@ -11,6 +11,10 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 DBTarzan changelog
 =================
 
+- Release 1.24
+
+Handles better tables with big columns' content.
+
 - Release 1.23
 
 Upgraded to JavaFX 14
@@ -21,13 +25,5 @@ Possibility to copy the column names of the table from the "columns description 
 
 Have always a row selected in an open table, so that it is possible to show a vertical row view.
 
-
-- Release 1.22
-
-Fields/columns suggestions in the where clause text box
-
-Ctrl-Del closes the current tab
-
-DBTarzan as snap now opens the browser to show the help/documentation
 
 

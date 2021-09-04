@@ -26,3 +26,5 @@ The vertical view shows vertically all the fields of the selected row. This is b
 The vertical row view can be shown or hidden very easily (it is just needed to press Ctrl-R) and is supposed to help only when there is a need for it, without being annoying.
 
 Additionally it is possible to copy the content of individual fields from the vertical row, differently from the [copy menu](Copy-Data) of the table.
+
+The vertical row displays the whole content of the fields of the row, also when they are big.
