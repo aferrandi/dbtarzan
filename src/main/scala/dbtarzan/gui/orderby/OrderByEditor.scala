@@ -48,34 +48,34 @@ class OrderByEditor(
 
  private def saveCancelButtons() : HBox = {
     new HBox {
-      children = List(buttonSave, new Region() { hgrow = Priority.Always }, buttonCancel )
+      children = List(buttonSave(), new Region() { hgrow = Priority.Always }, buttonCancel() )
       padding = Insets(10)
       spacing = 10
     }
  }
 
   private def listWithButtons() = new BorderPane {
-    center = listFields
+    center = listFields()
     right = new BorderPane {
-      top = listCombos
-      bottom = listButtons
+      top = listCombos()
+      bottom = listButtons()
     }
   }  
 
   private def listCombos() = new VBox {
-      children = List(comboFields, comboDirection)      
+      children = List(comboFields(), comboDirection())
       padding = Insets(10)
       spacing = 10
       alignment = Pos.BASELINE_CENTER
   }
 
   private def listButtons() = new VBox  {
-      children = List(buttonAdd, listEditButtons)      
+      children = List(buttonAdd(), listEditButtons())
       alignment = Pos.CENTER
   }
 
   private def listEditButtons() = new VBox {
-      children = List(buttonUpdate, buttonMoveUp, buttonMoveDown, buttonDelete)      
+      children = List(buttonUpdate(), buttonMoveUp(), buttonMoveDown(), buttonDelete())
       padding = Insets(10)
       spacing = 10
       alignment = Pos.BOTTOM_CENTER
@@ -149,8 +149,8 @@ class OrderByEditor(
     text = localization.save
     alignmentInParent = Pos.CENTER_RIGHT
     disable <==> saveButtonDisabled
-    onAction = (event: ActionEvent)  => {
-      if(!listBuffer.isEmpty || JFXUtil.areYouSure(localization.unorderedQueryResults, localization.saveOrder))
+    onAction = (_: ActionEvent)  => {
+      if(listBuffer.nonEmpty || JFXUtil.areYouSure(localization.unorderedQueryResults, localization.saveOrder))
         onSave(OrderByFields(listBuffer.toList))
     }
  }

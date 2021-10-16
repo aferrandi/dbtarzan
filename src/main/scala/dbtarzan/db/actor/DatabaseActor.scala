@@ -42,6 +42,7 @@ class DatabaseActor(
 
   private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
+    connection.setReadOnly(true)
     log.info(localization.connectedTo(databaseName))
     Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), data.maxFieldSize, localization, log))
   } catch {
@@ -157,6 +158,12 @@ class DatabaseActor(
           guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
       }, logError)
 
+  private def queryIndexes(qry: QueryIndexes) : Unit = withCore(core => {
+    val tableName = qry.queryId.tableId.tableName
+    val indexes = cache.cachedIndexes(tableName, core.indexesLoader.indexes(tableName))
+    guiActor ! ResponseIndexes(qry.queryId, indexes)
+  }, logError)
+
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
         val tableName = qry.tableId.tableName
         val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
@@ -215,6 +222,7 @@ class DatabaseActor(
 		case qry : QueryForeignKeys => queryForeignKeys(qry)    	
 		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)
+    case qry : QueryIndexes => queryIndexes(qry)
     case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
 		case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
 	}

@@ -11,7 +11,7 @@ import dbtarzan.db.{DBTable, DBTableStructure, Field, Filter, FollowKey, Foreign
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.gui.browsingtable.{BrowsingTableSplitter, ForeignKeysInfoSplitter, QueryText, RowDetailsApplicant, RowDetailsView, TableMenu, TableProgressBar}
-import dbtarzan.gui.info.{ColumnsTable, Info, QueryInfo}
+import dbtarzan.gui.info.{ColumnsTable, IndexInfo, Info, QueryInfo}
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -22,7 +22,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, guiActor, localization)
   private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure), localization)
-  private val info = new Info(columnsTable, queryInfo, localization)
+  private val indexInfo = new IndexInfo(dbActor, guiActor, localization)
+  private val info = new Info(columnsTable, queryInfo, indexInfo, localization, () => {
+    dbActor ! QueryIndexes(queryId)
+  })
   private val dbTable = new DBTable(structure)
   private val table = new Table(dbActor, guiActor, queryId, dbTable, localization)
   private val foreignKeysInfoSplitter = new ForeignKeysInfoSplitter(foreignKeyListWithTitle, info)
@@ -121,17 +124,23 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
               
   def switchRowDetailsView() : Unit = {
     rowDetailsView match {
-      case None => table.firstSelectedRow().foreach(row => {
-          val view = new RowDetailsView(dbTable)
-          splitter.splitPanelWithRowDetailsView(view)
-          rowDetailsView = Some(view)
-          openRowDisplay(row)
-        })
+      case None =>
+        showRowDetailsView()
       case Some(_) => {
         splitter.splitPanelWithoutRowDetailsView()
         rowDetailsView = None
       }
     }
+  }
+
+  private def showRowDetailsView(): Unit = {
+    table.selectOneIfNoneSelected()
+    table.firstSelectedRow().foreach(row => {
+      val view = new RowDetailsView(dbTable)
+      splitter.splitPanelWithRowDetailsView(view)
+      rowDetailsView = Some(view)
+      openRowDisplay(row)
+    })
   }
 
   /* if someone enters a query in the text box on the top of the table it creates a new table that depends by this query */
@@ -163,6 +172,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     progressBar.receivedPrimaryKeys()
     rowDetailsApplicant.addPrimaryKeys(keys.keys)
   }
+
+  def addIndexes(indexes: ResponseIndexes): Unit =
+    indexInfo.addRows(indexes.indexes.indexes)
 
   def copySelectionToClipboard(includeHeaders : Boolean) : Unit = 
     table.copySelectionToClipboard(includeHeaders) 

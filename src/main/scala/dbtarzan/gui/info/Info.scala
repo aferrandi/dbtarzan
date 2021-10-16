@@ -9,25 +9,40 @@ import scalafx.scene.layout.BorderPane
 import scalafx.Includes._
 
 /* the info box on the right bottom, which shows the information views as tabs  */
-class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, localization : Localization) {
+class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, indexInfo: IndexInfo, localization : Localization,
+           requestIndexInfo : () => Unit) {
   private val tabs = buildTabs()
 
   def control : Parent =  tabs
 
    /* builds the tab panel with the information views */
   private def buildTabs() = new TabPane {
-    tabs = List(
-      new Tab() {      
-        text = localization.queryText
-        content = queryInfo.control     
-      },
-      new Tab() {      
-        text = localization.columnsDescription
-        content = new BorderPane {
-          top = buildMenu()
-          center = columnsTable.control
-        }
+    private val columnsTab: Tab = new Tab() {
+      text = localization.columnsDescription
+      content = new BorderPane {
+        top = buildMenu()
+        center = columnsTable.control
       }
+    }
+    private val queryInfoTab: Tab = new Tab() {
+      text = localization.queryText
+      content = queryInfo.control
+    }
+    private val indexesTab: Tab = new Tab() {
+      text = localization.indexes
+      onSelectionChanged = () => {
+        if (indexesTab.selected() && !indexInfo.complete())
+          requestIndexInfo()
+      }
+      content = new BorderPane {
+        top = buildMenu()
+        center = indexInfo.control
+      }
+    }
+    tabs = List(
+      queryInfoTab,
+      columnsTab,
+      indexesTab
     )
   }
   private def buildMenu() = new MenuBar {

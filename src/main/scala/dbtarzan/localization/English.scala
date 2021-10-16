@@ -101,6 +101,7 @@ class English extends Localization {
     def connectionSuccessful = "Connection success"
     def connectionToDatabaseSuccesful(databaseName: String) = "Connection to database "+databaseName+" successful"
     def editingConnectionFile(fileName: Path) = "Editing connections configuration file " + fileName
+    def indexes = "Indexes"
     def errorConnectingToDatabase(databaseName : String) = "Cronnecting to the database "+databaseName+" got"
     def errorQueryingDatabase(databaseName : String) = "Querying the database "+databaseName+" got"
     def errorRequestingTheRows(queryId : QueryId) = "Requesting the rows for the tab "+queryId+" got"    

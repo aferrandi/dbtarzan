@@ -101,6 +101,7 @@ class Spanish extends Localization {
     def connectionToDatabaseSuccesful(databaseName: String) = "Conexión de base de datos "+databaseName+" ha tenido éxito"
     def databaseAlreadyOpen(databaseName : String) =  "La base de datos "+databaseName+" ya está abierta"
     def editingConnectionFile(fileName: Path) = "Estoy editando el archivo de configuración de las conexiones " + fileName
+    def indexes = "Indices"
     def errorConnectingToDatabase(databaseName : String) = "La conexión a la base de datos "+databaseName+" y 'fallado debido a"
     def errorQueryingDatabase(databaseName : String) = "La apertura de la base de datos "+databaseName+" y 'fallado debido a"
     def errorRequestingTheRows(queryId : QueryId) = "La solicitud de las filas de "+queryId+" y 'fallado debido a"    
