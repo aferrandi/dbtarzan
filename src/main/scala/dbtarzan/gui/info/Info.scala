@@ -9,7 +9,7 @@ import scalafx.scene.layout.BorderPane
 import scalafx.Includes._
 
 /* the info box on the right bottom, which shows the information views as tabs  */
-class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, indexInfo: IndexInfo, localization : Localization,
+class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, indexesInfo: IndexesInfo, localization : Localization,
            requestIndexInfo : () => Unit) {
   private val tabs = buildTabs()
 
@@ -31,12 +31,12 @@ class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, indexInfo: IndexIn
     private val indexesTab: Tab = new Tab() {
       text = localization.indexes
       onSelectionChanged = () => {
-        if (indexesTab.selected() && !indexInfo.complete())
+        if (indexesTab.selected() && !indexesInfo.complete())
           requestIndexInfo()
       }
       content = new BorderPane {
         top = buildMenu()
-        center = indexInfo.control
+        center = indexesInfo.control
       }
     }
     tabs = List(

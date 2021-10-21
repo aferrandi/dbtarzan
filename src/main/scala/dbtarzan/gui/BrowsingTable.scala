@@ -11,7 +11,7 @@ import dbtarzan.db.{DBTable, DBTableStructure, Field, Filter, FollowKey, Foreign
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.gui.browsingtable.{BrowsingTableSplitter, ForeignKeysInfoSplitter, QueryText, RowDetailsApplicant, RowDetailsView, TableMenu, TableProgressBar}
-import dbtarzan.gui.info.{ColumnsTable, IndexInfo, Info, QueryInfo}
+import dbtarzan.gui.info.{ColumnsTable, IndexInfo, IndexesInfo, Info, QueryInfo}
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -22,7 +22,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, guiActor, localization)
   private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure), localization)
-  private val indexInfo = new IndexInfo(dbActor, guiActor, localization)
+  private val indexInfo = new IndexesInfo(guiActor, localization)
   private val info = new Info(columnsTable, queryInfo, indexInfo, localization, () => {
     dbActor ! QueryIndexes(queryId)
   })

@@ -1,9 +1,8 @@
 package dbtarzan.db.actor
 
 import java.nio.file.Path
-import java.sql.SQLException
+import java.sql.{Connection, SQLException}
 import java.time.LocalDateTime
-
 import akka.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
@@ -42,7 +41,7 @@ class DatabaseActor(
 
   private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
-    connection.setReadOnly(true)
+    setReadOnlyIfPossible(connection)
     log.info(localization.connectedTo(databaseName))
     Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), data.maxFieldSize, localization, log))
   } catch {
@@ -53,6 +52,14 @@ class DatabaseActor(
     case e : Exception => {
       log.error(localization.errorConnectingToDatabase(databaseName), e)
       None
+    }
+  }
+
+  private def setReadOnlyIfPossible(connection: Connection): Unit = {
+    try {
+      connection.setReadOnly(true)
+    } catch {
+      case e: Exception => None
     }
   }
 
