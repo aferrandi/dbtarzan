@@ -34,10 +34,7 @@ class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, indexesInfo: Index
         if (indexesTab.selected() && !indexesInfo.complete())
           requestIndexInfo()
       }
-      content = new BorderPane {
-        top = buildMenu()
-        center = indexesInfo.control
-      }
+      content = indexesInfo.control
     }
     tabs = List(
       queryInfoTab,
