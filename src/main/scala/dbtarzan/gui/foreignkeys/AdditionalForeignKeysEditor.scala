@@ -1,18 +1,15 @@
 package dbtarzan.gui.foreignkeys
 
-import scalafx.scene.control.SplitPane
-import scalafx.scene.layout.BorderPane
+import akka.actor.ActorRef
+import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableNames}
+import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.util.{JFXUtil, StringUtil}
+import dbtarzan.localization.Localization
+import dbtarzan.messages.UpdateAdditionalForeignKeys
 import scalafx.geometry.Orientation
 import scalafx.scene.Parent
-import scalafx.Includes._
-import akka.actor.ActorRef
-
-import dbtarzan.db.{TableNames, AdditionalForeignKey, Fields, DatabaseId}
-import dbtarzan.gui.util.StringUtil
-import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.messages.UpdateAdditionalForeignKeys
-import dbtarzan.localization.Localization
+import scalafx.scene.control.SplitPane
+import scalafx.scene.layout.BorderPane
 
 /* table + constraint input box + foreign keys */
 class AdditionalForeignKeysEditor(
@@ -58,11 +55,11 @@ class AdditionalForeignKeysEditor(
             localization.errorAFKVerification + " " + 
             StringUtil.textIf(res.nameEmpty, () => localization.errorAFKEmptyNames +". ") +
             StringUtil.textIf(res.nameNewRow, () => localization.errorAFKNameNewRow +". ") +
-            StringUtil.textIf(!res.noColumns.isEmpty, () => localization.errorAFKNoColumns(res.noColumns) +". ") +
-            StringUtil.textIf(!res.sameColumns.isEmpty, () => localization.errorAFKSameColumns(res.sameColumns) +". ") +
-            StringUtil.textIf(!res.differentColumnsNumber.isEmpty, () => localization.errorAFKDifferentColumnsNumber(res.differentColumnsNumber) +". ") +
-            StringUtil.textIf(!res.nameDuplicates.isEmpty, () => localization.errorAFKDuplicateNames(res.nameDuplicates) +". ") +
-            StringUtil.textIf(!res.relationDuplicates.isEmpty, () => localization.errorAFKDuplicateRelations(res.relationDuplicates) +". ")
+            StringUtil.textIf(res.noColumns.nonEmpty, () => localization.errorAFKNoColumns(res.noColumns) +". ") +
+            StringUtil.textIf(res.sameColumns.nonEmpty, () => localization.errorAFKSameColumns(res.sameColumns) +". ") +
+            StringUtil.textIf(res.differentColumnsNumber.nonEmpty, () => localization.errorAFKDifferentColumnsNumber(res.differentColumnsNumber) +". ") +
+            StringUtil.textIf(res.nameDuplicates.nonEmpty, () => localization.errorAFKDuplicateNames(res.nameDuplicates) +". ") +
+            StringUtil.textIf(res.relationDuplicates.nonEmpty, () => localization.errorAFKDuplicateRelations(res.relationDuplicates) +". ")
           )
   }
 

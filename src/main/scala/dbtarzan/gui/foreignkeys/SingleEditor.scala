@@ -35,7 +35,7 @@ class SingleEditor(
   private var editorDisabled = BooleanProperty(true)
 
   private def buildChosenTableProperty(orderedListColumns : OrderedListView[String]) = new ObjectProperty[String]() {
-    onChange { (_, _, newTable) => Option(newTable).filter(t => !t.isEmpty).foreach(t => {
+    onChange { (_, _, newTable) => Option(newTable).filter(t => t.nonEmpty).foreach(t => {
       orderedListColumns.setListData(List.empty)
       dbActor ! QueryColumnsForForeignKeys(databaseId, t)
     }) }
@@ -93,11 +93,11 @@ class SingleEditor(
     editorDisabled.value = false
   })
 
-  def toKey() = {
+  def toKey(): AdditionalForeignKey = {
     val key = AdditionalForeignKey(
       txtName.text(), 
-      FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData),
-      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData)
+      FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData()),
+      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData())
    )
    key
   }
