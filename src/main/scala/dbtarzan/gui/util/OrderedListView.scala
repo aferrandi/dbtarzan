@@ -1,8 +1,9 @@
 package dbtarzan.gui.util
 
-import scalafx.collections.ObservableBuffer 
-import scalafx.scene.control.{ListView, Button, Label, ListCell, ComboBox}
-import scalafx.scene.layout.{ HBox, BorderPane }
+import dbtarzan.gui.util.orderedlist.OrderedListButtonBuilder
+import scalafx.collections.ObservableBuffer
+import scalafx.scene.control.{Button, ComboBox, Label, ListCell, ListView}
+import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.geometry.Pos
 import scalafx.Includes._
 import scalafx.scene.Parent
@@ -12,7 +13,7 @@ import scalafx.event.ActionEvent
 /**
   a list of items selected from a combo box. Eech item is displayed with buttons to move it  up and down  or to remove it
 */
-class OrderedListView[T](show : T => String, addButtonLabel : String) {
+class OrderedListView[T](show : T => String, addButtonLabel : String, rowButtons: List[OrderedListButtonBuilder[T]]) {
   val comboBuffer: ObservableBuffer[T] = ObservableBuffer.empty[T]
   private val listBuffer = ObservableBuffer.empty[T]
   private val emptyCombo = new BooleanProperty { value = comboBuffer.isEmpty }
@@ -34,9 +35,10 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
     cellFactory = { _ => buildComboCell() }
     maxWidth = Double.MaxValue
   }
+
   comboAdd.selectionModel().selectedItem.onChange(
       (_, _, nullableValue) => {
-        val buttonEnabled = Option(nullableValue).map(_ => !emptyCombo.value).getOrElse(false)
+        val buttonEnabled = Option(nullableValue).exists(_ => !emptyCombo.value)
         buttonDisabled.value = !buttonEnabled 
     })
   
@@ -71,47 +73,6 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
       }
   } 
 
-
-  private def buttonUp(value : T) = new Button {
-    text = "▲"
-    stylesheets += "rowButton.css"
-    onAction = {
-      (e: ActionEvent) => {                            
-        val index = listBuffer.indexOf(value)
-        if(index > 0) {
-          listBuffer.remove(index)
-          listBuffer.insert(index - 1, value)
-        }
-      }
-    }                          
-  }
-
-
-  private def buttonDown(value : T) = new Button {
-    text = "▼"
-    stylesheets += "rowButton.css"
-    onAction = {
-      (e: ActionEvent) => {                            
-        val index = listBuffer.indexOf(value)
-        if(index < listBuffer.length - 1) {
-          listBuffer.remove(index)
-          listBuffer.insert(index + 1, value)
-        }
-      }
-    }
-  }
-
-  private def buttonDelete(value : T) = new Button {
-    text = "X"
-    stylesheets += "rowButton.css"
-    onAction = {
-      (e: ActionEvent) => {
-        listBuffer -= value
-        comboBuffer += value
-      }
-    }
-  }
-
   private def buildListCell() = new ListCell[T]() {
     item.onChange { (_ , _, value) => 
               if(value != null) {
@@ -120,11 +81,7 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
                       text = show(value)
                       }
                     right = new HBox {
-                      children = List(
-                        buttonUp(value),
-                        buttonDown(value),
-                        buttonDelete(value)
-                      )
+                      children = rowButtons.map(_.onChange(value, listBuffer, comboBuffer))
                     }              
                 }
                 BorderPane.setAlignment(panel.center.value, Pos.CENTER_LEFT)
@@ -138,17 +95,18 @@ class OrderedListView[T](show : T => String, addButtonLabel : String) {
   def setComboData(data : List[T]) : Unit = {
     val remainingData = data.diff(listBuffer.toList)
     JFXUtil.bufferSet(comboBuffer, remainingData)
-      
   }
 
   def onChange(action : List[T] => Unit) : Unit = 
     listBuffer.onChange((buffer, changes) =>  
       safe.noChangeEventDuring(() =>  action(buffer.toList)) 
     )
+
   def setListData(data : List[T]) : Unit = 
     safe.onChange(() =>
       JFXUtil.bufferSet(listBuffer, data)
     )
+
   def listData() : List[T] = listBuffer.toList
 
   def control : Parent = layout 

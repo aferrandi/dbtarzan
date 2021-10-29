@@ -3,6 +3,7 @@ package dbtarzan.gui.foreignkeys
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.util.orderedlist.{ButtonBuilderDelete, ButtonBuilderDown, ButtonBuilderUp}
 import dbtarzan.gui.util.{OnChangeSafe, OrderedListView}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
@@ -21,8 +22,9 @@ class SingleEditor(
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
-  private val orderedListColumnsFrom = new OrderedListView[String](x => x, localization.add)
-  private val orderedListColumnsTo = new OrderedListView[String](x => x, localization.add)
+  private val rowButtons = List(new ButtonBuilderUp[String](), new ButtonBuilderDown[String](), new ButtonBuilderDelete[String]())
+  private val orderedListColumnsFrom = new OrderedListView[String](x => x, localization.add, rowButtons)
+  private val orderedListColumnsTo = new OrderedListView[String](x => x, localization.add, rowButtons)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
