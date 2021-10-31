@@ -9,10 +9,19 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Button, ComboBox, ListCell, ListView}
 import scalafx.scene.layout.{BorderPane, HBox}
 
+trait TComboStrategy[T] {
+  def removeFromCombo(comboBuffer: ObservableBuffer[T], item : T): Unit
+  def addToCombo(comboBuffer: ObservableBuffer[T], item : T): Unit
+}
+
 /**
 a list of items selected from a combo box. Eech item is displayed with buttons to move it  up and down  or to remove it
  */
-class OrderedListView[T](addButtonLabel: String, cellBuilder: Option[T] => Parent) {
+class OrderedListView[T](
+                          addButtonLabel: String,
+                          cellBuilder: Option[T] => Parent,
+                          comboStrategy: TComboStrategy[T]
+                        ) {
   val comboBuffer: ObservableBuffer[T] = ObservableBuffer.empty[T]
   private val listBuffer = ObservableBuffer.empty[T]
   private val emptyCombo = new BooleanProperty { value = comboBuffer.isEmpty }
@@ -58,7 +67,7 @@ class OrderedListView[T](addButtonLabel: String, cellBuilder: Option[T] => Paren
     Option(comboAdd.selectionModel().selectedItem.value).foreach(
       choice => {
         listBuffer += choice
-        comboBuffer -= choice
+        comboStrategy.removeFromCombo(comboBuffer, choice)
       }
     )
   }
@@ -71,25 +80,19 @@ class OrderedListView[T](addButtonLabel: String, cellBuilder: Option[T] => Paren
     }
   }
 
-  private def buttonUp(value : T) = buildButton(value, "▲", (value: T) => {
-    val index = listBuffer.indexOf(value)
-    if (index > 0) {
-      listBuffer.remove(index)
-      listBuffer.insert(index - 1, value)
-    }
-  })
+  private def buttonUp(value : T) = buildButton(value, "▲", (value: T) =>
+    moveUp(value)
+  )
 
-  private def buttonDown(value : T) = buildButton(value, "▼", (value: T) => {
-    val index = listBuffer.indexOf(value)
-    if(index < listBuffer.length - 1) {
-      listBuffer.remove(index)
-      listBuffer.insert(index + 1, value)
-    }
-  })
+
+  private def buttonDown(value : T) = buildButton(value, "▼", (value: T) =>
+    moveDown(value)
+  )
+
 
   private def buttonDelete(value : T) = buildButton(value, "X", (value: T) => {
     listBuffer -= value
-    comboBuffer += value
+    comboStrategy.addToCombo(comboBuffer, value)
   })
 
   private def buildButton(value: T, icon: String, onClick: T => Unit) = {
@@ -99,6 +102,21 @@ class OrderedListView[T](addButtonLabel: String, cellBuilder: Option[T] => Paren
       onAction = {
         (e: ActionEvent) => onClick(value)
       }
+    }
+  }
+
+  private def moveUp(value: T): Unit = {
+    val index = listBuffer.indexOf(value)
+    if (index > 0) {
+      listBuffer.remove(index)
+      listBuffer.insert(index - 1, value)
+    }
+  }
+  private def moveDown(value: T): Unit = {
+    val index = listBuffer.indexOf(value)
+    if (index < listBuffer.length - 1) {
+      listBuffer.remove(index)
+      listBuffer.insert(index + 1, value)
     }
   }
 

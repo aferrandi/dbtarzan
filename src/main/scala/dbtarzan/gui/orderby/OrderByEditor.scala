@@ -2,10 +2,11 @@ package dbtarzan.gui.orderby
 
 import dbtarzan.db.{Field, OrderByDirection, OrderByField, OrderByFields}
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.{JFXUtil, OrderedListView}
+import dbtarzan.gui.util.{JFXUtil, OrderedListView, TComboStrategy}
 import dbtarzan.localization.Localization
 import scalafx.Includes._
 import scalafx.beans.property.BooleanProperty
+import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Parent
@@ -40,8 +41,17 @@ class OrderByEditor(
     right = new ImageView(iconFromDirection(value))
     padding = Insets(0,20,0, 0)
   }
-
-  private var list = new OrderedListView[OrderByField](localization.add, showField)
+  private val comboStrategy = new TComboStrategy[OrderByField] {
+    override def removeFromCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit = {
+      comboBuffer -= OrderByField(item.field, OrderByDirection.ASC)
+      comboBuffer -= OrderByField(item.field, OrderByDirection.DESC)
+    }
+    override def addToCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit = {
+      comboBuffer += OrderByField(item.field, OrderByDirection.ASC)
+      comboBuffer += OrderByField(item.field, OrderByDirection.DESC)
+    }
+  }
+  private var list = new OrderedListView[OrderByField](localization.add, showField, comboStrategy)
   list.setListData(currentOrderByFields)
   list.setComboData(possibleOrderByFields.flatMap(f => List(
     OrderByField(f, OrderByDirection.ASC),

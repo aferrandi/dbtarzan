@@ -3,7 +3,7 @@ package dbtarzan.gui.foreignkeys
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.{OnChangeSafe, OrderedListView}
+import dbtarzan.gui.util.{OnChangeSafe, OrderedListView, TComboStrategy}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
@@ -26,8 +26,12 @@ class SingleEditor(
     textFill = Color.Black
     text = value.getOrElse("")
   }
-  private val orderedListColumnsFrom = new OrderedListView[String](localization.add, showText)
-  private val orderedListColumnsTo = new OrderedListView[String](localization.add, showText)
+  private val comboStrategy = new TComboStrategy[String] {
+    override def removeFromCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer -= item
+    override def addToCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer += item
+  }
+  private val orderedListColumnsFrom = new OrderedListView[String](localization.add, showText, comboStrategy)
+  private val orderedListColumnsTo = new OrderedListView[String](localization.add, showText, comboStrategy)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
