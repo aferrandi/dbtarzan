@@ -33,10 +33,12 @@ class OrderByEditor(
 
   private val showField: Option[OrderByField] => BorderPane = (value: Option[OrderByField]) => new BorderPane {
     center =   new Label {
+      alignmentInParent = Pos.CenterLeft
       textFill = Color.Black
       text = value.map(v => v.field.name).getOrElse("")
     }
     right = new ImageView(iconFromDirection(value))
+    padding = Insets(0,20,0, 0)
   }
 
   private var list = new OrderedListView[OrderByField](localization.add, showField)
@@ -45,6 +47,9 @@ class OrderByEditor(
     OrderByField(f, OrderByDirection.ASC),
     OrderByField(f, OrderByDirection.DESC)
   )))
+  list.onChange(data =>
+    saveButtonDisabled.value = data.isEmpty
+  )
 
   private def iconFromDirection(value: Option[OrderByField]): Image = {
     value.map(v =>
@@ -70,13 +75,13 @@ class OrderByEditor(
 
   private def buttonCancel() = new Button {
     text = localization.cancel
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
     onAction = (event: ActionEvent)  => onCancel()
   }
 
   private def buttonSave() = new Button {
     text = localization.save
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
     disable <==> saveButtonDisabled
     onAction = (_: ActionEvent)  => {
       if(list.listData().nonEmpty || JFXUtil.areYouSure(localization.unorderedQueryResults, localization.saveOrder))
