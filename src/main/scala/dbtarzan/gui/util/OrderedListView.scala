@@ -132,6 +132,7 @@ class OrderedListView[T](addButtonLabel: String, cellBuilder: Option[T] => Paren
     listBuffer.onChange((buffer, changes) =>
       safe.noChangeEventDuring(() =>  action(buffer.toList))
     )
+
   def setListData(data : List[T]) : Unit =
     safe.onChange(() =>
       JFXUtil.bufferSet(listBuffer, data)
