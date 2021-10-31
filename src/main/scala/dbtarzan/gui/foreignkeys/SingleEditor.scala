@@ -3,7 +3,6 @@ package dbtarzan.gui.foreignkeys
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.orderedlist.{ButtonBuilderDelete, ButtonBuilderDown, ButtonBuilderUp}
 import dbtarzan.gui.util.{OnChangeSafe, OrderedListView}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
@@ -13,6 +12,7 @@ import scalafx.geometry.Insets
 import scalafx.scene.Parent
 import scalafx.scene.control.{ComboBox, Label, ListCell, TextField}
 import scalafx.scene.layout.{ColumnConstraints, GridPane}
+import scalafx.scene.paint.Color
 
 /* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
@@ -22,9 +22,12 @@ class SingleEditor(
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
-  private val rowButtons = List(new ButtonBuilderUp[String](), new ButtonBuilderDown[String](), new ButtonBuilderDelete[String]())
-  private val orderedListColumnsFrom = new OrderedListView[String](x => x, localization.add, rowButtons)
-  private val orderedListColumnsTo = new OrderedListView[String](x => x, localization.add, rowButtons)
+  private val showText: Option[String] => Label = (value: Option[String]) => new Label {
+    textFill = Color.Black
+    text = value.getOrElse("")
+  }
+  private val orderedListColumnsFrom = new OrderedListView[String](localization.add, showText)
+  private val orderedListColumnsTo = new OrderedListView[String](localization.add, showText)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
