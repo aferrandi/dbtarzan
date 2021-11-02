@@ -142,8 +142,8 @@ class OrderedListView[T](
   }
 
   def setComboData(data : List[T]) : Unit = {
-    val remainingData = data.diff(listBuffer.toList)
-    JFXUtil.bufferSet(comboBuffer, remainingData)
+    JFXUtil.bufferSet(comboBuffer, data)
+    listBuffer.foreach(v => comboStrategy.removeFromCombo(comboBuffer, v))
   }
 
   def onChange(action : List[T] => Unit) : Unit =

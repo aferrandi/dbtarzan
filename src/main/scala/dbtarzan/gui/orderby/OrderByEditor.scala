@@ -42,14 +42,10 @@ class OrderByEditor(
     padding = Insets(0,20,0, 0)
   }
   private val comboStrategy = new TComboStrategy[OrderByField] {
-    override def removeFromCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit = {
-      comboBuffer -= OrderByField(item.field, OrderByDirection.ASC)
-      comboBuffer -= OrderByField(item.field, OrderByDirection.DESC)
-    }
-    override def addToCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit = {
-      comboBuffer += OrderByField(item.field, OrderByDirection.ASC)
-      comboBuffer += OrderByField(item.field, OrderByDirection.DESC)
-    }
+    override def removeFromCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit =
+      comboBuffer --= List(OrderByDirection.ASC,OrderByDirection.DESC).map(d => OrderByField(item.field, d))
+    override def addToCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit =
+      comboBuffer ++= List(OrderByDirection.ASC,OrderByDirection.DESC).map(d => OrderByField(item.field, d))
   }
   private var list = new OrderedListView[OrderByField](localization.add, showField, comboStrategy)
   list.setListData(currentOrderByFields)
