@@ -43,16 +43,18 @@ class OrderByEditor(
   }
   private val comboStrategy = new TComboStrategy[OrderByField] {
     override def removeFromCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit =
-      comboBuffer --= List(OrderByDirection.ASC,OrderByDirection.DESC).map(d => OrderByField(item.field, d))
+      comboBuffer --= fieldInBothDirections(item.field)
     override def addToCombo(comboBuffer: ObservableBuffer[OrderByField], item: OrderByField): Unit =
-      comboBuffer ++= List(OrderByDirection.ASC,OrderByDirection.DESC).map(d => OrderByField(item.field, d))
+      comboBuffer ++= fieldInBothDirections(item.field)
   }
+
+  private def fieldInBothDirections(field: Field) = {
+    OrderByDirection.directions().map(d => OrderByField(field, d))
+  }
+
   private var list = new OrderedListView[OrderByField](localization.add, showField, comboStrategy)
   list.setListData(currentOrderByFields)
-  list.setComboData(possibleOrderByFields.flatMap(f => List(
-    OrderByField(f, OrderByDirection.ASC),
-    OrderByField(f, OrderByDirection.DESC)
-  )))
+  list.setComboData(possibleOrderByFields.flatMap(f => OrderByDirection.directions().map(d => OrderByField(f, d))))
   list.onChange(data =>
     saveButtonDisabled.value = data.isEmpty
   )
@@ -62,7 +64,7 @@ class OrderByEditor(
       v.direction match {
         case OrderByDirection.ASC => upIcon
         case OrderByDirection.DESC => downIcon
-      }).getOrElse(null)
+      }).orNull
   }
 
 
