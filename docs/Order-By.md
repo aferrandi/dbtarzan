@@ -24,13 +24,13 @@ If instead you need to sort the table using multiple columns or in descending or
 ![order by dialog](images/orderbydialog.png)
 
 The dialog contains a list of order by columns, in the order in which they get applied in the final order by clause.
-To add a new column, choose column/field name and direction (ASC for ascending, DESC for descending) and press the **Add** button. 
+Eech line contains the name of the column and the direction (arrow up for ascending, arrow down for descending).
 
-To replace the values of a row in the list select the row, choose column/field name and direction and press the **Update** button. 
+To add a new column choose it from the combo box in the bottom, with the desired direction, and press the **Add** button. 
 
-To move a row up or down in the list, select the row and press **Move up** or **Move down**. 
+To move a row up or down in the list, click the **arrow-up** or **arrow-down** button in the row you want to move.  
 
-To remove a row from the list, select the row and press **Delete**.
+To remove a row from the list, click the **X** button in the row you want to remove.
 
 To apply the order by columns to the current tab press the **Save** button. 
 The **Cancel** button closes the dialog without generating a new tab.
