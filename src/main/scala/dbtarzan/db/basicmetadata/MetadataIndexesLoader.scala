@@ -22,7 +22,9 @@ class MetadataIndexesLoader(definition: DBDefinition, meta : DatabaseMetaData, l
   }
 
   private def indexLinesToIndexes(lines: List[IndexLine]) : List[Index] = {
-    val stringToLines = lines.groupBy(_.name).map({
+    val stringToLines = lines
+      .filter(index => Option(index.name).isDefined)
+      .groupBy(_.name).map({
         case  (indexName, fields)  => Index(indexName, fields.sortBy(_.fieldWithPosition.ordinalPosition).map(_.fieldWithPosition.field))
       })
     stringToLines.toList
