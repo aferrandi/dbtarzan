@@ -24,14 +24,11 @@ apps:
 
 parts:
   # one part for the java libraries and dependencies, one for the jar itself
-  java:
+  dbtarzan:
     plugin: dump
-    source: .
+    source: source/
     # without libcamberra... it complains that canberra-gtk is not available.
     build-packages: [ca-certificates, ca-certificates-java, openjdk-11-jre]
     stage-packages: [openjdk-11-jre, zlib1g, libcanberra-gtk-module, libcanberra-gtk3-module]
-  dbtarzan:
-    source: source/
-    plugin: dump
 
 
