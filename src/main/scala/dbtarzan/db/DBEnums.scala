@@ -14,6 +14,8 @@ abstract sealed class OrderByDirection
 object OrderByDirection {
 	object ASC extends OrderByDirection
 	object DESC extends OrderByDirection
+
+  def directions() = List(OrderByDirection.ASC, OrderByDirection.DESC)
 }
 
 

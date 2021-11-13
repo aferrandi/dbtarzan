@@ -43,6 +43,9 @@ case class ResponsePrimaryKeys(queryId : QueryId, keys : PrimaryKeys)
 case class ResponseForeignKeys(queryId : QueryId, keys : ForeignKeys) 
     extends TWithQueryId
 
+case class ResponseIndexes(queryId : QueryId, indexes: Indexes)
+  extends TWithQueryId
+
 case class ResponseColumnsFollow(tableId: TableId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
