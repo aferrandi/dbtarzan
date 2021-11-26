@@ -2,15 +2,15 @@ import scala.sys.process._
 
 fork := true
 
-val versionNumber = "1.24"
+val versionNumber = "1.25"
 version := versionNumber
 
 lazy val standardLibraries = Seq(
-  "io.spray" %%  "spray-json" % "1.3.5",
+  "io.spray" %%  "spray-json" % "1.3.6",
   "org.scalatest" % "scalatest_2.13" % "3.1.0" % "test",
-  "org.scalafx" % "scalafx_2.13" % "14-R19",
-  "com.typesafe.akka" %% "akka-actor" % "2.6.0",
-  "com.h2database" % "h2" % "1.4.197"
+  "org.scalafx" % "scalafx_2.13" % "15.0.1-R21",
+  "com.typesafe.akka" %% "akka-actor" % "2.6.4",
+  "com.h2database" % "h2" % "1.4.200"
 )
 
 lazy val commonConfiguration = Seq(
@@ -20,7 +20,7 @@ lazy val commonConfiguration = Seq(
 
   version := versionNumber,
 
-  scalaVersion := "2.13.1",
+  scalaVersion := "2.13.6",
 
   mainClass in Compile := Some("dbtarzan.gui.Main"),
 
@@ -55,7 +55,7 @@ def buildStrategy() = {
 def buildProject(name: String) = {
   val javaFXModules = Seq("base", "controls", "graphics", "media")
   val javaFXLibraries = javaFXModules.map(module =>
-    "org.openjfx" % s"javafx-$module" % "14" classifier name
+    "org.openjfx" % s"javafx-$module" % "15" classifier name
   )
   Project(name, file(s"prj${name}"))
     .settings( commonConfiguration)

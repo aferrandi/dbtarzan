@@ -24,6 +24,8 @@ case class QueryPrimaryKeys(queryId : QueryId)
 
 case class QueryForeignKeys(queryId : QueryId)
 
+case class QueryIndexes(queryId : QueryId)
+
 case class QuerySchemas(databaseId : DatabaseId)
 
 case class QueryReset(databaseId : DatabaseId) 

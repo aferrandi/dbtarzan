@@ -52,4 +52,8 @@ case class PrimaryKey(keyName: String, fields : List[String])
 case class PrimaryKeys(keys : List[PrimaryKey])
 /* the schmas of a database */
 case class Schema(name : String)
-case class Schemas(schemas : List[Schema]) 
+case class Schemas(schemas : List[Schema])
+/* an index of a table in the database */
+case class IndexField(name: String, direction: Option[OrderByDirection])
+case class Index(name: String, fields: List[IndexField])
+case class Indexes(indexes: List[Index])

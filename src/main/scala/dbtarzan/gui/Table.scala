@@ -98,7 +98,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   /* adds the database rows to the table */
   def addRows(rows : Rows) : Unit = try {
     buffer ++= fromRow(rows, fields)
-    selectOneIfNoneSelected()
+    // selectOneIfNoneSelected()
     checkedIfOnlyOne()
     tableFit.addRows(rows.rows)
     } catch {

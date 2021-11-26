@@ -3,7 +3,7 @@ package dbtarzan.gui.foreignkeys
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.{OnChangeSafe, OrderedListView}
+import dbtarzan.gui.util.{OnChangeSafe, OrderedListView, TComboStrategy}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
@@ -12,6 +12,7 @@ import scalafx.geometry.Insets
 import scalafx.scene.Parent
 import scalafx.scene.control.{ComboBox, Label, ListCell, TextField}
 import scalafx.scene.layout.{ColumnConstraints, GridPane}
+import scalafx.scene.paint.Color
 
 /* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
@@ -21,8 +22,16 @@ class SingleEditor(
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
-  private val orderedListColumnsFrom = new OrderedListView[String](x => x, localization.add)
-  private val orderedListColumnsTo = new OrderedListView[String](x => x, localization.add)
+  private val showText: Option[String] => Label = (value: Option[String]) => new Label {
+    textFill = Color.Black
+    text = value.getOrElse("")
+  }
+  private val comboStrategy = new TComboStrategy[String] {
+    override def removeFromCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer -= item
+    override def addToCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer += item
+  }
+  private val orderedListColumnsFrom = new OrderedListView[String](localization.add, showText, comboStrategy)
+  private val orderedListColumnsTo = new OrderedListView[String](localization.add, showText, comboStrategy)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
@@ -35,7 +44,7 @@ class SingleEditor(
   private var editorDisabled = BooleanProperty(true)
 
   private def buildChosenTableProperty(orderedListColumns : OrderedListView[String]) = new ObjectProperty[String]() {
-    onChange { (_, _, newTable) => Option(newTable).filter(t => !t.isEmpty).foreach(t => {
+    onChange { (_, _, newTable) => Option(newTable).filter(t => t.nonEmpty).foreach(t => {
       orderedListColumns.setListData(List.empty)
       dbActor ! QueryColumnsForForeignKeys(databaseId, t)
     }) }
@@ -93,11 +102,11 @@ class SingleEditor(
     editorDisabled.value = false
   })
 
-  def toKey() = {
+  def toKey(): AdditionalForeignKey = {
     val key = AdditionalForeignKey(
       txtName.text(), 
-      FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData),
-      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData)
+      FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData()),
+      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData())
    )
    key
   }
