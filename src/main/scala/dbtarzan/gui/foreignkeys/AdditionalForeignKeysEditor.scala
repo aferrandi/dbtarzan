@@ -10,6 +10,8 @@ import scalafx.geometry.Orientation
 import scalafx.scene.Parent
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
+import scalafx.Includes._
+
 
 /* table + constraint input box + foreign keys */
 class AdditionalForeignKeysEditor(
