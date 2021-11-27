@@ -36,12 +36,6 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
   /* to build automatically the headings of the table colums */
   private val headings = new TableColumnsHeadings(fields)
 
-  /* requests the foreign keys for this table. */
-  dbActor ! QueryForeignKeys(queryId)
-  /* requests the primary keys for this table. */
-  dbActor ! QueryPrimaryKeys(queryId)
-
-
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */
   def buildTable(): TableView[CheckedRow] = new TableView[CheckedRow](buffer) {
     columns += buildCheckColumn()

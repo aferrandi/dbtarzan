@@ -105,6 +105,10 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def queryRows(originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
     val queryId = IDGenerator.queryId(TableId(databaseId, structure.description.name))
     dbActor ! QueryRows(queryId, originalQuery, structure)
+    /* requests the foreign keys for this table. */
+    dbActor ! QueryForeignKeys(queryId)
+    /* requests the primary keys for this table. */
+    dbActor ! QueryPrimaryKeys(queryId)
   }
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
