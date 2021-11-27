@@ -1,9 +1,9 @@
 package dbtarzan.db.actor
 
-import org.scalatest.FlatSpec
 import dbtarzan.db._
+import org.scalatest.flatspec.AnyFlatSpec
 
-class AdditionalForeignKeysIntersectionTest extends FlatSpec {
+class AdditionalForeignKeysIntersectionTest extends AnyFlatSpec {
   def foreignKeysByTable = Map(
       "Artist" -> ForeignKeys(List(
           ForeignKey("key1",  FieldsOnTable("Album", List("ArtistId")), FieldsOnTable("Artist", List("ArtistId")), ForeignKeyDirection.STRAIGHT)

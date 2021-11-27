@@ -1,13 +1,13 @@
 package dbtarzan.config.global
 
-import org.scalatest.FlatSpec
 import spray.json._
 
 import dbtarzan.localization.Languages
 import dbtarzan.config.password.{ Password, VerificationKey }
+import org.scalatest.flatspec.AnyFlatSpec
 
 
-class GlobalDataReaderTest extends FlatSpec {
+class GlobalDataReaderTest extends AnyFlatSpec {
    import GlobalDataJsonProtocol._
 
   "A global configuration" should "be parseable" in {

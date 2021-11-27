@@ -1,8 +1,8 @@
 package dbtarzan.db
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class QueryAttributesApplierTest extends FlatSpec {
+class QueryAttributesApplierTest extends AnyFlatSpec {
   "applying both delimiters and schema" should "give a table with delimeters and schema" in {
 	val applier = QueryAttributesApplier.from(QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(Some(Schema("TST")), None), None))
 	assert("[TST].[TBL]" === applier.applySchemaAndDelimiters("TBL"))

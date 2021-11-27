@@ -1,6 +1,5 @@
 package dbtarzan.db
 
-import org.scalatest.FlatSpec
 import org.scalatest.BeforeAndAfter
 
 import java.sql.Connection
@@ -12,8 +11,9 @@ import dbtarzan.testutil.FakeLogger
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import org.scalatest.flatspec.AnyFlatSpec
 
-class IntegrationTest extends FlatSpec with BeforeAndAfter {
+class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   var connection: Connection = _
 
 

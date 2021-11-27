@@ -1,8 +1,8 @@
 package dbtarzan.db
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class SqlFieldBuilderTest extends FlatSpec {
+class SqlFieldBuilderTest extends AnyFlatSpec {
   "a text field without attributes" should "give a simple [name = 'value']" in {
     val builder = new SqlFieldBuilder(
       fields(),

@@ -1,10 +1,10 @@
 package dbtarzan.db.actor
 
-import org.scalatest.FlatSpec
 import dbtarzan.db._
+import org.scalatest.flatspec.AnyFlatSpec
 
 
-class DatabaseWorkerCacheTest extends FlatSpec {
+class DatabaseWorkerCacheTest extends AnyFlatSpec {
   "the cache" should "extract the primary key for a table only the first time it gets called" in {
     val cache = new DatabaseWorkerCache()
     cache.cachedPrimaryKeys("user", new PrimaryKeys(List(PrimaryKey("key1", List("lastName")))))

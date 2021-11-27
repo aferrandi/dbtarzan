@@ -1,8 +1,8 @@
 package dbtarzan.config.password
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class PasswordEncryptionTest extends FlatSpec {
+class PasswordEncryptionTest extends AnyFlatSpec {
   "decrypting the encrypted password" should "give the original value" in {
   	val passwordPlain = Password("amp1V30NtnMEyaIRciBh")
     val passwordEncryption = new PasswordEncryption(PasswordEncryption.defaultEncryptionKey)

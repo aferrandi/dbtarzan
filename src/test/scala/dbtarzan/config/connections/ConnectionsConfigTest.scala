@@ -1,11 +1,11 @@
 
 package dbtarzan.config.connections
 
-import org.scalatest.FlatSpec
 
 import dbtarzan.config.password.Password
+import org.scalatest.flatspec.AnyFlatSpec
 
-class ConnectionsConfigTest extends FlatSpec {
+class ConnectionsConfigTest extends AnyFlatSpec {
 
   "getting connection with existing 1 name" should "return the connection" in {
     val config = new ConnectionsConfig(List(

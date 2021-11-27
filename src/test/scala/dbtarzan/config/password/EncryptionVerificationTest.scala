@@ -1,8 +1,8 @@
 package dbtarzan.config.password
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class EncryptionVerificationTest extends FlatSpec {
+class EncryptionVerificationTest extends AnyFlatSpec {
   "the encryption key" should "verify against its own verification key" in {
     val encryptionKey = EncryptionKey("amp1V30NtnMEyaIR")  
     val verificationKey = EncryptionVerification.toVerification(encryptionKey)

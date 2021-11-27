@@ -1,9 +1,9 @@
 package dbtarzan.gui.util
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 
-class StringUtilTest extends FlatSpec {
+class StringUtilTest extends AnyFlatSpec {
   "shortening a string" should "should give a string of the desired length with 3 dots at the end" in {
   	assert(StringUtil.shortenIfTooLong("Zarathustra", 5) === "Za...")
   }

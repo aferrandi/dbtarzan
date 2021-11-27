@@ -2,10 +2,10 @@ package dbtarzan.config.connections
 
 import dbtarzan.config.password.Password
 import dbtarzan.db.IdentifierDelimitersValues
-import org.scalatest.FlatSpec
 import spray.json._
+import org.scalatest.flatspec.AnyFlatSpec
 
-class ConnectionDataReaderTest extends FlatSpec {
+class ConnectionDataReaderTest extends AnyFlatSpec {
    import ConnectionDataJsonProtocol._
   "A list of connections" should "be parseable" in {
   	val values= List(

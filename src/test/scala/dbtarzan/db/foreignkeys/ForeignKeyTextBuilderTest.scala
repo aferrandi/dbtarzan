@@ -1,9 +1,9 @@
 package dbtarzan.db.foreignkeys
 
 import dbtarzan.db._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class ForeignKeyTextBuilderTest extends FlatSpec {
+class ForeignKeyTextBuilderTest extends AnyFlatSpec {
   "building foreign key query with delimiters" should "give a query with delimiters" in {
   	val rows = List(buildRow("John", "23"))
 	  val criteria = ForeignKeyCriteria(rows, buildColumns())

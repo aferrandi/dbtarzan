@@ -1,8 +1,8 @@
 package dbtarzan.gui.table
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class TableColumnsFitterTest extends FlatSpec {
+class TableColumnsFitterTest extends AnyFlatSpec {
   "logistic of 10" should "be around 10" in {
 	  assert(TableColumnsFitter.logistic(10) === 10.686513575978815)
   }

@@ -1,9 +1,9 @@
 package dbtarzan.db
 
-import org.scalatest.FlatSpec
 import dbtarzan.db.foreignkeys.{ FKRow, ForeignKeyCriteria }
+import org.scalatest.flatspec.AnyFlatSpec
 
-class SqlBuilderTest extends FlatSpec {
+class SqlBuilderTest extends AnyFlatSpec {
   "a simple table" should "give a simple query" in {
     val structure = DBTableStructure(
         buildDescription(),

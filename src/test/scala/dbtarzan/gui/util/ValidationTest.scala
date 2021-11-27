@@ -1,9 +1,9 @@
 package dbtarzan.gui.util
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 
-class ValidationTest extends FlatSpec {
+class ValidationTest extends AnyFlatSpec {
   "a jdbc URL" should "should validate" in {
   	assert(Validation.isValidJdbcURL("jdbc:sqlite:/home/andrea/prj/dbtarzan/testdbs/sqllite/Chinook_Sqlite.sqlite") === true)
   }

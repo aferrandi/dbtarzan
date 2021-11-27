@@ -1,8 +1,8 @@
 package dbtarzan.db
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class SqlPartsBuilderTest extends FlatSpec {
+class SqlPartsBuilderTest extends AnyFlatSpec {
 
   "an order by with rwo fields" should "give an order by clause" in {
     val sql = SqlPartsBuilder.buildOrderBy(

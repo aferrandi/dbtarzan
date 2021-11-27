@@ -4,9 +4,9 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.Password
 import dbtarzan.db.{IdentifierDelimiters, Schema}
 import dbtarzan.gui.config.connections.ConnectionDataValidation
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class ConnectionDataValidationTest extends FlatSpec {
+class ConnectionDataValidationTest extends AnyFlatSpec {
   "correct connection data" should "give no error" in {
     val errors = ConnectionDataValidation.validate(
       ConnectionData(

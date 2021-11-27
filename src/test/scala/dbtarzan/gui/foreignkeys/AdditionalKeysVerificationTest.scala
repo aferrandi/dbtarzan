@@ -1,10 +1,10 @@
 package dbtarzan.gui.foreignkeys
 
-import org.scalatest.FlatSpec
 
 import dbtarzan.db.{ AdditionalForeignKey, FieldsOnTable }
+import org.scalatest.flatspec.AnyFlatSpec
 
-class AdditionalKeysVerificationTest extends FlatSpec {
+class AdditionalKeysVerificationTest extends AnyFlatSpec {
   "checking correct additional foreign keys" should "should succeed" in {
   	val vs = AdditionalKeysVerification.verify(List(
         AdditionalForeignKey("name1", FieldsOnTable("tableFrom1", List("columnFrom1")), FieldsOnTable("tableTo1", List("columnTo1"))),

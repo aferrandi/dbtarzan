@@ -1,10 +1,10 @@
 package dbtarzan.gui.table
 
-import org.scalatest.FlatSpec
 
 import dbtarzan.db._
+import org.scalatest.flatspec.AnyFlatSpec
 
-class TableColumnsHeadingsTest extends FlatSpec {
+class TableColumnsHeadingsTest extends AnyFlatSpec {
   "adding primary keys to the headings" should "return a primary key text" in {
     val headings = new TableColumnsHeadings(List(Field("firstName", FieldType.STRING, ""), Field("lastName", FieldType.STRING, "") ));
     val texts = headings.addPrimaryKeys(PrimaryKeys(List(PrimaryKey("nameKey", List("lastName")))))

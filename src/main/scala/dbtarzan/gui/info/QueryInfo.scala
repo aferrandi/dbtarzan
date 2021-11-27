@@ -1,12 +1,10 @@
 package dbtarzan.gui.info
 
-import scalafx.scene.control.TextArea
-import scalafx.scene.Parent
-import scalafx.Includes._
-
-import dbtarzan.db.{ QuerySql }
-import dbtarzan.localization.Localization
+import dbtarzan.db.QuerySql
 import dbtarzan.gui.TControlBuilder
+import dbtarzan.localization.Localization
+import scalafx.scene.Parent
+import scalafx.scene.control.TextArea
 
 
 /** The read only text box showing the query sql, so that it can be seen anc copied */
