@@ -22,7 +22,7 @@ object ConnectionDataValidation
       // errorIf("Password cannot contain spaces", _ => Validation.containsWhtitespace(data.password)),
       errorIf("Empty jar", _ => data.jar.isEmpty),
       errorIf("Jar cannot contain spaces", _ => Validation.containsWhitespace(data.jar)),
-      errorIf("Max field size should be over "+MAXFIELDSIZE_MIN, _ => !Validation.isMoreThan(data.maxFieldSize, MAXFIELDSIZE_MIN))
+      errorIf("Max field size should be over "+MAXFIELDSIZE_MIN, _ => !Validation.isMoreThanOrNone(data.maxFieldSize, MAXFIELDSIZE_MIN))
     ).flatten
 
   private def errorIf(errorText: String, conditionForError: String => Boolean): Option[String] = {
