@@ -32,9 +32,11 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   def selectFirst() : Unit = selectionModel().selectFirst()
 
-  private def selectionModel() = list.selectionModel() 
+  private def selectionModel() = list.selectionModel()
 
-  def newData(): ConnectionData = ConnectionData("", "<NEW>", "","",None,"", Password(""),None, None, None, None, None, None, None)
+  private val newConnectionName = "<NEW>"
+
+  def newData(): ConnectionData = ConnectionData("", newConnectionName, "","",None,"", Password(""),None, None, None, None, None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex(): Option[Int] = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
@@ -68,7 +70,7 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
     if(connectionDatas.nonEmpty)
       getSelectedIndex().foreach(selectedIndex => {
         val toDuplicate = connectionDatas(selectedIndex)
-        connectionDatas += toDuplicate.copy(name = "<NEW>")
+        connectionDatas += toDuplicate.copy(name = newConnectionName)
         selectionModel().selectLast()   
       })
 

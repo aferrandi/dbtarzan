@@ -101,6 +101,7 @@ class Italian extends Localization {
     def connectionSuccessful = "Connessione riuscita"
     def connectionToDatabaseSuccesful(databaseName: String) = "La connessione al database "+databaseName+" e' riuscita"
     def editingConnectionFile(fileName: Path) = "Sto editando il file di configurazione delle connessioni " + fileName
+    def indexes = "Indici"
     def errorConnectingToDatabase(databaseName : String) = "La connessione al database "+databaseName+" e' fallita a causa di"
     def errorQueryingDatabase(databaseName : String) = "L'apertura del database "+databaseName+" e' fallita a causa di"
     def errorRequestingTheRows(queryId : QueryId) = "La richiesta delle righe di "+queryId+" e' fallita a a causa di"    

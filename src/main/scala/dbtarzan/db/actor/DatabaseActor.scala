@@ -1,9 +1,8 @@
 package dbtarzan.db.actor
 
 import java.nio.file.Path
-import java.sql.SQLException
+import java.sql.{Connection, SQLException}
 import java.time.LocalDateTime
-
 import akka.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
@@ -42,6 +41,7 @@ class DatabaseActor(
 
   private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
+    setReadOnlyIfPossible(connection)
     log.info(localization.connectedTo(databaseName))
     Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), data.maxFieldSize, localization, log))
   } catch {
@@ -52,6 +52,14 @@ class DatabaseActor(
     case e : Exception => {
       log.error(localization.errorConnectingToDatabase(databaseName), e)
       None
+    }
+  }
+
+  private def setReadOnlyIfPossible(connection: Connection): Unit = {
+    try {
+      connection.setReadOnly(true)
+    } catch {
+      case e: Exception => None
     }
   }
 
@@ -157,6 +165,12 @@ class DatabaseActor(
           guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
       }, logError)
 
+  private def queryIndexes(qry: QueryIndexes) : Unit = withCore(core => {
+    val tableName = qry.queryId.tableId.tableName
+    val indexes = cache.cachedIndexes(tableName, core.indexesLoader.indexes(tableName))
+    guiActor ! ResponseIndexes(qry.queryId, indexes)
+  }, logError)
+
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
         val tableName = qry.tableId.tableName
         val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
@@ -215,6 +229,7 @@ class DatabaseActor(
 		case qry : QueryForeignKeys => queryForeignKeys(qry)    	
 		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)
+    case qry : QueryIndexes => queryIndexes(qry)
     case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
 		case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
 	}

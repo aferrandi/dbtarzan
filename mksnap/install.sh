@@ -1,3 +1,4 @@
+#prj/dbtarzan> mksnap/install.sh $PWD 1.25 
 ROOTDIR=$1
 VERSION=$2
 SNAPDIR=$ROOTDIR/mksnap

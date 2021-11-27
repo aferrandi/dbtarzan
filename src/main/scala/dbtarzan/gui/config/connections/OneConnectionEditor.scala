@@ -50,11 +50,9 @@ class OneConnectionEditor(
   }
 
   private val cmbDelimiters = new ComboDelimiters()
-
   private val txtMaxRows = JFXUtil.numTextField()
   private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
   private val txtMaxFieldSize = JFXUtil.numTextField()
-
 
   private val lblDelimiters = new Label { text = localization.delimiters+":" }
   private val lblMaxRows = new Label { text = localization.maxRows+":" }
@@ -117,8 +115,6 @@ class OneConnectionEditor(
       else
         password
 
-
-
   def show(data : ConnectionData) : Unit = safe.noChangeEventDuring(() => {
     txtName.text = data.name
     jarSelector.show(Some(data.jar))
@@ -136,8 +132,6 @@ class OneConnectionEditor(
     chkAdvanced.selected = false
     changeAdvancedVisibility(false)
   })
-
-
 
   private def changeAdvancedVisibility(visible : Boolean) : Unit = {
     JFXUtil.changeControlsVisibility(visible,

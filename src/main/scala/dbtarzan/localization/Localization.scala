@@ -101,6 +101,7 @@ trait Localization {
   def connectionSuccessful: String
   def connectionToDatabaseSuccesful(databaseName: String): String
   def editingConnectionFile(fileName: Path) : String
+  def indexes: String
   def errorConnectingToDatabase(databaseName : String) : String
   def errorQueryingDatabase(databaseName : String) : String
   def errorRequestingTheRows(queryId : QueryId) : String

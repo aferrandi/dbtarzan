@@ -34,5 +34,33 @@ class ValidationTest extends FlatSpec {
   
   "a phrase with tab" should "contain whitespace" in {
   	assert(Validation.containsWhitespace("not\tvalidate") === true)
-  }  
+  }
+
+  "the number 20" should "be more than 10" in {
+    assert(Validation.isMoreThanOrNone(Some(20), 10) === true)
+  }
+
+  "the number 20" should "not be more than 30" in {
+    assert(Validation.isMoreThanOrNone(Some(20), 30) === false)
+  }
+
+  "an empty number" should "be more than 10" in {
+    assert(Validation.isMoreThanOrNone(None, 10) === true)
+  }
+
+  "a word with only digit and letters" should "should validate" in {
+    assert(Validation.isDigitsOrLetters("9Dog12Cat12") === true)
+  }
+
+  "a word with space" should "should not validate" in {
+    assert(Validation.isDigitsOrLetters("9Dog12 Cat12") === false)
+  }
+
+  "a word with underscore" should "should not validate" in {
+    assert(Validation.isDigitsOrLetters("9Dog12_Cat12") === false)
+  }
+
+  "<NEW>" should "should not validate" in {
+    assert(Validation.isDigitsOrLetters("<NEW>") === false)
+  }
 }
