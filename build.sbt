@@ -22,18 +22,18 @@ lazy val commonConfiguration = Seq(
 
   scalaVersion := "2.13.6",
 
-  mainClass in Compile := Some("dbtarzan.gui.Main"),
+  Compile / mainClass := Some("dbtarzan.gui.Main"),
 
-  scalaSource in Compile := baseDirectory.value / ".." / "src" / "main" / "scala",
+  Compile / scalaSource := baseDirectory.value / ".." / "src" / "main" / "scala",
 
-  scalaSource in Test := baseDirectory.value / ".." / "src" / "test" / "scala",
+  Test / scalaSource := baseDirectory.value / ".." / "src" / "test" / "scala",
 
-  resourceDirectory in Compile := baseDirectory.value / ".." / "src" / "main" / "resources",
+  Compile / resourceDirectory := baseDirectory.value / ".." / "src" / "main" / "resources",
 
-  resourceDirectory in Test := baseDirectory.value / ".." / "src" / "test" / "resources",
+  Test / resourceDirectory := baseDirectory.value / ".." / "src" / "test" / "resources",
 
-  scalacOptions in Compile ++= Seq("-Ywarn-unused:imports"),
-  scalacOptions in Compile --= Seq("-Xfatal-warnings"),
+  Compile / scalacOptions ++= Seq("-Ywarn-unused:imports"),
+  Compile / scalacOptions --= Seq("-Xfatal-warnings"),
   buildStrategy(),
 // scalacOptions += "-Ylog-classpath"
   maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
@@ -43,10 +43,10 @@ lazy val commonConfiguration = Seq(
 )
 
 def buildStrategy() = {
-  assemblyMergeStrategy in assembly := {
+  assembly / assemblyMergeStrategy := {
     case "module-info.class" => MergeStrategy.discard
     case x => {
-      val oldStrategy = (assemblyMergeStrategy in assembly).value
+      val oldStrategy = (assembly / assemblyMergeStrategy).value
       oldStrategy(x)
     }
   }
@@ -68,16 +68,16 @@ def buildProject(name: String) = {
 }
 
 def excludeDependenciesOfOtherOses(name: String) = {
-  assemblyExcludedJars in assembly ++= {
+  assembly / assemblyExcludedJars ++= {
     val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
-    val cp = (fullClasspath in assembly).value
+    val cp = (assembly / fullClasspath).value
     cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) }
   }
 }
 
 lazy val linux = buildProject("linux")
     .settings(Seq(
-      debianPackageDependencies in Debian ++= Seq("openjdk-11-jre"),
+      Debian / debianPackageDependencies ++= Seq("openjdk-11-jre"),
       bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
     ))
     .enablePlugins(DebianPlugin, JavaAppPackaging)
