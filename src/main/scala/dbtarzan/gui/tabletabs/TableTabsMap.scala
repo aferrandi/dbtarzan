@@ -1,16 +1,17 @@
 package dbtarzan.gui.tabletabs
 
-import scalafx.scene.control.Tab
-import scalafx.Includes._
-import scala.collection.mutable.HashMap
 import dbtarzan.gui.BrowsingTable
 import dbtarzan.messages._
+import scalafx.Includes._
+import scalafx.scene.control.Tab
+
+import scala.collection.mutable
 
 case class BrowsingTableWithTab(table : BrowsingTable, tab : Tab)
 
 /* One tab for each table */
 class TableTabsMap() {
-  private val mapTable = HashMap.empty[QueryId, BrowsingTableWithTab]
+  private val mapTable = mutable.HashMap.empty[QueryId, BrowsingTableWithTab]
 
   def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) : List[QueryId] = 
     mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
@@ -30,7 +31,7 @@ class TableTabsMap() {
     withQueryId(id , table => doWith(table.table))
 
   def tabsWithIds(ids : List[QueryId]) : List[javafx.scene.control.Tab] = 
-    mapTable.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate).toList
+    mapTable.view.filterKeys(id => ids.contains(id)).values.map(_.tab.delegate).toList
 
   def removeTablesWithIds(ids : List[QueryId]) : Unit =
     mapTable --= ids
