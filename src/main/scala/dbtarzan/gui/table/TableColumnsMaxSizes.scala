@@ -26,11 +26,11 @@ class TableColumnsMaxSizes(columns : List[Field], rnd : Random) {
         row.map(nullableLength)
     }
     private def max2Rows(a : List[Int], b: List[Int]) : List[Int] = 
-        (a, b).zipped.map(Math.max)
+        a.lazyZip(b).map(Math.max)
     
     private def maxRows(rows : List[List[String]]) : List[Int] = {
         val rowsSizes = rows.map(rowLengths)
-        if(!rowsSizes.isEmpty)
+        if(rowsSizes.nonEmpty)
             rowsSizes.tail.foldLeft(rowsSizes.head)(max2Rows)
         else
             lengths

@@ -11,5 +11,5 @@ class CheckedRowsBuffer {
 
 	def remove(row : Row) : Unit = selected -= row
 
-	def rows = selected.toList
+	def rows: List[Row] = selected.toList
 }
