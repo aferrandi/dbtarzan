@@ -7,5 +7,5 @@ Since there can potentially be several tabs based on the same table, we use a ge
 case class QueryId(tableId : TableId, uuid : String)
 
 object IDGenerator {
-	def queryId(tableId : TableId) = QueryId(tableId, java.util.UUID.randomUUID.toString) 
+	def queryId(tableId : TableId): QueryId = QueryId(tableId, java.util.UUID.randomUUID.toString)
 }

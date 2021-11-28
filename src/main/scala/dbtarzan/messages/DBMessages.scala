@@ -20,9 +20,9 @@ case class QueryColumnsForForeignKeys(databaseId : DatabaseId, tableName: String
 
 case class QueryColumnsFollow(tableId: TableId, follow : FollowKey) 
 
-case class QueryPrimaryKeys(queryId : QueryId) 
+case class QueryPrimaryKeys(queryId : QueryId, structure : DBTableStructure)
 
-case class QueryForeignKeys(queryId : QueryId)
+case class QueryForeignKeys(queryId : QueryId, structure : DBTableStructure)
 
 case class QueryIndexes(queryId : QueryId)
 

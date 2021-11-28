@@ -1,21 +1,21 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ TabPane, Tab, Tooltip}
-import scalafx.scene.Parent
-import scalafx.Includes._
 import akka.actor.ActorRef
-
-import dbtarzan.db.{DBTableStructure, Fields, TableDescription, FollowKey, QueryAttributes, DatabaseId, TableId}
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
-import dbtarzan.messages._
-import dbtarzan.gui.tabletabs.{ TableTabsMap, BrowsingTableWithTab }
+import dbtarzan.db._
+import dbtarzan.gui.tabletabs.{BrowsingTableWithTab, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
+import dbtarzan.messages._
+import scalafx.Includes._
+import scalafx.scene.Parent
+import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
 class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tabs = new TabPane()
   private val tables = new TableTabsMap()
+  private val tablesToClose = new TabsToClose()
 
   /* creates a table from scratch */
   private def createTable(tableId : TableId, columns : Fields, attributes : QueryAttributes) : DBTableStructure = 
@@ -104,11 +104,12 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   private def queryRows(originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
     val queryId = IDGenerator.queryId(TableId(databaseId, structure.description.name))
-    dbActor ! QueryRows(queryId, originalQuery, structure)
+    tablesToClose.addToCloseWhenNewTabOpens(queryId, originalQuery)
     /* requests the foreign keys for this table. */
-    dbActor ! QueryForeignKeys(queryId)
+    dbActor ! QueryForeignKeys(queryId, structure)
+    dbActor ! QueryRows(queryId, originalQuery, structure)
     /* requests the primary keys for this table. */
-    dbActor ! QueryPrimaryKeys(queryId)
+    dbActor ! QueryPrimaryKeys(queryId, structure)
   }
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
@@ -126,8 +127,8 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case copy : CopySelectionToClipboard => tables.tableWithQueryId(copy.queryId, _.copySelectionToClipboard(copy.includeHeaders))
     case check : CheckAllTableRows => tables.tableWithQueryId(check.queryId, _.checkAllTableRows())
     case check : CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
-    case keys : ResponsePrimaryKeys => tables.tableWithQueryId(keys.queryId, _.addPrimaryKeys(keys)) 
-    case keys : ResponseForeignKeys => tables.tableWithQueryId(keys.queryId, _.addForeignKeys(keys))
+    case keys : ResponsePrimaryKeys => createTabWith(keys.queryId, keys.structure, _.table.addPrimaryKeys(keys))
+    case keys : ResponseForeignKeys => createTabWith(keys.queryId, keys.structure, _.table.addForeignKeys(keys))
     case indexes: ResponseIndexes =>  tables.tableWithQueryId(indexes.queryId, _.addIndexes(indexes))
     case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
@@ -135,17 +136,19 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case request : RequestRemovalThisTab => requestRemovalThisTab(request.queryId)
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
-    case rows : ResponseRows => { 
-      tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))
-      closeOriginalTabIfAny(rows)
-      }
+    case rows : ResponseRows => createTabWith(rows.queryId, rows.structure, addRows(_, rows))
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
     case _ => log.error(localization.errorTableMessage(msg))
   }
 
-  private def closeOriginalTabIfAny(rows: ResponseRows): Unit = {
-    rows.original.foreach(original => {
+  private def createTabWith(queryId: QueryId, structure : DBTableStructure, doWith : BrowsingTableWithTab => Unit): Unit = {
+    tables.withQueryIdForce(queryId, doWith, buildBrowsingTable(queryId, structure))
+    closeOriginalTabIfAny(queryId)
+  }
+
+  private def closeOriginalTabIfAny(queryId: QueryId): Unit = {
+    tablesToClose.removeAndGetToCloseWhenNewTabOpens(queryId).foreach(original => {
       if (original.closeCurrentTab)
         guiActor ! RequestRemovalThisTab(original.queryId)
     })
