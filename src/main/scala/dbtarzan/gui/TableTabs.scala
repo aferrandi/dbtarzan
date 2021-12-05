@@ -1,9 +1,9 @@
 package dbtarzan.gui
 
 import akka.actor.ActorRef
-import dbtarzan.db.foreignkeys.ForeignKeyMapper
 import dbtarzan.db._
-import dbtarzan.gui.tabletabs.{BrowsingTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
+import dbtarzan.db.foreignkeys.ForeignKeyMapper
+import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
 import scalafx.Includes._
@@ -11,10 +11,11 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization) extends TControlBuilder {
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization)
+  extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tabs = new TabPane()
-  private val tables = new TableTabsMap()
+  private val tables = new TableTabsMap[BrowsingTable]()
   private val tablesToClose = new TabsToClose()
 
   def addColumns(columns : ResponseColumns) : Unit =  {
@@ -98,7 +99,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def requestRemovalThisTab(queryId : QueryId) : Unit =
     tables.withQueryId(queryId, table => removeTabs(List(table.tab)))
 
-  private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : BrowsingTableWithTab = {
+  private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : TTableWithTab[BrowsingTable] = {
     val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId, localization)
     val tab = buildTab(structure, browsingTable)
     tabs += tab
@@ -107,10 +108,10 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     browsingTable.onNewTable((newStructure, closeCurrentTab) => 
         queryTableContent(Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
       )
-    BrowsingTableWithTab(browsingTable, tab)
+    TTableWithTab[BrowsingTable](browsingTable, tab)
   }
 
-  private def addRows(table: BrowsingTableWithTab, rows : ResponseRows) : Unit = {
+  private def addRows(table: TTableWithTab[BrowsingTable], rows : ResponseRows) : Unit = {
     table.table.addRows(rows)
     table.tab.tooltip.value.text = table.table.rowsNumber+" rows"
   }
@@ -134,7 +135,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     dbActor ! QueryPrimaryKeys(queryId, structure)
   }
 
-  private def createTabWith(queryId: QueryId, structure : DBTableStructure, doWith : BrowsingTableWithTab => Unit): Unit = {
+  private def createTabWith(queryId: QueryId, structure : DBTableStructure, doWith : TTableWithTab[BrowsingTable] => Unit): Unit = {
     tables.withQueryIdForce(queryId, doWith, buildBrowsingTable(queryId, structure))
     closeOriginalTabIfAny(queryId)
   }
