@@ -11,7 +11,7 @@ object ConnectionDataValidation
   def validate(data : ConnectionData) : List[String] =
     List(
       errorIf("Empty name", _ => data.name.isEmpty),
-      errorIf("Name must contain only letters or digits", _ => !Validation.isDigitsOrLetters(data.name)),
+      errorIf("Name must be an identifier", _ => !Validation.isIdentifier(data.name)),
       errorIf("Empty url", _ => data.url.isEmpty),
       errorIf("Url cannot contain spaces", _ => Validation.containsWhitespace(data.url)),
       errorIf("Url must be in URL form", _ => !Validation.isValidJdbcURL(data.url)),
