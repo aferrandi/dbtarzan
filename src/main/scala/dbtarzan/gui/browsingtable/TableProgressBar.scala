@@ -1,9 +1,12 @@
 package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.ProgressBar
+
 import scala.collection.mutable.HashSet
 import scalafx.scene.Parent
 import dbtarzan.gui.TControlBuilder
+import scalafx.scene.layout.StackPane
+import scalafx.scene.text.Text
 
 
 object TableProgressBar {
@@ -19,28 +22,36 @@ class TableProgressBar(complete: () => Unit) extends TControlBuilder {
 		prefWidth = Double.MaxValue
 	}
 
-	private val setReceived = new HashSet[String]()
+  private val text = new Text() {
+  }
+
+  private val pane = new StackPane {
+    children = List(bar, text)
+  }
+
+  private val setReceived = new HashSet[String]()
 
 	private def updateProgressBar() : Unit =  {
 		bar.progress() = setReceived.size * TableProgressBar.PROGRESSTEP
+    text.text = setReceived.mkString(" + ")
 		if(setReceived.size >= TableProgressBar.STEPS)
 			complete()
 	}
 
 	def receivedPrimaryKeys() : Unit = {
-		setReceived += "PRIMARYKEYS"
+		setReceived += "Primary keys"
 		updateProgressBar()
 	}
 
 	def receivedForeignKeys() : Unit = {
-		setReceived += "FOREIGNKEYS"
+		setReceived += "Foreign keys"
 		updateProgressBar()
 	}
 
 	def receivedRows() : Unit = {
-		setReceived += "ROWS"
+		setReceived += "Rows"
 		updateProgressBar()
 	}
 
-	def control : Parent = bar
+	def control : Parent = pane
 }
