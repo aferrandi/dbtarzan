@@ -1,4 +1,4 @@
-package dbtarzan.gui.table
+package dbtarzan.gui.table.headings
 
 import dbtarzan.gui.util.JFXUtil
 import scalafx.scene.image.Image

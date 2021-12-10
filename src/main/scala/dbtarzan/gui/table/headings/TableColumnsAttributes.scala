@@ -1,4 +1,4 @@
-package dbtarzan.gui.table
+package dbtarzan.gui.table.headings
 
 import scala.collection.immutable.BitSet
 import scala.collection.mutable

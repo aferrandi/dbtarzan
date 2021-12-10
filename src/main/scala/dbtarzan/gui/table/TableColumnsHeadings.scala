@@ -1,6 +1,7 @@
 package dbtarzan.gui.table
 
 import dbtarzan.db._
+import dbtarzan.gui.table.headings.{TableColumnsAttributes, TableColumnsIWithIndex, TableColumnsIcons, TableColumnsStates}
 import scalafx.scene.image.Image
 
 
@@ -23,7 +24,7 @@ class TableColumnsHeadings(columnNames : List[Field]) {
   }
 
   private def addKeys(fieldNames: List[String], state: Int): List[HeadingTextAndIcon] =
-    attributes.addKeys(fieldNames.map(TableColumnsIWithIndex.keyFromColumnName(_)), state).map(
+    attributes.addKeys(fieldNames.map(TableColumnsIWithIndex.keyFromColumnName), state).map(
       heading => HeadingTextAndIcon(columnsWithIndex.indexOf(heading.key), columnsWithIndex.nameOf(heading.key), TableColumnsIcons.bitsetToIcon(heading.attributes))
     )
 }

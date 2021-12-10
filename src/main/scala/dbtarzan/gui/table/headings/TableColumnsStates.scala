@@ -1,4 +1,4 @@
-package dbtarzan.gui.table
+package dbtarzan.gui.table.headings
 
 object TableColumnsStates {
   val PRIMARYKEY_STATE: Int = 1
