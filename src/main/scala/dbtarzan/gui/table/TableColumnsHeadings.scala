@@ -2,6 +2,7 @@ package dbtarzan.gui.table
 
 import dbtarzan.db._
 import scalafx.scene.image.Image
+import scala.collection.mutable
 
 object TableColumnsStates {
   val PRIMARYKEY_STATE: Int = 1
@@ -13,7 +14,11 @@ case class HeadingTextAndIcon(index: Int, text: String, icon : Option[Image])
 
 /* produces headings for the UI table depending by the primary and foreign keys of which the columns are part */
 class TableColumnsHeadings(columnNames : List[Field]) {
-  val attributes = new TableColumnsAttributes(columnNames.map(_.name))
+  case class KeyAndLabel(key: String, label: String)
+  private val keysAndLabels = columnNames.map(_.name).map(n => KeyAndLabel(n.toLowerCase, n))
+  private val indexByKey = keysAndLabels.map(_.key).zipWithIndex.toMap
+  private val namesByLowerCase: mutable.Map[String, String] = mutable.Map(keysAndLabels.map(n => (n.key, n.label)) : _*)
+  private val attributes = new TableColumnsAttributes(keysAndLabels.map(_.key))
 
   def addPrimaryKeys(keys : PrimaryKeys) : List[HeadingTextAndIcon] = {
     val fieldNames = keys.keys.flatMap(_.fields)
@@ -26,8 +31,8 @@ class TableColumnsHeadings(columnNames : List[Field]) {
   }
 
   private def addKeys(fieldNames: List[String], state: Int): List[HeadingTextAndIcon] = {
-    attributes.addKeys(fieldNames, state).map(
-      heading => HeadingTextAndIcon(heading.index, heading.text, TableColumnsIcons.bitsetToIcon(heading.attributes))
+    attributes.addKeys(fieldNames.map(_.toLowerCase()), state).map(
+      heading => HeadingTextAndIcon(indexByKey(heading.key), namesByLowerCase(heading.key), TableColumnsIcons.bitsetToIcon(heading.attributes))
     )
   }
 }
