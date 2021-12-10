@@ -19,9 +19,9 @@ class TableColumnsAttributes(keys : List[String]) {
   }
 
   private def addKeyAttribute(key: String, state: Int): BitSet = {
-    val bitset = keysAttributes(key) + state
-    keysAttributes.update(key, bitset)
-    bitset
+    val updateAttributes = keysAttributes(key) + state
+    keysAttributes.update(key, updateAttributes)
+    updateAttributes
   }
 
   private def toHeadingText(key : String) =
