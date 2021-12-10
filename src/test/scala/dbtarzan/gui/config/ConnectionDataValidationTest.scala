@@ -48,7 +48,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         None
       )
     )
-    assert(List("Empty name", "Empty url", "Url must be in URL form", "Empty driver", "Empty jar") === errors)
+    assert(List("Empty name", "Name must be an identifier", "Empty url", "Url must be in URL form", "Empty driver", "Empty jar") === errors)
   }
 
   "connection data with fields with spaces" should "give error" in {
@@ -70,7 +70,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         None
       )
     )
-    assert(List("Name must contain only letters or digits", "Url cannot contain spaces", "Url must be in URL form", "Jar cannot contain spaces", "Max field size should be over 200") === errors)
+    assert(List("Name must be an identifier", "Url cannot contain spaces", "Url must be in URL form", "Jar cannot contain spaces", "Max field size should be over 200") === errors)
   }
 
 }

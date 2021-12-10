@@ -14,5 +14,5 @@ case class DBDefinition(schema : Option[Schema], catalog : Option[String])
 case class QueryAttributes(delimiters : Option[IdentifierDelimiters], definition : DBDefinition, maxFieldSize: Option[Int])
 
 object QueryAttributes {
-	def none() = QueryAttributes(None, DBDefinition(None, None), None)
+	def none(): QueryAttributes = QueryAttributes(None, DBDefinition(None, None), None)
 } 

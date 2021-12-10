@@ -49,18 +49,23 @@ class ValidationTest extends AnyFlatSpec {
   }
 
   "a word with only digit and letters" should "should validate" in {
-    assert(Validation.isDigitsOrLetters("9Dog12Cat12") === true)
+    assert(Validation.isIdentifier("Dog12Cat12") === true)
   }
 
   "a word with space" should "should not validate" in {
-    assert(Validation.isDigitsOrLetters("9Dog12 Cat12") === false)
+    assert(Validation.isIdentifier("Dog12 Cat12") === false)
   }
 
-  "a word with underscore" should "should not validate" in {
-    assert(Validation.isDigitsOrLetters("9Dog12_Cat12") === false)
+  "a word with underscore or dash" should "should validate" in {
+    assert(Validation.isIdentifier("Dog12_Cat-12-") === true)
   }
+
+  "a word with characters that are not of an identifier" should "should not validate" in {
+    assert(Validation.isIdentifier("D?a3") === false)
+  }
+
 
   "<NEW>" should "should not validate" in {
-    assert(Validation.isDigitsOrLetters("<NEW>") === false)
+    assert(Validation.isIdentifier("<NEW>") === false)
   }
 }
