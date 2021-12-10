@@ -103,7 +103,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
     rowClickListener = Some(listener)
   }
 
-  private def displayKeyForFields(headingsTexts : List[HeadingText]) : Unit =
+  private def displayKeyForFields(headingsTexts : List[HeadingTextAndIcon]) : Unit =
     headingsTexts.foreach(ht => {
         val column = table.columns(ht.index+1)
         column.text = ht.text
