@@ -2,23 +2,15 @@ package dbtarzan.gui.table
 
 import dbtarzan.db._
 import scalafx.scene.image.Image
-import scala.collection.mutable
 
-object TableColumnsStates {
-  val PRIMARYKEY_STATE: Int = 1
-  val FOREIGNKEY_STATE: Int = 2
-  val BOTHKEYS_STATE: Int = PRIMARYKEY_STATE + FOREIGNKEY_STATE
-}
+
 
 case class HeadingTextAndIcon(index: Int, text: String, icon : Option[Image])
 
 /* produces headings for the UI table depending by the primary and foreign keys of which the columns are part */
 class TableColumnsHeadings(columnNames : List[Field]) {
-  case class KeyAndLabel(key: String, label: String)
-  private val keysAndLabels = columnNames.map(_.name).map(n => KeyAndLabel(n.toLowerCase, n))
-  private val indexByKey = keysAndLabels.map(_.key).zipWithIndex.toMap
-  private val namesByLowerCase: mutable.Map[String, String] = mutable.Map(keysAndLabels.map(n => (n.key, n.label)) : _*)
-  private val attributes = new TableColumnsAttributes(keysAndLabels.map(_.key))
+  private val columnsWithIndex = new TableColumnsIWithIndex(columnNames.map(_.name))
+  private val attributes = new TableColumnsAttributes(columnsWithIndex.keys())
 
   def addPrimaryKeys(keys : PrimaryKeys) : List[HeadingTextAndIcon] = {
     val fieldNames = keys.keys.flatMap(_.fields)
@@ -30,9 +22,8 @@ class TableColumnsHeadings(columnNames : List[Field]) {
     addKeys(fieldNames, TableColumnsStates.FOREIGNKEY_STATE)
   }
 
-  private def addKeys(fieldNames: List[String], state: Int): List[HeadingTextAndIcon] = {
-    attributes.addKeys(fieldNames.map(_.toLowerCase()), state).map(
-      heading => HeadingTextAndIcon(indexByKey(heading.key), namesByLowerCase(heading.key), TableColumnsIcons.bitsetToIcon(heading.attributes))
+  private def addKeys(fieldNames: List[String], state: Int): List[HeadingTextAndIcon] =
+    attributes.addKeys(fieldNames.map(TableColumnsIWithIndex.keyFromColumnName(_)), state).map(
+      heading => HeadingTextAndIcon(columnsWithIndex.indexOf(heading.key), columnsWithIndex.nameOf(heading.key), TableColumnsIcons.bitsetToIcon(heading.attributes))
     )
-  }
 }
