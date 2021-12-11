@@ -1,21 +1,67 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ TabPane, Tab, Tooltip}
-import scalafx.scene.Parent
-import scalafx.Includes._
 import akka.actor.ActorRef
-
-import dbtarzan.db.{DBTableStructure, Fields, TableDescription, FollowKey, QueryAttributes, DatabaseId, TableId}
+import dbtarzan.db._
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
-import dbtarzan.messages._
-import dbtarzan.gui.tabletabs.{ TableTabsMap, BrowsingTableWithTab }
+import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
+import dbtarzan.messages._
+import scalafx.Includes._
+import scalafx.scene.Parent
+import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization) extends TControlBuilder {
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization)
+  extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tabs = new TabPane()
-  private val tables = new TableTabsMap()
+  private val tables = new TableTabsMap[BrowsingTable]()
+  private val tablesToClose = new TabsToClose()
+
+  def addColumns(columns : ResponseColumns) : Unit =  {
+    val structure = createTable(columns.tableId, columns.columns, columns.queryAttributes)
+    queryTableContent(None, structure)
+  }
+
+  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
+    val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
+    queryTableContent(None, structure)
+  }
+
+  def removeTables(ids : List[QueryId]) : Unit = {
+    val tabsToClose = tables.tabsWithIds(ids)
+    tables.removeTablesWithIds(ids)
+    tabs.tabs --= tabsToClose
+  }
+
+  def requestRemovalAllTabs() : Unit =
+    removeTabs(tabs.tabs.toList)
+
+  def currentTableId : Option[QueryId] = {
+    val currentTab = tabs.selectionModel().selectedItem()
+    tables.tableIdForTab(currentTab)
+  }
+
+  def control : Parent = tabs
+
+  def handleQueryIdMessage(msg: TWithQueryId) : Unit = msg match {
+    case copy : CopySelectionToClipboard => tables.tableWithQueryId(copy.queryId, _.copySelectionToClipboard(copy.includeHeaders))
+    case check : CheckAllTableRows => tables.tableWithQueryId(check.queryId, _.checkAllTableRows())
+    case check : CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
+    case keys : ResponsePrimaryKeys => createTabWith(keys.queryId, keys.structure, _.table.addPrimaryKeys(keys))
+    case keys : ResponseForeignKeys => createTabWith(keys.queryId, keys.structure, _.table.addForeignKeys(keys))
+    case indexes: ResponseIndexes =>  tables.tableWithQueryId(indexes.queryId, _.addIndexes(indexes))
+    case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
+    case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
+    case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
+    case request : RequestRemovalThisTab => requestRemovalThisTab(request.queryId)
+    case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
+    case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
+    case rows : ResponseRows => createTabWith(rows.queryId, rows.structure, addRows(_, rows))
+    case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
+    case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
+    case _ => log.error(localization.errorTableMessage(msg))
+  }
 
   /* creates a table from scratch */
   private def createTable(tableId : TableId, columns : Fields, attributes : QueryAttributes) : DBTableStructure = 
@@ -28,7 +74,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   }
 
   private def buildTab(dbTable : DBTableStructure, browsingTable :  BrowsingTable) = new Tab() {      
-    text = buildTabText(dbTable)
+    text = TableStructureText.buildTabText(dbTable)
     content = browsingTable.control     
     tooltip.value = Tooltip("")
   }
@@ -53,38 +99,19 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def requestRemovalThisTab(queryId : QueryId) : Unit =
     tables.withQueryId(queryId, table => removeTabs(List(table.tab)))
 
-  def requestRemovalAllTabs() : Unit =
-    removeTabs(tabs.tabs.toList)
-
-  /*
-    Normally it shows the name of the table.
-
-    If the tab is derived from a foreign key, it is in the form:
-      [table] < [origin table]
-      where origin table is the table on the other side of the foreign key
-
-    If a filter (where) has been applied, a star (*) character is shown at the end of the text 
-  */
-  private def buildTabText(structure : DBTableStructure) : String = {
-    def starForFilter(structure : DBTableStructure) = if(DBTableStructure.hasFilter(structure)) " *" else ""
-
-    val description = structure.description
-    description.name + description.origin.map("<"+_).getOrElse("") + starForFilter(structure)
-  } 
-
-  private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : BrowsingTableWithTab = {
+  private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : TTableWithTab[BrowsingTable] = {
     val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId, localization)
     val tab = buildTab(structure, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)
     
     browsingTable.onNewTable((newStructure, closeCurrentTab) => 
-        queryRows(Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
+        queryTableContent(Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
       )
-    BrowsingTableWithTab(browsingTable, tab)
+    TTableWithTab[BrowsingTable](browsingTable, tab)
   }
 
-  private def addRows(table: BrowsingTableWithTab, rows : ResponseRows) : Unit = {
+  private def addRows(table: TTableWithTab[BrowsingTable], rows : ResponseRows) : Unit = {
     table.table.addRows(rows)
     table.tab.tooltip.value.text = table.table.rowsNumber+" rows"
   }
@@ -97,61 +124,27 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     log.error(localization.errorRequestingTheRows(error.queryId), error.ex)
   }
 
-  def addColumns(columns : ResponseColumns) : Unit =  {
-    val structure = createTable(columns.tableId, columns.columns, columns.queryAttributes)
-    queryRows(None, structure) 
-  }
-
-  private def queryRows(originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
+  private def queryTableContent(originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
     val queryId = IDGenerator.queryId(TableId(databaseId, structure.description.name))
+    tablesToClose.addToCloseWhenNewTabOpens(queryId, originalQuery)
+    // requests the foreign keys for this table.
+    dbActor ! QueryForeignKeys(queryId, structure)
+    // requests the rows of this table.
     dbActor ! QueryRows(queryId, originalQuery, structure)
+    // requests the primary keys for this table.
+    dbActor ! QueryPrimaryKeys(queryId, structure)
   }
 
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
-    val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
-    queryRows(None, structure) 
+  private def createTabWith(queryId: QueryId, structure : DBTableStructure, doWith : TTableWithTab[BrowsingTable] => Unit): Unit = {
+    tables.withQueryIdForce(queryId, doWith, buildBrowsingTable(queryId, structure))
+    closeOriginalTabIfAny(queryId)
   }
 
-  def removeTables(ids : List[QueryId]) : Unit = {
-    val tabsToClose = tables.tabsWithIds(ids)
-    tables.removeTablesWithIds(ids)
-    tabs.tabs --= tabsToClose
-  }
-
-  def handleQueryIdMessage(msg: TWithQueryId) : Unit = msg match {
-    case copy : CopySelectionToClipboard => tables.tableWithQueryId(copy.queryId, _.copySelectionToClipboard(copy.includeHeaders))
-    case check : CheckAllTableRows => tables.tableWithQueryId(check.queryId, _.checkAllTableRows())
-    case check : CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
-    case keys : ResponsePrimaryKeys => tables.tableWithQueryId(keys.queryId, _.addPrimaryKeys(keys)) 
-    case keys : ResponseForeignKeys => tables.tableWithQueryId(keys.queryId, _.addForeignKeys(keys))
-    case indexes: ResponseIndexes =>  tables.tableWithQueryId(indexes.queryId, _.addIndexes(indexes))
-    case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
-    case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
-    case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
-    case request : RequestRemovalThisTab => requestRemovalThisTab(request.queryId)
-    case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
-    case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
-    case rows : ResponseRows => { 
-      tables.withQueryIdForce(rows.queryId, addRows(_, rows), buildBrowsingTable(rows.queryId, rows.structure))
-      closeOriginalTabIfAny(rows)
-      }
-    case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
-    case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
-    case _ => log.error(localization.errorTableMessage(msg))
-  }
-
-  private def closeOriginalTabIfAny(rows: ResponseRows): Unit = {
-    rows.original.foreach(original => {
+  private def closeOriginalTabIfAny(queryId: QueryId): Unit = {
+    tablesToClose.removeAndGetToCloseWhenNewTabOpens(queryId).foreach(original => {
       if (original.closeCurrentTab)
         guiActor ! RequestRemovalThisTab(original.queryId)
     })
-  }
-
-  def control : Parent = tabs
-
-  def currentTableId : Option[QueryId] = {
-    val currentTab = tabs.selectionModel().selectedItem()
-    tables.tableIdForTab(currentTab)   
   }
 }
 

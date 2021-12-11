@@ -112,12 +112,12 @@ class DatabaseActor(
           foreignKeysForCache.getOrElseUpdate(tableName,
               cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
           ).keys ++ additionalForeignKeysExploded.get(tableName).map(_.keys).getOrElse(List.empty))
-      guiActor ! ResponseForeignKeys(qry.queryId, foreignKeys)
+      guiActor ! ResponseForeignKeys(qry.queryId, qry.structure, foreignKeys)
     }, logError)
 
 	private def queryRows(qry: QueryRows, maxRows: Option[Int], queryTimeout: Option[Duration], maxFieldSize: Option[Int]) : Unit = withCore(core =>
     core.queryLoader.query(SqlBuilder.buildSql(qry.structure), maxRows.getOrElse(500), queryTimeout.getOrElse(10 seconds),  maxFieldSize, rows =>
-        guiActor ! ResponseRows(qry.queryId, qry.structure, rows, qry.original)
+        guiActor ! ResponseRows(qry.queryId, qry.structure, rows)
       ), e => queryRowsHandleErr(qry, e))
 
   private def queryRowsHandleErr(qry: QueryRows, e: Exception): Unit =
@@ -186,7 +186,7 @@ class DatabaseActor(
 	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {
         val tableName = qry.queryId.tableId.tableName
         val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
-          guiActor ! ResponsePrimaryKeys(qry.queryId, primaryKeys)
+          guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
         }, logError)
 
 	private def queryAttributes() =

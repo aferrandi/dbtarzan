@@ -10,7 +10,7 @@ trait TWithQueryId { def queryId : QueryId }
 
 trait TWithTableId { def tableId : TableId }
       
-case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : Rows, original : Option[OriginalQuery]) 
+case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : Rows)
     extends TWithQueryId
 
 case class ErrorRows(queryId : QueryId,  ex: Exception) 
@@ -37,10 +37,10 @@ case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes
 case class  ResponseColumnsForForeignKeys(databaseId : DatabaseId, tableName: String, columns : Fields) 
     extends TWithDatabaseId
 
-case class ResponsePrimaryKeys(queryId : QueryId, keys : PrimaryKeys) 
+case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, keys : PrimaryKeys)
     extends TWithQueryId
 
-case class ResponseForeignKeys(queryId : QueryId, keys : ForeignKeys) 
+case class ResponseForeignKeys(queryId : QueryId, structure : DBTableStructure, keys : ForeignKeys)
     extends TWithQueryId
 
 case class ResponseIndexes(queryId : QueryId, indexes: Indexes)

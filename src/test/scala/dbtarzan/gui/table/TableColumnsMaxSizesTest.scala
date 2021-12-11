@@ -7,8 +7,6 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 
 class TableColumnsMaxSizesTest extends AnyFlatSpec {
-
-
   "maxLength" should "contain the maximum lengths of rows and header" in {
     val sizes = new TableColumnsMaxSizes(List(
         Field("id", FieldType.STRING, ""), 

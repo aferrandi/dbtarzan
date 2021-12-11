@@ -19,12 +19,12 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 	
 	/** need to show only the "to table" as cell text. And a tooltip for each cell	*/
 	private def buildCell() = new ListCell[ForeignKeyWithSharingCheck] {
-	        item.onChange { (_, _, _) => 
-	          Option(item.value).foreach(key => {
-		          tooltip.value = Tooltip(buildTooltip(key.key))
-		          text.value = buildText(key)
-	      	  })
-	        }} 	      
+    item.onChange { (_, _, _) =>
+      Option(item.value).foreach(key => {
+        tooltip.value = Tooltip(buildTooltip(key.key))
+        text.value = buildText(key)
+      })
+    }}
 	  
 	def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
 		def moreThanOneItem(l : List[_]) = l.length > 1
@@ -58,11 +58,11 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 	}
 	
 	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */
-  	def onForeignKeySelected(useKey : (ForeignKey, Boolean)  => Unit) : Unit =
-	     JFXUtil.onAction(list, { (selectedKey : ForeignKeyWithSharingCheck, ctrlDown) =>
-	        log.debug("Selected "+selectedKey)
-					Option(selectedKey).foreach(k => useKey(k.key, ctrlDown))
-	      })
+  def onForeignKeySelected(useKey : (ForeignKey, Boolean)  => Unit) : Unit =
+     JFXUtil.onAction(list, { (selectedKey : ForeignKeyWithSharingCheck, ctrlDown) =>
+        log.debug("Selected "+selectedKey)
+        Option(selectedKey).foreach(k => useKey(k.key, ctrlDown))
+      })
 
 	def control : Parent = list
  }

@@ -1,22 +1,24 @@
 package dbtarzan.gui
 
-import scalafx.stage.Stage
-import scalafx.scene.control.{Menu, MenuBar, MenuItem}
-import scalafx.scene.layout.BorderPane
+import akka.actor.ActorRef
+import dbtarzan.db._
+import dbtarzan.gui.browsingtable._
+import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}
+import dbtarzan.gui.orderby.OrderByEditorStarter
+import dbtarzan.gui.tabletabs.TTableForMapWithId
+import dbtarzan.gui.util.JFXUtil
+import dbtarzan.localization.Localization
+import dbtarzan.messages._
+import scalafx.Includes._
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
-import scalafx.Includes._
-import akka.actor.ActorRef
-import dbtarzan.db.{DBTable, DBTableStructure, Field, Filter, FollowKey, ForeignKey, OrderByDirection, OrderByField, OrderByFields, Row, SqlBuilder, TableId}
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.gui.orderby.OrderByEditorStarter
-import dbtarzan.gui.browsingtable.{BrowsingTableSplitter, ForeignKeysInfoSplitter, QueryText, RowDetailsApplicant, RowDetailsView, TableMenu, TableProgressBar}
-import dbtarzan.gui.info.{ColumnsTable, IndexInfo, IndexesInfo, Info, QueryInfo}
-import dbtarzan.messages._
-import dbtarzan.localization.Localization
+import scalafx.scene.control.{Menu, MenuBar, MenuItem}
+import scalafx.scene.layout.BorderPane
+import scalafx.stage.Stage
 
 /* table + constraint input box + foreign keys */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization) extends TControlBuilder {
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization)
+  extends TControlBuilder with TTableForMapWithId {
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList(log)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 

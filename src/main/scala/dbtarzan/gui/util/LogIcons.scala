@@ -9,8 +9,8 @@ object LogIcons {
 	val infoIcon: Image = JFXUtil.loadIcon("info.png")
 	  
 	def iconForMessage(msg : TLogMessage) : Image = msg match {
-		case e: Error => errorIcon
-		case e: Warning => warnIcon  
-		case e: Info => infoIcon  
+		case _: Error => errorIcon
+		case _: Warning => warnIcon
+		case _: Info => infoIcon
 	} 
 }
