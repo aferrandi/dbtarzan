@@ -42,6 +42,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     })
   }
   table.setRowClickListener(row => openRowDisplay(row))
+  table.setRowDoubleClickListener(row => {
+    switchRowDetailsView()
+    openRowDisplay(row)
+  })
 
   splitter.splitPanelWithoutRowDetailsView()
   private val progressBar = new TableProgressBar(removeProgressBar)

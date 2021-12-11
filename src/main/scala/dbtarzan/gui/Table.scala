@@ -3,6 +3,7 @@ package dbtarzan.gui
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.table._
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{Logger, _}
 import scalafx.Includes._
@@ -99,9 +100,12 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
       case ex : Exception => log.error(localization.errorDisplayingRows, ex)
     }
 
-  def setRowClickListener(listener : Row => Unit) : Unit = {
+  def setRowClickListener(listener : Row => Unit) : Unit =
     rowClickListener = Some(listener)
-  }
+
+  def setRowDoubleClickListener(listener: Row => Unit) : Unit =
+    JFXUtil.onAction(table, (row: CheckedRow, clicked: Boolean) => listener(row.row))
+
 
   private def displayKeyForFields(headingsTexts : List[HeadingTextAndIcon]) : Unit =
     headingsTexts.foreach(ht => {
