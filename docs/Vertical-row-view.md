@@ -10,7 +10,8 @@ categories: [GUI]
 ## Vertical row view
 
 On an open table tab, it is possible to open the so called **Vertical row view**.
-Just select the row you want to see in detail, open the table menu and select **Row details**, or press Ctrl-R. 
+Just double-click on a row. 
+Also you can just select the row you want to see in detail, press Enter, open the table menu and select **Row details**, or press Ctrl-R. 
 
 ![Table menu](images/accelerators.png)
 
