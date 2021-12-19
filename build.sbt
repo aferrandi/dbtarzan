@@ -16,8 +16,6 @@ lazy val standardLibraries = Seq(
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",
 
-  maintainer := "Andrea Ferrandi",
-
   version := versionNumber,
 
   scalaVersion := "2.13.6",
@@ -34,12 +32,8 @@ lazy val commonConfiguration = Seq(
 
   Compile / scalacOptions ++= Seq("-Ywarn-unused:imports"),
   Compile / scalacOptions --= Seq("-Xfatal-warnings"),
-  buildStrategy(),
+  buildStrategy()
 // scalacOptions += "-Ylog-classpath"
-  maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
-  packageSummary := "DBTarzan Package",
-  packageDescription := "DBTarzan, the database browser"
-
 )
 
 def buildStrategy() = {
@@ -78,7 +72,10 @@ def excludeDependenciesOfOtherOses(name: String) = {
 lazy val linux = buildProject("linux")
     .settings(Seq(
       Debian / debianPackageDependencies ++= Seq("openjdk-11-jre"),
-      bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan""""
+      bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan"""",
+      maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
+      packageSummary := "DBTarzan Package",
+      packageDescription := "DBTarzan, the database browser"
     ))
     .enablePlugins(DebianPlugin, JavaAppPackaging)
     
