@@ -12,8 +12,12 @@ categories: [GUI]
 ![Table tab](images/tabletab.png)
 
 A table tab is a tab that contains some table rows which are:
-- **the content of a database table**, if opened directly from the tables list.
--  or the **result of a query**, when as a result of applying [foreign keys](ForeignKeys), [where clauses](Where-clause) or [order by](Order-By) from other tabs.
+- either **the content of a database table**, if opened directly from the tables list.
+- or the **result of a query**, when as a result of applying [foreign keys](ForeignKeys), [where clauses](Where-clause) or [order by](Order-By) from other tabs.
+
+The amount of rows displayed is **limited** to a number editable in the [Connections editor](Connections-editor), by default 500.
+
+Double-clicking on a row or pressing enter when the row is selected opens the [Vertical row view](Vertical-row-view) for that row.
 
 The [tag on the tab](Table-tags) gives some information about the content of the table.
 
