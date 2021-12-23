@@ -1,7 +1,7 @@
 DbTarzan
 ========
 
-[Cross platform](https://aferrandi.github.io/dbtarzan/Installation.html) database **browser**.
+[Cross platform](https://aferrandi.github.io/dbtarzan/Tested-databases-and-operating-systems.html) database **browser**.
 
 Explore the tables of a **relational database** following the relations defined in their [foreign keys](https://aferrandi.github.io/dbtarzan/ForeignKeys.html).
 
