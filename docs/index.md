@@ -5,7 +5,7 @@
 layout: default
 title: Welcome
 resource: true
-categories: [Other]
+categories: [Welcome]
 
 ---
 

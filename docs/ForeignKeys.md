@@ -3,7 +3,7 @@
 layout: default
 title: Foreign keys
 resource: true
-categories: [Other]
+categories: [Structure]
 
 ---
 
