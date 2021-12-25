@@ -9,22 +9,22 @@ categories: [Welcome]
 
 ---
 
-## Welcome to DbTarzan.
+## Welcome to DbTarzan, the database browser
 
 ![DBTarzan](images/window.png)
 
-With DBTarzan you can browse the tables of a database using the relations in their [foreign keys](ForeignKeys). 
+With DBTarzan you can browse the tables of a database:
+* using the relations in their [foreign keys](ForeignKeyPanel).
+* with [where clauses](Where-clause).
 
-And if the database is missing a foreign key you can [simulate its existence](AdditionalForeignKeysEditor). 
-
-[Install](Installation) and start DbTarzan and [connect to a database](Connect-to-database). It's easy!
 Please check the [GUI structure](GUI-Structure) to know how to [use it](Usage).
 
-If things are too slow (databases with complex structures) try to [preload the foreign keys](Foreign-keys-preloading).
+[Install](Installation) and start DbTarzan and [connect to a database](Connect-to-database). It's easy!
 
 DBTarzan [can't harm your database](Can-I-use-it-with-production-databases) (it never writes) and has been used with production databases.
 
-This [video](https://youtu.be/-hR9ZLf3bNY) shows an example of database exploration.
+The following video shows an example of database exploration: 
 
+[![video](images/video.png)](https://youtu.be/qLh5HnW0Rwc)
 
-DBTarzan has been proved to work on these [databases and operating systems](Tested-databases-and-operating-systems).
+DBTarzan should work on any relational database with a **JDBC driver** and has been proved to work on these [databases and operating systems](Tested-databases-and-operating-systems).
