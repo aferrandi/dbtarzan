@@ -17,4 +17,6 @@ Using Akka, DBTarzan [does not block](Internal-Structure) waiting for the querie
 
 Thanks to these tools, the amount of code is very limited, which makes it easy to understand and to mantain.
 
-One of the principles of DBTarzan is to avoid code bloating, keeping the code simple and compact.  
+One of the principles of DBTarzan is to avoid code bloating, keeping the code simple and compact.
+
+If you want, you can [build the application yourself](Building).

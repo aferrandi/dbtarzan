@@ -18,6 +18,8 @@ The following videos show examples of database exploration, the first one is a s
 
 If you have any problem or question about the project please use the :speech_balloon:[DBTarzan gitter channel](https://gitter.im/aferrandi/dbtarzan) or add an [issue](https://github.com/aferrandi/dbtarzan/issues). 
 
+If you are interested in helping, [here]((https://aferrandi.github.io/dbtarzan/Building.html) is how to build the code yourself.
+
 <a href="https://snapcraft.io/dbtarzan" title="Get it from the Snap Store">
   <img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="" />
 </a>
