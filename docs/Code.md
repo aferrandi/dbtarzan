@@ -9,6 +9,9 @@ categories: [Code]
 
 ## Code
 
+DBTarzan is released under the [Apache License 2.0](https://github.com/aferrandi/dbtarzan/blob/master/LICENSE).
+Its code is published in [Github](https://github.com/aferrandi/dbtarzan).
+
 DBTarzan is written in [Scala](https://www.scala-lang.org/), uses [JavaFX](https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.htm) via [ScalaFX](http://www.scalafx.org/) for its GUI, uses the actors of [Akka](http://akka.io/), Spray (now part of Akka) to read the configurations written in JSON. 
 
 JavaFX does a wonderful job, giving the application a professional look and integrating it with the OS where it runs.
