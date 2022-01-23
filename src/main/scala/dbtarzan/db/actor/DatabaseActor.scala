@@ -7,6 +7,7 @@ import akka.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db._
+import dbtarzan.db.foreignkeys.AdditionalForeignKeyToForeignKey
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
@@ -37,7 +38,7 @@ class DatabaseActor(
   private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
   private val foreignKeysForCache  : mutable.HashMap[String, ForeignKeys] = mutable.HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*)
   private var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
-  private var additionalForeignKeysExploded : Map[String, ForeignKeys] = buildKeys(additionalForeignKeys)
+  private var additionalForeignKeysExploded : Map[String, ForeignKeys] = AdditionalForeignKeyToForeignKey.toForeignKeys(additionalForeignKeys)
 
   private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
@@ -78,7 +79,7 @@ class DatabaseActor(
 
 	private def logError(e: Exception) : Unit = log.error("dbWorker", e)
 	
-	override def  postStop() : Unit = {
+	override def postStop() : Unit = {
 		log.debug("Actor for "+databaseName+" stopped")
 	}
 
@@ -198,18 +199,14 @@ class DatabaseActor(
 
 	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit = {
 			additionalForeignKeys = update.keys
-			additionalForeignKeysExploded = buildKeys(update.keys) 
+			additionalForeignKeysExploded = AdditionalForeignKeyToForeignKey.toForeignKeys(update.keys)
 			toFile.saveAdditionalForeignKeys(update.keys)
 			val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysForCache, additionalForeignKeys)
 			if(intersection.nonEmpty)
 				log.error(localization.errorAFKAlreadyExisting(intersection)) 
 	}
 
-  private def buildKeys(keys: List[AdditionalForeignKey]) : Map[String, ForeignKeys] = {
-    val keysStraight = keys.map(k => ForeignKey(k.name+"_straight", k.from, k.to, ForeignKeyDirection.STRAIGHT))
-    val keysTurned = keys.map(k => ForeignKey(k.name+"_turned", k.to, k.from, ForeignKeyDirection.TURNED))
-    (keysStraight ++ keysTurned).groupBy(_.from.table).mapValues(ForeignKeys).toMap
-  }
+
 
   def queryOneRow(qry: QueryOneRow, queryTimeout: Option[FiniteDuration]): Unit = withCore(core =>
     core.queryLoader.query(SqlBuilder.buildSql(qry.structure), 1, queryTimeout.getOrElse(10 seconds),  None, rows =>
