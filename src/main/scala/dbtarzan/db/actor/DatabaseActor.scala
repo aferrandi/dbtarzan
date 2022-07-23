@@ -128,19 +128,23 @@ class DatabaseActor(
     }
 
   private def queryTables(qry: QueryTables) : Unit = withCore(core => {
-        val names = core.tablesLoader.tableNames()
-        if (names.tableNames.nonEmpty)
-          log.info(localization.loadedTables(names.tableNames.size, databaseName))
-        else {
-          val schemas = core.schemasLoader.schemasNames()
-          val schemasText = schemas.schemas.map(_.name).mkString(", ")
-          log.warning(localization.errorNoTables(databaseName, schemasText))
-        }
-        guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
-      }, ex => {
+      val names = core.tablesLoader.tableNames()
+      logTableNames(core, names)
+      guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
+    }, ex => {
       logError(ex)
       closeThisDBWorker()
     })
+
+  private def logTableNames(core: DatabaseWorkerCore, names: TableNames): Unit = {
+    if (names.tableNames.nonEmpty)
+      log.info(localization.loadedTables(names.tableNames.size, databaseName))
+    else {
+      val schemas = core.schemasLoader.schemasNames()
+      val schemasText = schemas.schemas.map(_.name).mkString(", ")
+      log.warning(localization.errorNoTables(databaseName, schemasText))
+    }
+  }
 
   private def querySchemas(qry: QuerySchemas) : Unit = withCore(core => {
     val schemas = core.schemasLoader.schemasNames()
@@ -161,10 +165,10 @@ class DatabaseActor(
       }, logError)
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
-        val tableName = qry.tableId.tableName
-        val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-          guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
-      }, logError)
+      val tableName = qry.tableId.tableName
+      val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+        guiActor ! ResponseColumns(qry.tableId, columns, queryAttributes())
+    }, logError)
 
   private def queryIndexes(qry: QueryIndexes) : Unit = withCore(core => {
     val tableName = qry.queryId.tableId.tableName
@@ -173,22 +177,22 @@ class DatabaseActor(
   }, logError)
 
 	private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(core => {
-        val tableName = qry.tableId.tableName
-        val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-          guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, queryAttributes())
-        }, logError)
+    val tableName = qry.tableId.tableName
+    val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+      guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, queryAttributes())
+    }, logError)
 
 	private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = withCore(core => {
-        val tableName = qry.tableName
-        val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-          guiActor ! ResponseColumnsForForeignKeys(qry.databaseId, tableName, columns)
-      }, logError)
+    val tableName = qry.tableName
+    val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+      guiActor ! ResponseColumnsForForeignKeys(qry.databaseId, tableName, columns)
+  }, logError)
 
 	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {
-        val tableName = qry.queryId.tableId.tableName
-        val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
-          guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
-        }, logError)
+    val tableName = qry.queryId.tableId.tableName
+    val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
+      guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
+    }, logError)
 
 	private def queryAttributes() =
     QueryAttributes(data.identifierDelimiters, DBDefinition(data.schema, data.catalog), data.maxFieldSize)
@@ -198,15 +202,17 @@ class DatabaseActor(
 	}
 
 	private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit = {
-			additionalForeignKeys = update.keys
-			additionalForeignKeysExploded = AdditionalForeignKeyToForeignKey.toForeignKeys(update.keys)
-			toFile.saveAdditionalForeignKeys(update.keys)
-			val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysForCache, additionalForeignKeys)
-			if(intersection.nonEmpty)
-				log.error(localization.errorAFKAlreadyExisting(intersection)) 
-	}
+    additionalForeignKeys = update.keys
+    additionalForeignKeysExploded = AdditionalForeignKeyToForeignKey.toForeignKeys(update.keys)
+    toFile.saveAdditionalForeignKeys(update.keys)
+    logAdditionalForeignKeysErrorIfAlreadyExisting()
+  }
 
-
+  private def logAdditionalForeignKeysErrorIfAlreadyExisting(): Unit = {
+    val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysForCache, additionalForeignKeys)
+    if (intersection.nonEmpty)
+      log.error(localization.errorAFKAlreadyExisting(intersection))
+  }
 
   def queryOneRow(qry: QueryOneRow, queryTimeout: Option[FiniteDuration]): Unit = withCore(core =>
     core.queryLoader.query(SqlBuilder.buildSql(qry.structure), 1, queryTimeout.getOrElse(10 seconds),  None, rows =>
