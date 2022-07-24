@@ -10,7 +10,6 @@ import scalafx.geometry.Orientation
 import scalafx.scene.Parent
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
-import scalafx.Includes._
 
 
 /* table + constraint input box + foreign keys */
@@ -21,7 +20,7 @@ class AdditionalForeignKeysEditor(
   tableNames: TableNames,
   localization: Localization
   ) extends TControlBuilder {
-  private val keysTable = new ForeignKeysTable(guiActor, localization)
+  private val keysTable = new ForeignKeysTable(databaseId, guiActor, localization)
   private val singleEditor = new SingleEditor(dbActor, databaseId, tableNames, localization)
   private val buttons = new AdditionalForeignKeysButtons(localization)
   private val bottomPane = new BorderPane {

@@ -109,12 +109,12 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
       if(closeCurrentTab)
         guiActor ! RequestRemovalThisTab(queryId) 
       val checkedRows = table.getCheckedRows
-      val foreignTableId = TableId(queryId.tableId.databaseId, key.to.table)
+      val foreignTableId = key.to.table
       if(checkedRows.nonEmpty) {
         dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.fields, key, checkedRows))
       } else {
         dbActor ! QueryColumns(foreignTableId)
-        log.warning(localization.noRowsFromForeignKey(key.name, key.to.table))
+        log.warning(localization.noRowsFromForeignKey(key.name, key.to.table.tableName))
       }
   } 
 

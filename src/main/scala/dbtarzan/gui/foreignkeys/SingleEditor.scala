@@ -95,8 +95,8 @@ class SingleEditor(
   def show(key : AdditionalForeignKey) : Unit = safe.noChangeEventDuring(() => {
     println("show "+key)
     txtName.text = key.name
-    chosenTableFromProperty.value = key.from.table
-    chosenTableToProperty.value = key.to.table
+    chosenTableFromProperty.value = key.from.table.tableName
+    chosenTableToProperty.value = key.to.table.tableName
     orderedListColumnsFrom.setListData(key.from.fields)
     orderedListColumnsTo.setListData(key.to.fields)
     editorDisabled.value = false
@@ -105,8 +105,8 @@ class SingleEditor(
   def toKey(): AdditionalForeignKey = {
     val key = AdditionalForeignKey(
       txtName.text(), 
-      FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData()),
-      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData())
+      FieldsOnTable(TableId(databaseId, chosenTableFromProperty.value), orderedListColumnsFrom.listData()),
+      FieldsOnTable(TableId(databaseId, chosenTableToProperty.value), orderedListColumnsTo.listData())
    )
    key
   }

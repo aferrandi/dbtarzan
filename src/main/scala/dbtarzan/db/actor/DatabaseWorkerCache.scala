@@ -1,6 +1,6 @@
 package dbtarzan.db.actor
 
-import dbtarzan.db.{Fields, ForeignKeys, Indexes, PrimaryKeys}
+import dbtarzan.db.{Fields, ForeignKeys, Indexes, PrimaryKeys, TableId}
 
 import scala.collection.mutable
 
@@ -12,15 +12,15 @@ import scala.collection.mutable
 class DatabaseWorkerCache {
     private val primaryKeys = mutable.HashMap.empty[String, PrimaryKeys]
     private val fields = mutable.HashMap.empty[String, Fields]
-    private val foreignKeys = mutable.HashMap.empty[String, ForeignKeys]
+    private val foreignKeys = mutable.HashMap.empty[TableId, ForeignKeys]
     private val indexes = mutable.HashMap.empty[String, Indexes]
 
     def cachedPrimaryKeys(tableName : String, extract : => PrimaryKeys) : PrimaryKeys = 
         primaryKeys.getOrElseUpdate(tableName, extract)
     def cachedFields(tableName : String, extract : => Fields) : Fields = 
         fields.getOrElseUpdate(tableName, extract)
-    def cachedForeignKeys(tableName : String, extract : => ForeignKeys) : ForeignKeys = 
-        foreignKeys.getOrElseUpdate(tableName, extract)
+    def cachedForeignKeys(tableId : TableId, extract : => ForeignKeys) : ForeignKeys =
+        foreignKeys.getOrElseUpdate(tableId, extract)
     def cachedIndexes(tableName : String, extract : => Indexes) : Indexes =
         indexes.getOrElseUpdate(tableName, extract)
 }

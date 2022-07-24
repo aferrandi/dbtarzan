@@ -1,8 +1,9 @@
 package dbtarzan.db.foreignkeys
 
-import spray.json._
 import dbtarzan.db.util.FileReadWrite
-import dbtarzan.db.{ ForeignKeyDirection, DBEnumsText, FieldsOnTable, ForeignKey, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList }
+import dbtarzan.db._
+import spray.json._
+
 import java.nio.file.Path
 
 class ForeignKeyDirectionFormat extends RootJsonFormat[ForeignKeyDirection] {
@@ -15,7 +16,13 @@ class ForeignKeyDirectionFormat extends RootJsonFormat[ForeignKeyDirection] {
   }
 }
 
+object TableJsonProtocol extends  DefaultJsonProtocol {
+  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId, "databaseName")
+  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId, "databaseId", "tableName")
+}
+
 object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
+  import TableJsonProtocol.tableIdFormat
   implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
   implicit val fieldsOnTableFormat: RootJsonFormat[FieldsOnTable] = jsonFormat(FieldsOnTable, "table", "fields" )
   implicit val foreignKeyFormat: RootJsonFormat[ForeignKey] = jsonFormat(ForeignKey, "name", "from", "to", "direction")
@@ -25,10 +32,10 @@ object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
 }
 
 
-class ForeignKeysFile(dirPath: Path, databaseName : String) {
+class ForeignKeysFile(dirPath: Path, filename: String) {
 	import ForeignKeysForTableJsonProtocol._
 
-  val fileName : Path = dirPath.resolve(databaseName+".fgk")
+  val fileName : Path = dirPath.resolve(filename+".fgk")
 
 	def writeAsFile(list : ForeignKeysForTableList) : Unit =
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)

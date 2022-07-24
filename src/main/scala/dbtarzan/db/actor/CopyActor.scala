@@ -23,10 +23,10 @@ class CopyActor(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : 
 	private val log = new Logger(guiActor)
   private val driverManger = new DriverManagerWithEncryption(encryptionKey)
   private val connection = driverManger.getConnection(data)
-  private def databaseName = data.name
-  private val foreignKeyLoader =  new ForeignKeyLoader(connection, DBDefinition(data.schema, data.catalog), localization, log)
+  private def databaseId = DatabaseId(data.name)
+  private val foreignKeyLoader =  new ForeignKeyLoader(connection, databaseId, DBDefinition(data.schema, data.catalog), localization, log)
   // private val queryLoader = new QueryLoader(connection, log)
-  private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseName)
+  private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, databaseId.databaseName)
 	
 	/* gets all the tables in the database/schema from the database metadata */
 	private def tableNames() : List[String] = {
@@ -43,9 +43,11 @@ class CopyActor(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : 
 	/* loads the keys from the database (table by table) and saves them to the file */
 	def loadAllKeysAndWriteThemToFile() : Unit  = {
 		val names = tableNames()
-		val keysForTables = names.map(name => 
-			ForeignKeysForTable(name, foreignKeyLoader.foreignKeys(name))
-			)
+		val keysForTables = names.map(name => {
+      val tableId = TableId(databaseId, name)
+      ForeignKeysForTable(tableId, foreignKeyLoader.foreignKeys(tableId))
+    })
+
 		foreignKeysFile.writeAsFile(ForeignKeysForTableList(keysForTables))
 	}
 

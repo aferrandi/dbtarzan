@@ -14,22 +14,22 @@ class DatabaseWorkerKeysFromFile(
 	keyFilesDirPath : Path,
 	log : Logger
 	) {
-    def loadForeignKeysFromFile() : Map[String, ForeignKeys] = {
+    def loadForeignKeysFromFile() : Map[TableId, ForeignKeys] = {
 		val foreignKeysFile =  new ForeignKeysFile(keyFilesDirPath, databaseName)
         if(foreignKeysFile.fileExist()) {
 			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
 			try {
 				val tablesKeys = foreignKeysFile.readFromFile()
-				tablesKeys.keys.map(tableKeys => tableKeys.table -> tableKeys.keys).toMap
+				tablesKeys.keys.map(tableKeys => tableKeys.tableId -> tableKeys.keys).toMap
 			} catch { 
 				case e : Exception => {
 					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString()), e) 
-				 	Map.empty[String, ForeignKeys]
+				 	Map.empty[TableId, ForeignKeys]
 				}
 			}
 		} 
 		else 
-			Map.empty[String, ForeignKeys]
+			Map.empty[TableId, ForeignKeys]
 	}
 
 

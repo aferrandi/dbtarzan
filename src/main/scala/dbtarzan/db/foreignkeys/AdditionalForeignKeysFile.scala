@@ -6,10 +6,10 @@ import dbtarzan.db.{ FieldsOnTable, AdditionalForeignKey }
 import java.nio.file.Path
 
 object AdditionalForeignKeysJsonProtocol extends DefaultJsonProtocol {
+  import TableJsonProtocol.tableIdFormat
   implicit val fieldsOnTableFormat = jsonFormat(FieldsOnTable, "table", "fields" )	
   implicit val foreignKeyFormat = jsonFormat(AdditionalForeignKey, "name", "from", "to")
 }
-
 
 /* to write and read the additional foreign keys from a file. */
 class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {

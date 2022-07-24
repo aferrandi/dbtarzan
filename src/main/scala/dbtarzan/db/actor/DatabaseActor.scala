@@ -36,15 +36,15 @@ class DatabaseActor(
   private val cache = new DatabaseWorkerCache()
   private val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
   private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
-  private val foreignKeysForCache  : mutable.HashMap[String, ForeignKeys] = mutable.HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*)
+  private val foreignKeysForCache  : mutable.HashMap[TableId, ForeignKeys] = mutable.HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*)
   private var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()
-  private var additionalForeignKeysExploded : Map[String, ForeignKeys] = AdditionalForeignKeyToForeignKey.toForeignKeys(additionalForeignKeys)
+  private var additionalForeignKeysExploded : Map[TableId, ForeignKeys] = AdditionalForeignKeyToForeignKey.toForeignKeys(additionalForeignKeys)
 
   private def buildCore() : Option[DatabaseWorkerCore] = try {
     val connection = createConnection.getConnection(data)
     setReadOnlyIfPossible(connection)
     log.info(localization.connectedTo(databaseName))
-    Some(new DatabaseWorkerCore(connection, DBDefinition(data.schema, data.catalog), data.maxFieldSize, localization, log))
+    Some(new DatabaseWorkerCore(connection, databaseId, DBDefinition(data.schema, data.catalog), data.maxFieldSize, localization, log))
   } catch {
     case se : SQLException => {
       log.error(localization.errorConnectingToDatabase(databaseName)+" "+ExceptionToText.sqlExceptionText(se), se)
@@ -108,11 +108,11 @@ class DatabaseActor(
     )
 
   private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(core => {
-      val tableName = qry.queryId.tableId.tableName
+      val tableId = qry.queryId.tableId
       val foreignKeys = ForeignKeys(
-          foreignKeysForCache.getOrElseUpdate(tableName,
-              cache.cachedForeignKeys(tableName, core.foreignKeyLoader.foreignKeys(tableName))
-          ).keys ++ additionalForeignKeysExploded.get(tableName).map(_.keys).getOrElse(List.empty))
+          foreignKeysForCache.getOrElseUpdate(tableId,
+              cache.cachedForeignKeys(tableId, core.foreignKeyLoader.foreignKeys(tableId))
+          ).keys ++ additionalForeignKeysExploded.get(tableId).map(_.keys).getOrElse(List.empty))
       guiActor ! ResponseForeignKeys(qry.queryId, qry.structure, foreignKeys)
     }, logError)
 
