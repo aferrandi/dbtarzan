@@ -9,21 +9,21 @@ import dbtarzan.messages.Logger
 import dbtarzan.db.ForeignKeys
 
 class DatabaseWorkerKeysFromFile(
-	databaseName : String, 
+	databaseId : DatabaseId,
 	localization: Localization,
 	keyFilesDirPath : Path,
 	log : Logger
 	) {
     def loadForeignKeysFromFile() : Map[TableId, ForeignKeys] = {
-		val foreignKeysFile =  new ForeignKeysFile(keyFilesDirPath, databaseName)
+		val foreignKeysFile =  new ForeignKeysFile(keyFilesDirPath, databaseId.databaseName)
         if(foreignKeysFile.fileExist()) {
-			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
+			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString))
 			try {
-				val tablesKeys = foreignKeysFile.readFromFile()
-				tablesKeys.keys.map(tableKeys => tableKeys.tableId -> tableKeys.keys).toMap
+				val tablesKeys = foreignKeysFile.readFromFile(databaseId)
+				tablesKeys.map(tableKeys => tableKeys.tableId -> tableKeys.keys).toMap
 			} catch { 
 				case e : Exception => {
-					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString()), e) 
+					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString), e)
 				 	Map.empty[TableId, ForeignKeys]
 				}
 			}
@@ -34,14 +34,14 @@ class DatabaseWorkerKeysFromFile(
 
 
     def loadAdditionalForeignKeysFromFile() : List[AdditionalForeignKey] = {
-        val foreignKeysFile =  new AdditionalForeignKeysFile(keyFilesDirPath, databaseName)
+        val foreignKeysFile =  new AdditionalForeignKeysFile(keyFilesDirPath, databaseId.databaseName)
 		if(foreignKeysFile.fileExist()) {
-			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString()))
+			log.info(localization.loadingForeignKeys(foreignKeysFile.fileName.toString))
 			try {
-				foreignKeysFile.readFromFile()
+				foreignKeysFile.readFromFile(databaseId)
 			} catch { 
 				case e : Exception => {
-					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString()), e) 
+					log.error(localization.errorReadingKeys(foreignKeysFile.fileName.toString), e)
 				 	List.empty[AdditionalForeignKey]
 				}
 			}

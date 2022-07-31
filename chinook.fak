@@ -1,11 +1,21 @@
 [{
-  "name": "composer",
   "from": {
-    "table": "Track",
-    "fields": ["Composer"]
+    "fields": ["Composer"],
+    "table": {
+      "databaseId": {
+        "databaseName": "chinook"
+      },
+      "tableName": "Track"
+    }
   },
+  "name": "composer",
   "to": {
-    "table": "Artist",
-    "fields": ["Name"]
+    "fields": ["Name"],
+    "table": {
+      "databaseId": {
+        "databaseName": "chinook"
+      },
+      "tableName": "Artist"
+    }
   }
 }]

@@ -34,7 +34,7 @@ class DatabaseActor(
   if(optCore.isEmpty)
     closeThisDBWorker()
   private val cache = new DatabaseWorkerCache()
-  private val fromFile = new DatabaseWorkerKeysFromFile(databaseName, localization, keyFilesDirPath, log)
+  private val fromFile = new DatabaseWorkerKeysFromFile(databaseId, localization, keyFilesDirPath, log)
   private val toFile = new DatabaseWorkerKeysToFile(databaseName, localization, keyFilesDirPath, log)
   private val foreignKeysForCache  : mutable.HashMap[TableId, ForeignKeys] = mutable.HashMap(fromFile.loadForeignKeysFromFile().toSeq: _*)
   private var additionalForeignKeys : List[AdditionalForeignKey] = fromFile.loadAdditionalForeignKeysFromFile()

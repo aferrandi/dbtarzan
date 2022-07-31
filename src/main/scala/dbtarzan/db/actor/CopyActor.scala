@@ -48,7 +48,7 @@ class CopyActor(data : ConnectionData, encryptionKey: EncryptionKey, guiActor : 
       ForeignKeysForTable(tableId, foreignKeyLoader.foreignKeys(tableId))
     })
 
-		foreignKeysFile.writeAsFile(ForeignKeysForTableList(keysForTables))
+		foreignKeysFile.writeAsFile(keysForTables)
 	}
 
   	def receive: Receive = {

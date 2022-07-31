@@ -1,7 +1,7 @@
 package dbtarzan.db.foreignkeys
 
-import dbtarzan.db.util.FileReadWrite
 import dbtarzan.db._
+import dbtarzan.db.util.FileReadWrite
 import spray.json._
 
 import java.nio.file.Path
@@ -16,35 +16,58 @@ class ForeignKeyDirectionFormat extends RootJsonFormat[ForeignKeyDirection] {
   }
 }
 
-object TableJsonProtocol extends  DefaultJsonProtocol {
-  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId, "databaseName")
-  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId, "databaseId", "tableName")
-}
+case class FieldsOnTableOneDb(table : String, fields : List[String])
+case class ForeignKeyOneDb(name: String, from : FieldsOnTableOneDb, to: FieldsOnTableOneDb, direction : ForeignKeyDirection)
+case class ForeignKeysOneDb(keys : List[ForeignKeyOneDb])
+case class ForeignKeysForTableOneDb(table : String, keys : ForeignKeysOneDb)
+case class ForeignKeysForTableListOneDb(keys : List[ForeignKeysForTableOneDb])
 
-object ForeignKeysForTableJsonProtocol extends DefaultJsonProtocol {
-  import TableJsonProtocol.tableIdFormat
+object ForeignKeysForTableJsonProtocolOneDb {
+  import DefaultJsonProtocol._
+
   implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
-  implicit val fieldsOnTableFormat: RootJsonFormat[FieldsOnTable] = jsonFormat(FieldsOnTable, "table", "fields" )
-  implicit val foreignKeyFormat: RootJsonFormat[ForeignKey] = jsonFormat(ForeignKey, "name", "from", "to", "direction")
-  implicit val foreignKeysFormat: RootJsonFormat[ForeignKeys] = jsonFormat(ForeignKeys, "keys")
-  implicit val foreignKeysForTableFormat: RootJsonFormat[ForeignKeysForTable] = jsonFormat(ForeignKeysForTable, "name", "keys")
-  implicit val foreignKeysForTableListFormat: RootJsonFormat[ForeignKeysForTableList] = jsonFormat(ForeignKeysForTableList, "keys")
+  implicit val fieldsOnTableFormatOneDb: RootJsonFormat[FieldsOnTableOneDb] = jsonFormat(FieldsOnTableOneDb, "table", "fields" )
+  implicit val foreignKeyFormatOneDb: RootJsonFormat[ForeignKeyOneDb] = jsonFormat(ForeignKeyOneDb, "name", "from", "to", "direction")
+  implicit val foreignKeysFormatOneDb: RootJsonFormat[ForeignKeysOneDb] = jsonFormat(ForeignKeysOneDb, "keys")
+  implicit val foreignKeysForTableFormatOneDb: RootJsonFormat[ForeignKeysForTableOneDb] = jsonFormat(ForeignKeysForTableOneDb, "name", "keys")
+  implicit val foreignKeysForTableListFormatOneDb: RootJsonFormat[ForeignKeysForTableListOneDb] = jsonFormat(ForeignKeysForTableListOneDb, "keys")
 }
-
 
 class ForeignKeysFile(dirPath: Path, filename: String) {
-	import ForeignKeysForTableJsonProtocol._
+	import DefaultJsonProtocol._
+	import ForeignKeysForTableJsonProtocolOneDb._
 
   val fileName : Path = dirPath.resolve(filename+".fgk")
 
-	def writeAsFile(list : ForeignKeysForTableList) : Unit =
-		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
-	
-	def readFromFile() : ForeignKeysForTableList = {
-		val text = FileReadWrite.readFile(fileName)
-		text.parseJson.convertTo[ForeignKeysForTableList]
-	}
+	def writeAsFile(list : List[ForeignKeysForTable]) : Unit = {
+    val keys = mapFromForeignKeys(list)
+    FileReadWrite.writeFile(fileName, keys.toJson.prettyPrint)
+  }
 
-	def fileExist() : Boolean = FileReadWrite.fileExist(fileName)
+	def readFromFile(databaseId: DatabaseId) : List[ForeignKeysForTable] = {
+		val text = FileReadWrite.readFile(fileName)
+    val keys = text.parseJson.convertTo[ForeignKeysForTableListOneDb].keys
+    mapToForeignKeys(databaseId, keys)
+  }
+
+  private def mapToForeignKeys(databaseId: DatabaseId, keys: List[ForeignKeysForTableOneDb]): List[ForeignKeysForTable] = {
+    keys.map(k => ForeignKeysForTable(TableId(databaseId, k.table),
+      ForeignKeys(k.keys.keys.map(l => ForeignKey(l.name,
+        FieldsOnTable(TableId(databaseId, l.from.table), l.from.fields),
+        FieldsOnTable(TableId(databaseId, l.to.table), l.to.fields),
+        l.direction)))
+    ))
+  }
+
+  private def mapFromForeignKeys(keys: List[ForeignKeysForTable]): List[ForeignKeysForTableOneDb] = {
+    keys.map(k => ForeignKeysForTableOneDb(k.tableId.tableName,
+      ForeignKeysOneDb(k.keys.keys.map(l => ForeignKeyOneDb(l.name,
+        FieldsOnTableOneDb(l.from.table.tableName, l.from.fields),
+        FieldsOnTableOneDb(l.to.table.tableName, l.to.fields),
+        l.direction)))
+    ))
+  }
+
+  def fileExist() : Boolean = FileReadWrite.fileExist(fileName)
 }
 
