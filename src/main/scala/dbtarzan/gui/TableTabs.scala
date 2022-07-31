@@ -11,7 +11,7 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization)
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization)
   extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tabs = new TabPane()
@@ -20,12 +20,12 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   def addColumns(columns : ResponseColumns) : Unit =  {
     val structure = createTable(columns.tableId, columns.columns, columns.queryAttributes)
-    queryTableContent(None, structure)
+    queryTableContent(columns.tableId.databaseId, None, structure)
   }
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
     val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
-    queryTableContent(None, structure)
+    queryTableContent(columns.tableId.databaseId, None, structure)
   }
 
   def removeTables(ids : List[QueryId]) : Unit = {
@@ -81,7 +81,8 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   private def removeTabs(toCloseTabs : List[javafx.scene.control.Tab]) : Unit = {
     val toCloseIds = tables.idsFromTabs(toCloseTabs)
-    guiActor ! ResponseCloseTables(databaseId, toCloseIds)
+    toCloseIds.groupBy(toCloseId => toCloseId.tableId.databaseId)
+      .foreach({case (databaseId, toCloseIdsWithDatabaseId) => guiActor ! ResponseCloseTables(databaseId, toCloseIdsWithDatabaseId)})
   }
 
   private def removeTabsBefore(queryId : QueryId, allTabsInOrder : List[javafx.scene.control.Tab]) : Unit = 
@@ -106,7 +107,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     tabs.selectionModel().select(tab)
     
     browsingTable.onNewTable((newStructure, closeCurrentTab) => 
-        queryTableContent(Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
+        queryTableContent(queryId.tableId.databaseId ,Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
       )
     TTableWithTab[BrowsingTable](browsingTable, tab)
   }
@@ -124,7 +125,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     log.error(localization.errorRequestingTheRows(error.queryId), error.ex)
   }
 
-  private def queryTableContent(originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
+  private def queryTableContent(databaseId: DatabaseId, originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
     val queryId = IDGenerator.queryId(TableId(databaseId, structure.description.name))
     tablesToClose.addToCloseWhenNewTabOpens(queryId, originalQuery)
     // requests the foreign keys for this table.

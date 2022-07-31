@@ -18,7 +18,7 @@ import dbtarzan.localization.Localization
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableNames: TableNames) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tableList = new TableList(tableNames)
-  private val tableTabs = new TableTabs(dbActor, guiActor, databaseId, localization)  
+  private val tableTabs = new TableTabs(dbActor, guiActor, localization)
   private var additionalForeignKeyEditor : Option[AdditionalForeignKeysEditor] = Option.empty
   tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
   private val filterText = new TextField() { 
