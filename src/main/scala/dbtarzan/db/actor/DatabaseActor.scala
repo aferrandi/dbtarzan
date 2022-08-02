@@ -129,16 +129,21 @@ class DatabaseActor(
 
   private def queryTables(qry: QueryTables) : Unit = withCore(core => {
       val names = core.tablesLoader.tableNames()
-      logTableNames(core, names)
-      guiActor ! ResponseTables(qry.databaseId, names, qry.dbActor)
+      val tableIds = tableNamesToTableIds(qry.databaseId, names)
+      logTableNames(core, tableIds)
+      guiActor ! ResponseTables(qry.databaseId, tableIds, qry.dbActor)
     }, ex => {
       logError(ex)
       closeThisDBWorker()
     })
 
-  private def logTableNames(core: DatabaseWorkerCore, names: TableNames): Unit = {
-    if (names.tableNames.nonEmpty)
-      log.info(localization.loadedTables(names.tableNames.size, databaseName))
+  private def tableNamesToTableIds(databaseId: DatabaseId, names: TableNames) = {
+    TableIds(names.names.map(name => TableId(databaseId, name)))
+  }
+
+  private def logTableNames(core: DatabaseWorkerCore, tableIds: TableIds): Unit = {
+    if (tableIds.tableIds.nonEmpty)
+      log.info(localization.loadedTables(tableIds.tableIds.size, databaseName))
     else {
       val schemas = core.schemasLoader.schemasNames()
       val schemasText = schemas.schemas.map(_.name).mkString(", ")
@@ -161,7 +166,7 @@ class DatabaseActor(
 
   private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCore(core => {
         val names = core.tablesLoader.tablesByPattern(qry.pattern)
-        guiActor ! ResponseTablesByPattern(qry.databaseId, names)
+        guiActor ! ResponseTablesByPattern(qry.databaseId, tableNamesToTableIds(qry.databaseId,names))
       }, logError)
 
 	private def queryColumns(qry: QueryColumns) : Unit = withCore(core => {
@@ -183,9 +188,9 @@ class DatabaseActor(
     }, logError)
 
 	private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = withCore(core => {
-    val tableName = qry.tableName
+    val tableName = qry.tableId.tableName
     val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-      guiActor ! ResponseColumnsForForeignKeys(qry.databaseId, tableName, columns)
+      guiActor ! ResponseColumnsForForeignKeys(qry.tableId, columns)
   }, logError)
 
 	private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(core => {

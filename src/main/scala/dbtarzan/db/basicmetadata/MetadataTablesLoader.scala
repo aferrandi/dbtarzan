@@ -1,10 +1,10 @@
 package dbtarzan.db.basicmetadata
 
-import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
-
-import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ TableNames, DBDefinition }
+import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
+import dbtarzan.db.{DBDefinition, TableNames}
+
+import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 /* to read the basic methadata (tables and columns) from the dataase */
 class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
@@ -32,7 +32,7 @@ class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 	/* gets all the tables in the database/schema from the database metadata */
 	def tableNames() : TableNames = try {
 			using(meta.getTables(definition.catalog.orNull, definition.schema.map(_.name).orNull, "%", Array("TABLE"))) { rs =>
-				toTableNames(readTableNames(rs))
+        toTableNames(readTableNames(rs))
 			}
 		} catch {
 			case se : SQLException  => throw new Exception("Reading the database tables got "+ExceptionToText.sqlExceptionText(se), se)

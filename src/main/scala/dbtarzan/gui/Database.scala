@@ -1,26 +1,26 @@
 package dbtarzan.gui
 
-import scalafx.stage.Stage
-import scalafx.scene.control.{Label, Menu, MenuBar, MenuItem, SplitPane, TextField}
-import scalafx.scene.layout.{BorderPane, FlowPane}
-import scalafx.scene.Parent
-import scalafx.Includes._
 import akka.actor.ActorRef
+import dbtarzan.db.{DatabaseId, TableIds}
+import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
+import dbtarzan.gui.util.JFXUtil
+import dbtarzan.localization.Localization
+import dbtarzan.messages._
+import scalafx.Includes._
 import scalafx.event.ActionEvent
 import scalafx.geometry.Insets
-import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
-import dbtarzan.messages._
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.db.{DatabaseId, TableId, TableNames}
-import dbtarzan.localization.Localization
+import scalafx.scene.Parent
+import scalafx.scene.control._
+import scalafx.scene.layout.{BorderPane, FlowPane}
+import scalafx.stage.Stage
 
 /* A panel containing all the tabs related to a database */
-class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableNames: TableNames) extends TControlBuilder {
+class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: TableIds) extends TControlBuilder {
   private val log = new Logger(guiActor)
-  private val tableList = new TableList(tableNames)
+  private val tableList = new TableList(tableIds)
   private val tableTabs = new TableTabs(dbActor, guiActor, localization)
   private var additionalForeignKeyEditor : Option[AdditionalForeignKeysEditor] = Option.empty
-  tableList.onTableSelected(tableName => dbActor ! QueryColumns(TableId(databaseId, tableName)))
+  tableList.onTableSelected(tableId => dbActor ! QueryColumns(tableId))
   private val filterText = new TextField() { 
     promptText = localization.filter
     margin = Insets(0,0,3,0)
@@ -61,7 +61,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
                   dbActor, 
                   guiActor,
                   databaseId,
-                  tableList.tableNames,
+                  tableList.tableIds,
                   localization
                   ))
               }
@@ -84,7 +84,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTablesByPattern => tableList.addTableNames(tables.names)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
-    case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableName, columns.columns)) 
+    case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case _: RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
     case additionalKeys: ResponseAdditionalForeignKeys =>  additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
     case _ => log.error(localization.errorDatabaseMessage(msg))

@@ -5,7 +5,7 @@ import scalafx.scene.Scene
 import scalafx.Includes._
 import akka.actor.ActorRef
 
-import dbtarzan.db.{ TableNames, DatabaseId }
+import dbtarzan.db.{ TableIds, DatabaseId }
 import dbtarzan.messages.RequestAdditionalForeignKeys
 import dbtarzan.localization.Localization
 
@@ -13,12 +13,12 @@ import dbtarzan.localization.Localization
 object AdditionalForeignKeysEditorStarter
 {
  def openAdditionalForeignKeysEditor(
-    parentStage : Stage, 
-    dbActor : ActorRef,
-    guiActor: ActorRef, 
-    databaseId: DatabaseId,
-    tableNames: TableNames,
-    localization: Localization) : AdditionalForeignKeysEditor = {
+                                      parentStage : Stage,
+                                      dbActor : ActorRef,
+                                      guiActor: ActorRef,
+                                      databaseId: DatabaseId,
+                                      tableNames: TableIds,
+                                      localization: Localization) : AdditionalForeignKeysEditor = {
     println("open additional foreign keys editor")  
     val editor = new AdditionalForeignKeysEditor(dbActor, guiActor, databaseId, tableNames, localization)
     val additionalForeignKeysStage = new Stage {

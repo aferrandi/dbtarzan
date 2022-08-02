@@ -13,7 +13,10 @@ case class QuerySql(sql: String)
 /* a table: its name, the name of the original table if it comes from another table */
 case class TableDescription(name: String, origin : Option[String], notes: Option[String])
 /* the tables in a databases */
-case class TableNames(tableNames : List[String])
+case class TableIds(tableIds : List[TableId])
+
+case class TableNames(names : List[String])
+
 /* a field in a table (name and type) */
 case class Field(name : String,  fieldType : FieldType, typeDescription : String)
 /* all fields in a table */

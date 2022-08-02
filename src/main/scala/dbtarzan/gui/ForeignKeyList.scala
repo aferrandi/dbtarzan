@@ -54,7 +54,7 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 			case _  => "<ERROR>"
 		}
 		def fieldsIfSharesTable() = Some(key).filter(_.sharesToTable).map(k => fieldsToText(k.key.from.fields)) 
-		directionText(key.key.direction) + " " + key.key.to.table + fieldsIfSharesTable().map(t => " "+t).getOrElse("")
+		directionText(key.key.direction) + " " + key.key.to.table.tableName + fieldsIfSharesTable().map(t => " "+t).getOrElse("")
 	}
 	
 	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */

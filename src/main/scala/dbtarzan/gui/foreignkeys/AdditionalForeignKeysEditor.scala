@@ -1,7 +1,7 @@
 package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableNames}
+import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableId, TableIds}
 import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, StringUtil}
 import dbtarzan.localization.Localization
@@ -14,11 +14,11 @@ import scalafx.scene.layout.BorderPane
 
 /* table + constraint input box + foreign keys */
 class AdditionalForeignKeysEditor(
-  dbActor : ActorRef,
-  guiActor: ActorRef,
-  databaseId: DatabaseId,
-  tableNames: TableNames,
-  localization: Localization
+                                   dbActor : ActorRef,
+                                   guiActor: ActorRef,
+                                   databaseId: DatabaseId,
+                                   tableNames: TableIds,
+                                   localization: Localization
   ) extends TControlBuilder {
   private val keysTable = new ForeignKeysTable(databaseId, guiActor, localization)
   private val singleEditor = new SingleEditor(dbActor, databaseId, tableNames, localization)
@@ -77,8 +77,8 @@ class AdditionalForeignKeysEditor(
   def handleForeignKeys(additionalKeys : List[AdditionalForeignKey]) : Unit = 
     keysTable.addRows(additionalKeys)
 
-  def handleColumns(tableName : String, columns : Fields) : Unit =
-    singleEditor.handleColumns(tableName, columns) 
+  def handleColumns(tableId : TableId, columns : Fields) : Unit =
+    singleEditor.handleColumns(tableId, columns)
 
   def control : Parent = layout
 }

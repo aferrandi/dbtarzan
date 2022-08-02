@@ -20,7 +20,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "tablenames" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tableNames()
-  	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableNames)
+  	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableIds)
   }
 
 
@@ -49,7 +49,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "tablesByPattern" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tablesByPattern("PRI")
-  	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.tableNames)
+  	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.tableIds)
   }
 
 

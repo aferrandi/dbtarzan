@@ -16,10 +16,10 @@ import scalafx.scene.paint.Color
 
 /* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
-  dbActor: ActorRef,
-  databaseId: DatabaseId,  
-  tableNames: TableNames,
-  localization: Localization
+                    dbActor: ActorRef,
+                    databaseId: DatabaseId,
+                    tableNames: TableIds,
+                    localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
   private val showText: Option[String] => Label = (value: Option[String]) => new Label {
@@ -34,7 +34,7 @@ class SingleEditor(
   private val orderedListColumnsTo = new OrderedListView[String](localization.add, showText, comboStrategy)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
-  private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
+  private val tableNamesBuffer = ObservableBuffer(tableNames.tableIds)
   private val comboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty) 
   private val comboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty) 
   
@@ -43,14 +43,14 @@ class SingleEditor(
   }
   private var editorDisabled = BooleanProperty(true)
 
-  private def buildChosenTableProperty(orderedListColumns : OrderedListView[String]) = new ObjectProperty[String]() {
-    onChange { (_, _, newTable) => Option(newTable).filter(t => t.nonEmpty).foreach(t => {
+  private def buildChosenTableProperty(orderedListColumns : OrderedListView[String]) = new ObjectProperty[TableId]() {
+    onChange { (_, _, newTable) => Option(newTable).filter(t => t.tableName.nonEmpty).foreach(t => {
       orderedListColumns.setListData(List.empty)
-      dbActor ! QueryColumnsForForeignKeys(databaseId, t)
+      dbActor ! QueryColumnsForForeignKeys(t)
     }) }
   }
 
-  private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[String]) = new ComboBox[String] {
+  private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[TableId]) = new ComboBox[TableId] {
       items = tableNamesBuffer
       editable = false
       cellFactory = { _ => buildTableCell() }
@@ -59,10 +59,10 @@ class SingleEditor(
       value <==> chosenTableProperty
   }
  
-  private def buildTableCell() = new ListCell[String] {
+  private def buildTableCell() = new ListCell[TableId] {
     item.onChange { 
       (_, _, value) => {
-          text = Option(value).getOrElse("") 
+          text = Option(value).map(value => value.tableName).getOrElse("")
         }
       }
   } 	
@@ -95,8 +95,8 @@ class SingleEditor(
   def show(key : AdditionalForeignKey) : Unit = safe.noChangeEventDuring(() => {
     println("show "+key)
     txtName.text = key.name
-    chosenTableFromProperty.value = key.from.table.tableName
-    chosenTableToProperty.value = key.to.table.tableName
+    chosenTableFromProperty.value = key.from.table
+    chosenTableToProperty.value = key.to.table
     orderedListColumnsFrom.setListData(key.from.fields)
     orderedListColumnsTo.setListData(key.to.fields)
     editorDisabled.value = false
@@ -105,8 +105,8 @@ class SingleEditor(
   def toKey(): AdditionalForeignKey = {
     val key = AdditionalForeignKey(
       txtName.text(), 
-      FieldsOnTable(TableId(databaseId, chosenTableFromProperty.value), orderedListColumnsFrom.listData()),
-      FieldsOnTable(TableId(databaseId, chosenTableToProperty.value), orderedListColumnsTo.listData())
+      FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData()),
+      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData())
    )
    key
   }
@@ -125,16 +125,16 @@ class SingleEditor(
     ).foreach(_.onChange(_ => safe.onChange(() => useKey(toKey()))))
   }
 
-  private def handleColumnsForTable(tableName : String, columns : Fields, comboTable : ComboBox[String], orderedListColumns : OrderedListView[String]) : Unit = {
-    if(comboTable.value.value == tableName) {
+  private def handleColumnsForTable(tableId : TableId, columns : Fields, comboTable : ComboBox[TableId], orderedListColumns : OrderedListView[String]) : Unit = {
+    if(comboTable.value.value == tableId) {
       orderedListColumns.setComboData(columns.fields.map(_.name))
     }
   }
 
-  def handleColumns(tableName : String, columns : Fields) : Unit = {
+  def handleColumns(tableId : TableId, columns : Fields) : Unit = {
     safe.onChange(() => {
-      handleColumnsForTable(tableName, columns, comboTableFrom, orderedListColumnsFrom)
-      handleColumnsForTable(tableName, columns, comboTableTo, orderedListColumnsTo)
+      handleColumnsForTable(tableId, columns, comboTableFrom, orderedListColumnsFrom)
+      handleColumnsForTable(tableId, columns, comboTableTo, orderedListColumnsTo)
     })
   }
 }

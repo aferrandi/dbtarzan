@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import akka.actor.ActorRef
-import dbtarzan.db.{DatabaseId, TableId, TableNames}
+import dbtarzan.db.{DatabaseId, TableId, TableIds}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
 import scalafx.Includes._
@@ -25,7 +25,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
       this.connectionsActor = Some(connectionsActor)
   } 
 
-  private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableNames : TableNames) : Database = {
+  private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableNames : TableIds) : Database = {
     println("add database tab for "+databaseId.databaseName)
     guiActor match {
       case Some(ga) => addDatabaseTabWithGUIActor(dbActor, ga, databaseId, tableNames)
@@ -33,7 +33,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
     }
   }
 
-  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, someGuiActor: ActorRef, databaseId: DatabaseId, tableNames: TableNames) = {
+  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, someGuiActor: ActorRef, databaseId: DatabaseId, tableNames: TableIds) = {
     val database = new Database(dbActor, someGuiActor, databaseId, localization, tableNames)
     val tab = buildTab(database)
     tabs += tab

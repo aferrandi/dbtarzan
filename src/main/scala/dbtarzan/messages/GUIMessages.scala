@@ -19,10 +19,10 @@ case class ErrorRows(queryId : QueryId,  ex: Exception)
 case class ResponseOneRow(queryId : QueryId, structure : DBRowStructure, row : Row)
   extends TWithQueryId
 
-case class ResponseTables(databaseId : DatabaseId, names: TableNames, dbActor : ActorRef) 
+case class ResponseTables(databaseId : DatabaseId, names: TableIds, dbActor : ActorRef)
     extends TWithDatabaseId
 
-case class ResponseTablesByPattern(databaseId : DatabaseId, names: TableNames) 
+case class ResponseTablesByPattern(databaseId : DatabaseId, names: TableIds)
     extends TWithDatabaseId
 
 case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId]) 
@@ -34,8 +34,8 @@ case class ResponseSchemas(databaseId : DatabaseId, schemas: Schemas)
 case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
-case class  ResponseColumnsForForeignKeys(databaseId : DatabaseId, tableName: String, columns : Fields) 
-    extends TWithDatabaseId
+case class  ResponseColumnsForForeignKeys(tableId  : TableId, columns : Fields)
+    extends TWithTableId
 
 case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, keys : PrimaryKeys)
     extends TWithQueryId
