@@ -49,13 +49,12 @@ class ComboSchemas() extends TControlBuilder with TCombo {
   def show(schema : Option[Schema]) : Unit =
     cmbSchemas.value = schema
 
-  def toSchema(): Option[Schema] = cmbSchemas.getSelectionModel.selectedItem()
+  def chosenSchema(): Option[Schema] = cmbSchemas.getSelectionModel.selectedItem()
 
   def control : Parent = cmbSchemas
 
   def onChanged(useSchemas : () => Unit) : Unit = {
     cmbSchemas.onAction = (ev: ActionEvent) => useSchemas()
   }
-
 }
 

@@ -7,6 +7,7 @@ trait Localization {
   def settings : String
   def globalSettings: String
   def editConnections: String
+  def editComposites: String
   def help : String
   def documentation: String
   def new_ : String
@@ -101,6 +102,7 @@ trait Localization {
   def connectionSuccessful: String
   def connectionToDatabaseSuccesful(databaseName: String): String
   def editingConnectionFile(fileName: Path) : String
+  def editingCompositeFile(compositeConfigPath: Path): String
   def indexes: String
   def errorConnectingToDatabase(databaseName : String) : String
   def errorQueryingDatabase(databaseName : String) : String

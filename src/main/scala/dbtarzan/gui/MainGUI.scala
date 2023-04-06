@@ -4,6 +4,7 @@ import akka.actor.ActorRef
 import dbtarzan.config.password.{EncryptionKey, PasswordEncryption, VerificationKey}
 import dbtarzan.db.DatabaseId
 import dbtarzan.gui.browsingtable.TableMenu
+import dbtarzan.gui.config.composite.CompositeEditorStarter
 import dbtarzan.gui.config.connections.ConnectionEditorStarter
 import dbtarzan.gui.config.global.GlobalEditorStarter
 import dbtarzan.gui.util.JFXUtil
@@ -45,6 +46,7 @@ class MainGUI(
 	private val stage = buildStage() 
 	private var guiActor: Option[ActorRef]  = None
 	private var connectionsActor: Option[ActorRef] = None
+  private var compositeActor: Option[ActorRef] = None
 	private var encryptionKey : Option[EncryptionKey] = None
 	private val encryptionKeyDialog  = new EncryptionKeyDialog(stage, localization)
 
@@ -53,6 +55,7 @@ class MainGUI(
   def setActors(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
 		this.guiActor = Some(guiActor)
 		this.connectionsActor = Some(connectionsActor)
+
 		databaseTabs.setActors(guiActor, connectionsActor)
   } 
 
@@ -97,7 +100,8 @@ class MainGUI(
 	private def buildSettingsMenu() = new Menu(localization.settings) {
     items = List(
       JFXUtil.menuItem(localization.globalSettings, openGlobalEditor),
-      JFXUtil.menuItem(localization.editConnections, openConnectionsEditor)
+      JFXUtil.menuItem(localization.editConnections, openConnectionsEditor),
+      JFXUtil.menuItem(localization.editComposites, openCompositeEditor)
     )
   }
 
@@ -141,6 +145,14 @@ class MainGUI(
 			case None => println("MainGUI: encryptionKey not entered")
 		}
 	}
+
+  private def openCompositeEditor(): Unit = {
+    guiActor match {
+      case Some(ga) => new Logger(ga).info(localization.editingCompositeFile(configPaths.compositeConfigPath))
+      case None => println("MainGUI: guiActor not defined")
+    }
+    CompositeEditorStarter.openCompositeEditor(stage, configPaths.compositeConfigPath, configPaths.connectionsConfigPath, localization)
+  }
 
 	private def extractEncryptionKey() : Option[EncryptionKey] = {
 		if(encryptionKey.isEmpty)

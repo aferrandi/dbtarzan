@@ -31,7 +31,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
 
 
   /* builds table with the two columns (name and description) */ 
-  def buildTable() = new TableView[AdditionalForeignKey](buffer) {
+  def buildTable(): TableView[AdditionalForeignKey] = new TableView[AdditionalForeignKey](buffer) {
     columns ++= List ( nameColumn(), tableFromColumn(), foreignKeysFromColumn(), tableToColumn(), foreignKeysToColumn(), buttonColumn())
     editable = false
     columnResizePolicy = TableView.ConstrainedResizePolicy

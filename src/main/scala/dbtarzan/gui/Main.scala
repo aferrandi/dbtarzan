@@ -43,11 +43,13 @@ object Main extends JFXApp {
     var configsPath = parameters.named.getOrElse("configPath", Option(System.getProperty("configPath")).getOrElse(".") )
     val globalConfigPath = Paths.get(configsPath, "global.config")
     val connectionsConfigPath = Paths.get(configsPath, "connections.config")
+    val compositesConfigPath = Paths.get(configsPath, "composites.config")
     println("Current directory: "+System.getProperty("user.dir")
       +" globalConfigPath:"+globalConfigPath
       +" connectionsConfigPath:"+connectionsConfigPath
+      +" compositesConfigPath:"+compositesConfigPath
       )
-    ConfigPath(globalConfigPath, connectionsConfigPath, Paths.get(configsPath))
+    ConfigPath(globalConfigPath, connectionsConfigPath, Paths.get(configsPath), compositesConfigPath)
   }
 
   private def readConnectionDatas(connectionsConfigPath: Path) : ConnectionDatas = {

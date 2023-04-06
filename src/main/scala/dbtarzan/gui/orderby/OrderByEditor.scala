@@ -2,7 +2,7 @@ package dbtarzan.gui.orderby
 
 import dbtarzan.db.{Field, OrderByDirection, OrderByField, OrderByFields}
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.{JFXUtil, OrderedListView, TComboStrategy}
+import dbtarzan.gui.util.{JFXUtil, ListViewAddFromComboBuilder, TComboStrategy}
 import dbtarzan.localization.Localization
 import scalafx.Includes._
 import scalafx.beans.property.BooleanProperty
@@ -52,7 +52,7 @@ class OrderByEditor(
     OrderByDirection.directions().map(d => OrderByField(field, d))
   }
 
-  private var list = new OrderedListView[OrderByField](localization.add, showField, comboStrategy)
+  private var list = ListViewAddFromComboBuilder.buildOrdered[OrderByField](localization.add, showField, comboStrategy)
   list.setListData(currentOrderByFields)
   list.setComboData(possibleOrderByFields.flatMap(f => OrderByDirection.directions().map(d => OrderByField(f, d))))
   list.onChange(data =>

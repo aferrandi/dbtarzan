@@ -161,7 +161,7 @@ class OneConnectionEditor(
         txtName.text(),
         txtDriver.text(),
         txtUrl.text(),
-        cmbSchemas.toSchema(),
+        cmbSchemas.chosenSchema(),
         txtUser.text(),
         encryptPassword(Password(txtPassword.text())),
         Some(true),

@@ -7,7 +7,7 @@ case class TableId(databaseId : DatabaseId, tableName : String)
 /* The name given by the user to the composite identifies it */
 case class CompositeId(compositeName: String)
 /* A composite is a composition of multiple databases */
-case class Compoosite(compositeId: CompositeId, databaseIds: List[DatabaseId])
+case class Composite(compositeId: CompositeId, databaseIds: List[DatabaseId])
 /* an sql expression */
 case class QuerySql(sql: String)
 /* a table: its name, the name of the original table if it comes from another table */

@@ -3,7 +3,7 @@ package dbtarzan.gui.foreignkeys
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.{OnChangeSafe, OrderedListView, TComboStrategy}
+import dbtarzan.gui.util.{ListViewAddFromCombo, OnChangeSafe, ListViewAddFromComboBuilder, TComboStrategy}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
@@ -30,8 +30,8 @@ class SingleEditor(
     override def removeFromCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer -= item
     override def addToCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer += item
   }
-  private val orderedListColumnsFrom = new OrderedListView[String](localization.add, showText, comboStrategy)
-  private val orderedListColumnsTo = new OrderedListView[String](localization.add, showText, comboStrategy)
+  private val orderedListColumnsFrom = ListViewAddFromComboBuilder.buildOrdered[String](localization.add, showText, comboStrategy)
+  private val orderedListColumnsTo = ListViewAddFromComboBuilder.buildOrdered[String](localization.add, showText, comboStrategy)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
   private val tableNamesBuffer = ObservableBuffer(tableNames.tableIds)
@@ -43,7 +43,7 @@ class SingleEditor(
   }
   private var editorDisabled = BooleanProperty(true)
 
-  private def buildChosenTableProperty(orderedListColumns : OrderedListView[String]) = new ObjectProperty[TableId]() {
+  private def buildChosenTableProperty(orderedListColumns : ListViewAddFromCombo[String]) = new ObjectProperty[TableId]() {
     onChange { (_, _, newTable) => Option(newTable).filter(t => t.tableName.nonEmpty).foreach(t => {
       orderedListColumns.setListData(List.empty)
       dbActor ! QueryColumnsForForeignKeys(t)
@@ -125,7 +125,7 @@ class SingleEditor(
     ).foreach(_.onChange(_ => safe.onChange(() => useKey(toKey()))))
   }
 
-  private def handleColumnsForTable(tableId : TableId, columns : Fields, comboTable : ComboBox[TableId], orderedListColumns : OrderedListView[String]) : Unit = {
+  private def handleColumnsForTable(tableId : TableId, columns : Fields, comboTable : ComboBox[TableId], orderedListColumns : ListViewAddFromCombo[String]) : Unit = {
     if(comboTable.value.value == tableId) {
       orderedListColumns.setComboData(columns.fields.map(_.name))
     }

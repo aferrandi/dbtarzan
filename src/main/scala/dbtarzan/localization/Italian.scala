@@ -6,7 +6,8 @@ import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId 
 class Italian extends Localization {
     def settings = "Opzioni"
     def globalSettings = "Opzioni Globali"
-    def editConnections = "Modifica Connessioni"  
+    def editConnections = "Modifica Connessioni"
+    def editComposites = "Modifica Combinazioni"
     def help = "Aiuto"      
     def documentation = "Documentazione"
     def new_ = "Nuovo"
@@ -99,12 +100,13 @@ class Italian extends Localization {
     def databaseAlreadyOpen(databaseName : String) =  "Il database "+databaseName+" e' gia' aperto"
     def connectionRefused = "Connessione rifiutata"
     def connectionSuccessful = "Connessione riuscita"
-    def connectionToDatabaseSuccesful(databaseName: String) = "La connessione al database "+databaseName+" e' riuscita"
-    def editingConnectionFile(fileName: Path) = "Sto editando il file di configurazione delle connessioni " + fileName
+    def connectionToDatabaseSuccesful(databaseName: String): String = "La connessione al database "+databaseName+" e' riuscita"
+    def editingConnectionFile(fileName: Path): String = "Sto editando il file di configurazione delle connessioni " + fileName
+    def editingCompositeFile(fileName: Path): String = "Sto editando il file di configurazione delle combinazioni " + fileName
     def indexes = "Indici"
-    def errorConnectingToDatabase(databaseName : String) = "La connessione al database "+databaseName+" e' fallita a causa di"
-    def errorQueryingDatabase(databaseName : String) = "L'apertura del database "+databaseName+" e' fallita a causa di"
-    def errorRequestingTheRows(queryId : QueryId) = "La richiesta delle righe di "+queryId+" e' fallita a a causa di"    
+    def errorConnectingToDatabase(databaseName : String): String = "La connessione al database "+databaseName+" e' fallita a causa di"
+    def errorQueryingDatabase(databaseName : String): String = "L'apertura del database "+databaseName+" e' fallita a causa di"
+    def errorRequestingTheRows(queryId : QueryId): String = "La richiesta delle righe di "+queryId+" e' fallita a a causa di"
     def errorCopyingSelection = "La copia della selezione e' fallita a causa di "
     def errorCopyingSQL = "La copia dell'SQL e' fallita a causa di "
     def errorReadingKeys(databaseName : String) = "Nella lettiura del file delle chiavi esterne del database "+databaseName+" si e' avuto il seguente errore. Cancella il file se e' corrotto o di una vecchia versione dell'applicazione."

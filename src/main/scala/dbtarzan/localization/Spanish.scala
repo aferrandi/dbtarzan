@@ -6,7 +6,8 @@ import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId 
 class Spanish extends Localization {
     def settings = "Opciones"
     def globalSettings = "Opciones globales"
-    def editConnections = "Modificación de conexiones"  
+    def editConnections = "Modificación de conexiones"
+    def editComposites = "Modificación de combinaciones"
     def help = "Ayuda"      
     def documentation = "Documentación"
     def new_ = "Nuevo"
@@ -98,13 +99,14 @@ class Spanish extends Localization {
     def connectionResetted(databaseName : String) = "Conexión de base de datos "+databaseName+" restablecida"
     def connectionRefused = "Conexión denegada"
     def connectionSuccessful = "Conexión exitosa"
-    def connectionToDatabaseSuccesful(databaseName: String) = "Conexión de base de datos "+databaseName+" ha tenido éxito"
-    def databaseAlreadyOpen(databaseName : String) =  "La base de datos "+databaseName+" ya está abierta"
-    def editingConnectionFile(fileName: Path) = "Estoy editando el archivo de configuración de las conexiones " + fileName
+    def connectionToDatabaseSuccesful(databaseName: String): String = "Conexión de base de datos "+databaseName+" ha tenido éxito"
+    def databaseAlreadyOpen(databaseName : String): String =  "La base de datos "+databaseName+" ya está abierta"
+    def editingConnectionFile(fileName: Path): String = "Estoy editando el archivo de configuración de las conexiones " + fileName
+    def editingCompositeFile(fileName: Path): String = "Estoy editando el archivo de configuración de las combinaciones " + fileName
     def indexes = "Indices"
-    def errorConnectingToDatabase(databaseName : String) = "La conexión a la base de datos "+databaseName+" y 'fallado debido a"
-    def errorQueryingDatabase(databaseName : String) = "La apertura de la base de datos "+databaseName+" y 'fallado debido a"
-    def errorRequestingTheRows(queryId : QueryId) = "La solicitud de las filas de "+queryId+" y 'fallado debido a"    
+    def errorConnectingToDatabase(databaseName : String): String = "La conexión a la base de datos "+databaseName+" y 'fallado debido a"
+    def errorQueryingDatabase(databaseName : String): String = "La apertura de la base de datos "+databaseName+" y 'fallado debido a"
+    def errorRequestingTheRows(queryId : QueryId): String = "La solicitud de las filas de "+queryId+" y 'fallado debido a"
     def errorCopyingSelection = "La copia de la selección y 'fallado debido a "
     def errorCopyingSQL = "La copia de SQL y 'fallado debido a "
     def errorReadingKeys(databaseName : String) = "Se produjo el siguiente error en la lectura del archivo de clave externa de la base de datos "+databaseName+". Elimine el archivo si está dañado o es de una versión anterior de la aplicación."
