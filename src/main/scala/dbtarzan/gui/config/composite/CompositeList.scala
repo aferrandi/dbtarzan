@@ -10,11 +10,16 @@ import scalafx.scene.control._
 
 case class CompositeErrors(compositeId: CompositeId, errors : List[String])
 
+object CompositeList {
+ val newCompositeName = "<NEW>"
+}
+
+
 /* The list of database to choose from */
 class CompositeList(composites : List[Composite], localization : Localization) extends TControlBuilder {
-  private val compositesObservable = ObservableBuffer(
-    if(composites.nonEmpty) composites else List(newComposite())
-  )
+  private val compositesWithNew: List[Composite] = if (composites.nonEmpty) composites else List(newComposite())
+  println("Composites "+compositesWithNew)
+  private val compositesObservable = ObservableBuffer(compositesWithNew)
   private val menuAddComposite = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
   private val list = new ListView[Composite](compositesObservable) {
@@ -32,9 +37,7 @@ class CompositeList(composites : List[Composite], localization : Localization) e
 
   private def selectionModel() = list.selectionModel()
 
-  private val newCompositeName = "<NEW>"
-
-  def newComposite(): Composite = Composite(CompositeId(newCompositeName), List.empty)
+  def newComposite(): Composite = Composite(CompositeId(CompositeList.newCompositeName), List.empty)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex(): Option[Int] = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
