@@ -34,7 +34,7 @@ class CompositeList(composites : List[Composite], localization : Localization) e
 
   private val newCompositeName = "<NEW>"
 
-  def newComposite(): Composite = Composite(CompositeId(newCompositeName), List())
+  def newComposite(): Composite = Composite(CompositeId(newCompositeName), List.empty)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex(): Option[Int] = {
     var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)

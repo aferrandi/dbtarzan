@@ -6,7 +6,7 @@ import dbtarzan.gui.util.{ListViewAddFromComboBuilder, OnChangeSafe, TComboStrat
 import dbtarzan.localization.Localization
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
-import scalafx.geometry.Insets
+import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Parent
 import scalafx.scene.control._
 import scalafx.scene.layout.{ColumnConstraints, GridPane, Priority}
@@ -42,7 +42,7 @@ class OneCompositeEditor(
       })
     add(new Label { text = localization.name+":" }, 0, 0)
     add(txtName, 1, 0)
-    add(new Label { text = "Database ids:" }, 0, 1)
+    add(new Label { text = "Database ids:"; alignmentInParent = Pos.TopLeft }, 0, 1)
     add(lvwDatabaseId.control, 1, 1)
     padding = Insets(10)
     vgap = 10
