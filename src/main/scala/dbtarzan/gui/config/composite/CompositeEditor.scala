@@ -19,6 +19,7 @@ class CompositeEditor(
   private val oneCompositeEditor = new OneCompositeEditor(allDatabaseId, localization)
   oneCompositeEditor.onChanged(compositeList.changeSelected)
   private val buttons = new CompositeButtons(localization)
+  compositeList.selectFirst()
 
   private val layout = new BorderPane {
     center = buildSplitPane()
@@ -40,18 +41,18 @@ class CompositeEditor(
   private def showComposite(composite: Composite): Unit = try {
     oneCompositeEditor.show(composite)
   } catch {
-    case ex: Exception => JFXUtil.showErrorAlert(localization.errorDisplayingConnections + ": ", ex.getMessage)
+    case ex: Exception => JFXUtil.showErrorAlert(localization.errorDisplayingComposites + ": ", ex.getMessage)
   }
 
   private def saveIfPossible(save: List[Composite] => Unit): Unit = {
     val errors = compositeList.validate()
     if (errors.isEmpty) {
-      if (JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
+      if (JFXUtil.areYouSure(localization.areYouSureSaveComposite, localization.saveComposites))
         try {
           save(compositeList.content())
         }
         catch {
-          case ex: Exception => JFXUtil.showErrorAlert(localization.errorSavingConnections + ": ", ex.getMessage)
+          case ex: Exception => JFXUtil.showErrorAlert(localization.errorSavingComposites + ": ", ex.getMessage)
         }
     } else
       showCompositeErrors(errors)
@@ -59,7 +60,7 @@ class CompositeEditor(
 
   private def showCompositeErrors(errors: List[CompositeErrors]): Unit = {
     val errorText = errors.map(error => error.compositeId.compositeName + ":" + error.errors.mkString(",")).mkString(";")
-    JFXUtil.showErrorAlert(localization.errorSavingConnections + ": ", errorText)
+    JFXUtil.showErrorAlert(localization.errorSavingComposites + ": ", errorText)
   }
 
   def cancelIfPossible(cancel : () => Unit) : Unit = {

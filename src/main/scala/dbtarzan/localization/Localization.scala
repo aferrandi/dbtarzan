@@ -63,7 +63,9 @@ trait Localization {
   def buildForeignKeysFile: String
   def areYouSureClose: String
   def areYouSureSaveConnections: String
+  def areYouSureSaveComposite: String
   def saveConnections: String
+  def saveComposites: String
   def areYouSureSaveGlobalSettings: String
   def saveGlobalSettings: String
   def selectionCopied: String
@@ -112,7 +114,9 @@ trait Localization {
   def errorReadingKeys(databaseName : String) : String
   def errorWritingKeys(databaseName : String) : String
   def errorDisplayingConnections : String
+  def errorDisplayingComposites : String
   def errorSavingConnections: String
+  def errorSavingComposites: String
   def errorSavingGlobalSettings: String
   def errorWrongEncryptionKey : String
   def errorEncryptionKeysDifferent : String
