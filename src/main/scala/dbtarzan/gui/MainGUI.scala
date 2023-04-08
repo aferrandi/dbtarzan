@@ -39,6 +39,8 @@ class MainGUI(
 	/* the database/connection list on the left side */
 	val databaseList = new DatabaseList(localization)
 
+  val compositeList = new CompositeList(localization)
+
   val global = new Global();
 	/* how big is the screen */
 	private val screenBounds = Screen.primary.visualBounds
@@ -116,15 +118,24 @@ class MainGUI(
 		center = mainSplitPane()
 	}
 
+  private def buildCompositeSplitPane() = new SplitPane {
+    val databaseListWithTitle: BorderPane = JFXUtil.withTitle(databaseList.control, localization.databases)
+    val compositeListWithTitle: BorderPane = JFXUtil.withTitle(compositeList.control, localization.composites)
+    items.addAll(databaseListWithTitle, compositeListWithTitle)
+    dividerPositions = 0.6
+    orientation() =  Orientation.Vertical
+    SplitPane.setResizableWithParent(databaseListWithTitle, false)
+  }
+
   private def buildDatabaseSplitPane() = new SplitPane {
-		val databaseListWithTitle: BorderPane = JFXUtil.withTitle(databaseList.control, localization.databases)
-		items.addAll(databaseListWithTitle, databaseTabs.control)
+    private val compositeSplitPane: SplitPane = buildCompositeSplitPane()
+    items.addAll(compositeSplitPane, databaseTabs.control)
 		dividerPositions = 0.2
-		SplitPane.setResizableWithParent(databaseListWithTitle, false)
+		SplitPane.setResizableWithParent(compositeSplitPane, false)
 	}
 
 	private def mainSplitPane() = new SplitPane {
-		orientation() =  Orientation.VERTICAL
+		orientation() =  Orientation.Vertical
 		items.addAll(buildDatabaseSplitPane(), logList.control)
 		dividerPositions = 0.85
 		SplitPane.setResizableWithParent(logList.control, false)

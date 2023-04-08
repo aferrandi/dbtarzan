@@ -29,6 +29,7 @@ class English extends Localization {
     def maxFieldSize = "Max field size"
     def tables = "Tables"
     def databases = "Databases"
+    def composites = "Composites"
     def foreignKeys = "Foreign keys"
     def connectionReset = "Connection Reset"
     def orderBy = "Order by"

@@ -29,6 +29,7 @@ class Spanish extends Localization {
     def queryTimeoutInSeconds = "tiempo de espera de consulta en segundos"
     def tables = "Tablas"    
     def databases = "Base de datos"
+    def composites = "Combinaciones"
     def foreignKeys = "Llaves extranjeras"
     def connectionReset = "Restablecer la conexión"
     def orderBy = "Ordenar por"

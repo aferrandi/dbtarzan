@@ -29,6 +29,7 @@ trait Localization {
   def maxFieldSize: String
   def tables: String
   def databases: String
+  def composites: String
   def foreignKeys: String
   def connectionReset: String
   def orderBy: String

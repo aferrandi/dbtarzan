@@ -29,6 +29,7 @@ class Italian extends Localization {
     def maxFieldSize = "Max dimensione campo"
     def tables = "Tabelle"
     def databases = "Database"
+    def composites = "Combinazioni"
     def foreignKeys = "Chiavi esterne"
     def connectionReset = "Resetta connessione"
     def orderBy = "Order by"

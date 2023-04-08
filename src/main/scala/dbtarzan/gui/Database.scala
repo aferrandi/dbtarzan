@@ -3,12 +3,11 @@ package dbtarzan.gui
 import akka.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableIds}
 import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
-import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
 import scalafx.Includes._
 import scalafx.event.ActionEvent
-import scalafx.geometry.Insets
 import scalafx.scene.Parent
 import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, FlowPane}
@@ -21,21 +20,14 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val tableTabs = new TableTabs(dbActor, guiActor, localization)
   private var additionalForeignKeyEditor : Option[AdditionalForeignKeysEditor] = Option.empty
   tableList.onTableSelected(tableId => dbActor ! QueryColumns(tableId))
-  private val filterText = new TextField() { 
-    promptText = localization.filter
-    margin = Insets(0,0,3,0)
-    text.onChange { (value , oldValue, newValue) => {
-        val optValue = Option(newValue)
-        optValue.foreach({ dbActor ! QueryTablesByPattern(databaseId, _)  })
-      }}
-  }
+  private val filterText = new FilterText(dbActor ! QueryTablesByPattern(databaseId, _), localization)
   private val pane = new SplitPane {
     private val tableListWithTitle = new BorderPane {
       top = new FlowPane {
         children = List(buildMenu(), new Label(localization.tables))
       }
       center = new BorderPane {
-        top = filterText
+        top = filterText.control
         center = tableList.control
       }
     }
