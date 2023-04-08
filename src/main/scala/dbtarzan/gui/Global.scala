@@ -1,5 +1,6 @@
 package dbtarzan.gui
 import dbtarzan.gui.config.connections.ConnectionEditor
+import dbtarzan.gui.interfaces.TGlobal
 import dbtarzan.messages.{ResponseSchemaExtraction, ResponseTestConnection}
 
 class Global extends TGlobal {

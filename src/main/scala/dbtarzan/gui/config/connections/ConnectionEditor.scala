@@ -2,7 +2,7 @@ package dbtarzan.gui.config.connections
 
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{ExceptionText, ResponseSchemaExtraction, ResponseTestConnection}

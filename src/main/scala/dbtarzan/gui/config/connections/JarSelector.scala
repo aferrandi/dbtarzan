@@ -1,5 +1,6 @@
 package dbtarzan.gui.config.connections
 
+import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.scene.control.{ TextField, Button }
 import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
 import scalafx.scene.Parent
@@ -8,7 +9,6 @@ import scalafx.stage.FileChooser._
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import java.io.File
-import dbtarzan.gui.TControlBuilder
 import dbtarzan.localization.Localization
 
 /* The list of database to choose from*/
@@ -25,7 +25,7 @@ class JarSelector(localization : Localization) extends TControlBuilder {
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {
-        hgrow = Priority.ALWAYS
+        hgrow = Priority.Always
       },
       new ColumnConstraints() {
         

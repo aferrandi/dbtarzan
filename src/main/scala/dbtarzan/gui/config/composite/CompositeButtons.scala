@@ -1,6 +1,6 @@
 package dbtarzan.gui.config.composite
 
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 import scalafx.Includes._
 import scalafx.event.ActionEvent
@@ -21,12 +21,12 @@ class CompositeButtons(localization: Localization) extends TControlBuilder {
 
   private val buttonCancel = new Button {
     text = localization.cancel
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
   }
 
   private val buttonSave = new Button {
     text = localization.save
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
   }
 
 	private val layout = new HBox {

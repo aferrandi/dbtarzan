@@ -5,7 +5,7 @@ import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
 import dbtarzan.db.{Schema, Schemas}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.event.ActionEvent
 import scalafx.util.StringConverter
 

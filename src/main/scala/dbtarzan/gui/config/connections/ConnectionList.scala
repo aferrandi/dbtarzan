@@ -4,11 +4,10 @@ import scalafx.scene.control.{ ListView, ListCell, SplitPane, ContextMenu, MenuI
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
-
-import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.localization.Localization
 import dbtarzan.config.password.Password
+import dbtarzan.gui.interfaces.TControlBuilder
 
 case class ConnectionDataErrors(name : String, errors : List[String])
 

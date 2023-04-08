@@ -1,11 +1,12 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ ListView, ListCell, SplitPane, ContextMenu, MenuItem }
+import scalafx.scene.control.{ContextMenu, ListCell, ListView, MenuItem, SplitPane}
 import scalafx.scene.Parent
-import scalafx.collections.ObservableBuffer 
+import scalafx.collections.ObservableBuffer
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.DatabaseIds
 import dbtarzan.db.DatabaseId
+import dbtarzan.gui.interfaces.{TControlBuilder, TDatabaseList}
 import dbtarzan.localization.Localization
 
 /*	The list of database to choose from*/

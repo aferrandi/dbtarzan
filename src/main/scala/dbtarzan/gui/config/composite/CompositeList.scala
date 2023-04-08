@@ -1,7 +1,7 @@
 package dbtarzan.gui.config.composite
 
 import dbtarzan.db.{Composite, CompositeId}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer

@@ -4,6 +4,7 @@ import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.browsingtable._
 import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.gui.tabletabs.TTableForMapWithId
 import dbtarzan.gui.util.JFXUtil

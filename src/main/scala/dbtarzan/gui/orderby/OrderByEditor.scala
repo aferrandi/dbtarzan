@@ -1,7 +1,7 @@
 package dbtarzan.gui.orderby
 
 import dbtarzan.db.{Field, OrderByDirection, OrderByField, OrderByFields}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, ListViewAddFromComboBuilder, TComboStrategy}
 import dbtarzan.localization.Localization
 import scalafx.Includes._

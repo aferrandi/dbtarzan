@@ -3,6 +3,7 @@ package dbtarzan.gui
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._

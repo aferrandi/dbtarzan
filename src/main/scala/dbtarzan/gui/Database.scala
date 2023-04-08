@@ -3,6 +3,7 @@ package dbtarzan.gui
 import akka.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableIds}
 import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._

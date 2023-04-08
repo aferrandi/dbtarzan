@@ -1,12 +1,12 @@
 package dbtarzan.gui.config.connections
 
+import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.scene.layout. { HBox, Region, Priority }
 import scalafx.scene.control.Button
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import scalafx.scene.Parent
 import scalafx.geometry.{ Insets, Pos }
-import dbtarzan.gui.TControlBuilder
 import dbtarzan.localization.Localization
 
 
@@ -29,12 +29,12 @@ class ConnectionButtons(localization: Localization) extends TControlBuilder {
 
   private val buttonCancel = new Button {
     text = localization.cancel
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
   }
 
   private val buttonSave = new Button {
     text = localization.save
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
   }
 
 	private val layout = new HBox {

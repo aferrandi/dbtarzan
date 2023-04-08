@@ -1,29 +1,29 @@
 package dbtarzan.gui.foreignkeys
 
+import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.scene.layout. { HBox, Region, Priority }
 import scalafx.scene.control.Button
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import scalafx.scene.Parent
 import scalafx.geometry.{ Insets, Pos }
-import dbtarzan.gui.TControlBuilder
 import dbtarzan.localization.Localization
 
 
 /* the buttons on the bottom of the additinal foreign keys editor, to add foreign keys, to save them and to exit from the editor without saving */
 class AdditionalForeignKeysButtons(localization: Localization) extends TControlBuilder {
-  val buttonNew = new Button {
+  private val buttonNew = new Button {
     text = localization.new_
   }
-  
-  val buttonCancel = new Button {
+
+  private val buttonCancel = new Button {
     text = localization.cancel
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
   }
 
-  val buttonSave = new Button {
+  private val buttonSave = new Button {
     text = localization.save
-    alignmentInParent = Pos.CENTER_RIGHT
+    alignmentInParent = Pos.CenterRight
   }
 
 	private val layout = new HBox {

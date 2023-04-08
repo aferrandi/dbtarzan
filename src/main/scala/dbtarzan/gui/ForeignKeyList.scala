@@ -1,6 +1,7 @@
 package dbtarzan.gui
 
 import dbtarzan.db.{FieldsOnTable, ForeignKey, ForeignKeyDirection, ForeignKeys}
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages.TLogger
 import scalafx.collections.ObservableBuffer

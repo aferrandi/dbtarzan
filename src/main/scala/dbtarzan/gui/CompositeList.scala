@@ -1,6 +1,7 @@
 package dbtarzan.gui
 
 import dbtarzan.db.CompositeId
+import dbtarzan.gui.interfaces.{TCompositeList, TControlBuilder}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import scalafx.collections.ObservableBuffer

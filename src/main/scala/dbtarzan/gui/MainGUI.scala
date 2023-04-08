@@ -1,21 +1,17 @@
 package dbtarzan.gui
 
 import akka.actor.ActorRef
-import dbtarzan.config.password.{EncryptionKey, PasswordEncryption, VerificationKey}
+import dbtarzan.config.password.{EncryptionKey, VerificationKey}
 import dbtarzan.db.DatabaseId
 import dbtarzan.gui.browsingtable.TableMenu
-import dbtarzan.gui.config.composite.CompositeEditorStarter
-import dbtarzan.gui.config.connections.ConnectionEditorStarter
-import dbtarzan.gui.config.global.GlobalEditorStarter
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
 import dbtarzan.types.ConfigPath
 import scalafx.Includes._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Orientation
 import scalafx.scene.Scene
-import scalafx.scene.control.{Menu, MenuBar, SplitPane}
+import scalafx.scene.control.SplitPane
 import scalafx.scene.image.Image
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.layout.BorderPane
@@ -28,7 +24,7 @@ class MainGUI(
 	configPaths: ConfigPath, 
 	localization: Localization,
 	verificationKey: Option[VerificationKey],
-	version: String, 
+	version: String,
 	openWeb : String => Unit, 
 	closeApp : () => Unit)
 {
@@ -40,17 +36,19 @@ class MainGUI(
 	val databaseList = new DatabaseList(localization)
 
   val compositeList = new CompositeList(localization)
+  val global = new Global()
 
-  val global = new Global();
 	/* how big is the screen */
 	private val screenBounds = Screen.primary.visualBounds
 	/* the gui */
-	private val stage = buildStage() 
+  private val encryptionKeyExtractor = new EncryptionKeyExtractor(verificationKey,  localization)
+
+  private val mainGUIMenu = new MainGUIMenu(configPaths, localization, encryptionKeyExtractor, global, openWeb)
+
+  private val stage = buildStage()
 	private var guiActor: Option[ActorRef]  = None
 	private var connectionsActor: Option[ActorRef] = None
   private var compositeActor: Option[ActorRef] = None
-	private var encryptionKey : Option[EncryptionKey] = None
-	private val encryptionKeyDialog  = new EncryptionKeyDialog(stage, localization)
 
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
@@ -59,10 +57,11 @@ class MainGUI(
 		this.connectionsActor = Some(connectionsActor)
 
 		databaseTabs.setActors(guiActor, connectionsActor)
+    mainGUIMenu.postInit(stage, guiActor, connectionsActor)
   } 
 
 	private def withExtractedEncryptionKey(use : EncryptionKey => Unit) : Unit = 
-		extractEncryptionKey().foreach(use) 
+		encryptionKeyExtractor.extractEncryptionKey(stage).foreach(use)
 
 	def onDatabaseSelected(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
 		databaseList.onDatabaseSelected(databaseId => {
@@ -91,30 +90,9 @@ class MainGUI(
 			case Some(ga) => TableMenu.handleKeyCombination(ga, ev, () => databaseTabs.currentTableId)
 			case None => println("MainGUI: guiActor not defined")
 		}
-	
-	private def buildMenu() = new MenuBar {
-		menus = List(
-			buildSettingsMenu(),
-		  buildHelpMenu()
-		)
-	}
-
-	private def buildSettingsMenu() = new Menu(localization.settings) {
-    items = List(
-      JFXUtil.menuItem(localization.globalSettings, openGlobalEditor),
-      JFXUtil.menuItem(localization.editConnections, openConnectionsEditor),
-      JFXUtil.menuItem(localization.editComposites, openCompositeEditor)
-    )
-  }
-
-	private def buildHelpMenu() = new Menu(localization.help) {
-    items = List(
-      JFXUtil.menuItem(localization.documentation, () => openWeb("https://aferrandi.github.io/dbtarzan/")),
-    )
-  }
 
 	private def buildMainView() = new BorderPane {
-		top = buildMenu() 
+		top = mainGUIMenu.buildMenu()
 		center = mainSplitPane()
 	}
 
@@ -131,57 +109,15 @@ class MainGUI(
     private val compositeSplitPane: SplitPane = buildCompositeSplitPane()
     items.addAll(compositeSplitPane, databaseTabs.control)
 		dividerPositions = 0.2
-		SplitPane.setResizableWithParent(compositeSplitPane, false)
+		SplitPane.setResizableWithParent(compositeSplitPane, value = false)
 	}
 
 	private def mainSplitPane() = new SplitPane {
 		orientation() =  Orientation.Vertical
 		items.addAll(buildDatabaseSplitPane(), logList.control)
 		dividerPositions = 0.85
-		SplitPane.setResizableWithParent(logList.control, false)
+		SplitPane.setResizableWithParent(logList.control, value = false)
 	}
   
 	private def appIcon() = new Image(getClass.getResourceAsStream("monkey-face-cartoon.png"))
-
-	private def openConnectionsEditor() : Unit = {
-		guiActor match {
-			case Some(ga) => new Logger(ga).info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
-			case None => println("MainGUI: guiActor not defined")
-		}		 
-		extractEncryptionKey() match {
-			case Some(key) => connectionsActor match {
-					case Some(ca) => global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(stage, ca, configPaths.connectionsConfigPath, openWeb, key, localization))
-					case None => println("MainGUI: connectionsActor not defined") 
-				}
-			case None => println("MainGUI: encryptionKey not entered")
-		}
-	}
-
-  private def openCompositeEditor(): Unit = {
-    guiActor match {
-      case Some(ga) => new Logger(ga).info(localization.editingCompositeFile(configPaths.compositeConfigPath))
-      case None => println("MainGUI: guiActor not defined")
-    }
-    CompositeEditorStarter.openCompositeEditor(stage, configPaths.compositeConfigPath, configPaths.connectionsConfigPath, localization)
-  }
-
-	private def extractEncryptionKey() : Option[EncryptionKey] = {
-		if(encryptionKey.isEmpty)
-			encryptionKey  = verificationKey.map(
-				vkey => encryptionKeyDialog.showDialog(vkey)
-				).getOrElse(
-					Some(PasswordEncryption.defaultEncryptionKey)
-					)
-		encryptionKey
-	}
-
-	private def openGlobalEditor() : Unit = {
-		guiActor match {
-			case Some(ga) => {
-				new Logger(ga).info("Editing global configuration file "+configPaths.globalConfigPath)
-				GlobalEditorStarter.openGlobalEditor(stage, configPaths, localization, ga)
-			}
-			case None => println("MainGUI: guiActor not defined")
-		}
-	}
 }

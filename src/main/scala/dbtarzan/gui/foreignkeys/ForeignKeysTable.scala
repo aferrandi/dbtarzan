@@ -2,7 +2,7 @@ package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
 import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, TableId}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
 import scalafx.Includes._

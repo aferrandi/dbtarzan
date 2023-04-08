@@ -2,6 +2,7 @@ package dbtarzan.gui
 
 import akka.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableId, TableIds}
+import dbtarzan.gui.interfaces.{TControlBuilder, TDatabases}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
 import scalafx.Includes._

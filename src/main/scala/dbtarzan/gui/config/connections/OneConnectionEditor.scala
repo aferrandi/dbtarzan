@@ -7,10 +7,10 @@ import scalafx.event.ActionEvent
 import scalafx.geometry.{HPos, Insets}
 import scalafx.Includes._
 import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
-import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
 import dbtarzan.db.Schemas
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 
 /* The editor for one single connection */

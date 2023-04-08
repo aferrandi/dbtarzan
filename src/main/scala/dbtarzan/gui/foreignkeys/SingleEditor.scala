@@ -2,7 +2,7 @@ package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
 import dbtarzan.db._
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{ListViewAddFromCombo, OnChangeSafe, ListViewAddFromComboBuilder, TComboStrategy}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
@@ -38,7 +38,7 @@ class SingleEditor(
   private val comboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty) 
   private val comboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty) 
   
-  val txtName = new TextField {
+  private val txtName = new TextField {
     text = ""
   }
   private var editorDisabled = BooleanProperty(true)

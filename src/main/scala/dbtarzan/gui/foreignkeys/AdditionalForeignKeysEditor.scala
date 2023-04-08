@@ -2,7 +2,7 @@ package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
 import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableId, TableIds}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, StringUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.UpdateAdditionalForeignKeys
@@ -29,7 +29,7 @@ class AdditionalForeignKeysEditor(
   }
   private val layout = new SplitPane {
     items ++= List(keysTable.control, bottomPane)
-    orientation() =  Orientation.VERTICAL
+    orientation() =  Orientation.Vertical
     maxHeight = Double.MaxValue    
     maxWidth = Double.MaxValue
     dividerPositions = 0.5

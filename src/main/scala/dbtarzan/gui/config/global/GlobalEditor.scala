@@ -11,9 +11,9 @@ import akka.actor.ActorRef
 
 import dbtarzan.messages.Logger
 import dbtarzan.config.global.GlobalData
-import dbtarzan.gui.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.connections.EncryptionKeyChange
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.{ Languages, Language, Localization }
 
 /**
@@ -41,7 +41,7 @@ class GlobalEditor(
     columnConstraints = List(
       new ColumnConstraints() {},
       new ColumnConstraints() {
-        hgrow = Priority.ALWAYS
+        hgrow = Priority.Always
       })
     add(new Label { text = localization.language+":" }, 0, 0)
     add(cmbLanguages, 1, 0)

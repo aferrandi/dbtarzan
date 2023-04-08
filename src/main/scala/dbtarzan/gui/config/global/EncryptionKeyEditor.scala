@@ -1,17 +1,16 @@
 package dbtarzan.gui.config.global
 
-import scalafx.scene.control.{ PasswordField, CheckBox, Label }
-import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
-import scalafx.scene.Parent
-import scalafx.geometry.Insets
-import scalafx.Includes._
-
-import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.connections.EncryptionKeyChange
-import dbtarzan.config.password.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.config.global.EncryptionData
+import dbtarzan.config.password.{EncryptionKey, EncryptionVerification, VerificationKey}
+import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import scalafx.Includes._
+import scalafx.geometry.Insets
+import scalafx.scene.Parent
+import scalafx.scene.control.{CheckBox, Label, PasswordField}
+import scalafx.scene.layout.{ColumnConstraints, GridPane, Priority}
 
 
 case class EncryptionKeyEditorData(
@@ -50,7 +49,7 @@ class EncryptionKeyEditor(
     columnConstraints = List(
       new ColumnConstraints() {},
       new ColumnConstraints() {
-        hgrow = Priority.ALWAYS
+        hgrow = Priority.Always
       })
     add(chkEncryptionKey, 0, 0, 2, 1)
     addRow(1, lblOriginalEncryptionKey, pwdOriginalEncryptionKey)

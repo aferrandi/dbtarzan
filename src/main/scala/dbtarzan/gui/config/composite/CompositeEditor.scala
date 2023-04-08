@@ -1,7 +1,7 @@
 package dbtarzan.gui.config.composite
 
 import dbtarzan.db.{Composite, DatabaseId}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import scalafx.scene.Parent

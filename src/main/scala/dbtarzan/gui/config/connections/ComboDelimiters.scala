@@ -5,7 +5,7 @@ import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
 import dbtarzan.db.{IdentifierDelimiters, IdentifierDelimitersValues}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.event.ActionEvent
 
 /* A combo box from which to select the identfier delimiters that get stored in the configuration file */
@@ -33,7 +33,7 @@ class ComboDelimiters() extends TControlBuilder with TCombo {
 
 
   def show(delimiters : Option[IdentifierDelimiters]) : Unit = {
-    cmbDelimiters.value = delimiters; 
+    cmbDelimiters.value = delimiters
   }
 
   def toDelimiters() : Option[IdentifierDelimiters] = cmbDelimiters.getSelectionModel.selectedItem()
