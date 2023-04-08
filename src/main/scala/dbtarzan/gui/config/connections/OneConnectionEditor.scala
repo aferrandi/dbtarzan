@@ -10,12 +10,12 @@ import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
 import dbtarzan.db.Schemas
+import dbtarzan.gui.OpenWeb
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 
 /* The editor for one single connection */
 class OneConnectionEditor(
-  openWeb : String => Unit, 
   encryptionKey : EncryptionKey,
   localization: Localization
   ) extends TControlBuilder {
@@ -61,7 +61,7 @@ class OneConnectionEditor(
   private val lblCatalog = new Label { text = localization.catalog+":" }
   private val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
-    onAction = (event: ActionEvent)  => openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
+    onAction = (event: ActionEvent)  => OpenWeb.openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
   }
 
   private val grid =  new GridPane {

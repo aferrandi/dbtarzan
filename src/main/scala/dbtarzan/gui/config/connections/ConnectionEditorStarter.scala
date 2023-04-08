@@ -18,11 +18,10 @@ object ConnectionEditorStarter
     parentStage : Stage, 
     connectionsWorker : ActorRef, 
     configPath: Path, 
-    openWeb : String => Unit, 
     encryptionKey : EncryptionKey,
     localization: Localization) : ConnectionEditor = {
     val connectionData: List[ConnectionData] = ConnectionDataReader.read(configPath)
-    val editor = new ConnectionEditor(connectionData, openWeb, encryptionKey, localization)
+    val editor = new ConnectionEditor(connectionData, encryptionKey, localization)
     val connectionStage = new Stage {
       title = localization.editConnections
       width = 800

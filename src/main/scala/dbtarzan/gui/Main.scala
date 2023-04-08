@@ -20,14 +20,14 @@ object Main extends JFXApp {
   private val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
   private val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
   private val localization = Localizations.of(globalData.language)
-  val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, openWeb, closeApp)
+  val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, closeApp)
   val actors = new ActorHandler(
     () => new GUIActor(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization),
     guiActor => new ConnectionsActor(connectionDatas, guiActor, localization, configPaths.keyFilesDirPath)
     ) 
-  mainGUI.setActors(actors.guiActor, actors.connectionsActor)
+  mainGUI.postInit(actors.guiActor, actors.connectionsActor)
   val log = new Logger(actors.guiActor)
-  mainGUI.databaseList.setDatabaseIds(databaseIds(connectionDatas))
+  mainGUI.databaseList.setDatabaseIds(databaseIdsFromConnections(connectionDatas))
   mainGUI.onDatabaseSelected( { case (databaseId, encryptionKey) => {
     log.info(localization.openingDatabase(databaseId.databaseName))
     actors.connectionsActor ! QueryDatabase(databaseId, encryptionKey) 
@@ -36,7 +36,7 @@ object Main extends JFXApp {
     case (databaseId, encryptionKey) => actors.connectionsActor ! CopyToFile(databaseId, encryptionKey) 
     })
 
-  private def databaseIds(connections : ConnectionDatas)  =
+  private def databaseIdsFromConnections(connections : ConnectionDatas)  =
     DatabaseIds(connections.datas.map(c => DatabaseId(c.name)))
 
   private def extractConnectionsConfigPath() : ConfigPath = {
@@ -64,16 +64,6 @@ object Main extends JFXApp {
 
   private def versionFromManifest() = Option(getClass.getPackage.getImplementationVersion).getOrElse("")
 
-  private def openWeb(url : String) : Unit = openWebTry1(url)
 
-  private def openWebTry1(url: String): Unit = try {
-      val p = new ProcessBuilder("xdg-open", url).start()
-      if (!p.isAlive)
-        openWebTry2(url)
-    }
-    catch { case e: Throwable => openWebTry2(url) }
-
-  private def openWebTry2(url: String): Unit =
-    hostServices.showDocument(url)
 }
 

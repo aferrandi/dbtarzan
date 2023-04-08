@@ -25,7 +25,6 @@ class MainGUI(
 	localization: Localization,
 	verificationKey: Option[VerificationKey],
 	version: String,
-	openWeb : String => Unit, 
 	closeApp : () => Unit)
 {
 	/* the database tabs on the middle-right side */
@@ -43,7 +42,7 @@ class MainGUI(
 	/* the gui */
   private val encryptionKeyExtractor = new EncryptionKeyExtractor(verificationKey,  localization)
 
-  private val mainGUIMenu = new MainGUIMenu(configPaths, localization, encryptionKeyExtractor, global, openWeb)
+  private val mainGUIMenu = new MainGUIMenu(configPaths, localization, encryptionKeyExtractor, global)
 
   private val stage = buildStage()
 	private var guiActor: Option[ActorRef]  = None
@@ -52,7 +51,7 @@ class MainGUI(
 
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
-  def setActors(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
+  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
 		this.guiActor = Some(guiActor)
 		this.connectionsActor = Some(connectionsActor)
 
@@ -102,7 +101,7 @@ class MainGUI(
     items.addAll(databaseListWithTitle, compositeListWithTitle)
     dividerPositions = 0.6
     orientation() =  Orientation.Vertical
-    SplitPane.setResizableWithParent(databaseListWithTitle, false)
+    SplitPane.setResizableWithParent(databaseListWithTitle, value = false)
   }
 
   private def buildDatabaseSplitPane() = new SplitPane {

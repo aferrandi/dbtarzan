@@ -17,8 +17,7 @@ class MainGUIMenu(
                   configPaths: ConfigPath,
                   localization: Localization,
                   encryptionKeyExtractor: EncryptionKeyExtractor,
-                  global: Global,
-                  openWeb: String => Unit) {
+                  global: Global) {
 
   case class PostInitData(stage: PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef)
 
@@ -45,7 +44,7 @@ class MainGUIMenu(
 
   private def buildHelpMenu() = new Menu(localization.help) {
     items = List(
-      JFXUtil.menuItem(localization.documentation, () => openWeb("https://aferrandi.github.io/dbtarzan/")),
+      JFXUtil.menuItem(localization.documentation, () => OpenWeb.openWeb("https://aferrandi.github.io/dbtarzan/")),
     )
   }
 
@@ -55,7 +54,7 @@ class MainGUIMenu(
         new Logger(pa.guiActor).info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
         encryptionKeyExtractor.extractEncryptionKey(pa.stage) match {
           case Some(key) =>
-            global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(pa.stage, pa.connectionsActor, configPaths.connectionsConfigPath, openWeb, key, localization))
+            global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(pa.stage, pa.connectionsActor, configPaths.connectionsConfigPath, key, localization))
           case None => println("MainGUI: encryptionKey not entered")
         }
       }

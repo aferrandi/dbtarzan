@@ -13,12 +13,11 @@ import scalafx.scene.layout.BorderPane
 /* table + constraint input box + foreign keys */
 class ConnectionEditor(
   connectionDatas : List[ConnectionData],
-  openWeb : String => Unit,
   encryptionKey : EncryptionKey,
   localization: Localization
   ) extends TControlBuilder {
   private val list = new ConnectionList(connectionDatas, localization)
-  private val connection = new OneConnectionEditor(openWeb, encryptionKey, localization)
+  private val connection = new OneConnectionEditor(encryptionKey, localization)
   private val buttons = new ConnectionButtons(localization) 
   private val layout = new BorderPane {
     center = buildSplitPane()
