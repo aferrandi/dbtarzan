@@ -25,7 +25,8 @@ class ActorHandler (guiActorSupplier : () =>  Actor,
     val stopAll = for {
       stopGui : Boolean <- gracefulStop(guiActor, 1 seconds)
       stopConfig : Boolean <- gracefulStop(connectionsActor, 1 seconds)
-    } yield stopGui && stopConfig
+      stopComposite: Boolean <-  gracefulStop(connectionsActor, 1 seconds)
+    } yield stopGui && stopConfig && stopComposite
     stopAll.foreach(x => { 
       system.terminate()
       println("shutdown")

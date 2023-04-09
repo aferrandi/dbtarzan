@@ -22,7 +22,7 @@ class ListViewAddFromCombo[T](
                         ) {
   val comboBuffer: ObservableBuffer[T] = ObservableBuffer.empty[T]
   private val listBuffer = ObservableBuffer.empty[T]
-  private val emptyCombo = new BooleanProperty { value = comboBuffer.isEmpty }
+  private val comboEmpty = new BooleanProperty { value = comboBuffer.isEmpty }
   private val buttonDisabled = new BooleanProperty { value = comboBuffer.isEmpty }
 
   val safe = new OnChangeSafe()
@@ -31,7 +31,7 @@ class ListViewAddFromCombo[T](
   }
 
   comboBuffer.onChange((buffer, changes) =>
-    emptyCombo.value = buffer.isEmpty
+    comboEmpty.value = buffer.isEmpty
   )
 
   val comboAdd: ComboBox[T] = new ComboBox[T] {
@@ -43,7 +43,7 @@ class ListViewAddFromCombo[T](
   }
   comboAdd.selectionModel().selectedItem.onChange(
     (_, _, nullableValue) => {
-      val buttonEnabled = Option(nullableValue).isDefined && !emptyCombo.value
+      val buttonEnabled = Option(nullableValue).isDefined && !comboEmpty.value
       buttonDisabled.value = !buttonEnabled
     })
 
@@ -57,7 +57,7 @@ class ListViewAddFromCombo[T](
     bottom = new BorderPane {
       center = comboAdd
       right = buttonAdd
-      disable <==>  emptyCombo
+      disable <==>  comboEmpty
     }
   }
 
@@ -104,6 +104,10 @@ class ListViewAddFromCombo[T](
 
   def setComboData(data : List[T]) : Unit = {
     JFXUtil.bufferSet(comboBuffer, data)
+    removeListDataFromCombo()
+  }
+
+  private def removeListDataFromCombo(): Unit = {
     listBuffer.foreach(v => comboStrategy.removeFromCombo(comboBuffer, v))
   }
 
@@ -113,9 +117,10 @@ class ListViewAddFromCombo[T](
     )
 
   def setListData(data : List[T]) : Unit =
-    safe.onChange(() =>
+    safe.onChange(() => {
       JFXUtil.bufferSet(listBuffer, data)
-    )
+      removeListDataFromCombo()
+    })
   def listData() : List[T] = listBuffer.toList
 
   def control : Parent = layout

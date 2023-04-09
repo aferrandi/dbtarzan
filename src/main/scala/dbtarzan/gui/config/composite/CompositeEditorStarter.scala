@@ -5,6 +5,7 @@ import dbtarzan.config.composite.{CompositeReader, CompositeWriter}
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader}
 import dbtarzan.db.{Composite, DatabaseId}
 import dbtarzan.localization.Localization
+import dbtarzan.messages.Composites
 import scalafx.Includes._
 import scalafx.scene.Scene
 import scalafx.stage.{Stage, StageStyle, WindowEvent}
@@ -30,7 +31,7 @@ object CompositeEditorStarter
       scene = new Scene {
         def onSave(compositesToSave: List[Composite]) : Unit = {
             CompositeWriter.write(compositeConfigPath, compositesToSave)
-            compositeActor ! compositesToSave
+            compositeActor ! Composites(compositesToSave)
             window().hide()
           }
 
