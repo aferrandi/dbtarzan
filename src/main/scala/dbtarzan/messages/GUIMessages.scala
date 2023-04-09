@@ -86,6 +86,8 @@ case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
 case class DatabaseIds(names : List[DatabaseId])
 
+case class CompositeIds(compositeIds: List[CompositeId])
+
 case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
     extends TWithDatabaseId
 

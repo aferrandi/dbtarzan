@@ -5,7 +5,6 @@ import dbtarzan.db.{Index, OrderByDirection}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import scalafx.Includes._
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent

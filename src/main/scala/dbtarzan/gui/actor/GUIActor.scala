@@ -1,7 +1,7 @@
 package dbtarzan.gui.actor
 
 import akka.actor.Actor
-import dbtarzan.gui.interfaces.{TDatabaseList, TDatabases, TGlobal, TLogs}
+import dbtarzan.gui.interfaces.{TCompositeList, TDatabaseList, TDatabases, TGlobal, TLogs}
 import scalafx.application.Platform
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
@@ -11,6 +11,7 @@ class GUIActor(
                  databases : TDatabases,
                  logs : TLogs,
                  dbList : TDatabaseList,
+                 compositeList: TCompositeList,
                  main: TGlobal,
                  localization : Localization
    ) extends Actor {
@@ -30,6 +31,7 @@ class GUIActor(
         case rsp: ResponseSchemaExtraction => runLater { main.handleSchemaExtractionResponse(rsp) }
         case msg: TLogMessage => runLater { logs.addLogMessage(msg) }
         case msg: DatabaseIds => runLater { dbList.setDatabaseIds(msg) }
+        case msg: CompositeIds => runLater { compositeList.setCompositeIds(msg) }
         case err: ErrorDatabaseAlreadyOpen => runLater {
             databases.showDatabase(err.databaseId)
             log.warning(localization.databaseAlreadyOpen(err.databaseId.databaseName))

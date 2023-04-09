@@ -21,7 +21,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   private var guiActor: Option[ActorRef]  = None
   private var connectionsActor: Option[ActorRef] = None 
 
-  def setActors(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
+  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
       this.guiActor = Some(guiActor)
       this.connectionsActor = Some(connectionsActor)
   } 

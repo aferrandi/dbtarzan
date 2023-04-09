@@ -6,7 +6,6 @@ import dbtarzan.config.password.{EncryptionKey, EncryptionVerification, Verifica
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import scalafx.Includes._
 import scalafx.geometry.Insets
 import scalafx.scene.Parent
 import scalafx.scene.control.{CheckBox, Label, PasswordField}

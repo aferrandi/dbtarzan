@@ -1,11 +1,12 @@
 package dbtarzan.gui
 
 import java.nio.file.{Path, Paths}
-
 import dbtarzan.config.actor.ConnectionsActor
+import dbtarzan.config.composite.CompositeReader
 import dbtarzan.config.connections.ConnectionDataReader
 import dbtarzan.config.global.GlobalDataReader
 import dbtarzan.db.DatabaseId
+import dbtarzan.db.actor.CompositeActor
 import dbtarzan.gui.actor.GUIActor
 import dbtarzan.localization.Localizations
 import dbtarzan.messages._
@@ -19,13 +20,15 @@ object Main extends JFXApp {
   private val configPaths = extractConnectionsConfigPath()
   private val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
   private val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
+  private val composites = readComposites(configPaths.compositeConfigPath)
   private val localization = Localizations.of(globalData.language)
   val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, closeApp)
   val actors = new ActorHandler(
-    () => new GUIActor(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization),
-    guiActor => new ConnectionsActor(connectionDatas, guiActor, localization, configPaths.keyFilesDirPath)
+    () => new GUIActor(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.compositeList, mainGUI.global, localization),
+    guiActor => new ConnectionsActor(connectionDatas, guiActor, localization, configPaths.keyFilesDirPath),
+      guiActor => new CompositeActor(composites, guiActor, localization)
     ) 
-  mainGUI.postInit(actors.guiActor, actors.connectionsActor)
+  mainGUI.postInit(actors.guiActor, actors.connectionsActor, actors.compositeActor)
   val log = new Logger(actors.guiActor)
   mainGUI.databaseList.setDatabaseIds(databaseIdsFromConnections(connectionDatas))
   mainGUI.onDatabaseSelected( { case (databaseId, encryptionKey) => {
@@ -40,7 +43,7 @@ object Main extends JFXApp {
     DatabaseIds(connections.datas.map(c => DatabaseId(c.name)))
 
   private def extractConnectionsConfigPath() : ConfigPath = {
-    var configsPath = parameters.named.getOrElse("configPath", Option(System.getProperty("configPath")).getOrElse(".") )
+    val configsPath = parameters.named.getOrElse("configPath", Option(System.getProperty("configPath")).getOrElse("."))
     val globalConfigPath = Paths.get(configsPath, "global.config")
     val connectionsConfigPath = Paths.get(configsPath, "connections.config")
     val compositesConfigPath = Paths.get(configsPath, "composites.config")
@@ -57,13 +60,16 @@ object Main extends JFXApp {
     ConnectionDatas(connections.sortBy(_.name))    
   }
 
+  private def readComposites(compositeConfigPath: Path): Composites = {
+    val composites = CompositeReader.read(compositeConfigPath)
+    Composites(composites.sortBy(_.compositeId.compositeName))
+  }
+
   def closeApp() : Unit = actors.closeApp(() => {
     scalafx.application.Platform.exit()
     System.exit(0)
   })
 
   private def versionFromManifest() = Option(getClass.getPackage.getImplementationVersion).getOrElse("")
-
-
 }
 

@@ -27,6 +27,9 @@ class MainGUI(
 	version: String,
 	closeApp : () => Unit)
 {
+  case class PostInitData(guiActor: ActorRef, connectionsActor: ActorRef, compositeActor: ActorRef)
+
+  private var postInitData: Option[PostInitData] = None
 	/* the database tabs on the middle-right side */
 	val databaseTabs = new DatabaseTabs(localization)
 	/* the log/error list on the bottom */
@@ -45,18 +48,14 @@ class MainGUI(
   private val mainGUIMenu = new MainGUIMenu(configPaths, localization, encryptionKeyExtractor, global)
 
   private val stage = buildStage()
-	private var guiActor: Option[ActorRef]  = None
-	private var connectionsActor: Option[ActorRef] = None
-  private var compositeActor: Option[ActorRef] = None
 
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
-  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
-		this.guiActor = Some(guiActor)
-		this.connectionsActor = Some(connectionsActor)
+  def postInit(guiActor: ActorRef, connectionsActor: ActorRef, compositeActor: ActorRef) : Unit = {
+		this.postInitData = Some(PostInitData(guiActor, connectionsActor, compositeActor))
 
-		databaseTabs.setActors(guiActor, connectionsActor)
-    mainGUIMenu.postInit(stage, guiActor, connectionsActor)
+		databaseTabs.postInit(guiActor, connectionsActor)
+    mainGUIMenu.postInit(stage, guiActor, connectionsActor, compositeActor)
   } 
 
 	private def withExtractedEncryptionKey(use : EncryptionKey => Unit) : Unit = 
@@ -85,8 +84,8 @@ class MainGUI(
 	}
 
 	private def handleShortcut(ev : KeyEvent) : Unit = 
-		guiActor match {
-			case Some(ga) => TableMenu.handleKeyCombination(ga, ev, () => databaseTabs.currentTableId)
+		postInitData match {
+			case Some(pa) => TableMenu.handleKeyCombination(pa.guiActor, ev, () => databaseTabs.currentTableId)
 			case None => println("MainGUI: guiActor not defined")
 		}
 

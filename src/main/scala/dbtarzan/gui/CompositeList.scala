@@ -4,6 +4,7 @@ import dbtarzan.db.CompositeId
 import dbtarzan.gui.interfaces.{TCompositeList, TControlBuilder}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.messages.CompositeIds
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import scalafx.scene.control.{ListCell, ListView, SplitPane}
@@ -21,9 +22,9 @@ class CompositeList(localization: Localization) extends TControlBuilder with TCo
     }
   }
 
-  def setCompositeIds(compositeIds: List[CompositeId]): Unit = {
-    println("Got new composite list:" + compositeIds)
-    JFXUtil.bufferSet(buffer, compositeIds.sortBy(_.compositeName))
+  def setCompositeIds(compositeIds: CompositeIds): Unit = {
+    println("Got new composite list:" + compositeIds.compositeIds)
+    JFXUtil.bufferSet(buffer, compositeIds.compositeIds.sortBy(_.compositeName))
   }
 
   def onDatabaseSelected(use: CompositeId => Unit): Unit =
