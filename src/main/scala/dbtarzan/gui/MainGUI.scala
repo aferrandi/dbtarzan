@@ -27,7 +27,7 @@ class MainGUI(
 	version: String,
 	closeApp : () => Unit)
 {
-  case class PostInitData(guiActor: ActorRef, connectionsActor: ActorRef, compositeActor: ActorRef)
+  case class PostInitData(guiActor: ActorRef, connectionsActor: ActorRef)
 
   private var postInitData: Option[PostInitData] = None
 	/* the database tabs on the middle-right side */
@@ -37,7 +37,6 @@ class MainGUI(
 	/* the database/connection list on the left side */
 	val databaseList = new DatabaseList(localization)
 
-  val compositeList = new CompositeList(localization)
   val global = new Global()
 
 	/* how big is the screen */
@@ -51,11 +50,11 @@ class MainGUI(
 
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
-  def postInit(guiActor: ActorRef, connectionsActor: ActorRef, compositeActor: ActorRef) : Unit = {
-		this.postInitData = Some(PostInitData(guiActor, connectionsActor, compositeActor))
+  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
+		this.postInitData = Some(PostInitData(guiActor, connectionsActor))
 
 		databaseTabs.postInit(guiActor, connectionsActor)
-    mainGUIMenu.postInit(stage, guiActor, connectionsActor, compositeActor)
+    mainGUIMenu.postInit(stage, guiActor, connectionsActor)
   } 
 
 	private def withExtractedEncryptionKey(use : EncryptionKey => Unit) : Unit = 
@@ -68,7 +67,7 @@ class MainGUI(
       }
     )
 
-	def onForeignKeyToFile(use : (DatabaseId, EncryptionKey) => Unit) : Unit = 
+	def onForeignKeyToFile(use : (DatabaseId, EncryptionKey) => Unit) : Unit =
 		databaseList.onForeignKeyToFile(databaseId => withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey)))
 
 	private def buildStage() : PrimaryStage = new PrimaryStage {
@@ -94,20 +93,11 @@ class MainGUI(
 		center = mainSplitPane()
 	}
 
-  private def buildCompositeSplitPane() = new SplitPane {
-    val databaseListWithTitle: BorderPane = JFXUtil.withTitle(databaseList.control, localization.databases)
-    val compositeListWithTitle: BorderPane = JFXUtil.withTitle(compositeList.control, localization.composites)
-    items.addAll(databaseListWithTitle, compositeListWithTitle)
-    dividerPositions = 0.6
-    orientation() =  Orientation.Vertical
-    SplitPane.setResizableWithParent(databaseListWithTitle, value = false)
-  }
-
   private def buildDatabaseSplitPane() = new SplitPane {
-    private val compositeSplitPane: SplitPane = buildCompositeSplitPane()
-    items.addAll(compositeSplitPane, databaseTabs.control)
+    val databaseListWithTitle: BorderPane = JFXUtil.withTitle(databaseList.control, localization.databases)
+    items.addAll(databaseListWithTitle, databaseTabs.control)
 		dividerPositions = 0.2
-		SplitPane.setResizableWithParent(compositeSplitPane, value = false)
+		SplitPane.setResizableWithParent(databaseListWithTitle, value = false)
 	}
 
 	private def mainSplitPane() = new SplitPane {

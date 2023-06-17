@@ -1,13 +1,13 @@
 package dbtarzan.gui
 
-import scalafx.scene.control.{ContextMenu, ListCell, ListView, MenuItem, SplitPane}
-import scalafx.scene.Parent
-import scalafx.collections.ObservableBuffer
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.messages.DatabaseIds
 import dbtarzan.db.DatabaseId
 import dbtarzan.gui.interfaces.{TControlBuilder, TDatabaseList}
+import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.messages.{DatabaseIds, DatabaseIdUtil}
+import scalafx.collections.ObservableBuffer
+import scalafx.scene.Parent
+import scalafx.scene.control._
 
 /*	The list of database to choose from*/
 class DatabaseList(localization : Localization) extends TControlBuilder with TDatabaseList {
@@ -21,23 +21,23 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
 
   private def buildCell() = new ListCell[DatabaseId] {
     item.onChange { (_, _, _) => 
-      text.value = Option(item.value).map(databaseId => databaseId.databaseName).getOrElse("")
+      text.value = Option(item.value).map(DatabaseIdUtil.databaseIdText).getOrElse("")
     }} 
 
   def setDatabaseIds(databaseIds: DatabaseIds) : Unit = {
     println("Got new database list:"+databaseIds)
-    JFXUtil.bufferSet(buffer, databaseIds.names.sortBy(_.databaseName))
+    JFXUtil.bufferSet(buffer, databaseIds.names.sortBy(DatabaseIdUtil.databaseIdText))
   }
 
   def onDatabaseSelected(use : DatabaseId => Unit) : Unit = 
     JFXUtil.onAction(list, (selectedDatabaseId : DatabaseId, _) => { 
-      println("Selected "+selectedDatabaseId.databaseName)
+      println("Selected "+DatabaseIdUtil.databaseIdText(selectedDatabaseId))
       use(selectedDatabaseId)
     })
 
   def onForeignKeyToFile(use : DatabaseId => Unit) : Unit =
   	JFXUtil.onContextMenu(menuForeignKeyToFile, list, {selectedDatabaseId : DatabaseId => 
-      println("Selected "+selectedDatabaseId.databaseName)
+      println("Selected "+DatabaseIdUtil.databaseIdText(selectedDatabaseId))
       use(selectedDatabaseId)
     })
 

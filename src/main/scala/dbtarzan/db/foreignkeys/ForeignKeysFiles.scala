@@ -33,7 +33,7 @@ object ForeignKeysForTableJsonProtocolOneDb {
   implicit val foreignKeysForTableListFormatOneDb: RootJsonFormat[ForeignKeysForTableListOneDb] = jsonFormat(ForeignKeysForTableListOneDb, "keys")
 }
 
-class ForeignKeysFile(dirPath: Path, filename: String) {
+class ForeignKeysFile(dirPath: Path, filename: String, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId) {
 	import DefaultJsonProtocol._
 	import ForeignKeysForTableJsonProtocolOneDb._
 
@@ -44,19 +44,21 @@ class ForeignKeysFile(dirPath: Path, filename: String) {
     FileReadWrite.writeFile(fileName, keys.toJson.prettyPrint)
   }
 
-	def readFromFile(databaseId: DatabaseId) : List[ForeignKeysForTable] = {
+	def readFromFile() : List[ForeignKeysForTable] = {
 		val text = FileReadWrite.readFile(fileName)
     val keys = text.parseJson.convertTo[ForeignKeysForTableListOneDb].keys
-    mapToForeignKeys(databaseId, keys)
+    mapToForeignKeys(keys)
   }
 
-  private def mapToForeignKeys(databaseId: DatabaseId, keys: List[ForeignKeysForTableOneDb]): List[ForeignKeysForTable] = {
-    keys.map(k => ForeignKeysForTable(TableId(databaseId, k.table),
-      ForeignKeys(k.keys.keys.map(l => ForeignKey(l.name,
-        FieldsOnTable(TableId(databaseId, l.from.table), l.from.fields),
-        FieldsOnTable(TableId(databaseId, l.to.table), l.to.fields),
-        l.direction)))
-    ))
+  private def mapToForeignKeys(keys: List[ForeignKeysForTableOneDb]): List[ForeignKeysForTable] = {
+    keys.map(k => {
+      ForeignKeysForTable(TableId(databaseId, simpleDatabaseId, k.table),
+        ForeignKeys(k.keys.keys.map(l => ForeignKey(l.name,
+          FieldsOnTable(TableId(databaseId, simpleDatabaseId, l.from.table), l.from.fields),
+          FieldsOnTable(TableId(databaseId, simpleDatabaseId, l.to.table), l.to.fields),
+          l.direction)))
+      )
+    })
   }
 
   private def mapFromForeignKeys(keys: List[ForeignKeysForTable]): List[ForeignKeysForTableOneDb] = {

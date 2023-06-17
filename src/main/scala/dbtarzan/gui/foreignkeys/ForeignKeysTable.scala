@@ -1,7 +1,7 @@
 package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, TableId}
+import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, TableId, SimpleDatabaseId}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
@@ -90,7 +90,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
   /* adds an empty foreign key */
   def addEmptyRow() : Unit = {
     log.debug("Adding row")
-    val emptyFields = FieldsOnTable(TableId(databaseId, ""), List.empty)
+    val emptyFields = FieldsOnTable(TableId(databaseId, SimpleDatabaseId(""), ""), List.empty)
     buffer += AdditionalForeignKey(ForeignKeysTable.newRowName,  emptyFields,  emptyFields)
     table.selectionModel().selectLast()
   }

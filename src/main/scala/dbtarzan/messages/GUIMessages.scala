@@ -22,13 +22,13 @@ case class ResponseOneRow(queryId : QueryId, structure : DBRowStructure, row : R
 case class ResponseTables(databaseId : DatabaseId, names: TableIds, dbActor : ActorRef)
     extends TWithDatabaseId
 
-case class ResponseTablesByPattern(databaseId : DatabaseId, names: TableIds)
+case class ResponseTablesByPattern(databaseId : DatabaseId, tabeIds: TableIds)
     extends TWithDatabaseId
 
 case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId]) 
     extends TWithDatabaseId
 
-case class ResponseSchemas(databaseId : DatabaseId, schemas: Schemas)
+case class ResponseSchemas(databaseId : DatabaseId, schemaIds: SchemaIds)
   extends TWithDatabaseId
 
 case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes : QueryAttributes) 
@@ -93,4 +93,4 @@ case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[Ad
 
 case class ResponseTestConnection(data : ConnectionData,  ex: Option[Exception])
 
-case class ResponseSchemaExtraction(data : ConnectionData,  schemas: Option[Schemas],  ex: Option[Exception])
+case class ResponseSchemaExtraction(data : ConnectionData,  schemas: Option[SchemaNames],  ex: Option[Exception])

@@ -1,10 +1,9 @@
 package dbtarzan.gui.config.composite
 
-import dbtarzan.db.{Composite, CompositeId, DatabaseId}
+import dbtarzan.db.{Composite, CompositeId, SimpleDatabaseId}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{ListViewAddFromComboBuilder, OnChangeSafe, TComboStrategy}
 import dbtarzan.localization.Localization
-import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Parent
@@ -14,7 +13,7 @@ import scalafx.scene.paint.Color
 
 /* The editor for one single connection */
 class OneCompositeEditor(
-  allDatabaseId : List[DatabaseId],
+  allDatabaseId : List[SimpleDatabaseId],
   localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
@@ -22,16 +21,16 @@ class OneCompositeEditor(
     text = ""
   }
 
-  private val showText: Option[DatabaseId] => Label = (value: Option[DatabaseId]) => new Label {
+  private val showText: Option[SimpleDatabaseId] => Label = (value: Option[SimpleDatabaseId]) => new Label {
     textFill = Color.Black
-    text = value.map(databaseId => databaseId.databaseName).getOrElse("")
+    text = value.map(id => id.databaseName).getOrElse("")
   }
-  private val comboStrategy = new TComboStrategy[DatabaseId] {
-    override def removeFromCombo(comboBuffer: ObservableBuffer[DatabaseId], item: DatabaseId): Unit = comboBuffer -= item
+  private val comboStrategy = new TComboStrategy[SimpleDatabaseId] {
+    override def removeFromCombo(comboBuffer: ObservableBuffer[SimpleDatabaseId], item: SimpleDatabaseId): Unit = comboBuffer -= item
 
-    override def addToCombo(comboBuffer: ObservableBuffer[DatabaseId], item: DatabaseId): Unit = comboBuffer += item
+    override def addToCombo(comboBuffer: ObservableBuffer[SimpleDatabaseId], item: SimpleDatabaseId): Unit = comboBuffer += item
   }
-  private val lvwDatabaseId = ListViewAddFromComboBuilder.buildUnordered[DatabaseId](localization.add, showText, comboStrategy)
+  private val lvwDatabaseId = ListViewAddFromComboBuilder.buildUnordered[SimpleDatabaseId](localization.add, showText, comboStrategy)
   lvwDatabaseId.setComboData(allDatabaseId)
 
   private val grid =  new GridPane {

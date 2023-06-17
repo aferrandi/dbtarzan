@@ -1,13 +1,15 @@
 package dbtarzan.db
 
-/* The name given by the user to the database identifies it */
-case class DatabaseId(databaseName : String)
-/* The database id + the table name identifies a table */
-case class TableId(databaseId : DatabaseId, tableName : String)
+
+case class SimpleDatabaseId(databaseName : String)
 /* The name given by the user to the composite identifies it */
 case class CompositeId(compositeName: String)
 /* A composite is a composition of multiple databases */
-case class Composite(compositeId: CompositeId, databaseIds: List[DatabaseId])
+case class Composite(compositeId: CompositeId, databaseIds: List[SimpleDatabaseId])
+/* The name given by the user to the database identifies it */
+case class DatabaseId(origin : Either[SimpleDatabaseId, CompositeId])
+/* The database id + the table name identifies a table */
+case class TableId(databaseId : DatabaseId, simpleDatabaseId: SimpleDatabaseId, tableName : String)
 /* an sql expression */
 case class QuerySql(sql: String)
 /* a table: its name, the name of the original table if it comes from another table */
@@ -58,8 +60,12 @@ case class OrderByFields(fields : List[OrderByField])
 case class PrimaryKey(keyName: String, fields : List[String])
 case class PrimaryKeys(keys : List[PrimaryKey])
 /* the schmas of a database */
-case class Schema(name : String)
-case class Schemas(schemas : List[Schema])
+case class SchemaName(schema : String)
+
+case class SchemaNames(names: List[SchemaName])
+
+case class SchemaId(databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId, schema : SchemaName)
+case class SchemaIds(schemaIds : List[SchemaId])
 /* an index of a table in the database */
 case class IndexField(name: String, direction: Option[OrderByDirection])
 case class Index(name: String, fields: List[IndexField])

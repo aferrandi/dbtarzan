@@ -19,12 +19,12 @@ class MainGUIMenu(
                   encryptionKeyExtractor: EncryptionKeyExtractor,
                   global: Global) {
 
-  case class PostInitData(stage: PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef, compositeActor: ActorRef)
+  case class PostInitData(stage: PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef)
 
   private var postInitData: Option[PostInitData] = None
 
-  def postInit(stage: PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef, compositeActor: ActorRef): Unit = {
-    this.postInitData = Some(PostInitData(stage, guiActor, connectionsActor, compositeActor))
+  def postInit(stage: PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef): Unit = {
+    this.postInitData = Some(PostInitData(stage, guiActor, connectionsActor))
   }
 
   def buildMenu(): MenuBar = new MenuBar {
@@ -66,7 +66,7 @@ class MainGUIMenu(
     postInitData match {
       case Some(pa) => {
         new Logger(pa.guiActor).info(localization.editingCompositeFile(configPaths.compositeConfigPath))
-        CompositeEditorStarter.openCompositeEditor(pa.stage, configPaths.compositeConfigPath, configPaths.connectionsConfigPath, pa.compositeActor, localization)
+        CompositeEditorStarter.openCompositeEditor(pa.stage, configPaths.compositeConfigPath, configPaths.connectionsConfigPath,  pa.connectionsActor, localization)
       }
       case None => println("MainGUI: guiActor not defined")
     }

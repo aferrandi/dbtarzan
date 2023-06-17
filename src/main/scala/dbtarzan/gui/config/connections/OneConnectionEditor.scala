@@ -9,7 +9,7 @@ import scalafx.Includes._
 import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
-import dbtarzan.db.Schemas
+import dbtarzan.db.{SchemaName}
 import dbtarzan.gui.OpenWeb
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
@@ -194,7 +194,7 @@ class OneConnectionEditor(
     ).foreach(_.onChanged(() => safe.onChange(() => useData(toData))))
   }
 
-  def schemasToChooseFrom(schemas: Schemas) : Unit =
+  def schemasToChooseFrom(schemas: List[SchemaName]) : Unit =
     cmbSchemas.schemasToChooseFrom(schemas)
 
 

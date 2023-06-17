@@ -5,13 +5,11 @@ import scala.language.postfixOps
 
 /* crates and keeps track of the main actors in this application */
 class ActorHandler (guiActorSupplier : () =>  Actor,
-                    connectionActorSupplier: ActorRef => Actor,
-                    compositeActorSupplier: ActorRef => Actor
+                    connectionActorSupplier: ActorRef => Actor
                    ) {
   private val system = ActorSystem("Sys")
   val guiActor : ActorRef = system.actorOf(Props(guiActorSupplier()).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val connectionsActor : ActorRef = system.actorOf(Props(connectionActorSupplier(guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")
-  val compositeActor : ActorRef = system.actorOf(Props(compositeActorSupplier(guiActor)).withDispatcher("my-pinned-dispatcher"), "compositeWorker")
 
   /* first we close the dbWorker actors. Then the config and gui actors. Then we stop the actor system and we check that there are no more actors. 
       Once this is done, we close JavaF (the GUI)
@@ -25,8 +23,7 @@ class ActorHandler (guiActorSupplier : () =>  Actor,
     val stopAll = for {
       stopGui : Boolean <- gracefulStop(guiActor, 1 seconds)
       stopConfig : Boolean <- gracefulStop(connectionsActor, 1 seconds)
-      stopComposite: Boolean <-  gracefulStop(connectionsActor, 1 seconds)
-    } yield stopGui && stopConfig && stopComposite
+    } yield stopGui && stopConfig
     stopAll.foreach(x => { 
       system.terminate()
       println("shutdown")

@@ -1,6 +1,6 @@
 package dbtarzan.gui.config.composite
 
-import dbtarzan.db.{Composite, DatabaseId}
+import dbtarzan.db.{Composite, SimpleDatabaseId}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
@@ -11,7 +11,7 @@ import scalafx.scene.layout.BorderPane
 /* table + constraint input box + foreign keys */
 class CompositeEditor(
                        composites : List[Composite],
-                       allDatabaseId : List[DatabaseId],
+                       allDatabaseId : List[SimpleDatabaseId],
                        localization: Localization
   ) extends TControlBuilder {
   private val compositeList = new CompositeList(composites, localization)

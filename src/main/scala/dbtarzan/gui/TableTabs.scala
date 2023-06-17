@@ -21,12 +21,12 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
 
   def addColumns(columns : ResponseColumns) : Unit =  {
     val structure = createTable(columns.tableId, columns.columns, columns.queryAttributes)
-    queryTableContent(columns.tableId.databaseId, None, structure)
+    queryTableContent(columns.tableId, None, structure)
   }
 
   def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
     val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
-    queryTableContent(columns.tableId.databaseId, None, structure)
+    queryTableContent(columns.tableId, None, structure)
   }
 
   def removeTables(ids : List[QueryId]) : Unit = {
@@ -108,7 +108,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     tabs.selectionModel().select(tab)
     
     browsingTable.onNewTable((newStructure, closeCurrentTab) => 
-        queryTableContent(queryId.tableId.databaseId ,Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
+        queryTableContent(queryId.tableId ,Some(OriginalQuery(queryId, closeCurrentTab)), newStructure)
       )
     TTableWithTab[BrowsingTable](browsingTable, tab)
   }
@@ -126,8 +126,8 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     log.error(localization.errorRequestingTheRows(error.queryId), error.ex)
   }
 
-  private def queryTableContent(databaseId: DatabaseId, originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
-    val queryId = IDGenerator.queryId(TableId(databaseId, structure.description.name))
+  private def queryTableContent(tableId: TableId, originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
+    val queryId = IDGenerator.queryId(tableId)
     tablesToClose.addToCloseWhenNewTabOpens(queryId, originalQuery)
     // requests the foreign keys for this table.
     dbActor ! QueryForeignKeys(queryId, structure)

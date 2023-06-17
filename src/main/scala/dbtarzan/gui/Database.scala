@@ -75,7 +75,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     tableTabs.handleQueryIdMessage(msg)
 
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
-    case tables : ResponseTablesByPattern => tableList.addTableNames(tables.names)
+    case tables : ResponseTablesByPattern => tableList.addTableNames(tables.tabeIds)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
     case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case _: RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()

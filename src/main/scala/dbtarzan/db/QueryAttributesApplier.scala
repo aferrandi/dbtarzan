@@ -7,7 +7,7 @@ class QueryAttributesApplier(queryAttributes: QueryAttributes) {
 		queryAttributes.delimiters.map(ds => ds.withDelimiters(identifier)).getOrElse(identifier)
 
 	def applySchema(identifier: String) : String = 	
-		queryAttributes.definition.schema.map(s => applyDelimiters(s.name)+"."+identifier).getOrElse(identifier)
+		queryAttributes.definition.schemaId.map(schemaId => applyDelimiters(schemaId.schema.schema)+"."+identifier).getOrElse(identifier)
 
 	def applySchemaAndDelimiters(identifier: String) : String =
 		applySchema(applyDelimiters(identifier))

@@ -12,7 +12,7 @@ class MetadataIndexesLoader(definition: DBDefinition, meta : DatabaseMetaData, l
   private case class IndexLine(name: String, fieldWithPosition: IndexFieldWithPosition)
 
   def indexes(tableName : String) : Indexes = try {
-    using(meta.getIndexInfo(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName, false, true)) { rs =>
+    using(meta.getIndexInfo(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName, false, true)) { rs =>
       val lines = readIndexLines(rs)
       Indexes(indexLinesToIndexes(lines))
     }

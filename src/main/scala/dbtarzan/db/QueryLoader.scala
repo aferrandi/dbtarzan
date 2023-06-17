@@ -5,7 +5,6 @@ import dbtarzan.db.util.{ExceptionToText, ExecutionTime}
 import dbtarzan.messages.TLogger
 
 import java.sql.{ResultSet, SQLException, Statement}
-import scala.collection.immutable.Vector
 import scala.concurrent.duration.Duration
 
 /** The part of the database actor that runs the table queries */
@@ -15,7 +14,7 @@ class QueryLoader(connection : java.sql.Connection, log: TLogger) {
   /* does the queries in the database. Sends them back to the GUI in packets of 20 lines
        QueryRows gives the SQL query and tells how many rows must be read in total */
 	def query(qry : QuerySql, maxRows: Int, queryTimeout: Duration, maxFieldSize: Option[Int], use : Rows => Unit) : Unit = {
-		  log.debug("SQL:"+qry.sql)
+		  log.debug(s"SQL: ${qry.sql}")
   		using(connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) { statement =>
 			  queryWithStatement(statement, qry, maxRows, queryTimeout, maxFieldSize, use)
 		  }

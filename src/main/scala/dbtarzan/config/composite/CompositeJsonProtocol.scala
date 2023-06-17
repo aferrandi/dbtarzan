@@ -1,24 +1,24 @@
 package dbtarzan.config.composite
 
-import dbtarzan.db.{Composite, CompositeId, DatabaseId}
+import dbtarzan.db.{Composite, CompositeId, SimpleDatabaseId}
 import spray.json._
 
 object CompositeIdJsonProtocol extends DefaultJsonProtocol {
-  implicit val compositeIdFormat = jsonFormat(CompositeId,
+  implicit val compositeIdFormat: RootJsonFormat[CompositeId] = jsonFormat(CompositeId,
     "compositeName"
   )
 }
 
-object DatabaseIdJsonProtocol extends DefaultJsonProtocol {
-  implicit val databaseIdFormat = jsonFormat(DatabaseId,
+object SimpleDatabaseIdJsonProtocol extends DefaultJsonProtocol {
+  implicit val simpleDatabaseIdFormat: RootJsonFormat[SimpleDatabaseId] = jsonFormat(SimpleDatabaseId,
     "databaseName"
   )
 }
 
 object CompositeJsonProtocol extends DefaultJsonProtocol {
   import CompositeIdJsonProtocol._
-  import DatabaseIdJsonProtocol._
-  implicit val compositeFormat = jsonFormat(Composite,
+  import SimpleDatabaseIdJsonProtocol._
+  implicit val compositeFormat: RootJsonFormat[Composite] = jsonFormat(Composite,
   	"compositeId",
     "databaseIds",
   	)

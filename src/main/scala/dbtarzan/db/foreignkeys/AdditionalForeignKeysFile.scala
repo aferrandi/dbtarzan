@@ -1,14 +1,16 @@
 package dbtarzan.db.foreignkeys
 
 import dbtarzan.db.util.FileReadWrite
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, ForeignKey, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList, TableId}
+import dbtarzan.db.{AdditionalForeignKey, CompositeId, DatabaseId, FieldsOnTable, ForeignKey, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList, SimpleDatabaseId, TableId}
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import java.nio.file.Path
 object TableJsonProtocol extends  DefaultJsonProtocol {
-  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId, "databaseName")
-  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId, "databaseId", "tableName")
+  implicit val simpleDatabaseIdFormat: RootJsonFormat[SimpleDatabaseId] = jsonFormat(SimpleDatabaseId, "databaseName")
+  implicit val compositeIdFormat: RootJsonFormat[CompositeId] = jsonFormat(CompositeId, "compositeName")
+  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId, "origin")
+  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId, "databaseId", "simpleDatabaseId", "tableName")
 }
 
 object ForeignKeysForTableJsonProtocol {
@@ -59,10 +61,11 @@ class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
 	}
 
   private def readVer1(databaseId: DatabaseId, text: String): List[AdditionalForeignKey] = {
+    val simpleDatabaseId = databaseId.origin.left.get
     text.parseJson.convertTo[List[AdditionalForeignKeyVer1]]
       .map(k => AdditionalForeignKey(k.name,
-        FieldsOnTable(TableId(databaseId, k.from.table), k.from.fields),
-        FieldsOnTable(TableId(databaseId, k.to.table), k.to.fields)
+        FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.from.table), k.from.fields),
+        FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.to.table), k.to.fields)
       ))
   }
 

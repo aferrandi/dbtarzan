@@ -90,7 +90,7 @@ class ConnectionEditor(
 
   def schemaExtractionResult(rsp: ResponseSchemaExtraction): Unit =
     rsp.schemas match {
-      case Some(schemas)  => connection.schemasToChooseFrom(schemas)
+      case Some(schemas)  => connection.schemasToChooseFrom(schemas.names)
       case None => rsp.ex match {
         case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, ExceptionText.extractMessageText(ex))
         case None =>   JFXUtil.showErrorAlert(localization.connectionRefused, "")

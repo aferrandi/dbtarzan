@@ -27,7 +27,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   } 
 
   private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableNames : TableIds) : Database = {
-    println("add database tab for "+databaseId.databaseName)
+    println("add database tab for "+DatabaseIdUtil.databaseIdText(databaseId))
     guiActor match {
       case Some(ga) => addDatabaseTabWithGUIActor(dbActor, ga, databaseId, tableNames)
       case None => throw new Exception("guiActor is not defined")
@@ -49,7 +49,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   }
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {
-    text = database.getId.databaseName
+    text = DatabaseIdUtil.databaseIdText(database.getId)
     content = database.control
     onCloseRequest = (e : Event) => { sendClose(database.getId ) }
   }      
@@ -85,7 +85,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
 
   /* from the database name, finds out the tab to which send the information (tables, columns, rows) */
   private def getTabByDatabaseId(databaseId : DatabaseId) =
-    tabs.tabs.find(_.text() == databaseId.databaseName)
+    tabs.tabs.find(_.text() == DatabaseIdUtil.databaseIdText(databaseId))
 
   /* selects and shows the content of a database tab */
   private def selectTab(tab : Tab) : Unit = 

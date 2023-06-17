@@ -3,7 +3,7 @@ package dbtarzan.gui.config.composite
 import akka.actor.ActorRef
 import dbtarzan.config.composite.{CompositeReader, CompositeWriter}
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader}
-import dbtarzan.db.{Composite, DatabaseId}
+import dbtarzan.db.{Composite, SimpleDatabaseId}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Composites
 import scalafx.Includes._
@@ -19,11 +19,11 @@ object CompositeEditorStarter
     parentStage : Stage,
     compositeConfigPath: Path,
     connectionConfigPath: Path,
-    compositeActor : ActorRef,
+    connectionsActor : ActorRef,
     localization: Localization) : CompositeEditor = {
     val connectionData: List[ConnectionData] = ConnectionDataReader.read(connectionConfigPath)
     val composites: List[Composite] = CompositeReader.read(compositeConfigPath)
-    val editor = new CompositeEditor(composites, connectionData.map(cd => DatabaseId(cd.name)), localization)
+    val editor = new CompositeEditor(composites, connectionData.map(cd => SimpleDatabaseId(cd.name)), localization)
     val compositeStage = new Stage {
       title = localization.editConnections
       width = 800
@@ -31,7 +31,7 @@ object CompositeEditorStarter
       scene = new Scene {
         def onSave(compositesToSave: List[Composite]) : Unit = {
             CompositeWriter.write(compositeConfigPath, compositesToSave)
-            compositeActor ! Composites(compositesToSave)
+            connectionsActor ! Composites(compositesToSave)
             window().hide()
           }
 

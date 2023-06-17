@@ -1,12 +1,14 @@
 package dbtarzan.db.actor
 
 import dbtarzan.db._
+import dbtarzan.messages.DatabaseIdUtil
 
 /* to check if additional foreign keys match existing foreign keys */
 object AdditionalForeignKeysIntersection {
 	private def equalsIgnoreCase(a: FieldsOnTable, b: FieldsOnTable) : Boolean = 
 		a.table.tableName.equalsIgnoreCase(b.table.tableName) &&
-    a.table.databaseId.databaseName.equalsIgnoreCase(b.table.databaseId.databaseName) &&
+    a.table.databaseId.origin.isLeft == b.table.databaseId.origin.isLeft &&
+    DatabaseIdUtil.databaseIdText(a.table.databaseId).equalsIgnoreCase(DatabaseIdUtil.databaseIdText(b.table.databaseId)) &&
 		a.fields.size == b.fields.size &&
 		a.fields.sorted.zip(b.fields.sorted).forall({case (aa, bb) => aa.equalsIgnoreCase(bb)})
 

@@ -4,7 +4,7 @@ import dbtarzan.db.util.ExceptionToText
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
 import dbtarzan.localization.Localization
-import dbtarzan.messages.TLogger
+import dbtarzan.messages.{DatabaseIdUtil, TLogger}
 
 import java.sql.{ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
@@ -15,7 +15,7 @@ import scala.collection.mutable.ListBuffer
 	The part of the database actor that reads the foreign keys
 	schema is the database schema (in case of Oracle and SQL server)
 */
-class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId, definition: DBDefinition, localization: Localization, log: TLogger) {
+class ForeignKeyLoader(connection : java.sql.Connection, databaseId: SimpleDatabaseId, definition: DBDefinition, localization: Localization, log: TLogger) {
 	/* the foreign key between two tables, has a name */
 	case class ForeignKeyKey(name: String, fromTable : TableId, toTable : TableId)
 	/* a column of the foreign key */
@@ -26,7 +26,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId,
     if (tableNameOrdering != 0)
       tableNameOrdering
     else
-      x.databaseId.databaseName.compareTo(y.databaseId.databaseName)
+      DatabaseIdUtil.databaseIdText(x.databaseId).compareTo(DatabaseIdUtil.databaseIdText(y.databaseId))
   }
 
 	/* extract the foreign key from the result set */
@@ -34,8 +34,8 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId,
 		ForeignKeyColumn(
 				ForeignKeyKey(
 					rs.getString("FK_NAME"), 
-					TableId(databaseId, rs.getString("FKTABLE_NAME")),
-          TableId(databaseId, rs.getString("PKTABLE_NAME"))
+					TableId(DatabaseId(Left(databaseId)), databaseId, rs.getString("FKTABLE_NAME")),
+          TableId(DatabaseId(Left(databaseId)), databaseId, rs.getString("PKTABLE_NAME"))
 				), 
 				rs.getString("FKCOLUMN_NAME"), 				
 				rs.getString("PKCOLUMN_NAME")
@@ -76,9 +76,9 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId,
 	*/
 	def foreignKeys(tableId : TableId) : ForeignKeys = try {
 			var meta = connection.getMetaData
-			using(meta.getImportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableId.tableName)) { rs =>
+			using(meta.getImportedKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableId.tableName)) { rs =>
 				val keysImported = rsToForeignKeys(rs) 
-				using(meta.getExportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableId.tableName)) { rs =>
+				using(meta.getExportedKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableId.tableName)) { rs =>
 					val keysExported = rsToForeignKeys(rs).map(turnForeignKey)
 					log.debug("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 					val keys = keysImported ++ keysExported
