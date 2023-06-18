@@ -2,7 +2,7 @@ package dbtarzan.db.actor
 
 import dbtarzan.db.basicmetadata._
 import dbtarzan.db.foreignkeys.ForeignKeyLoader
-import dbtarzan.db.{QueryAttributes, QueryLoader, SimpleDatabaseId}
+import dbtarzan.db.{DatabaseId, QueryAttributes, QueryLoader, SimpleDatabaseId}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.TLogger
 
@@ -12,8 +12,8 @@ import java.sql.DatabaseMetaData
 	and everything is dependent by it, so we need only one "var" variable */
 case class DBLimits(maxRows : Option[Int], queryTimeoutInSeconds : Option[Int])
 
-class DatabaseCore(connection : java.sql.Connection, val simpleDatabaseId: SimpleDatabaseId, val attributes: QueryAttributes, val limits: DBLimits, localization: Localization, log: TLogger) {
-	val foreignKeyLoader = new ForeignKeyLoader(connection, simpleDatabaseId, attributes.definition, localization, log)
+class DatabaseCore(connection : java.sql.Connection, databaseId: DatabaseId, val simpleDatabaseId: SimpleDatabaseId, val attributes: QueryAttributes, val limits: DBLimits, localization: Localization, log: TLogger) {
+	val foreignKeyLoader = new ForeignKeyLoader(connection, databaseId, simpleDatabaseId, attributes.definition, localization, log)
 	val queryLoader = new QueryLoader(connection, log)
   private val metaData: DatabaseMetaData = connection.getMetaData
   val tablesLoader = new MetadataTablesLoader(attributes.definition, metaData)

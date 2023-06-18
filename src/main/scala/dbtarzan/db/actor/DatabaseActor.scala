@@ -47,7 +47,7 @@ class DatabaseActor(
     val schemaId = data.schema.map(schema => SchemaId(databaseId, simpleDatabaseId, schema))
     val attributes = QueryAttributes(data.identifierDelimiters, DBDefinition(schemaId, data.catalog), data.maxFieldSize)
     val limits = DBLimits(data.maxRows, data.queryTimeoutInSeconds)
-    Some(new DatabaseCore(connection, simpleDatabaseId, attributes, limits, localization, log))
+    Some(new DatabaseCore(connection, databaseId, simpleDatabaseId, attributes, limits, localization, log))
   } catch {
     case se : SQLException => {
       log.error(localization.errorConnectingToDatabase(DatabaseIdUtil.databaseIdText(databaseId))+" "+ExceptionToText.sqlExceptionText(se), se)

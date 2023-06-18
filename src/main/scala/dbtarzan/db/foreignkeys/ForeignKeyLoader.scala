@@ -15,7 +15,7 @@ import scala.collection.mutable.ListBuffer
 	The part of the database actor that reads the foreign keys
 	schema is the database schema (in case of Oracle and SQL server)
 */
-class ForeignKeyLoader(connection : java.sql.Connection, databaseId: SimpleDatabaseId, definition: DBDefinition, localization: Localization, log: TLogger) {
+class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId, definition: DBDefinition, localization: Localization, log: TLogger) {
 	/* the foreign key between two tables, has a name */
 	case class ForeignKeyKey(name: String, fromTable : TableId, toTable : TableId)
 	/* a column of the foreign key */
@@ -34,8 +34,8 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: SimpleDatab
 		ForeignKeyColumn(
 				ForeignKeyKey(
 					rs.getString("FK_NAME"), 
-					TableId(DatabaseId(Left(databaseId)), databaseId, rs.getString("FKTABLE_NAME")),
-          TableId(DatabaseId(Left(databaseId)), databaseId, rs.getString("PKTABLE_NAME"))
+					TableId(databaseId, simpleDatabaseId, rs.getString("FKTABLE_NAME")),
+          TableId(databaseId, simpleDatabaseId, rs.getString("PKTABLE_NAME"))
 				), 
 				rs.getString("FKCOLUMN_NAME"), 				
 				rs.getString("PKCOLUMN_NAME")
