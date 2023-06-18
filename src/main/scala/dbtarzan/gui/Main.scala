@@ -5,7 +5,7 @@ import dbtarzan.config.actor.ConnectionsActor
 import dbtarzan.config.composite.CompositeReader
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader}
 import dbtarzan.config.global.GlobalDataReader
-import dbtarzan.db.{DatabaseId, SimpleDatabaseId}
+import dbtarzan.db.{Composite, DatabaseId, SimpleDatabaseId}
 import dbtarzan.gui.actor.GUIActor
 import dbtarzan.localization.Localizations
 import dbtarzan.messages._
@@ -14,7 +14,7 @@ import scalafx.application.JFXApp
 
 /** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp {
-  println("Named commend line arguments:"+ parameters.named.mkString(","))
+  println(s"Named commend line arguments: ${parameters.named.mkString(",")}")
   private val version = versionFromManifest()
   private val configPaths = extractConnectionsConfigPath()
   private val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
@@ -28,7 +28,7 @@ object Main extends JFXApp {
     )
   mainGUI.postInit(actors.guiActor, actors.connectionsActor)
   val log = new Logger(actors.guiActor)
-  mainGUI.databaseList.setDatabaseIds(databaseIdsFromConnections(connectionDatas))
+  mainGUI.databaseList.setDatabaseIds(DatabaseIds(databaseIdsFromConnections(connectionDatas) ++ databaseIdsFromComposites(composites)))
   mainGUI.onDatabaseSelected( { case (databaseId, encryptionKey) => {
     log.info(localization.openingDatabase(DatabaseIdUtil.databaseIdText(databaseId)))
     actors.connectionsActor ! QueryDatabase(databaseId, encryptionKey) 
@@ -37,8 +37,11 @@ object Main extends JFXApp {
     case (databaseId, encryptionKey) => actors.connectionsActor ! CopyToFile(databaseId, encryptionKey) 
     })
 
-  private def databaseIdsFromConnections(connectionDatas : List[ConnectionData])  =
-    DatabaseIds(connectionDatas.map(c => DatabaseId(Left(SimpleDatabaseId(c.name)))))
+  private def databaseIdsFromConnections(connectionDatas : List[ConnectionData]): List[DatabaseId] =
+    connectionDatas.map(c => DatabaseId(Left(SimpleDatabaseId(c.name))))
+
+  private def databaseIdsFromComposites(composites: List[Composite]): List[DatabaseId] =
+    composites.map(composite => DatabaseId(Right(composite.compositeId)))
 
   private def extractConnectionsConfigPath() : ConfigPath = {
     val configsPath = parameters.named.getOrElse("configPath", Option(System.getProperty("configPath")).getOrElse("."))
@@ -58,9 +61,9 @@ object Main extends JFXApp {
     connections.sortBy(_.name)
   }
 
-  private def readComposites(compositeConfigPath: Path): Composites = {
+  private def readComposites(compositeConfigPath: Path): List[Composite] = {
     val composites = CompositeReader.read(compositeConfigPath)
-    Composites(composites.sortBy(_.compositeId.compositeName))
+    composites.sortBy(_.compositeId.compositeName)
   }
 
   def closeApp() : Unit = actors.closeApp(() => {

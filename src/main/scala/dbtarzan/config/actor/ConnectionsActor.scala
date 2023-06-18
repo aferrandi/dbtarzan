@@ -14,7 +14,7 @@ import scala.collection.mutable
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
 class ConnectionsActor(datas : List[ConnectionData],
-                       composites: Composites,
+                       composites: List[Composite],
                        guiActor : ActorRef,
                        localization : Localization,
                        keyFilesDirPath : Path) extends Actor {
@@ -22,8 +22,8 @@ class ConnectionsActor(datas : List[ConnectionData],
 	 private var connectionsConfig = new ConnectionsConfig(datas)
    private var currentComposites : Map[CompositeId, Composite] = mapComposites(composites)
 
-  private def mapComposites(composites: Composites): Map[CompositeId, Composite] = {
-    composites.composites.map(composite => composite.compositeId -> composite).toMap
+  private def mapComposites(composites: List[Composite]): Map[CompositeId, Composite] = {
+    composites.map(composite => composite.compositeId -> composite).toMap
   }
 
   private val registerDriver = new RegisterDriver()
@@ -108,7 +108,7 @@ class ConnectionsActor(datas : List[ConnectionData],
       guiActor ! extractDatabaseIds()
 	 }
 
-  private def newComposites(composites: Composites): Unit = {
+  private def newComposites(composites: List[Composite]): Unit = {
     currentComposites = mapComposites(composites)
     guiActor ! extractDatabaseIds()
   }
