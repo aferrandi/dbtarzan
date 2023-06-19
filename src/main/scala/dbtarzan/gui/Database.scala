@@ -1,18 +1,11 @@
 package dbtarzan.gui
 
-import akka.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableIds}
 import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
-import scalafx.Includes._
-import scalafx.event.ActionEvent
-import scalafx.scene.Parent
-import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, FlowPane}
-import scalafx.stage.Stage
 
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: TableIds) extends TControlBuilder {
@@ -77,7 +70,6 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTablesByPattern => tableList.addTableNames(tables.tabeIds)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
-    case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case _: RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
     case additionalKeys: ResponseAdditionalForeignKeys =>  additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
     case _ => log.error(localization.errorDatabaseMessage(msg))
@@ -86,6 +78,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
     case columns : ResponseColumns => tableTabs.addColumns(columns)
     case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
+    case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case _ => log.error(localization.errorTableMessage(msg))
   }  
 
