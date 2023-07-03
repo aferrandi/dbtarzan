@@ -1,11 +1,18 @@
 package dbtarzan.gui
 
+import akka.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableIds}
 import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
+import scalafx.Includes._
+import scalafx.event.ActionEvent
+import scalafx.scene.Parent
+import scalafx.scene.control._
+import scalafx.scene.layout.{BorderPane, FlowPane}
+import scalafx.stage.Stage
 
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: TableIds) extends TControlBuilder {
