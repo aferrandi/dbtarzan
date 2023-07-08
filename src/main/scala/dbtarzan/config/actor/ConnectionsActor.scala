@@ -103,8 +103,8 @@ class ConnectionsActor(datas : List[ConnectionData],
         )
 	 }
 
-  private def newConnections(datas: ConnectionDatas) : Unit = {
-      connectionsConfig = new ConnectionsConfig(datas.datas)
+  private def newConnections(datas: List[ConnectionData]) : Unit = {
+      connectionsConfig = new ConnectionsConfig(datas)
       guiActor ! extractDatabaseIds()
 	 }
 
@@ -141,6 +141,7 @@ class ConnectionsActor(datas : List[ConnectionData],
 	    case cpy : CopyToFile => startCopyWorker(cpy.databaseId, cpy.encryptionKey)
       case tst: TestConnection => testConnection(tst.data, tst.encryptionKey)
       case ext: ExtractSchemas => extractSchemas(ext.data, ext.encryptionKey)
-	    case datas: ConnectionDatas => newConnections(datas)
+	    case datas: ConnectionDatas => newConnections(datas.datas)
+      case composites: Composites => newComposites(composites.composites)
 	}
 }
