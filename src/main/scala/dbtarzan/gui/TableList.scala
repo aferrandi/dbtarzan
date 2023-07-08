@@ -4,7 +4,7 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.{ListCell, ListView}
 import dbtarzan.db.{TableId, TableIds}
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.util.{JFXUtil, TableIdLabel}
 import scalafx.scene.Parent
 
 /* The list of tables to choose from */
@@ -21,7 +21,7 @@ class TableList(originalTableIds : TableIds) extends TControlBuilder {
 
   private def buildCell() = new ListCell[TableId] {
     item.onChange { (_, _, _) =>
-      text.value = Option(item.value).map(tableId => tableId.tableName).getOrElse("")
+      text.value = Option(item.value).map(tableId => TableIdLabel.toLabel(tableId)).getOrElse("")
     }
   }
 
