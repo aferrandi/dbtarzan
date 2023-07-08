@@ -2,7 +2,7 @@ package dbtarzan.gui.config
 
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.Password
-import dbtarzan.db.{IdentifierDelimiters, Schema}
+import dbtarzan.db.{IdentifierDelimiters, SchemaName}
 import dbtarzan.gui.config.connections.ConnectionDataValidation
 import org.scalatest.flatspec.AnyFlatSpec
 
@@ -14,7 +14,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         "chinook",
         "org.sqlite.JDBC",
         "jdbc:sqlite:/home/andrea/prj/dbtarzan/testdbs/sqllite/Chinook_Sqlite.sqlite",
-        Some(Schema("chinook")),
+        Some(SchemaName("chinook")),
         "root",
         Password("pwd"),
         Some(false),

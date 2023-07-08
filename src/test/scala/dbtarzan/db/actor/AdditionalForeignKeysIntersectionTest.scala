@@ -1,12 +1,16 @@
 package dbtarzan.db.actor
 
 import dbtarzan.db._
+import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
 class AdditionalForeignKeysIntersectionTest extends AnyFlatSpec {
+  def albumTableId = TestDatabaseIds.simpleTableId("Album")
+  def artistTableId = TestDatabaseIds.simpleTableId("Artist")
+  def customerTableId = TestDatabaseIds.simpleTableId("Customer")
   def foreignKeysByTable = Map(
-      "Artist" -> ForeignKeys(List(
-          ForeignKey("key1",  FieldsOnTable("Album", List("ArtistId")), FieldsOnTable("Artist", List("ArtistId")), ForeignKeyDirection.STRAIGHT)
+    artistTableId -> ForeignKeys(List(
+          ForeignKey("key1",  FieldsOnTable(albumTableId, List("ArtistId")), FieldsOnTable(artistTableId, List("ArtistId")), ForeignKeyDirection.STRAIGHT)
           ))
       )
 
@@ -17,7 +21,7 @@ class AdditionalForeignKeysIntersectionTest extends AnyFlatSpec {
 
   "the intersection with a non matching additional key list" should "give an empty list" in {
     val additionalKeys = List(
-      AdditionalForeignKey("add1", FieldsOnTable("Album", List("CustomerId")), FieldsOnTable("Customer", List("CustomerId")))
+      AdditionalForeignKey("add1", FieldsOnTable(albumTableId, List("CustomerId")), FieldsOnTable(customerTableId, List("CustomerId")))
       )
     val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysByTable, additionalKeys)
     assert(intersection.isEmpty)
@@ -25,7 +29,7 @@ class AdditionalForeignKeysIntersectionTest extends AnyFlatSpec {
 
   "the intersection with a matching additional key list from=from a d to=to" should "give the matcihing key" in {
     val additionalKeys = List(
-      AdditionalForeignKey("add1", FieldsOnTable("Album", List("ArtistId")), FieldsOnTable("Artist", List("ArtistId")))
+      AdditionalForeignKey("add1", FieldsOnTable(albumTableId, List("ArtistId")), FieldsOnTable(artistTableId, List("ArtistId")))
       )
     val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysByTable, additionalKeys)
     assert(intersection === List("add1"))
@@ -33,7 +37,7 @@ class AdditionalForeignKeysIntersectionTest extends AnyFlatSpec {
 
   "the intersection with a matching additional key list from=to a d to=from" should "give the matcihing key" in {
     val additionalKeys = List(
-      AdditionalForeignKey("add1", FieldsOnTable("Artist", List("ArtistId")), FieldsOnTable("Album", List("ArtistId")))
+      AdditionalForeignKey("add1", FieldsOnTable(artistTableId, List("ArtistId")), FieldsOnTable(albumTableId, List("ArtistId")))
       )
     val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysByTable, additionalKeys)
     assert(intersection === List("add1"))

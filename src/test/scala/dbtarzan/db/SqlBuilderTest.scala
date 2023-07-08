@@ -1,6 +1,7 @@
 package dbtarzan.db
 
-import dbtarzan.db.foreignkeys.{ FKRow, ForeignKeyCriteria }
+import dbtarzan.db.foreignkeys.{FKRow, ForeignKeyCriteria}
+import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
 class SqlBuilderTest extends AnyFlatSpec {
@@ -134,7 +135,7 @@ class SqlBuilderTest extends AnyFlatSpec {
   private def buildRow(name : String, age: String) = FKRow(buildFields(name, age))
 
   private def buildAttributes() = {
-    QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(Some(Schema("TST")), None), None)
+    QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(Some(SchemaId(TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, SchemaName("TST"))), None), None)
   }
 
   private def buildFields(name: String, age: String) = {
