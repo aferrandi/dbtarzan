@@ -1,8 +1,9 @@
 package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, TableId, SimpleDatabaseId}
+import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, SimpleDatabaseId, TableId}
 import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.util.TableIdLabel
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
 import scalafx.Includes._
@@ -48,14 +49,14 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
    /* the column with the from table of the foreign key */
   private def tableFromColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.tableFrom
-    cellValueFactory = { x => new StringProperty(x.value.from.table.tableName) }
+    cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.from.table)) }
     resizable = true
   }
 
    /* the column with the to table of the foreign key */
   private def tableToColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.tableTo
-    cellValueFactory = { x => new StringProperty(x.value.to.table.tableName) }
+    cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.to.table)) }
     resizable = true
   }
 

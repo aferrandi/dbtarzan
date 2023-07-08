@@ -3,7 +3,7 @@ package dbtarzan.gui.foreignkeys
 import akka.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.gui.util.{ListViewAddFromCombo, OnChangeSafe, ListViewAddFromComboBuilder, TComboStrategy}
+import dbtarzan.gui.util.{ListViewAddFromCombo, ListViewAddFromComboBuilder, OnChangeSafe, TComboStrategy, TableIdLabel}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
@@ -15,16 +15,16 @@ import scalafx.scene.layout.{ColumnConstraints, GridPane}
 import scalafx.scene.paint.Color
 
 
+
 /* the combo uses toString sometimes as text, which is not ok for a TableId. So we decorate it with a good toString */
 class TableIdForCombo(val tableId: TableId) {
-  def comboLabel: String = tableId.tableName
+  def comboLabel: String = TableIdLabel.toLabel(tableId)
   override def toString: String = comboLabel
 }
 
 /* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
                     dbActor: ActorRef,
-                    databaseId: DatabaseId,
                     tableNames: TableIds,
                     localization: Localization
   ) extends TControlBuilder {

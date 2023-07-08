@@ -21,7 +21,7 @@ class AdditionalForeignKeysEditor(
                                    localization: Localization
   ) extends TControlBuilder {
   private val keysTable = new ForeignKeysTable(databaseId, guiActor, localization)
-  private val singleEditor = new SingleEditor(dbActor, databaseId, tableNames, localization)
+  private val singleEditor = new SingleEditor(dbActor, tableNames, localization)
   private val buttons = new AdditionalForeignKeysButtons(localization)
   private val bottomPane = new BorderPane {
     center = singleEditor.control
