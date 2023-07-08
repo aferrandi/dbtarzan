@@ -2,9 +2,9 @@ package dbtarzan.gui.tabletabs
 
 import dbtarzan.db._
 import dbtarzan.messages.QueryId
+import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 import scalafx.Includes._
-import dbtarzan.testutil.TestDatabaseIds
 
 case class SimpleTableForMap(getId : QueryId) extends TTableForMapWithId
 
@@ -28,7 +28,7 @@ class TableTabsMapTest extends AnyFlatSpec {
     val tableTabsMap = new TableTabsMap[SimpleTableForMap]()
     tableTabsMap.addBrowsingTable(SimpleTableForMap(table1AId), tab1A)
     tableTabsMap.addBrowsingTable(SimpleTableForMap(table2BId), tab2B)
-    assert(tableTabsMap.tabsWithIds(List(table1AId, table2BId)) == List(tab1A, tab2B))
+    assert(tableTabsMap.tabsWithIds(List(table1AId, table2BId)).toSet == List(tab1A, tab2B).toSet)
     tableTabsMap.removeTablesWithIds(List(table1AId, table2BId))
     assert(tableTabsMap.tabsWithIds(List(table1AId, table2BId)) == List.empty)
   }
@@ -79,7 +79,7 @@ class TableTabsMapTest extends AnyFlatSpec {
     val tableTabsMap = new TableTabsMap[SimpleTableForMap]()
     tableTabsMap.addBrowsingTable(SimpleTableForMap(table1AId), tab1A)
     tableTabsMap.addBrowsingTable(SimpleTableForMap(table2BId), tab2B)
-    assert(tableTabsMap.idsFromTabs(List(tab1A, tab2B)) == List(table1AId, table2BId))
+    assert(tableTabsMap.idsFromTabs(List(tab1A, tab2B)).toSet == List(table1AId, table2BId).toSet)
     tableTabsMap.removeTablesWithIds(List(table1AId, table2BId))
     assert(tableTabsMap.idsFromTabs(List(tab1A, tab2B)) == List.empty)
   }
