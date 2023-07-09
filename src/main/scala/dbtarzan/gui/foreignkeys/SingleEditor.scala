@@ -48,7 +48,7 @@ class SingleEditor(
   private val txtName = new TextField {
     text = ""
   }
-  private var editorDisabled = BooleanProperty(true)
+  private val editorDisabled = BooleanProperty(true)
 
   private def buildChosenTableProperty(orderedListColumns : ListViewAddFromCombo[String]) = new ObjectProperty[TableIdForCombo]() {
     onChange { (_, _, newTable) => Option(newTable).filter(t => t.tableId.tableName.nonEmpty).foreach(t => {

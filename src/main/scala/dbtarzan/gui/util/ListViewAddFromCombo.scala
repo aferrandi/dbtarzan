@@ -102,8 +102,8 @@ class ListViewAddFromCombo[T](
     }
   }
 
-  def setComboData(data : List[T]) : Unit = {
-    JFXUtil.bufferSet(comboBuffer, data)
+  def setComboData(comboData : List[T]) : Unit = {
+    JFXUtil.bufferSet(comboBuffer, comboData)
     removeListDataFromCombo()
   }
 
@@ -112,15 +112,24 @@ class ListViewAddFromCombo[T](
   }
 
   def onChange(action : List[T] => Unit) : Unit =
-    listBuffer.onChange((buffer, changes) =>
+    listBuffer.onChange((buffer, _) =>
       safe.noChangeEventDuring(() =>  action(buffer.toList))
     )
 
-  def setListData(data : List[T]) : Unit =
+  def setListData(listData : List[T]) : Unit =
     safe.onChange(() => {
-      JFXUtil.bufferSet(listBuffer, data)
+      JFXUtil.bufferSet(listBuffer, listData)
       removeListDataFromCombo()
     })
+
+  def setListAndComboData(listData : List[T], comboData: List[T]): Unit =
+    safe.onChange(() => {
+      JFXUtil.bufferSet(listBuffer, listData)
+      JFXUtil.bufferSet(comboBuffer, comboData)
+      removeListDataFromCombo()
+    })
+
+
   def listData() : List[T] = listBuffer.toList
 
   def control : Parent = layout

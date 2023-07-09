@@ -18,7 +18,6 @@ object CompositeList {
 /* The list of database to choose from */
 class CompositeList(composites : List[Composite], localization : Localization) extends TControlBuilder {
   private val compositesWithNew: List[Composite] = if (composites.nonEmpty) composites else List(newComposite())
-  println("Composites "+compositesWithNew)
   private val compositesObservable = ObservableBuffer(compositesWithNew)
   private val menuAddComposite = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
@@ -37,22 +36,18 @@ class CompositeList(composites : List[Composite], localization : Localization) e
 
   private def selectionModel() = list.selectionModel()
 
-  def newComposite(): Composite = Composite(CompositeId(CompositeList.newCompositeName), List.empty)
-  /* returns Some(selected index) if it makes sense (> )0), None otherwise */
-  def getSelectedIndex(): Option[Int] = {
-    var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
-    // println("Selected index:"+index)
-    index
-  }
+  private def newComposite(): Composite = Composite(CompositeId(CompositeList.newCompositeName), List.empty)
 
+  /* returns Some(selected index) if it makes sense (> )0), None otherwise */
+  private def selectedIndex(): Option[Int] = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
   def onCompositeSelected(use : Composite => Unit) : Unit =
-    selectionModel().selectedIndex.onChange {  (item, oldIndex, newIndex) => {
-        //println("Selected index changed to "+newIndex) 
+    selectionModel().selectedIndex.onChange {  (_, _, newIndex) => {
+        //println("Selected index changed to "+newIndex)
         Option(newIndex).map(_.intValue()).filter(_ >= 0).foreach(index => use(compositesObservable(index)))
       }}
 
   private def buildCell() = new ListCell[Composite] {
-    item.onChange { (value , oldValue, newValue) => {
+    item.onChange { (_, _, newValue) => {
         val optValue = Option(newValue)
         // the orElse is to avoid problems when removing items
         val valueOrEmpty = optValue.map(_.compositeId.compositeName).orElse(Some(""))
@@ -60,19 +55,18 @@ class CompositeList(composites : List[Composite], localization : Localization) e
       }}}
 
   /* there must be always at least one connection */
-  def removeCurrent() : Unit = 
+  def removeCurrent() : Unit =
     if(compositesObservable.nonEmpty)
-      getSelectedIndex().foreach(selectedIndex => {
+      selectedIndex().foreach(selectedIndex => {
         compositesObservable.remove(selectedIndex)
         newSelectedIndex(selectedIndex).foreach(selectionModel().select(_))
       })
 
   /* returns errors validating the items in the list */
-  def validate() : List[CompositeErrors] = {
-    compositesObservable.toList.map(data => CompositeErrors(data.compositeId, CompositeValidation.validate(data)))
+  def validate() : List[CompositeErrors] =
+    compositesObservable.toList
+      .map(data => CompositeErrors(data.compositeId, CompositeValidation.validate(data)))
       .filter(_.errors.nonEmpty)
-  }
-
 
   private def newSelectedIndex(selectedIndex : Int) : Option[Int] =
     if(compositesObservable.isEmpty)
@@ -85,7 +79,7 @@ class CompositeList(composites : List[Composite], localization : Localization) e
   def content() : List[Composite] = compositesObservable.toList
 
   def changeSelected(data : Composite) : Unit =
-    getSelectedIndex().foreach(selectedIndex => {
+    selectedIndex().foreach(selectedIndex => {
       // println("Before setconnectionDatas of "+selectedIndex+":"+data)
       compositesObservable.update(selectedIndex, data)
       selectionModel().select(selectedIndex) // patch to avoid deselection when changing data

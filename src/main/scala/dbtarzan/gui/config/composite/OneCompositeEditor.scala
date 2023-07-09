@@ -31,7 +31,7 @@ class OneCompositeEditor(
     override def addToCombo(comboBuffer: ObservableBuffer[SimpleDatabaseId], item: SimpleDatabaseId): Unit = comboBuffer += item
   }
   private val lvwDatabaseId = ListViewAddFromComboBuilder.buildUnordered[SimpleDatabaseId](localization.add, showText, comboStrategy)
-  lvwDatabaseId.setComboData(allDatabaseId)
+  lvwDatabaseId.setListAndComboData(List.empty, allDatabaseId)
 
   private val grid =  new GridPane {
     columnConstraints = List(
@@ -50,7 +50,7 @@ class OneCompositeEditor(
 
   def show(composite : Composite) : Unit =  safe.noChangeEventDuring(() => {
     txtName.text = composite.compositeId.compositeName
-    lvwDatabaseId.setListData(composite.databaseIds)
+    lvwDatabaseId.setListAndComboData(composite.databaseIds, allDatabaseId)
   })
 
 
