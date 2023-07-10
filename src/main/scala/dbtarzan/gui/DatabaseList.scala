@@ -11,6 +11,7 @@ import scalafx.scene.control._
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.paint.Color
 
+
 /*	The list of database to choose from*/
 class DatabaseList(localization : Localization) extends TControlBuilder with TDatabaseList {
   private val menuForeignKeyToFile = new MenuItem(localization.buildForeignKeysFile)
@@ -44,11 +45,20 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
   }
 
   def setDatabaseIds(databaseIds: DatabaseIds) : Unit = {
-    println("Got new database list:"+databaseIds)
-    JFXUtil.bufferSet(buffer, databaseIds.names.sortBy(DatabaseIdUtil.databaseIdText))
+    println("Got new database list:" + databaseIds)
+    JFXUtil.bufferSet(buffer, databaseIds.names.sortWith((id1, id2) =>
+      sortByOriginThenByName(id1, id2)
+    ))
   }
 
-  def onDatabaseSelected(use : DatabaseId => Unit) : Unit = 
+  private def sortByOriginThenByName(id1: DatabaseId, id2: DatabaseId) = {
+    if (id1.origin.isRight == id2.origin.isRight)
+      DatabaseIdUtil.databaseIdText(id1) < DatabaseIdUtil.databaseIdText(id2)
+    else
+      id1.origin.isRight
+  }
+
+  def onDatabaseSelected(use : DatabaseId => Unit) : Unit =
     JFXUtil.onAction(list, (selectedDatabaseId : DatabaseId, _) => { 
       println("Selected "+DatabaseIdUtil.databaseIdText(selectedDatabaseId))
       use(selectedDatabaseId)

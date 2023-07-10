@@ -1,7 +1,7 @@
 package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableId, TableIds}
+import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableId}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, StringUtil}
 import dbtarzan.localization.Localization
@@ -17,11 +17,11 @@ class AdditionalForeignKeysEditor(
                                    dbActor : ActorRef,
                                    guiActor: ActorRef,
                                    databaseId: DatabaseId,
-                                   tableNames: TableIds,
+                                   tableIds: List[TableId],
                                    localization: Localization
   ) extends TControlBuilder {
   private val keysTable = new ForeignKeysTable(databaseId, guiActor, localization)
-  private val singleEditor = new SingleEditor(dbActor, tableNames, localization)
+  private val singleEditor = new SingleEditor(dbActor, tableIds, localization)
   private val buttons = new AdditionalForeignKeysButtons(localization)
   private val bottomPane = new BorderPane {
     center = singleEditor.control

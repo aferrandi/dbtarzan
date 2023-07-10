@@ -25,7 +25,7 @@ class TableIdForCombo(val tableId: TableId) {
 /* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
                     dbActor: ActorRef,
-                    tableNames: TableIds,
+                    tableIds: List[TableId],
                     localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
@@ -41,7 +41,7 @@ class SingleEditor(
   private val orderedListColumnsTo = ListViewAddFromComboBuilder.buildOrdered[String](localization.add, showText, comboStrategy)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
-  private val tableNamesBuffer = ObservableBuffer(tableNames.tableIds.map(id => new TableIdForCombo(id)))
+  private val tableNamesBuffer = ObservableBuffer(tableIds.map(id => new TableIdForCombo(id)))
   private val comboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty)
   private val comboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty)
 

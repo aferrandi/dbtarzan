@@ -8,8 +8,8 @@ import dbtarzan.gui.util.{JFXUtil, TableIdLabel}
 import scalafx.scene.Parent
 
 /* The list of tables to choose from */
-class TableList(originalTableIds : TableIds) extends TControlBuilder {
-  private val buffer = ObservableBuffer[TableId](originalTableIds.tableIds)
+class TableList(originalTableIds : List[TableId]) extends TControlBuilder {
+  private val buffer = ObservableBuffer[TableId](originalTableIds.sortBy(TableIdLabel.toLabel))
   private val list = new ListView[TableId](buffer) {
     cellFactory = { _ => buildCell() }
   }

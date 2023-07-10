@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import akka.actor.ActorRef
-import dbtarzan.db.{DatabaseId, TableIds}
+import dbtarzan.db.{DatabaseId, TableId}
 import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
@@ -15,7 +15,7 @@ import scalafx.scene.layout.{BorderPane, FlowPane}
 import scalafx.stage.Stage
 
 /* A panel containing all the tabs related to a database */
-class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: TableIds) extends TControlBuilder {
+class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: List[TableId]) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val tableList = new TableList(tableIds)
   private val tableTabs = new TableTabs(dbActor, guiActor, localization)
@@ -54,7 +54,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
                   dbActor, 
                   guiActor,
                   databaseId,
-                  tableList.tableIds,
+                  tableList.tableIds.tableIds,
                   localization
                   ))
               }

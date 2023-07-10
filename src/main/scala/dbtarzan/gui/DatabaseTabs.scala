@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import akka.actor.ActorRef
-import dbtarzan.db.{DatabaseId, TableId, TableIds}
+import dbtarzan.db.{DatabaseId, TableId}
 import dbtarzan.gui.interfaces.{TControlBuilder, TDatabases}
 import dbtarzan.localization.Localization
 import dbtarzan.messages._
@@ -26,16 +26,16 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
       this.connectionsActor = Some(connectionsActor)
   } 
 
-  private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableNames : TableIds) : Database = {
+  private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableIds : List[TableId]) : Database = {
     println("add database tab for "+DatabaseIdUtil.databaseIdText(databaseId))
     guiActor match {
-      case Some(ga) => addDatabaseTabWithGUIActor(dbActor, ga, databaseId, tableNames)
+      case Some(ga) => addDatabaseTabWithGUIActor(dbActor, ga, databaseId, tableIds)
       case None => throw new Exception("guiActor is not defined")
     }
   }
 
-  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, someGuiActor: ActorRef, databaseId: DatabaseId, tableNames: TableIds) = {
-    val database = new Database(dbActor, someGuiActor, databaseId, localization, tableNames)
+  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, someGuiActor: ActorRef, databaseId: DatabaseId, tableIds: List[TableId]) = {
+    val database = new Database(dbActor, someGuiActor, databaseId, localization, tableIds)
     val tab = buildTab(database)
     tabs += tab
     selectTab(tab)
@@ -76,7 +76,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
 
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case rsp : ResponseCloseDatabase => removeDatabase(rsp.databaseId)
-    case rsp : ResponseTables => addDatabaseTab(rsp.dbActor, rsp.databaseId, rsp.names)
+    case rsp : ResponseTables => addDatabaseTab(rsp.dbActor, rsp.databaseId, rsp.names.tableIds)
     case _ => withDatabaseId(msg.databaseId, database => database.handleDatabaseIdMessage(msg))
   }
 
