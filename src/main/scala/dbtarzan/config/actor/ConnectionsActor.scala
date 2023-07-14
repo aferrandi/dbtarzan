@@ -1,7 +1,6 @@
 package dbtarzan.config.actor
 
 import akka.actor.{Actor, ActorRef}
-import akka.routing.Broadcast
 import dbtarzan.config.connections.{ConnectionData, ConnectionsConfig}
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db._
@@ -99,7 +98,7 @@ class ConnectionsActor(datas : List[ConnectionData],
 	 private def queryClose(databaseId : DatabaseId) : Unit = {
 	    log.debug("Closing the database "+DatabaseIdUtil.databaseIdText(databaseId))
       mapDBWorker.remove(databaseId).foreach(
-        dbActor => dbActor ! Broadcast(QueryClose(databaseId)) // routed to all dbWorkers of the router
+        dbActor => dbActor ! QueryClose(databaseId) // routed to all dbWorkers of the router
         )
 	 }
 

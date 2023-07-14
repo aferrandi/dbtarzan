@@ -121,7 +121,7 @@ class DatabaseActor(
 	})
 
 	private def reset() : Unit = ExceptionToHandler.handleErr(logError, {
-		log.debug(s"Reseting the connection of the database worker for ${DatabaseIdUtil.databaseIdText(databaseId)}")
+		log.debug(s"ReseFting the connection of the database worker for ${DatabaseIdUtil.databaseIdText(databaseId)}")
 		closeCore()
 		optCores = buildCores()
 		log.info(localization.connectionResetted(databaseIdText(databaseId)))
