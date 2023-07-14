@@ -1,8 +1,8 @@
 package dbtarzan.gui.orderby
 
 import dbtarzan.db.{Field, OrderByDirection, OrderByField, OrderByFields}
-import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.{JFXUtil, OrderedListView, TComboStrategy}
+import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.util.{JFXUtil, ListViewAddFromCombo, ListViewAddFromComboBuilder, TComboStrategy}
 import dbtarzan.localization.Localization
 import scalafx.Includes._
 import scalafx.beans.property.BooleanProperty
@@ -48,16 +48,21 @@ class OrderByEditor(
       comboBuffer ++= fieldInBothDirections(item.field)
   }
 
+  private val list = buildList()
+
   private def fieldInBothDirections(field: Field) = {
     OrderByDirection.directions().map(d => OrderByField(field, d))
   }
 
-  private var list = new OrderedListView[OrderByField](localization.add, showField, comboStrategy)
-  list.setListData(currentOrderByFields)
-  list.setComboData(possibleOrderByFields.flatMap(f => OrderByDirection.directions().map(d => OrderByField(f, d))))
-  list.onChange(data =>
-    saveButtonDisabled.value = data.isEmpty
-  )
+  private def buildList(): ListViewAddFromCombo[OrderByField] = {
+    val list = ListViewAddFromComboBuilder.buildOrdered[OrderByField](localization.add, showField, comboStrategy)
+    val comboData = possibleOrderByFields.flatMap(f => OrderByDirection.directions().map(d => OrderByField(f, d)))
+    list.setListAndComboData(currentOrderByFields, comboData)
+    list.onChange(data =>
+      saveButtonDisabled.value = data.isEmpty
+    )
+    list
+  }
 
   private def iconFromDirection(value: Option[OrderByField]): Image = {
     value.map(v =>
@@ -84,7 +89,7 @@ class OrderByEditor(
   private def buttonCancel() = new Button {
     text = localization.cancel
     alignmentInParent = Pos.CenterRight
-    onAction = (event: ActionEvent)  => onCancel()
+    onAction = (_: ActionEvent)  => onCancel()
   }
 
   private def buttonSave() = new Button {

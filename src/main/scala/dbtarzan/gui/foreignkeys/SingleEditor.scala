@@ -2,8 +2,8 @@ package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
 import dbtarzan.db._
-import dbtarzan.gui.TControlBuilder
-import dbtarzan.gui.util.{OnChangeSafe, OrderedListView, TComboStrategy}
+import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.util.{ListViewAddFromCombo, ListViewAddFromComboBuilder, OnChangeSafe, TComboStrategy, TableIdLabel}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryColumnsForForeignKeys
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
@@ -14,12 +14,19 @@ import scalafx.scene.control.{ComboBox, Label, ListCell, TextField}
 import scalafx.scene.layout.{ColumnConstraints, GridPane}
 import scalafx.scene.paint.Color
 
+
+
+/* the combo uses toString sometimes as text, which is not ok for a TableId. So we decorate it with a good toString */
+class TableIdForCombo(val tableId: TableId) {
+  def comboLabel: String = TableIdLabel.toLabel(tableId)
+  override def toString: String = comboLabel
+}
+
 /* To edit a single foreign keys. Every change gets propagated to the other parts of the editor */
 class SingleEditor(
-  dbActor: ActorRef,
-  databaseId: DatabaseId,  
-  tableNames: TableNames,
-  localization: Localization
+                    dbActor: ActorRef,
+                    tableIds: List[TableId],
+                    localization: Localization
   ) extends TControlBuilder {
   val safe = new OnChangeSafe()
   private val showText: Option[String] => Label = (value: Option[String]) => new Label {
@@ -30,27 +37,27 @@ class SingleEditor(
     override def removeFromCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer -= item
     override def addToCombo(comboBuffer: ObservableBuffer[String], item: String): Unit = comboBuffer += item
   }
-  private val orderedListColumnsFrom = new OrderedListView[String](localization.add, showText, comboStrategy)
-  private val orderedListColumnsTo = new OrderedListView[String](localization.add, showText, comboStrategy)
+  private val orderedListColumnsFrom = ListViewAddFromComboBuilder.buildOrdered[String](localization.add, showText, comboStrategy)
+  private val orderedListColumnsTo = ListViewAddFromComboBuilder.buildOrdered[String](localization.add, showText, comboStrategy)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
-  private val tableNamesBuffer = ObservableBuffer(tableNames.tableNames)
-  private val comboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty) 
-  private val comboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty) 
-  
-  val txtName = new TextField {
+  private val tableNamesBuffer = ObservableBuffer(tableIds.map(id => new TableIdForCombo(id)))
+  private val comboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty)
+  private val comboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty)
+
+  private val txtName = new TextField {
     text = ""
   }
-  private var editorDisabled = BooleanProperty(true)
+  private val editorDisabled = BooleanProperty(true)
 
-  private def buildChosenTableProperty(orderedListColumns : OrderedListView[String]) = new ObjectProperty[String]() {
-    onChange { (_, _, newTable) => Option(newTable).filter(t => t.nonEmpty).foreach(t => {
+  private def buildChosenTableProperty(orderedListColumns : ListViewAddFromCombo[String]) = new ObjectProperty[TableIdForCombo]() {
+    onChange { (_, _, newTable) => Option(newTable).filter(t => t.tableId.tableName.nonEmpty).foreach(t => {
       orderedListColumns.setListData(List.empty)
-      dbActor ! QueryColumnsForForeignKeys(databaseId, t)
+      dbActor ! QueryColumnsForForeignKeys(t.tableId)
     }) }
   }
 
-  private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[String]) = new ComboBox[String] {
+  private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[TableIdForCombo]) = new ComboBox[TableIdForCombo] {
       items = tableNamesBuffer
       editable = false
       cellFactory = { _ => buildTableCell() }
@@ -58,15 +65,16 @@ class SingleEditor(
       maxWidth = Double.MaxValue
       value <==> chosenTableProperty
   }
- 
-  private def buildTableCell() = new ListCell[String] {
-    item.onChange { 
+
+  private def buildTableCell() = new ListCell[TableIdForCombo] {
+    item.onChange {
       (_, _, value) => {
-          text = Option(value).getOrElse("") 
+          val textValue = Option(value).map(value => value.comboLabel).getOrElse("");
+          text.value = textValue
         }
       }
-  } 	
-  
+  }
+
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
@@ -93,10 +101,10 @@ class SingleEditor(
 
 
   def show(key : AdditionalForeignKey) : Unit = safe.noChangeEventDuring(() => {
-    println("show "+key)
+    // println("show "+key)
     txtName.text = key.name
-    chosenTableFromProperty.value = key.from.table
-    chosenTableToProperty.value = key.to.table
+    chosenTableFromProperty.value = new TableIdForCombo(key.from.table)
+    chosenTableToProperty.value = new TableIdForCombo(key.to.table)
     orderedListColumnsFrom.setListData(key.from.fields)
     orderedListColumnsTo.setListData(key.to.fields)
     editorDisabled.value = false
@@ -104,37 +112,37 @@ class SingleEditor(
 
   def toKey(): AdditionalForeignKey = {
     val key = AdditionalForeignKey(
-      txtName.text(), 
-      FieldsOnTable(chosenTableFromProperty.value, orderedListColumnsFrom.listData()),
-      FieldsOnTable(chosenTableToProperty.value, orderedListColumnsTo.listData())
+      txtName.text(),
+      FieldsOnTable(chosenTableFromProperty.value.tableId, orderedListColumnsFrom.listData()),
+      FieldsOnTable(chosenTableToProperty.value.tableId, orderedListColumnsTo.listData())
    )
    key
   }
 
   def control : Parent = grid
 
-  def onChanged(useKey : AdditionalForeignKey => Unit) : Unit = {  
+  def onChanged(useKey : AdditionalForeignKey => Unit) : Unit = {
      txtName.text.onChange(safe.onChange(() => useKey(toKey())))
      List(
       chosenTableFromProperty,
-      chosenTableToProperty 
+      chosenTableToProperty
     ).foreach(_.onChange(safe.onChange(() => useKey(toKey()))))
      List(
       orderedListColumnsFrom,
-      orderedListColumnsTo 
+      orderedListColumnsTo
     ).foreach(_.onChange(_ => safe.onChange(() => useKey(toKey()))))
   }
 
-  private def handleColumnsForTable(tableName : String, columns : Fields, comboTable : ComboBox[String], orderedListColumns : OrderedListView[String]) : Unit = {
-    if(comboTable.value.value == tableName) {
+  private def handleColumnsForTable(tableId : TableId, columns : Fields, comboTable : ComboBox[TableIdForCombo], orderedListColumns : ListViewAddFromCombo[String]) : Unit = {
+    if(comboTable.value.value.tableId == tableId) {
       orderedListColumns.setComboData(columns.fields.map(_.name))
     }
   }
 
-  def handleColumns(tableName : String, columns : Fields) : Unit = {
+  def handleColumns(tableId : TableId, columns : Fields) : Unit = {
     safe.onChange(() => {
-      handleColumnsForTable(tableName, columns, comboTableFrom, orderedListColumnsFrom)
-      handleColumnsForTable(tableName, columns, comboTableTo, orderedListColumnsTo)
+      handleColumnsForTable(tableId, columns, comboTableFrom, orderedListColumnsFrom)
+      handleColumnsForTable(tableId, columns, comboTableTo, orderedListColumnsTo)
     })
   }
 }

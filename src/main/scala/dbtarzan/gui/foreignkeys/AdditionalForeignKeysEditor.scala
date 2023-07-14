@@ -1,8 +1,8 @@
 package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableNames}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableId}
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, StringUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.UpdateAdditionalForeignKeys
@@ -10,19 +10,18 @@ import scalafx.geometry.Orientation
 import scalafx.scene.Parent
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
-import scalafx.Includes._
 
 
 /* table + constraint input box + foreign keys */
 class AdditionalForeignKeysEditor(
-  dbActor : ActorRef,
-  guiActor: ActorRef,
-  databaseId: DatabaseId,
-  tableNames: TableNames,
-  localization: Localization
+                                   dbActor : ActorRef,
+                                   guiActor: ActorRef,
+                                   databaseId: DatabaseId,
+                                   tableIds: List[TableId],
+                                   localization: Localization
   ) extends TControlBuilder {
-  private val keysTable = new ForeignKeysTable(guiActor, localization)
-  private val singleEditor = new SingleEditor(dbActor, databaseId, tableNames, localization)
+  private val keysTable = new ForeignKeysTable(databaseId, guiActor, localization)
+  private val singleEditor = new SingleEditor(dbActor, tableIds, localization)
   private val buttons = new AdditionalForeignKeysButtons(localization)
   private val bottomPane = new BorderPane {
     center = singleEditor.control
@@ -30,7 +29,7 @@ class AdditionalForeignKeysEditor(
   }
   private val layout = new SplitPane {
     items ++= List(keysTable.control, bottomPane)
-    orientation() =  Orientation.VERTICAL
+    orientation() =  Orientation.Vertical
     maxHeight = Double.MaxValue    
     maxWidth = Double.MaxValue
     dividerPositions = 0.5
@@ -78,8 +77,8 @@ class AdditionalForeignKeysEditor(
   def handleForeignKeys(additionalKeys : List[AdditionalForeignKey]) : Unit = 
     keysTable.addRows(additionalKeys)
 
-  def handleColumns(tableName : String, columns : Fields) : Unit =
-    singleEditor.handleColumns(tableName, columns) 
+  def handleColumns(tableId : TableId, columns : Fields) : Unit =
+    singleEditor.handleColumns(tableId, columns)
 
   def control : Parent = layout
 }

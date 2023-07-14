@@ -1,11 +1,12 @@
 package dbtarzan.gui
 import dbtarzan.gui.config.connections.ConnectionEditor
+import dbtarzan.gui.interfaces.TGlobal
 import dbtarzan.messages.{ResponseSchemaExtraction, ResponseTestConnection}
 
 class Global extends TGlobal {
   private var connectionEditor: Option[ConnectionEditor] = None
 
-  def setConnectionEditor(connectionEditor: ConnectionEditor) : Unit =
+  def setConnectionEditor(connectionEditor: ConnectionEditor): Unit =
     this.connectionEditor = Some(connectionEditor)
 
   override def handleTestConnectionResponse(rsp: ResponseTestConnection): Unit =

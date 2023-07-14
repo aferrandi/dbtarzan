@@ -1,5 +1,6 @@
 package dbtarzan.gui.util
 
+import dbtarzan.gui.util.listviewbuttons.{ButtonBuilder, TListViewButton}
 import scalafx.Includes._
 import scalafx.beans.property.BooleanProperty
 import scalafx.collections.ObservableBuffer
@@ -9,22 +10,19 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Button, ComboBox, ListCell, ListView}
 import scalafx.scene.layout.{BorderPane, HBox}
 
-trait TComboStrategy[T] {
-  def removeFromCombo(comboBuffer: ObservableBuffer[T], item : T): Unit
-  def addToCombo(comboBuffer: ObservableBuffer[T], item : T): Unit
-}
 
 /**
 a list of items selected from a combo box. Eech item is displayed with buttons to move it  up and down  or to remove it
  */
-class OrderedListView[T](
+class ListViewAddFromCombo[T](
                           addButtonLabel: String,
                           cellBuilder: Option[T] => Parent,
-                          comboStrategy: TComboStrategy[T]
+                          comboStrategy: TComboStrategy[T],
+                          additionalButtons: List[TListViewButton[T]]
                         ) {
   val comboBuffer: ObservableBuffer[T] = ObservableBuffer.empty[T]
   private val listBuffer = ObservableBuffer.empty[T]
-  private val emptyCombo = new BooleanProperty { value = comboBuffer.isEmpty }
+  private val comboEmpty = new BooleanProperty { value = comboBuffer.isEmpty }
   private val buttonDisabled = new BooleanProperty { value = comboBuffer.isEmpty }
 
   val safe = new OnChangeSafe()
@@ -33,7 +31,7 @@ class OrderedListView[T](
   }
 
   comboBuffer.onChange((buffer, changes) =>
-    emptyCombo.value = buffer.isEmpty
+    comboEmpty.value = buffer.isEmpty
   )
 
   val comboAdd: ComboBox[T] = new ComboBox[T] {
@@ -45,7 +43,7 @@ class OrderedListView[T](
   }
   comboAdd.selectionModel().selectedItem.onChange(
     (_, _, nullableValue) => {
-      val buttonEnabled = Option(nullableValue).isDefined && !emptyCombo.value
+      val buttonEnabled = Option(nullableValue).isDefined && !comboEmpty.value
       buttonDisabled.value = !buttonEnabled
     })
 
@@ -59,7 +57,7 @@ class OrderedListView[T](
     bottom = new BorderPane {
       center = comboAdd
       right = buttonAdd
-      disable <==>  emptyCombo
+      disable <==>  comboEmpty
     }
   }
 
@@ -80,45 +78,10 @@ class OrderedListView[T](
     }
   }
 
-  private def buttonUp(value : T) = buildButton(value, "▲", (value: T) =>
-    moveUp(value)
-  )
-
-
-  private def buttonDown(value : T) = buildButton(value, "▼", (value: T) =>
-    moveDown(value)
-  )
-
-
-  private def buttonDelete(value : T) = buildButton(value, "X", (value: T) => {
+  private def buttonDelete(value : T) = ButtonBuilder.buildButton(value, "X", (value: T) => {
     listBuffer -= value
     comboStrategy.addToCombo(comboBuffer, value)
   })
-
-  private def buildButton(value: T, icon: String, onClick: T => Unit) = {
-    new Button {
-      text = icon
-      stylesheets += "rowButton.css"
-      onAction = {
-        (e: ActionEvent) => onClick(value)
-      }
-    }
-  }
-
-  private def moveUp(value: T): Unit = {
-    val index = listBuffer.indexOf(value)
-    if (index > 0) {
-      listBuffer.remove(index)
-      listBuffer.insert(index - 1, value)
-    }
-  }
-  private def moveDown(value: T): Unit = {
-    val index = listBuffer.indexOf(value)
-    if (index < listBuffer.length - 1) {
-      listBuffer.remove(index)
-      listBuffer.insert(index + 1, value)
-    }
-  }
 
   private def buildListCell() = new ListCell[T]() {
     item.onChange { (_ , _, value) =>
@@ -126,9 +89,7 @@ class OrderedListView[T](
         val panel = new BorderPane {
           center = cellBuilder(Option(value))
           right = new HBox {
-            children = List(
-              buttonUp(value),
-              buttonDown(value),
+            children = additionalButtons.map(button => button.buildFor(value, listBuffer)) ++ List(
               buttonDelete(value)
             )
           }
@@ -141,20 +102,34 @@ class OrderedListView[T](
     }
   }
 
-  def setComboData(data : List[T]) : Unit = {
-    JFXUtil.bufferSet(comboBuffer, data)
+  def setComboData(comboData : List[T]) : Unit = {
+    JFXUtil.bufferSet(comboBuffer, comboData)
+    removeListDataFromCombo()
+  }
+
+  private def removeListDataFromCombo(): Unit = {
     listBuffer.foreach(v => comboStrategy.removeFromCombo(comboBuffer, v))
   }
 
   def onChange(action : List[T] => Unit) : Unit =
-    listBuffer.onChange((buffer, changes) =>
+    listBuffer.onChange((buffer, _) =>
       safe.noChangeEventDuring(() =>  action(buffer.toList))
     )
 
-  def setListData(data : List[T]) : Unit =
-    safe.onChange(() =>
-      JFXUtil.bufferSet(listBuffer, data)
-    )
+  def setListData(listData : List[T]) : Unit =
+    safe.onChange(() => {
+      JFXUtil.bufferSet(listBuffer, listData)
+      removeListDataFromCombo()
+    })
+
+  def setListAndComboData(listData : List[T], comboData: List[T]): Unit =
+    safe.onChange(() => {
+      JFXUtil.bufferSet(listBuffer, listData)
+      JFXUtil.bufferSet(comboBuffer, comboData)
+      removeListDataFromCombo()
+    })
+
+
   def listData() : List[T] = listBuffer.toList
 
   def control : Parent = layout

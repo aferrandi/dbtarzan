@@ -7,15 +7,15 @@ import scalafx.event.ActionEvent
 import scalafx.geometry.{HPos, Insets}
 import scalafx.Includes._
 import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
-import dbtarzan.gui.TControlBuilder
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
-import dbtarzan.db.Schemas
+import dbtarzan.db.{SchemaName}
+import dbtarzan.gui.OpenWeb
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 
 /* The editor for one single connection */
 class OneConnectionEditor(
-  openWeb : String => Unit, 
   encryptionKey : EncryptionKey,
   localization: Localization
   ) extends TControlBuilder {
@@ -61,7 +61,7 @@ class OneConnectionEditor(
   private val lblCatalog = new Label { text = localization.catalog+":" }
   private val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
-    onAction = (event: ActionEvent)  => openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
+    onAction = (event: ActionEvent)  => OpenWeb.openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
   }
 
   private val grid =  new GridPane {
@@ -161,7 +161,7 @@ class OneConnectionEditor(
         txtName.text(),
         txtDriver.text(),
         txtUrl.text(),
-        cmbSchemas.toSchema(),
+        cmbSchemas.chosenSchema(),
         txtUser.text(),
         encryptPassword(Password(txtPassword.text())),
         Some(true),
@@ -194,7 +194,7 @@ class OneConnectionEditor(
     ).foreach(_.onChanged(() => safe.onChange(() => useData(toData))))
   }
 
-  def schemasToChooseFrom(schemas: Schemas) : Unit =
+  def schemasToChooseFrom(schemas: List[SchemaName]) : Unit =
     cmbSchemas.schemasToChooseFrom(schemas)
 
 

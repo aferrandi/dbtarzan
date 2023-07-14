@@ -12,7 +12,7 @@ class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaDat
     private case class PrimaryKeyField(keyName : String, fieldName : String)
 
 	def primaryKeys(tableName : String) : PrimaryKeys = try {
-			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
+			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName)) { rs =>
 				val rawKeysFields = readPrimaryKeys(rs)
 				log.debug("Primary keys ("+rawKeysFields.size+") loaded")
         buildPrimaryKeysFromFields(rawKeysFields)

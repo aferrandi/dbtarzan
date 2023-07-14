@@ -1,8 +1,8 @@
-package dbtarzan.gui.info;
+package dbtarzan.gui.info
 
 import akka.actor.ActorRef
 import dbtarzan.db.{Index, OrderByDirection}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import scalafx.beans.property.{ObjectProperty, StringProperty}
@@ -11,7 +11,6 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Label, TableCell, TableColumn, TableView}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.VBox
-import scalafx.Includes._
 
 class IndexInfo(guiActor : ActorRef, localization : Localization, index: Index) extends TControlBuilder {
   case class TableLine(fieldName: String, direction: Option[OrderByDirection])

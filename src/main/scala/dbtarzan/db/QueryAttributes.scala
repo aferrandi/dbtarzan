@@ -9,7 +9,7 @@ object IdentifierDelimitersValues {
   val doubleQuotes: IdentifierDelimiters = IdentifierDelimiters('"', '"')
 }
 
-case class DBDefinition(schema : Option[Schema], catalog : Option[String])
+case class DBDefinition(schemaId : Option[SchemaId], catalog : Option[String])
 
 case class QueryAttributes(delimiters : Option[IdentifierDelimiters], definition : DBDefinition, maxFieldSize: Option[Int])
 

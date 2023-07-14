@@ -7,6 +7,7 @@ trait Localization {
   def settings : String
   def globalSettings: String
   def editConnections: String
+  def editComposites: String
   def help : String
   def documentation: String
   def new_ : String
@@ -28,6 +29,7 @@ trait Localization {
   def maxFieldSize: String
   def tables: String
   def databases: String
+  def composites: String
   def foreignKeys: String
   def connectionReset: String
   def orderBy: String
@@ -62,7 +64,9 @@ trait Localization {
   def buildForeignKeysFile: String
   def areYouSureClose: String
   def areYouSureSaveConnections: String
+  def areYouSureSaveComposite: String
   def saveConnections: String
+  def saveComposites: String
   def areYouSureSaveGlobalSettings: String
   def saveGlobalSettings: String
   def selectionCopied: String
@@ -101,6 +105,7 @@ trait Localization {
   def connectionSuccessful: String
   def connectionToDatabaseSuccesful(databaseName: String): String
   def editingConnectionFile(fileName: Path) : String
+  def editingCompositeFile(compositeConfigPath: Path): String
   def indexes: String
   def errorConnectingToDatabase(databaseName : String) : String
   def errorQueryingDatabase(databaseName : String) : String
@@ -110,7 +115,9 @@ trait Localization {
   def errorReadingKeys(databaseName : String) : String
   def errorWritingKeys(databaseName : String) : String
   def errorDisplayingConnections : String
+  def errorDisplayingComposites : String
   def errorSavingConnections: String
+  def errorSavingComposites: String
   def errorSavingGlobalSettings: String
   def errorWrongEncryptionKey : String
   def errorEncryptionKeysDifferent : String

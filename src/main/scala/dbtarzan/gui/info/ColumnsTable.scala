@@ -2,7 +2,7 @@ package dbtarzan.gui.info
 
 import akka.actor.ActorRef
 import dbtarzan.db.{Field, Fields}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger

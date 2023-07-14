@@ -4,29 +4,38 @@ import dbtarzan.db.util.ExceptionToText
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
 import dbtarzan.localization.Localization
-import dbtarzan.messages.TLogger
+import dbtarzan.messages.{DatabaseIdUtil, TLogger}
 
 import java.sql.{ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
+
 
 
 /**
 	The part of the database actor that reads the foreign keys
 	schema is the database schema (in case of Oracle and SQL server)
 */
-class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinition, localization: Localization, log: TLogger) {
+class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId, definition: DBDefinition, localization: Localization, log: TLogger) {
 	/* the foreign key between two tables, has a name */
-	case class ForeignKeyKey(name: String, fromTable : String, toTable : String)
+	case class ForeignKeyKey(name: String, fromTable : TableId, toTable : TableId)
 	/* a column of the foreign key */
 	case class ForeignKeyColumn(key : ForeignKeyKey, fromField : String, toField : String)
+
+  implicit def tableIdOrdering[A <: TableId]: Ordering[A] = (x: A, y: A) => {
+    val tableNameOrdering = x.tableName.compareTo(y.tableName)
+    if (tableNameOrdering != 0)
+      tableNameOrdering
+    else
+      DatabaseIdUtil.databaseIdText(x.databaseId).compareTo(DatabaseIdUtil.databaseIdText(y.databaseId))
+  }
 
 	/* extract the foreign key from the result set */
 	private def rsToForeignColumn(rs : ResultSet) = 
 		ForeignKeyColumn(
 				ForeignKeyKey(
 					rs.getString("FK_NAME"), 
-					rs.getString("FKTABLE_NAME"), 
-					rs.getString("PKTABLE_NAME")
+					TableId(databaseId, simpleDatabaseId, rs.getString("FKTABLE_NAME")),
+          TableId(databaseId, simpleDatabaseId, rs.getString("PKTABLE_NAME"))
 				), 
 				rs.getString("FKCOLUMN_NAME"), 				
 				rs.getString("PKCOLUMN_NAME")
@@ -43,7 +52,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinitio
 		})
 	}
 
-	private def foreignKeyColumnsToForeignKey(key : ForeignKeyKey, from : List[String], to : List[String]) = 
+	private def foreignKeyColumnsToForeignKey(key : ForeignKeyKey, from : List[String], to : List[String]) =
 		ForeignKey(key.name, 
 			FieldsOnTable(key.fromTable, from),
 			FieldsOnTable(key.toTable, to),
@@ -65,11 +74,11 @@ class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinitio
 	/**
 		All the foreign keys from the table and TO the table (used in reverse order)
 	*/
-	def foreignKeys(tableName : String) : ForeignKeys = try {
+	def foreignKeys(tableId : TableId) : ForeignKeys = try {
 			var meta = connection.getMetaData
-			using(meta.getImportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
+			using(meta.getImportedKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableId.tableName)) { rs =>
 				val keysImported = rsToForeignKeys(rs) 
-				using(meta.getExportedKeys(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName)) { rs =>
+				using(meta.getExportedKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableId.tableName)) { rs =>
 					val keysExported = rsToForeignKeys(rs).map(turnForeignKey)
 					log.debug("keysImported:"+keysImported+"\nkeysExported:"+keysExported)
 					val keys = keysImported ++ keysExported
@@ -79,7 +88,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, definition: DBDefinitio
 			}
 		}
 		catch {
-			case se : SQLException  => throw new Exception("Reading the foreign keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
-			case ex : Throwable => throw new Exception("Reading the foreign keys of the "+tableName +" table got", ex)
+			case se : SQLException  => throw new Exception("Reading the foreign keys of the "+tableId.tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
+			case ex : Throwable => throw new Exception("Reading the foreign keys of the "+tableId.tableName +" table got", ex)
 		}
 }

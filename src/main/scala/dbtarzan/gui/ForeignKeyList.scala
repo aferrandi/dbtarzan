@@ -1,7 +1,8 @@
 package dbtarzan.gui
 
 import dbtarzan.db.{FieldsOnTable, ForeignKey, ForeignKeyDirection, ForeignKeys}
-import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.util.{JFXUtil, TableIdLabel}
 import dbtarzan.messages.TLogger
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
@@ -30,7 +31,7 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 		def moreThanOneItem(l : List[_]) = l.length > 1
 		log.debug("newForeignKeys "+newForeignKeys)
 		val allForeignKeys = buffer.toList.map(_.key) ++ newForeignKeys.keys
-		val groupedByToTableInsensitive = allForeignKeys.groupBy(_.to.table.toUpperCase()).values
+		val groupedByToTableInsensitive = allForeignKeys.groupBy(_.to.table.tableName.toUpperCase()).values
 		val withSharingCheck = groupedByToTableInsensitive.flatMap(ks => ks.map(ForeignKeyWithSharingCheck(_, moreThanOneItem(ks))))
 		JFXUtil.bufferSet(buffer, withSharingCheck)
 	}
@@ -39,7 +40,7 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 
 	/** the tooltip show the whole foreign key */
 	private def buildTooltip(key : ForeignKey) = {
-		def buildSide(fields : FieldsOnTable) = fields.table + fieldsToText(fields.fields)
+		def buildSide(fields : FieldsOnTable) = TableIdLabel.toLabel(fields.table) + fieldsToText(fields.fields)
 		key.name + 
 		"\n- "+ buildSide(key.from)+
 		"\n- "+ buildSide(key.to)
@@ -54,7 +55,7 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 			case _  => "<ERROR>"
 		}
 		def fieldsIfSharesTable() = Some(key).filter(_.sharesToTable).map(k => fieldsToText(k.key.from.fields)) 
-		directionText(key.key.direction) + " " + key.key.to.table + fieldsIfSharesTable().map(t => " "+t).getOrElse("")
+		directionText(key.key.direction) + " " + TableIdLabel.toLabel(key.key.to.table) + fieldsIfSharesTable().map(t => " "+t).getOrElse("")
 	}
 	
 	/* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */

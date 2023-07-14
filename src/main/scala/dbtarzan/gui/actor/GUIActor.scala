@@ -1,8 +1,8 @@
 package dbtarzan.gui.actor
 
 import akka.actor.Actor
+import dbtarzan.gui.interfaces.{TDatabaseList, TDatabases, TGlobal, TLogs}
 import scalafx.application.Platform
-import dbtarzan.gui.{TDatabaseList, TDatabases, TLogs, TGlobal}
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 
@@ -32,7 +32,7 @@ class GUIActor(
         case msg: DatabaseIds => runLater { dbList.setDatabaseIds(msg) }
         case err: ErrorDatabaseAlreadyOpen => runLater {
             databases.showDatabase(err.databaseId)
-            log.warning(localization.databaseAlreadyOpen(err.databaseId.databaseName))
+            log.warning(localization.databaseAlreadyOpen(DatabaseIdUtil.databaseIdText(err.databaseId)))
         }
 	}
 }

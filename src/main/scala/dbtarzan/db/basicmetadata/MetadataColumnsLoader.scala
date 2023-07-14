@@ -11,7 +11,7 @@ import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, log: TLogger) {
 	/* gets the columns of a table from the database metadata */
 	def columnNames(tableName : String) : Fields = try {
-		using(meta.getColumns(definition.catalog.orNull, definition.schema.map(_.name).orNull, tableName, "%")) { rs =>
+		using(meta.getColumns(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName, "%")) { rs =>
 			val list = readColumns(rs) 
 			log.debug("Columns with schema "+definition+" loaded")
 			Fields(list)

@@ -2,15 +2,15 @@ import scala.sys.process._
 
 fork := true
 
-val versionNumber = "1.26"
+val versionNumber = "1.27"
 version := versionNumber
 
 lazy val standardLibraries = Seq(
   "io.spray" %%  "spray-json" % "1.3.6",
-  "org.scalatest" % "scalatest_2.13" % "3.1.0" % "test",
+  "org.scalatest" % "scalatest_2.13" % "3.2.15" % "test",
   "org.scalafx" % "scalafx_2.13" % "15.0.1-R21",
-  "com.typesafe.akka" %% "akka-actor" % "2.6.4",
-  "com.h2database" % "h2" % "1.4.200"
+  "com.typesafe.akka" %% "akka-actor" % "2.6.21",
+  "com.h2database" % "h2" % "1.4.200" % "test"
 )
 
 lazy val commonConfiguration = Seq(
@@ -18,7 +18,7 @@ lazy val commonConfiguration = Seq(
 
   version := versionNumber,
 
-  scalaVersion := "2.13.6",
+  scalaVersion := "2.13.11",
 
   Compile / mainClass := Some("dbtarzan.gui.Main"),
 

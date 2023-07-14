@@ -1,5 +1,6 @@
 package dbtarzan.db
 
+import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
 class SqlFieldBuilderTest extends AnyFlatSpec {
@@ -24,7 +25,7 @@ class SqlFieldBuilderTest extends AnyFlatSpec {
   "a numeric field with attributes" should "give a simple [name = value]" in {
     val builder = new SqlFieldBuilder(
       fields(),
-      QueryAttributes(Some(IdentifierDelimitersValues.doubleQuotes), DBDefinition(Some(Schema("person")),None), None)
+      QueryAttributes(Some(IdentifierDelimitersValues.doubleQuotes), DBDefinition(Some(SchemaId(TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, SchemaName("person"))),None), None)
     )
     val text = builder.buildFieldText(FieldWithValue("age", "23"))
     assert("\"age\"=23" === text)

@@ -1,8 +1,7 @@
 package dbtarzan.config.connections
 
-import spray.json._
-
 import dbtarzan.config.password.PasswordJsonProtocol
+import spray.json._
 
 object IdentifierDelimitersJsonProtocol extends DefaultJsonProtocol {
 import dbtarzan.db.IdentifierDelimiters
@@ -13,11 +12,12 @@ import dbtarzan.db.IdentifierDelimiters
 }
 
 object SchemaJsonProtocol extends DefaultJsonProtocol {
-  import dbtarzan.db.Schema
-  implicit object SchemaFormat extends JsonFormat[Schema] {
-    def write(schema: Schema) = JsString(schema.name)
-    def read(json: JsValue): Schema = json match {
-      case JsString(key) => Schema(key)
+  import dbtarzan.db.SchemaName
+  implicit object SchemaFormat extends JsonFormat[SchemaName] {
+    def write(schema: SchemaName) = JsString(schema.schema)
+
+    def read(json: JsValue): SchemaName = json match {
+      case JsString(key) => SchemaName(key)
     }
   }
 }

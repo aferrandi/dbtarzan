@@ -11,8 +11,8 @@ import scalafx.scene.layout.GridPane
 import dbtarzan.config.password.{ EncryptionKey, VerificationKey, EncryptionVerification }
 import dbtarzan.localization.Localization
 
-class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
-  class Content(verificationKey : VerificationKey) {
+class EncryptionKeyDialog(localization: Localization)  {
+  class Content(stage : Stage, verificationKey : VerificationKey) {
     private val dialog = new Dialog[EncryptionKey]() {
       initOwner(stage)
       title = localization.encryptionKey
@@ -71,11 +71,10 @@ class EncryptionKeyDialog(stage : Stage, localization: Localization)  {
       val res = dialog.showAndWait((x: EncryptionKey) => x).asInstanceOf[Option[EncryptionKey]] 
       res
     }
-      
   }
 
-  def showDialog(verificationKey : VerificationKey): Option[EncryptionKey] = {
-    val content = new Content(verificationKey) 
+  def showDialog(stage : Stage, verificationKey : VerificationKey): Option[EncryptionKey] = {
+    val content = new Content(stage, verificationKey)
     content.showAndWait()
   }
 }

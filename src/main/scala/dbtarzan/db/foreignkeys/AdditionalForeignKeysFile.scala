@@ -1,30 +1,74 @@
 package dbtarzan.db.foreignkeys
 
-import spray.json._
 import dbtarzan.db.util.FileReadWrite
-import dbtarzan.db.{ FieldsOnTable, AdditionalForeignKey }
-import java.nio.file.Path
+import dbtarzan.db.{AdditionalForeignKey, CompositeId, DatabaseId, FieldsOnTable, ForeignKey, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList, SimpleDatabaseId, TableId}
+import spray.json.DefaultJsonProtocol._
+import spray.json._
 
-object AdditionalForeignKeysJsonProtocol extends DefaultJsonProtocol {
-  implicit val fieldsOnTableFormat = jsonFormat(FieldsOnTable, "table", "fields" )	
-  implicit val foreignKeyFormat = jsonFormat(AdditionalForeignKey, "name", "from", "to")
+import java.nio.file.Path
+object TableJsonProtocol extends  DefaultJsonProtocol {
+  implicit val simpleDatabaseIdFormat: RootJsonFormat[SimpleDatabaseId] = jsonFormat(SimpleDatabaseId, "databaseName")
+  implicit val compositeIdFormat: RootJsonFormat[CompositeId] = jsonFormat(CompositeId, "compositeName")
+  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId, "origin")
+  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId, "databaseId", "simpleDatabaseId", "tableName")
+}
+
+object ForeignKeysForTableJsonProtocol {
+  import DefaultJsonProtocol._
+  import TableJsonProtocol.tableIdFormat
+  implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
+  implicit val fieldsOnTableFormat: RootJsonFormat[FieldsOnTable] = jsonFormat(FieldsOnTable, "table", "fields" )
+  implicit val foreignKeyFormat: RootJsonFormat[ForeignKey] = jsonFormat(ForeignKey, "name", "from", "to", "direction")
+  implicit val foreignKeysFormat: RootJsonFormat[ForeignKeys] = jsonFormat(ForeignKeys, "keys")
+  implicit val foreignKeysForTableFormat: RootJsonFormat[ForeignKeysForTable] = jsonFormat(ForeignKeysForTable, "name", "keys")
+  implicit val foreignKeysForTableListFormat: RootJsonFormat[ForeignKeysForTableList] = jsonFormat(ForeignKeysForTableList, "keys")
+}
+object AdditionalForeignKeysJsonProtocol {
+  import ForeignKeysForTableJsonProtocol.fieldsOnTableFormat
+  implicit val foreignKeyFormat: RootJsonFormat[AdditionalForeignKey] = jsonFormat(AdditionalForeignKey, "name", "from", "to")
+}
+
+
+case class AdditionalForeignKeyVer1(name: String, from : FieldsOnTableOneDb, to: FieldsOnTableOneDb)
+
+object AdditionalForeignKeysVer1JsonProtocol {
+  import ForeignKeysForTableJsonProtocolOneDb.fieldsOnTableFormatOneDb
+  implicit val foreignKeyFormatVer1: RootJsonFormat[AdditionalForeignKeyVer1] = jsonFormat(AdditionalForeignKeyVer1, "name", "from", "to")
 }
 
 
 /* to write and read the additional foreign keys from a file. */
 class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
-	import AdditionalForeignKeysJsonProtocol._
+  import AdditionalForeignKeysJsonProtocol._
+  import AdditionalForeignKeysVer1JsonProtocol._
 
   val fileName : Path = dirPath.resolve(databaseName+".fak")
 
 	def writeAsFile(list : List[AdditionalForeignKey]) : Unit =
 		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
 	
-	def readFromFile() : List[AdditionalForeignKey] = {
+	def readFromFile(databaseId: DatabaseId) : List[AdditionalForeignKey] = {
 		val text = FileReadWrite.readFile(fileName)
-		text.parseJson.convertTo[List[AdditionalForeignKey]]
+    try {
+      text.parseJson.convertTo[List[AdditionalForeignKey]]
+    } catch {
+      case _: Throwable => {
+        val keys = readVer1(databaseId, text)
+        writeAsFile(keys)
+        keys
+      }
+    }
 	}
 
-	def fileExist() : Boolean = FileReadWrite.fileExist(fileName)
+  private def readVer1(databaseId: DatabaseId, text: String): List[AdditionalForeignKey] = {
+    val simpleDatabaseId = databaseId.origin.left.get
+    text.parseJson.convertTo[List[AdditionalForeignKeyVer1]]
+      .map(k => AdditionalForeignKey(k.name,
+        FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.from.table), k.from.fields),
+        FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.to.table), k.to.fields)
+      ))
+  }
+
+  def fileExist() : Boolean = FileReadWrite.fileExist(fileName)
 }
 

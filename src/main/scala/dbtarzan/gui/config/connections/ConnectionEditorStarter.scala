@@ -15,14 +15,13 @@ import dbtarzan.localization.Localization
 object ConnectionEditorStarter
 {
  def openConnectionsEditor(
-    parentStage : Stage, 
-    connectionsWorker : ActorRef, 
-    configPath: Path, 
-    openWeb : String => Unit, 
-    encryptionKey : EncryptionKey,
-    localization: Localization) : ConnectionEditor = {
+          parentStage : Stage,
+          connectionsActor : ActorRef,
+          configPath: Path,
+          encryptionKey : EncryptionKey,
+          localization: Localization) : ConnectionEditor = {
     val connectionData: List[ConnectionData] = ConnectionDataReader.read(configPath)
-    val editor = new ConnectionEditor(connectionData, openWeb, encryptionKey, localization)
+    val editor = new ConnectionEditor(connectionData, encryptionKey, localization)
     val connectionStage = new Stage {
       title = localization.editConnections
       width = 800
@@ -30,17 +29,17 @@ object ConnectionEditorStarter
       scene = new Scene {
         def onSave(connectionsToSave: List[ConnectionData]) : Unit = {
             ConnectionDataWriter.write(configPath, connectionsToSave)
-            connectionsWorker ! ConnectionDatas(connectionsToSave)
+            connectionsActor ! ConnectionDatas(connectionsToSave)
             window().hide()
           }
 
-        def onCancel() : Unit = 
+        def onCancel() : Unit =
           window().hide()
 
         editor.onSave(onSave)
         editor.onCancel(() => onCancel())
-        editor.onTestConnection(data => connectionsWorker ! TestConnection(data, encryptionKey))
-        editor.onSchemasLoad(data => connectionsWorker ! ExtractSchemas(data, encryptionKey))
+        editor.onTestConnection(data => connectionsActor ! TestConnection(data, encryptionKey))
+        editor.onSchemasLoad(data => connectionsActor ! ExtractSchemas(data, encryptionKey))
         onCloseRequest = (event : WindowEvent) => {
           event.consume()
           editor.cancelIfPossible(() => onCancel()) 

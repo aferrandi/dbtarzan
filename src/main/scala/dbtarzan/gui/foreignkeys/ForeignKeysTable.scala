@@ -1,8 +1,9 @@
 package dbtarzan.gui.foreignkeys
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, FieldsOnTable}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, SimpleDatabaseId, TableId}
+import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.util.TableIdLabel
 import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
 import scalafx.Includes._
@@ -18,7 +19,7 @@ object ForeignKeysTable {
 }
 
 /** The GUI table control showing the currently edited additional foreign keys */
-class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends TControlBuilder {
+class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   private val buffer = ObservableBuffer.empty[AdditionalForeignKey]
   /* the table */
@@ -31,7 +32,7 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
 
 
   /* builds table with the two columns (name and description) */ 
-  def buildTable() = new TableView[AdditionalForeignKey](buffer) {
+  def buildTable(): TableView[AdditionalForeignKey] = new TableView[AdditionalForeignKey](buffer) {
     columns ++= List ( nameColumn(), tableFromColumn(), foreignKeysFromColumn(), tableToColumn(), foreignKeysToColumn(), buttonColumn())
     editable = false
     columnResizePolicy = TableView.ConstrainedResizePolicy
@@ -48,14 +49,14 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
    /* the column with the from table of the foreign key */
   private def tableFromColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.tableFrom
-    cellValueFactory = { x => new StringProperty(x.value.from.table) }
+    cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.from.table)) }
     resizable = true
   }
 
    /* the column with the to table of the foreign key */
   private def tableToColumn() = new TableColumn[AdditionalForeignKey, String] {
     text = localization.tableTo
-    cellValueFactory = { x => new StringProperty(x.value.to.table) }
+    cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.to.table)) }
     resizable = true
   }
 
@@ -90,7 +91,8 @@ class ForeignKeysTable(guiActor : ActorRef, localization : Localization) extends
   /* adds an empty foreign key */
   def addEmptyRow() : Unit = {
     log.debug("Adding row")
-    buffer += AdditionalForeignKey(ForeignKeysTable.newRowName,  FieldsOnTable("", List.empty),  FieldsOnTable("", List.empty))
+    val emptyFields = FieldsOnTable(TableId(databaseId, SimpleDatabaseId(""), ""), List.empty)
+    buffer += AdditionalForeignKey(ForeignKeysTable.newRowName,  emptyFields,  emptyFields)
     table.selectionModel().selectLast()
   }
 

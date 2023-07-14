@@ -1,7 +1,7 @@
-package dbtarzan.gui
+package dbtarzan.gui.interfaces
 
-import dbtarzan.messages._
 import dbtarzan.db.DatabaseId
+import dbtarzan.messages._
 
 trait TDatabases {
 	def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit

@@ -1,7 +1,7 @@
 package dbtarzan.gui.browsingtable
 
 import dbtarzan.db.{DBTable, Row}
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Parent
 import scalafx.scene.control.ScrollPane

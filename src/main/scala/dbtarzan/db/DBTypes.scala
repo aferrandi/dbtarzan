@@ -1,21 +1,30 @@
 package dbtarzan.db
 
+
+case class SimpleDatabaseId(databaseName : String)
+/* The name given by the user to the composite identifies it */
+case class CompositeId(compositeName: String)
+/* A composite is a composition of multiple databases */
+case class Composite(compositeId: CompositeId, databaseIds: List[SimpleDatabaseId])
 /* The name given by the user to the database identifies it */
-case class DatabaseId(databaseName : String)
+case class DatabaseId(origin : Either[SimpleDatabaseId, CompositeId])
 /* The database id + the table name identifies a table */
-case class TableId(databaseId : DatabaseId, tableName : String)
+case class TableId(databaseId : DatabaseId, simpleDatabaseId: SimpleDatabaseId, tableName : String)
 /* an sql expression */
 case class QuerySql(sql: String)
 /* a table: its name, the name of the original table if it comes from another table */
 case class TableDescription(name: String, origin : Option[String], notes: Option[String])
 /* the tables in a databases */
-case class TableNames(tableNames : List[String])
+case class TableIds(tableIds : List[TableId])
+
+case class TableNames(names : List[String])
+
 /* a field in a table (name and type) */
 case class Field(name : String,  fieldType : FieldType, typeDescription : String)
 /* all fields in a table */
 case class Fields(fields : List[Field])
 /* all fields in a table (with the table name)n*/
-case class FieldsOnTable(table : String, fields : List[String])
+case class FieldsOnTable(table : TableId, fields : List[String])
 /* a foreign key is a relation between two tables. It has a name and matches fields on the two tables (can clearly be more than one) */
 case class ForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable, direction : ForeignKeyDirection)
 /* the foreign keys involving a table */
@@ -41,7 +50,7 @@ Contains:
  */
 case class FollowKey(columns : List[Field], key : ForeignKey, rows : List[Row])
 /* the foreign keys involving a table, with the table */
-case class ForeignKeysForTable(table : String, keys : ForeignKeys)
+case class ForeignKeysForTable(tableId : TableId, keys : ForeignKeys)
 /* all the foreign keys for all tables in the database */
 case class ForeignKeysForTableList(keys : List[ForeignKeysForTable])
 /* the fields used to sort the rows resulting from a query (order by) */
@@ -51,8 +60,12 @@ case class OrderByFields(fields : List[OrderByField])
 case class PrimaryKey(keyName: String, fields : List[String])
 case class PrimaryKeys(keys : List[PrimaryKey])
 /* the schmas of a database */
-case class Schema(name : String)
-case class Schemas(schemas : List[Schema])
+case class SchemaName(schema : String)
+
+case class SchemaNames(names: List[SchemaName])
+
+case class SchemaId(databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId, schema : SchemaName)
+case class SchemaIds(schemaIds : List[SchemaId])
 /* an index of a table in the database */
 case class IndexField(name: String, direction: Option[OrderByDirection])
 case class Index(name: String, fields: List[IndexField])

@@ -4,7 +4,9 @@ import akka.actor.{ ActorSystem, Props, ActorRef, Actor }
 import scala.language.postfixOps
 
 /* crates and keeps track of the main actors in this application */
-class ActorHandler (guiActorSupplier : () =>  Actor, connectionActorSupplier: ActorRef => Actor) {
+class ActorHandler (guiActorSupplier : () =>  Actor,
+                    connectionActorSupplier: ActorRef => Actor
+                   ) {
   private val system = ActorSystem("Sys")
   val guiActor : ActorRef = system.actorOf(Props(guiActorSupplier()).withDispatcher("my-pinned-dispatcher"), "guiWorker")
   val connectionsActor : ActorRef = system.actorOf(Props(connectionActorSupplier(guiActor)).withDispatcher("my-pinned-dispatcher"), "configWorker")

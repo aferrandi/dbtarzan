@@ -2,7 +2,7 @@ package dbtarzan.gui.info
 
 import akka.actor.ActorRef
 import dbtarzan.db.Index
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 import scalafx.scene.Parent
 import scalafx.scene.layout.VBox

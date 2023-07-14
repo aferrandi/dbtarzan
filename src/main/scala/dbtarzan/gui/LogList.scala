@@ -1,21 +1,20 @@
 package dbtarzan.gui
 
-import scalafx.collections.ObservableBuffer 
-import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.{TableColumn, TableView, TableCell, ContextMenu, MenuItem, Alert, TextArea, Label}
-import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.image.{ Image, ImageView }
-import scalafx.Includes._
-import scalafx.scene.Parent
-import scalafx.beans.property.{ StringProperty, ObjectProperty }
-import scalafx.event.ActionEvent
-import java.time.format.DateTimeFormatter
-
-import dbtarzan.messages.TLogMessage
-import dbtarzan.messages.LogText
-import dbtarzan.gui.util.JFXUtil
-import dbtarzan.gui.util.{ JFXUtil, LogIcons }
+import dbtarzan.gui.interfaces.{TControlBuilder, TLogs}
+import dbtarzan.gui.util.{JFXUtil, LogIcons}
 import dbtarzan.localization.Localization
+import dbtarzan.messages.{LogText, TLogMessage}
+import scalafx.Includes._
+import scalafx.beans.property.{ObjectProperty, StringProperty}
+import scalafx.collections.ObservableBuffer
+import scalafx.event.ActionEvent
+import scalafx.scene.Parent
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.TableColumn._
+import scalafx.scene.control._
+import scalafx.scene.image.{Image, ImageView}
+
+import java.time.format.DateTimeFormatter
 
 /**
   A list of the errors happened in the application, last error first
@@ -23,7 +22,7 @@ import dbtarzan.localization.Localization
 class LogList(localization : Localization) extends TLogs with TControlBuilder {
   private val buffer = ObservableBuffer.empty[TLogMessage]
   private val logTable = buildTable()
-  private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+  private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
   JFXUtil.onAction(logTable, (selectedMessage : TLogMessage, _) => showMessageInDialogBox(selectedMessage))
 

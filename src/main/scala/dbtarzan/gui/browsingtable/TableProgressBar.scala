@@ -1,17 +1,17 @@
 package dbtarzan.gui.browsingtable
 
+import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.scene.control.ProgressBar
 
 import scala.collection.mutable.HashSet
 import scalafx.scene.Parent
-import dbtarzan.gui.TControlBuilder
 import scalafx.scene.layout.StackPane
 import scalafx.scene.text.Text
 
 
 object TableProgressBar {
 	val STEPS = 3
-	val PROGRESSTEP = 1.0 / STEPS 
+	val PROGRESSTEP: Double = 1.0 / STEPS
 }
 
 /**

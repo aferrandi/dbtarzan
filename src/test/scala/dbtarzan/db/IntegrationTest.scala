@@ -7,7 +7,7 @@ import java.sql.DriverManager
 import dbtarzan.db.foreignkeys.{FKRow, ForeignKeyCriteria, ForeignKeyLoader}
 import dbtarzan.db.basicmetadata.{MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader, MetadataTablesLoader}
 import dbtarzan.localization.English
-import dbtarzan.testutil.FakeLogger
+import dbtarzan.testutil.{FakeLogger, TestDatabaseIds}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -16,11 +16,18 @@ import org.scalatest.flatspec.AnyFlatSpec
 class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   var connection: Connection = _
 
+  def productTableId = TestDatabaseIds.simpleTableId( "PRODUCT")
+
+  def laptopTableId = TestDatabaseIds.simpleTableId("LAPTOP")
+
+  def pcTableId = TestDatabaseIds.simpleTableId("PC")
+
+  def printerTableId = TestDatabaseIds.simpleTableId("PRINTER")
 
   "tablenames" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tableNames()
-  	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.tableNames)
+  	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.names)
   }
 
 
@@ -42,14 +49,14 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "schemaNames" should "give a list of the schemas in the database" in {
     val metadataLoader = new MetadataSchemasLoader(connection.getMetaData, new FakeLogger())
     val schemasNames = metadataLoader.schemasNames()
-  	assert(List(Schema("INFORMATION_SCHEMA"), Schema("PUBLIC")) === schemasNames.schemas)
+  	assert(List(SchemaName("INFORMATION_SCHEMA"), SchemaName("PUBLIC")) === schemasNames)
   }
 
 
   "tablesByPattern" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tablesByPattern("PRI")
-  	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.tableNames)
+  	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.names)
   }
 
 
@@ -60,23 +67,23 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   }
 
  "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English(), new FakeLogger())
-    val foreignKeys = foreignKeyLoader.foreignKeys("LAPTOP")
+    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new English(), new FakeLogger())
+    val foreignKeys = foreignKeyLoader.foreignKeys(laptopTableId)
   	assert(
       List(
-        ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable("LAPTOP", List("MODEL")), FieldsOnTable("PRODUCT", List("MODEL")), ForeignKeyDirection.STRAIGHT)
+        ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable(laptopTableId, List("MODEL")), FieldsOnTable(productTableId, List("MODEL")), ForeignKeyDirection.STRAIGHT)
       ) 
       === foreignKeys.keys)
   }
 
    "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, DBDefinition(None, None), new English(), new FakeLogger())
-    val foreignKeys = foreignKeyLoader.foreignKeys("PRODUCT")
+    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new English(), new FakeLogger())
+    val foreignKeys = foreignKeyLoader.foreignKeys(productTableId)
   	assert(
       List(
-        ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable("PRODUCT", List("MODEL")), FieldsOnTable("LAPTOP", List("MODEL")), ForeignKeyDirection.TURNED),
-        ForeignKey("FK_PC_PRODUCT", FieldsOnTable("PRODUCT", List("MODEL")), FieldsOnTable("PC", List("MODEL")), ForeignKeyDirection.TURNED),
-        ForeignKey("FK_PRINTER_PRODUCT", FieldsOnTable("PRODUCT", List("MODEL")), FieldsOnTable("PRINTER", List("MODEL")), ForeignKeyDirection.TURNED)
+        ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable(productTableId, List("MODEL")), FieldsOnTable(laptopTableId, List("MODEL")), ForeignKeyDirection.TURNED),
+        ForeignKey("FK_PC_PRODUCT", FieldsOnTable(productTableId, List("MODEL")), FieldsOnTable(pcTableId, List("MODEL")), ForeignKeyDirection.TURNED),
+        ForeignKey("FK_PRINTER_PRODUCT", FieldsOnTable(productTableId, List("MODEL")), FieldsOnTable(printerTableId, List("MODEL")), ForeignKeyDirection.TURNED)
       ) 
       === foreignKeys.keys)
   }

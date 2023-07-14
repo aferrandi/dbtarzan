@@ -1,7 +1,7 @@
 package dbtarzan.messages
 
 import akka.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, TableId}
+import dbtarzan.db.{AdditionalForeignKey, Composite, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, TableId}
 
 
 case class OriginalQuery(queryId : QueryId, closeCurrentTab : Boolean)
@@ -16,7 +16,7 @@ case class QueryTablesByPattern(databaseId : DatabaseId, pattern: String)
 
 case class QueryColumns(tableId: TableId) 
 
-case class QueryColumnsForForeignKeys(databaseId : DatabaseId, tableName: String) 
+case class QueryColumnsForForeignKeys(tableId: TableId)
 
 case class QueryColumnsFollow(tableId: TableId, follow : FollowKey) 
 
@@ -33,3 +33,5 @@ case class QueryReset(databaseId : DatabaseId)
 case class UpdateAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
 
 case class RequestAdditionalForeignKeys(databaseId : DatabaseId)
+
+case class Composites(composites: List[Composite])

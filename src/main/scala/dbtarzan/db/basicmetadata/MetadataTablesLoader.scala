@@ -1,10 +1,10 @@
 package dbtarzan.db.basicmetadata
 
-import java.sql.{ DatabaseMetaData, SQLException, ResultSet }
-
-import dbtarzan.db.util.{ ExceptionToText, ResultSetReader }
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db.{ TableNames, DBDefinition }
+import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
+import dbtarzan.db.{DBDefinition, TableNames}
+
+import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 /* to read the basic methadata (tables and columns) from the dataase */
 class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
@@ -13,10 +13,10 @@ class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 	/* gets the tables whose names or whose column names match a pattern */
 	def tablesByPattern(pattern : String) : TableNames = try {
 			val uppercasePattern = pattern.toUpperCase		
-			val allStandardTables = using(meta.getTables(definition.catalog.orNull, definition.schema.map(_.name).orNull, "%", Array("TABLE"))) { rs =>
+			val allStandardTables = using(meta.getTables(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, "%", Array("TABLE"))) { rs =>
 				readTableAndSchemas(rs)
 			}
-			val tablesByColumnPattern = using(meta.getColumns(definition.catalog.orNull, definition.schema.map(_.name).orNull, "%", "%"+uppercasePattern+"%")) { rs =>
+			val tablesByColumnPattern = using(meta.getColumns(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, "%", "%"+uppercasePattern+"%")) { rs =>
 				readTableAndSchemas(rs)
 			}.map(toUpperCase).toSet
 			val matchingTables = allStandardTables.filter(t => {
@@ -31,8 +31,8 @@ class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
 
 	/* gets all the tables in the database/schema from the database metadata */
 	def tableNames() : TableNames = try {
-			using(meta.getTables(definition.catalog.orNull, definition.schema.map(_.name).orNull, "%", Array("TABLE"))) { rs =>
-				toTableNames(readTableNames(rs))
+			using(meta.getTables(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, "%", Array("TABLE"))) { rs =>
+        toTableNames(readTableNames(rs))
 			}
 		} catch {
 			case se : SQLException  => throw new Exception("Reading the database tables got "+ExceptionToText.sqlExceptionText(se), se)

@@ -1,4 +1,4 @@
-package dbtarzan.gui
+package dbtarzan.gui.interfaces
 
 import dbtarzan.messages.TLogMessage
 

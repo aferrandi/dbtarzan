@@ -2,6 +2,7 @@ package dbtarzan.db.actor
 
 import dbtarzan.db._
 import org.scalatest.flatspec.AnyFlatSpec
+import dbtarzan.testutil.TestDatabaseIds
 
 
 class DatabaseWorkerCacheTest extends AnyFlatSpec {
@@ -20,8 +21,10 @@ class DatabaseWorkerCacheTest extends AnyFlatSpec {
 
  "the cache" should "contain the foreign keys" in {
     val cache = new DatabaseWorkerCache()
-    val keys = cache.cachedForeignKeys("user", ForeignKeys(List(
-      ForeignKey("lastNameKey", FieldsOnTable("user", List("lastName")), FieldsOnTable("class", List("lastName")), ForeignKeyDirection.STRAIGHT)
+    val userTableId = TestDatabaseIds.simpleTableId("user")
+    val classTableId = TestDatabaseIds.simpleTableId("class")
+    val keys = cache.cachedForeignKeys(userTableId, ForeignKeys(List(
+      ForeignKey("lastNameKey", FieldsOnTable(userTableId, List("lastName")), FieldsOnTable(classTableId, List("lastName")), ForeignKeyDirection.STRAIGHT)
       )))
 	assert("lastNameKey" === keys.keys.head.name)
   }

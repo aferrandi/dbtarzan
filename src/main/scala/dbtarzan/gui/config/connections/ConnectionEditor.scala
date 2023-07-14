@@ -2,7 +2,7 @@ package dbtarzan.gui.config.connections
 
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
-import dbtarzan.gui.TControlBuilder
+import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{ExceptionText, ResponseSchemaExtraction, ResponseTestConnection}
@@ -13,12 +13,11 @@ import scalafx.scene.layout.BorderPane
 /* table + constraint input box + foreign keys */
 class ConnectionEditor(
   connectionDatas : List[ConnectionData],
-  openWeb : String => Unit,
   encryptionKey : EncryptionKey,
   localization: Localization
   ) extends TControlBuilder {
   private val list = new ConnectionList(connectionDatas, localization)
-  private val connection = new OneConnectionEditor(openWeb, encryptionKey, localization)
+  private val connection = new OneConnectionEditor(encryptionKey, localization)
   private val buttons = new ConnectionButtons(localization) 
   private val layout = new BorderPane {
     center = buildSplitPane()
@@ -91,7 +90,7 @@ class ConnectionEditor(
 
   def schemaExtractionResult(rsp: ResponseSchemaExtraction): Unit =
     rsp.schemas match {
-      case Some(schemas)  => connection.schemasToChooseFrom(schemas)
+      case Some(schemas)  => connection.schemasToChooseFrom(schemas.names)
       case None => rsp.ex match {
         case Some(ex) => JFXUtil.showErrorAlert(localization.connectionRefused, ExceptionText.extractMessageText(ex))
         case None =>   JFXUtil.showErrorAlert(localization.connectionRefused, "")
