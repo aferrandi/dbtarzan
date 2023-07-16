@@ -17,6 +17,9 @@ With DBTarzan you can browse the tables of a database:
 * using the relations in their [foreign keys](ForeignKeyPanel).
 * with [where clauses](Where-clause).
 
+It can also follow the relations among tables of separated databases through [ad hoc additional forign keys](Composites).
+
+
 Please check the [GUI structure](GUI-Structure) to know how to [use it](Usage).
 
 [Install](Installation) and start DbTarzan and [connect to a database](Connect-to-database). It's easy!

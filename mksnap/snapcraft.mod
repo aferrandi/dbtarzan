@@ -1,5 +1,5 @@
 name: dbtarzan
-base: core18
+base: core22
 version: 'VERSION.0' 
 summary: Database browser
 description: Explore the tables of a relational database following the relations defined in their foreign keys.
@@ -9,7 +9,7 @@ confinement: strict
 
 apps:
   dbtarzan:
-    command: java -jar $SNAP/dbtarzan-assembly-VERSION.jar --configPath=$SNAP_USER_COMMON
+    command: java.sh VERSION
     desktop: dbtarzan.desktop
     environment:        
         # If it does not find the fonts configuration it gives an error.
@@ -30,5 +30,6 @@ parts:
     # without libcamberra... it complains that canberra-gtk is not available.
     build-packages: [ca-certificates, ca-certificates-java, openjdk-11-jre]
     stage-packages: [openjdk-11-jre, zlib1g, libcanberra-gtk-module, libcanberra-gtk3-module]
-
-
+    override-prime: |
+        snapcraftctl prime
+        rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs

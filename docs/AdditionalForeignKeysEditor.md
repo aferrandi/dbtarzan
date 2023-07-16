@@ -65,3 +65,9 @@ Pressing **Save** the foreign keys in the table are saved and the editor closed,
 After they are saved, the additional foreign keys are **checked against the existing database foreign keys**; if they match one or more of them, they are stored anyway (they are not harmful) but an error message is displayed in the log view.    
 
 Pressing **Cancel** the editor is closed without saving.
+
+### Composites
+
+If we are editing the additional foreign keys of a composite, the editor shows the tables names with their database as prefix, to avoid confusing tables of different databases.
+
+![Additiional foreign keys editor for composites](images/additionalforeignkeys_composite.png)
