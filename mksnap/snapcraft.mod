@@ -1,5 +1,5 @@
 name: dbtarzan
-base: core18
+base: core22
 version: 'VERSION.0' 
 summary: Database browser
 description: Explore the tables of a relational database following the relations defined in their foreign keys.
@@ -9,7 +9,7 @@ confinement: strict
 
 apps:
   dbtarzan:
-    command: java -jar $SNAP/dbtarzan-assembly-VERSION.jar --configPath=$SNAP_USER_COMMON
+    command: java.sh VERSION
     desktop: dbtarzan.desktop
     environment:        
         # If it does not find the fonts configuration it gives an error.
