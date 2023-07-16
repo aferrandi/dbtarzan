@@ -25,7 +25,7 @@ object CompositeEditorStarter
     val composites: List[Composite] = CompositeReader.read(compositeConfigPath)
     val editor = new CompositeEditor(composites, connectionData.map(cd => SimpleDatabaseId(cd.name)), localization)
     val compositeStage = new Stage {
-      title = localization.editConnections
+      title = localization.editComposites
       width = 800
       height = 600
       scene = new Scene {

@@ -11,7 +11,7 @@ categories: [GUI]
 
 ![Window Commented](images/windowCommented.png)
 
-1. The **databases** list, as read from the configuration. When you open a database, a new database tab is added.
+1. The **databases** list, as read from the configuration, showing all avaiable databases and [composites](Composites). When you open a database, a new database tab is added.
 2. The **tables** list for the selected database. When you open a table, a new [table tab](Table-tab) is added.
 3. The **tables filter** filters the names in the tables list, showing only the ones with names and columns matching the filter text. 
 4. The **table rows** in a table tab. 
