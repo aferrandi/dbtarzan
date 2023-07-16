@@ -30,5 +30,6 @@ parts:
     # without libcamberra... it complains that canberra-gtk is not available.
     build-packages: [ca-certificates, ca-certificates-java, openjdk-11-jre]
     stage-packages: [openjdk-11-jre, zlib1g, libcanberra-gtk-module, libcanberra-gtk3-module]
-
-
+    override-prime: |
+        snapcraftctl prime
+        rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
