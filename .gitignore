@@ -28,5 +28,5 @@ wget-log*
 global.config
 connections (copy).config
 build (copy).sbt
-macosx/jre11.tar.gz
-macosx/._jdk*
+mkmacosx/jre11.tar.gz
+mkmacosx/._jdk*

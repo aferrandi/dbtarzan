@@ -92,9 +92,9 @@ packageWin := {
 
 lazy val packageMacOS = taskKey[Unit]("Packages MacOS app")
 packageMacOS := {
-  val macOsDir = baseDirectory.value / "macosx"
+  val macOsDir = baseDirectory.value / "mkmacosx"
   (mac/assembly).value // dependency
-  "macosx/package.sh "+macOsDir+" "+version.value !
+  "mkmacosx/package.sh "+macOsDir+" "+version.value !
 }
 
 lazy val packageSnap = taskKey[Unit]("Packages Snap")
