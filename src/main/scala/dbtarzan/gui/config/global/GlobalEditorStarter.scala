@@ -5,7 +5,7 @@ import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.Scene
 import scalafx.Includes._
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import scalafx.scene.layout.Region
 
 import dbtarzan.config.connections.{EncryptionKeyChange, ConnectionDataPasswordChanger}

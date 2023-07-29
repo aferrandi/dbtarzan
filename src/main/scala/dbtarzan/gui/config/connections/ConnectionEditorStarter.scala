@@ -3,7 +3,7 @@ package dbtarzan.gui.config.connections
 import scalafx.stage.{Stage, StageStyle, WindowEvent}
 import scalafx.scene.Scene
 import scalafx.Includes._
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import java.nio.file.Path
 
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader, ConnectionDataWriter}

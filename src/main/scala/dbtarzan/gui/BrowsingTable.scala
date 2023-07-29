@@ -1,6 +1,6 @@
 package dbtarzan.gui
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.browsingtable._
 import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}

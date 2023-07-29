@@ -1,6 +1,6 @@
 package dbtarzan.gui.table
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import scalafx.scene.control.{ContextMenu, Menu, MenuItem}
 import scalafx.event.ActionEvent
 import scalafx.Includes._

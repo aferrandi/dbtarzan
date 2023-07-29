@@ -1,6 +1,6 @@
 package dbtarzan.gui.info
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.Index
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization

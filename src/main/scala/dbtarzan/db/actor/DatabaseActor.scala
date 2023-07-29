@@ -1,6 +1,6 @@
 package dbtarzan.db.actor
 
-import akka.actor.{Actor, ActorRef}
+import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db._

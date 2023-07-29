@@ -1,6 +1,6 @@
 package dbtarzan.gui
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableId}
 import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder

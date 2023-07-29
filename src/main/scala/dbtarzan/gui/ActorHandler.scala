@@ -1,6 +1,6 @@
 package dbtarzan.gui
 
-import akka.actor.{ ActorSystem, Props, ActorRef, Actor }
+import org.apache.pekko.actor.{ ActorSystem, Props, ActorRef, Actor }
 import scala.language.postfixOps
 
 /* crates and keeps track of the main actors in this application */
@@ -16,7 +16,7 @@ class ActorHandler (guiActorSupplier : () =>  Actor,
   */
   def closeApp(onExit : Runnable) : Unit = {
     println("application exit")
-    import akka.pattern.gracefulStop
+    import org.apache.pekko.pattern.gracefulStop
     import scala.concurrent._
     import scala.concurrent.duration._
     import ExecutionContext.Implicits.global

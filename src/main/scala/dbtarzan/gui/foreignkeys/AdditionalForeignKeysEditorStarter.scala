@@ -3,7 +3,7 @@ package dbtarzan.gui.foreignkeys
 import scalafx.stage.{ Stage, StageStyle, WindowEvent }
 import scalafx.scene.Scene
 import scalafx.Includes._
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 
 import dbtarzan.db.{ TableId, DatabaseId }
 import dbtarzan.messages.RequestAdditionalForeignKeys

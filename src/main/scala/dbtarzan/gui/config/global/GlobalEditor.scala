@@ -7,7 +7,7 @@ import scalafx.geometry.Insets
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import scalafx.Includes._
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 
 import dbtarzan.messages.Logger
 import dbtarzan.config.global.GlobalData
