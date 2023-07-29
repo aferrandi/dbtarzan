@@ -1,6 +1,6 @@
 package dbtarzan.gui.config.composite
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.config.composite.{CompositeReader, CompositeWriter}
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader}
 import dbtarzan.db.{Composite, SimpleDatabaseId}

@@ -1,6 +1,6 @@
 package dbtarzan.gui.foreignkeys
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.db._
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{ListViewAddFromCombo, ListViewAddFromComboBuilder, OnChangeSafe, TComboStrategy, TableIdLabel}

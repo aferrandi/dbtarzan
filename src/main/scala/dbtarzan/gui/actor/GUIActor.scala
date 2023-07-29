@@ -1,6 +1,6 @@
 package dbtarzan.gui.actor
 
-import akka.actor.Actor
+import org.apache.pekko.actor.Actor
 import dbtarzan.gui.interfaces.{TDatabaseList, TDatabases, TGlobal, TLogs}
 import scalafx.application.Platform
 import dbtarzan.messages._

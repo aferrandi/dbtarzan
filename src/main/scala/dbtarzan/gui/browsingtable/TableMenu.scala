@@ -4,7 +4,7 @@ import scalafx.scene.control.{MenuItem, Menu, MenuBar, CheckMenuItem }
 import scalafx.event.ActionEvent
 import scalafx.scene.input.{ KeyEvent, KeyCodeCombination, KeyCombination, KeyCode }
 import scalafx.Includes._
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.messages._

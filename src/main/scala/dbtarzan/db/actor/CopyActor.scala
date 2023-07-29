@@ -1,7 +1,7 @@
 package dbtarzan.db.actor
 
-import akka.actor.Actor
-import akka.actor.ActorRef
+import org.apache.pekko.actor.Actor
+import org.apache.pekko.actor.ActorRef
 
 import java.nio.file.Path
 import scala.collection.mutable.ListBuffer

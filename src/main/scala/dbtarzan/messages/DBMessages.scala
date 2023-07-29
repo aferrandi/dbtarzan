@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{AdditionalForeignKey, Composite, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, TableId}
 
 

@@ -1,6 +1,6 @@
 package dbtarzan.gui
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.config.password.{EncryptionKey, VerificationKey}
 import dbtarzan.db.DatabaseId
 import dbtarzan.gui.browsingtable.TableMenu

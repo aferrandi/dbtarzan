@@ -1,6 +1,6 @@
 package dbtarzan.gui
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.gui.config.composite.CompositeEditorStarter
 import dbtarzan.gui.config.connections.ConnectionEditorStarter
 import dbtarzan.gui.config.global.GlobalEditorStarter

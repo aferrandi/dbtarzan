@@ -1,7 +1,7 @@
 package dbtarzan.messages
 
 import dbtarzan.db._
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dbtarzan.config.connections.ConnectionData
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
