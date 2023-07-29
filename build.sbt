@@ -2,7 +2,7 @@ import scala.sys.process._
 
 fork := true
 
-val versionNumber = "1.27"
+val versionNumber = "1.28"
 version := versionNumber
 
 lazy val standardLibraries = Seq(
@@ -71,7 +71,7 @@ def excludeDependenciesOfOtherOses(name: String) = {
 
 lazy val linux = buildProject("linux")
     .settings(Seq(
-      Debian / debianPackageDependencies ++= Seq("openjdk-11-jre"),
+      Debian / debianPackageDependencies ++= Seq("openjdk-17-jre"),
       bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan"""",
       maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
       packageSummary := "DBTarzan Package",

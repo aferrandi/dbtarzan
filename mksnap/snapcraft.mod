@@ -16,10 +16,10 @@ apps:
         XDG_DATA_HOME: $SNAP/usr/share
         FONTCONFIG_PATH: "$SNAP/etc/fonts"
         # Standard libraries for Java
-        JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+        JAVA_HOME: $SNAP/usr/lib/jvm/java-17-openjdk-amd64
         JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON -Djdk.gtk.version=2"        
-        PATH: $SNAP/usr/lib/jvm/java-11-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/bin:$PATH
-        LD_LIBRARY_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-11-openjdk-amd64/jre/lib/amd64/
+        PATH: $SNAP/usr/lib/jvm/java-17-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-17-openjdk-amd64/jre/bin:$PATH
+        LD_LIBRARY_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-17-openjdk-amd64/jre/lib/amd64/
     plugs: [desktop, home, x11, wayland, network, network-bind]
 
 parts:
@@ -28,8 +28,8 @@ parts:
     plugin: dump
     source: source/
     # without libcamberra... it complains that canberra-gtk is not available.
-    build-packages: [ca-certificates, ca-certificates-java, openjdk-11-jre]
-    stage-packages: [openjdk-11-jre, zlib1g, libcanberra-gtk-module, libcanberra-gtk3-module]
+    build-packages: [ca-certificates, ca-certificates-java, openjdk-17-jre]
+    stage-packages: [openjdk-17-jre, zlib1g, libcanberra-gtk-module, libcanberra-gtk3-module]
     override-prime: |
         snapcraftctl prime
-        rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
+        rm -vf usr/lib/jvm/java-17-openjdk-*/lib/security/blacklisted.certs
