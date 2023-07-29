@@ -39,6 +39,7 @@ lazy val commonConfiguration = Seq(
 def buildStrategy() = {
   assembly / assemblyMergeStrategy := {
     case "module-info.class" => MergeStrategy.discard
+    case PathList("META-INF", _*) => MergeStrategy.discard
     case x => {
       val oldStrategy = (assembly / assemblyMergeStrategy).value
       oldStrategy(x)
