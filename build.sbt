@@ -49,7 +49,7 @@ def buildStrategy() = {
 def buildProject(name: String) = {
   val javaFXModules = Seq("base", "controls", "graphics", "media")
   val javaFXLibraries = javaFXModules.map(module =>
-    "org.openjfx" % s"javafx-$module" % "15" classifier name
+    "org.openjfx" % s"javafx-$module" % "20" classifier name
   )
   Project(name, file(s"prj${name}"))
     .settings( commonConfiguration)
