@@ -2,7 +2,7 @@ import scala.sys.process._
 
 fork := true
 
-val versionNumber = "1.27"
+val versionNumber = "1.28"
 version := versionNumber
 
 lazy val standardLibraries = Seq(
@@ -39,6 +39,7 @@ lazy val commonConfiguration = Seq(
 def buildStrategy() = {
   assembly / assemblyMergeStrategy := {
     case "module-info.class" => MergeStrategy.discard
+    case PathList("META-INF", _*) => MergeStrategy.discard
     case x => {
       val oldStrategy = (assembly / assemblyMergeStrategy).value
       oldStrategy(x)
@@ -49,7 +50,7 @@ def buildStrategy() = {
 def buildProject(name: String) = {
   val javaFXModules = Seq("base", "controls", "graphics", "media")
   val javaFXLibraries = javaFXModules.map(module =>
-    "org.openjfx" % s"javafx-$module" % "15" classifier name
+    "org.openjfx" % s"javafx-$module" % "20" classifier name
   )
   Project(name, file(s"prj${name}"))
     .settings( commonConfiguration)
@@ -71,7 +72,7 @@ def excludeDependenciesOfOtherOses(name: String) = {
 
 lazy val linux = buildProject("linux")
     .settings(Seq(
-      Debian / debianPackageDependencies ++= Seq("openjdk-11-jre"),
+      Debian / debianPackageDependencies ++= Seq("openjdk-17-jre"),
       bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan"""",
       maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
       packageSummary := "DBTarzan Package",
