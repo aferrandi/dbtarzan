@@ -10,7 +10,7 @@ import scalafx.event.ActionEvent
 
 /* A combo box from which to select the identfier delimiters that get stored in the configuration file */
 class ComboDelimiters() extends TControlBuilder with TCombo {
-  private val possibleDelimiters = ObservableBuffer(List(
+  private val possibleDelimiters : ObservableBuffer[Option[IdentifierDelimiters]] = ObservableBuffer.from(List(
     None,
     Some(IdentifierDelimitersValues.squareBrackets),
     Some(IdentifierDelimitersValues.doubleQuotes)
@@ -19,8 +19,14 @@ class ComboDelimiters() extends TControlBuilder with TCombo {
     items = possibleDelimiters
     editable = false
     value = None
-    cellFactory = { _ => buildCell() }
-    buttonCell = buildCell() 
+    cellFactory = (cell, value) => {
+      // the orElse is to avoid problems when removing items
+      val valueOrEmpty = value.map(v => v.start + " " + v.end).orElse(Some(""))
+      valueOrEmpty.foreach({
+        cell.text.value = _
+      })
+    }
+    buttonCell = buildCell()
   }
  
   private def buildCell() = new ListCell[Option[IdentifierDelimiters]] {

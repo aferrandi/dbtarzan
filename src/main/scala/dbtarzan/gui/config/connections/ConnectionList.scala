@@ -13,7 +13,7 @@ case class ConnectionDataErrors(name : String, errors : List[String])
 
 /* The list of database to choose from */
 class ConnectionList(connectionDatasRead : List[ConnectionData], localization : Localization) extends TControlBuilder {
-  private val connectionDatas = ObservableBuffer(
+  private val connectionDatas : ObservableBuffer[ConnectionData] = ObservableBuffer.from[ConnectionData](
     if(connectionDatasRead.nonEmpty) connectionDatasRead else List(newData())
   )
   private val menuAddConnection = new MenuItem(localization.addConnection)
@@ -21,7 +21,9 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   private val list = new ListView[ConnectionData](connectionDatas) {
   	SplitPane.setResizableWithParent(this, value = false)
   	contextMenu = new ContextMenu(menuAddConnection, menuSave)   
-    cellFactory = { _ => buildCell() }
+    cellFactory = (cell, value) => {
+        cell.text.value = value.name
+    }
   }
 
   def addNew():Unit={
@@ -48,14 +50,6 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
         //println("Selected index changed to "+newIndex) 
         Option(newIndex).map(_.intValue()).filter(_ >= 0).foreach(index => use(connectionDatas(index)))
       }}
-
-  private def buildCell() = new ListCell[ConnectionData] {
-    item.onChange { (value , oldValue, newValue) => {
-        val optValue = Option(newValue)
-        // the orElse is to avoid problems when removing items
-        val valueOrEmpty = optValue.map(_.name).orElse(Some(""))
-        valueOrEmpty.foreach({ text.value = _ })
-      }}}
 
   /* there must be always at least one connection */
   def removeCurrent() : Unit = 

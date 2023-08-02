@@ -15,18 +15,14 @@ case class ForeignKeyWithSharingCheck(key: ForeignKey, sharesToTable : Boolean)
 class ForeignKeyList(log: TLogger) extends TControlBuilder {
 	private val buffer = ObservableBuffer.empty[ForeignKeyWithSharingCheck]
 	private val list = new ListView[ForeignKeyWithSharingCheck](buffer) {
-	    cellFactory = { _ => buildCell() }
+	    cellFactory =  (cell, value) => {
+        cell.tooltip.value = Tooltip(buildTooltip(value.key))
+        cell.text.value = buildText(value)
+      }
 	  }		
 	
 	/** need to show only the "to table" as cell text. And a tooltip for each cell	*/
-	private def buildCell() = new ListCell[ForeignKeyWithSharingCheck] {
-    item.onChange { (_, _, _) =>
-      Option(item.value).foreach(key => {
-        tooltip.value = Tooltip(buildTooltip(key.key))
-        text.value = buildText(key)
-      })
-    }}
-	  
+
 	def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
 		def moreThanOneItem(l : List[_]) = l.length > 1
 		log.debug("newForeignKeys "+newForeignKeys)

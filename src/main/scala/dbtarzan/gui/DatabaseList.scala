@@ -21,23 +21,14 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
   private val list = new ListView[DatabaseId](buffer) {
   	SplitPane.setResizableWithParent(this, value = false)
   	contextMenu = new ContextMenu(menuForeignKeyToFile)   
-    cellFactory = { _ => buildCell() }
-  }
-
-  private def buildCell() = new ListCell[DatabaseId] {
-    item.onChange { (_, _, value) =>
-      if (value != null) {
-        graphic = new Label {
-          textFill = Color.Black
-          text = Option(item.value).map(DatabaseIdUtil.databaseIdText).getOrElse("")
-          graphic  = new ImageView(iconFromDatabaseId(item.value))
-        }
+    cellFactory = (cell, value) => {
+      cell.graphic = new Label {
+        textFill = Color.Black
+        text = DatabaseIdUtil.databaseIdText(value)
+        graphic = new ImageView(iconFromDatabaseId(value))
       }
-      else
-        graphic = null
     }
   }
-
 
   private def iconFromDatabaseId(databaseId: DatabaseId): Image = databaseId.origin match {
     case Left(_) => databaseIcon

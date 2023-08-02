@@ -7,8 +7,8 @@ version := versionNumber
 
 lazy val standardLibraries = Seq(
   "io.spray" %%  "spray-json" % "1.3.6",
-  "org.scalatest" % "scalatest_2.13" % "3.2.15" % "test",
-  "org.scalafx" % "scalafx_2.13" % "15.0.1-R21",
+  "org.scalatest" % "scalatest_2.13" % "3.2.16" % "test",
+  "org.scalafx" % "scalafx_2.13" % "20.0.0-R31",
   "org.apache.pekko" %% "pekko-actor" % "1.0.1",
   "com.h2database" % "h2" % "1.4.200" % "test"
 )

@@ -18,13 +18,13 @@ object CompositeList {
 /* The list of database to choose from */
 class CompositeList(composites : List[Composite], localization : Localization) extends TControlBuilder {
   private val compositesWithNew: List[Composite] = if (composites.nonEmpty) composites else List(newComposite())
-  private val compositesObservable = ObservableBuffer(compositesWithNew)
+  private val compositesObservable : ObservableBuffer[Composite]= ObservableBuffer.from[Composite](compositesWithNew)
   private val menuAddComposite = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
   private val list = new ListView[Composite](compositesObservable) {
   	SplitPane.setResizableWithParent(this, value = false)
   	contextMenu = new ContextMenu(menuAddComposite, menuSave)
-    cellFactory = { _ => buildCell() }
+    cellFactory = (cell, value) => cell.text.value  = value.compositeId.compositeName
   }
 
   def addNew():Unit={
@@ -45,14 +45,6 @@ class CompositeList(composites : List[Composite], localization : Localization) e
         //println("Selected index changed to "+newIndex)
         Option(newIndex).map(_.intValue()).filter(_ >= 0).foreach(index => use(compositesObservable(index)))
       }}
-
-  private def buildCell() = new ListCell[Composite] {
-    item.onChange { (_, _, newValue) => {
-        val optValue = Option(newValue)
-        // the orElse is to avoid problems when removing items
-        val valueOrEmpty = optValue.map(_.compositeId.compositeName).orElse(Some(""))
-        valueOrEmpty.foreach({ text.value = _ })
-      }}}
 
   /* there must be always at least one connection */
   def removeCurrent() : Unit =

@@ -27,7 +27,18 @@ class ListViewAddFromCombo[T](
 
   val safe = new OnChangeSafe()
   private val list = new ListView[T](listBuffer) {
-    cellFactory = { _ => buildListCell() }
+    cellFactory = (cell, value) => {
+      val panel = new BorderPane {
+        center = cellBuilder(Option(value))
+        right = new HBox {
+          children = additionalButtons.map(button => button.buildFor(value, listBuffer)) ++ List(
+            buttonDelete(value)
+          )
+        }
+      }
+      BorderPane.setAlignment(panel.center.value, Pos.CENTER_LEFT)
+      cell.graphic = panel
+    }
   }
 
   comboBuffer.onChange((buffer, changes) =>
@@ -38,7 +49,7 @@ class ListViewAddFromCombo[T](
     items = comboBuffer
     editable = false
     buttonCell = buildComboCell()
-    cellFactory = { _ => buildComboCell() }
+    cellFactory = (cell, value) => cell.graphic = cellBuilder(Option(value))
     maxWidth = Double.MaxValue
   }
   comboAdd.selectionModel().selectedItem.onChange(
@@ -83,24 +94,7 @@ class ListViewAddFromCombo[T](
     comboStrategy.addToCombo(comboBuffer, value)
   })
 
-  private def buildListCell() = new ListCell[T]() {
-    item.onChange { (_ , _, value) =>
-      if(value != null) {
-        val panel = new BorderPane {
-          center = cellBuilder(Option(value))
-          right = new HBox {
-            children = additionalButtons.map(button => button.buildFor(value, listBuffer)) ++ List(
-              buttonDelete(value)
-            )
-          }
-        }
-        BorderPane.setAlignment(panel.center.value, Pos.CENTER_LEFT)
-        graphic = panel
-      }
-      else
-        graphic = null
-    }
-  }
+
 
   def setComboData(comboData : List[T]) : Unit = {
     JFXUtil.bufferSet(comboBuffer, comboData)

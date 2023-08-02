@@ -9,20 +9,14 @@ import scalafx.scene.Parent
 
 /* The list of tables to choose from */
 class TableList(originalTableIds : List[TableId]) extends TControlBuilder {
-  private val buffer = ObservableBuffer[TableId](originalTableIds.sortBy(TableIdLabel.toLabel))
+  private val buffer : ObservableBuffer[TableId] = ObservableBuffer.from[TableId](originalTableIds.sortBy(TableIdLabel.toLabel))
   private val list = new ListView[TableId](buffer) {
-    cellFactory = { _ => buildCell() }
+    cellFactory = (cell, value) => cell.text.value = TableIdLabel.toLabel(value)
   }
 
   def addTableNames(tableIds : TableIds) : Unit = {
     buffer.clear()
     buffer ++= tableIds.tableIds
-  }
-
-  private def buildCell() = new ListCell[TableId] {
-    item.onChange { (_, _, _) =>
-      text.value = Option(item.value).map(tableId => TableIdLabel.toLabel(tableId)).getOrElse("")
-    }
   }
 
   def onTableSelected(useTable : TableId => Unit) : Unit = {

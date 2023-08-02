@@ -18,7 +18,13 @@ class ComboSchemas() extends TControlBuilder with TCombo {
     items = schemas
     editable = true
     value = None
-    cellFactory = { _ => buildCell() }
+    cellFactory = (cell, value) => {
+      // the orElse is to avoid problems when removing items
+      val valueOrEmpty = value.map(_.schema).orElse(Some(""))
+      valueOrEmpty.foreach({
+        cell.text.value = _
+      })
+    }
     buttonCell = buildCell()
     converter = new StringConverter[Option[SchemaName]] {
       override def fromString(v: String): Option[SchemaName] =

@@ -41,7 +41,7 @@ class SingleEditor(
   private val orderedListColumnsTo = ListViewAddFromComboBuilder.buildOrdered[String](localization.add, showText, comboStrategy)
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
-  private val tableNamesBuffer = ObservableBuffer(tableIds.map(id => new TableIdForCombo(id)))
+  private val tableNamesBuffer: ObservableBuffer[TableIdForCombo] = ObservableBuffer.from[TableIdForCombo](tableIds.map(id => new TableIdForCombo(id)))
   private val comboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty)
   private val comboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty)
 
@@ -60,7 +60,7 @@ class SingleEditor(
   private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[TableIdForCombo]) = new ComboBox[TableIdForCombo] {
       items = tableNamesBuffer
       editable = false
-      cellFactory = { _ => buildTableCell() }
+      cellFactory = (cell, value) => cell.text = value.comboLabel
       buttonCell =  buildTableCell()
       maxWidth = Double.MaxValue
       value <==> chosenTableProperty
