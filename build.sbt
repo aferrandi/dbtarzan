@@ -4,7 +4,7 @@ fork := true
 
 val versionNumber = "1.28"
 version := versionNumber
-
+scalaVersion := "3.1.1"
 
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",
@@ -92,21 +92,21 @@ lazy val packageWin = taskKey[Unit]("Packages Windows app")
 packageWin := {
   val rootDir = baseDirectory.value
   (win/assembly).value // dependency
-  "mkwin/packageexe.sh "+rootDir+" "+version.value !
+  "mkwin/packageexe.sh "+rootDir+" "+version.value +" " + scalaVersion.value !
 }
 
 lazy val packageMacOS = taskKey[Unit]("Packages MacOS app")
 packageMacOS := {
   val macOsDir = baseDirectory.value / "mkmacosx"
   (mac/assembly).value // dependency
-  "mkmacosx/package.sh "+macOsDir+" "+version.value !
+  "mkmacosx/package.sh "+macOsDir+" "+version.value +" " + scalaVersion.value !
 }
 
 lazy val packageSnap = taskKey[Unit]("Packages Snap")
 packageSnap := {
   val rootDir = baseDirectory.value
   (linux/assembly).value // dependency
-  "mksnap/create.sh "+rootDir+" "+ version.value !
+  "mksnap/create.sh "+rootDir+" "+ version.value +" " + scalaVersion.value !
 }
 
 addCommandAlias("packageAll", 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#example: mkwin/packageexe.sh $PWD 1.27
+#example: mkwin/packageexe.sh $PWD 1.27 3.1.1
 ROOTDIR=$1
 WINDIR=$ROOTDIR/mkwin
 VERSION=$2
-SCALA_VERSION=2.13
+SCALA_VERSION=$3
 JRE=$WINDIR/jre17
 echo "ROOTDIR $ROOTDIR"
 echo "WINDIR $WINDIR"
