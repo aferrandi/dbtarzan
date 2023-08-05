@@ -6,7 +6,7 @@ import dbtarzan.gui.util.{JFXUtil, TableIdLabel}
 import dbtarzan.messages.TLogger
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
-import scalafx.scene.control.{ListCell, ListView, Tooltip}
+import scalafx.scene.control.{ListView, Tooltip}
 
 /* if the table has 2 or more foreign keys to the same table, we want to give more information to the user, so that he can understand which one to use */ 
 case class ForeignKeyWithSharingCheck(key: ForeignKey, sharesToTable : Boolean)
@@ -48,7 +48,6 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 		def directionText(direction : ForeignKeyDirection) = direction match {
 			case ForeignKeyDirection.STRAIGHT => ">"
 			case ForeignKeyDirection.TURNED => "<"
-			case _  => "<ERROR>"
 		}
 		def fieldsIfSharesTable() = Some(key).filter(_.sharesToTable).map(k => fieldsToText(k.key.from.fields)) 
 		directionText(key.key.direction) + " " + TableIdLabel.toLabel(key.key.to.table) + fieldsIfSharesTable().map(t => " "+t).getOrElse("")

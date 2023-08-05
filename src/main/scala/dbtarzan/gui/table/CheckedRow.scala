@@ -2,7 +2,6 @@ package dbtarzan.gui.table
 
 import scalafx.beans.property.{StringProperty, BooleanProperty}
 import dbtarzan.db.{Row, Rows, Field, FieldType}
-import scalafx.Includes._
 import scalafx.scene.control.MultipleSelectionModel
 
 /* One row of a table. The first column is for the check box, the others come from the database */

@@ -14,7 +14,7 @@ object ConnectionDataReader {
 			val text = FileReadWrite.readFile(path)
 			parseText(text)
 		} catch {
-		  case e: FileNotFoundException => List.empty[ConnectionData]
+		  case _: FileNotFoundException => List.empty[ConnectionData]
 		}
 	}
 	

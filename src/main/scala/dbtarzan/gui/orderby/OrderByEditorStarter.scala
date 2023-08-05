@@ -18,11 +18,11 @@ object OrderByEditorStarter
       scene = buildScene(dbTable, useNewTable, localization) 
       onCloseRequest = (event : WindowEvent) => { 
         event.consume()
-        scene.window().hide()
+        scene().window().hide()
       }
     }
     orderByStage.initOwner(parentStage)    
-    orderByStage.initStyle(StageStyle.UTILITY)
+    orderByStage.initStyle(StageStyle.Utility)
     orderByStage.show()
   }
 

@@ -26,11 +26,11 @@ object ForeignKeysForTableJsonProtocolOneDb {
   import DefaultJsonProtocol._
 
   implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
-  implicit val fieldsOnTableFormatOneDb: RootJsonFormat[FieldsOnTableOneDb] = jsonFormat(FieldsOnTableOneDb, "table", "fields" )
-  implicit val foreignKeyFormatOneDb: RootJsonFormat[ForeignKeyOneDb] = jsonFormat(ForeignKeyOneDb, "name", "from", "to", "direction")
-  implicit val foreignKeysFormatOneDb: RootJsonFormat[ForeignKeysOneDb] = jsonFormat(ForeignKeysOneDb, "keys")
-  implicit val foreignKeysForTableFormatOneDb: RootJsonFormat[ForeignKeysForTableOneDb] = jsonFormat(ForeignKeysForTableOneDb, "name", "keys")
-  implicit val foreignKeysForTableListFormatOneDb: RootJsonFormat[ForeignKeysForTableListOneDb] = jsonFormat(ForeignKeysForTableListOneDb, "keys")
+  implicit val fieldsOnTableFormatOneDb: RootJsonFormat[FieldsOnTableOneDb] = jsonFormat(FieldsOnTableOneDb.apply, "table", "fields" )
+  implicit val foreignKeyFormatOneDb: RootJsonFormat[ForeignKeyOneDb] = jsonFormat(ForeignKeyOneDb.apply, "name", "from", "to", "direction")
+  implicit val foreignKeysFormatOneDb: RootJsonFormat[ForeignKeysOneDb] = jsonFormat(ForeignKeysOneDb.apply, "keys")
+  implicit val foreignKeysForTableFormatOneDb: RootJsonFormat[ForeignKeysForTableOneDb] = jsonFormat(ForeignKeysForTableOneDb.apply, "name", "keys")
+  implicit val foreignKeysForTableListFormatOneDb: RootJsonFormat[ForeignKeysForTableListOneDb] = jsonFormat(ForeignKeysForTableListOneDb.apply, "keys")
 }
 
 class ForeignKeysFile(dirPath: Path, filename: String, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId) {

@@ -36,13 +36,13 @@ object TableMenu {
         menus = List(
             new Menu(JFXUtil.threeLines) {
                 items = List(
-                    menuItem(localization.closeThisTab, CLOSE_THIS_TAB, (ev: ActionEvent) => guiActor ! RequestRemovalThisTab(queryId)),
-                    menuItem(localization.closeTabsBeforeThis, CLOSE_TAB_BEFORE_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
-                    menuItem(localization.closeTabsAfterThis, CLOSE_TAB_AFTER_KEY, (ev: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
-                    menuItem(localization.closeAllTabs, (ev: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
-                    menuItem(localization.checkAll, CHECK_ALL_KEY, (ev: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
-                    menuItem(localization.uncheckAll, CHECK_NONE_KEY, (ev: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
-                    checkMenuItem(localization.rowDetails, ROW_DETAILS_KEY, (ev: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
+                    menuItem(localization.closeThisTab, CLOSE_THIS_TAB, (_: ActionEvent) => guiActor ! RequestRemovalThisTab(queryId)),
+                    menuItem(localization.closeTabsBeforeThis, CLOSE_TAB_BEFORE_KEY, (_: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
+                    menuItem(localization.closeTabsAfterThis, CLOSE_TAB_AFTER_KEY, (_: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
+                    menuItem(localization.closeAllTabs, (_: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
+                    menuItem(localization.checkAll, CHECK_ALL_KEY, (_: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
+                    menuItem(localization.uncheckAll, CHECK_NONE_KEY, (_: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
+                    checkMenuItem(localization.rowDetails, ROW_DETAILS_KEY, (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
                 )
             }
         )

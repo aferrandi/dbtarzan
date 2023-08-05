@@ -16,6 +16,7 @@ import scalafx.scene.image.Image
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.layout.BorderPane
 import scalafx.stage.Screen
+import scalafx.application.JFXApp3
 
 /* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle.
 	the actors are still not been created when calling the constructor, therefore they are passed as functions.
@@ -24,8 +25,7 @@ class MainGUI(
 	configPaths: ConfigPath, 
 	localization: Localization,
 	verificationKey: Option[VerificationKey],
-	version: String,
-	closeApp : () => Unit)
+	version: String)
 {
   case class PostInitData(guiActor: ActorRef, connectionsActor: ActorRef)
 
@@ -47,6 +47,8 @@ class MainGUI(
   private val mainGUIMenu = new MainGUIMenu(configPaths, localization, encryptionKeyExtractor, global)
 
   private val stage = buildStage()
+
+  private var closeApp: Option[() => Unit] = None
 
 	stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
@@ -70,14 +72,14 @@ class MainGUI(
 	def onForeignKeyToFile(use : (DatabaseId, EncryptionKey) => Unit) : Unit =
 		databaseList.onForeignKeyToFile(databaseId => withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey)))
 
-	private def buildStage() : PrimaryStage = new PrimaryStage {
+	private def buildStage() : JFXApp3.PrimaryStage = new JFXApp3.PrimaryStage {
 	    title = "DbTarzan "+version
 	    icons.add(appIcon())
 	    scene = new Scene(screenBounds.width / 2, screenBounds.height / 2 ) {
 	        root = buildMainView()
-	        onCloseRequest = handle { 
+	        onCloseRequest = _ => {
 	        	databaseTabs.sendCloseToAllOpen()
-	        	closeApp() 
+	        	closeApp.foreach(_.apply())
 	        }
 		  }
 	}
@@ -106,6 +108,9 @@ class MainGUI(
 		dividerPositions = 0.85
 		SplitPane.setResizableWithParent(logList.control, value = false)
 	}
-  
+
+  def onCloseApp(closeApp: () => Unit ): Unit = { this.closeApp = Some(closeApp) }
+
+
 	private def appIcon() = new Image(getClass.getResourceAsStream("monkey-face-cartoon.png"))
 }

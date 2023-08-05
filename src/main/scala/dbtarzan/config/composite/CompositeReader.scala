@@ -15,7 +15,7 @@ object CompositeReader {
 			val text = FileReadWrite.readFile(path)
 			parseText(text)
 		} catch {
-		  case e: FileNotFoundException => List.empty[Composite]
+		  case _: FileNotFoundException => List.empty[Composite]
 		}
 	}
 	

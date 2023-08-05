@@ -1,7 +1,7 @@
 package dbtarzan.gui.foreignkeys
 
 
-import dbtarzan.db.{AdditionalForeignKey, FieldsOnTable, TableId}
+import dbtarzan.db.{AdditionalForeignKey, FieldsOnTable}
 import org.scalatest.flatspec.AnyFlatSpec
 import dbtarzan.testutil.TestDatabaseIds
 

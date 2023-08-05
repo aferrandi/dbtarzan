@@ -124,9 +124,9 @@ class EncryptionKeyEditor(
   def toData() : EncryptionKeyEditorData = 
     if(chkEncryptionKey.selected() && passwordTextChanged)
       EncryptionKeyEditorData(
-        calcVerificationKey().map(EncryptionData),
+        calcVerificationKey().map(k => EncryptionData(k)),
         EncryptionKeyChange(
-          encryptionData.map(ed => originalEncryptionKey()),
+          encryptionData.map(_ => originalEncryptionKey()),
           Some(newEncryptionKey1())
         )  
       )

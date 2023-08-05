@@ -3,11 +3,10 @@ package dbtarzan.db.basicmetadata
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db.util.{ExceptionToText, ResultSetReader}
 import dbtarzan.db.{DBDefinition, Index, IndexField, Indexes, OrderByDirection}
-import dbtarzan.messages.TLogger
 
 import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
-class MetadataIndexesLoader(definition: DBDefinition, meta : DatabaseMetaData, log: TLogger) {
+class MetadataIndexesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
   private case class IndexFieldWithPosition(ordinalPosition: Short, field: IndexField)
   private case class IndexLine(name: String, fieldWithPosition: IndexFieldWithPosition)
 

@@ -1,24 +1,17 @@
-import scala.sys.process._
+import scala.sys.process.*
 
 fork := true
 
 val versionNumber = "1.28"
 version := versionNumber
 
-lazy val standardLibraries = Seq(
-  "io.spray" %%  "spray-json" % "1.3.6",
-  "org.scalatest" % "scalatest_2.13" % "3.2.16" % "test",
-  "org.scalafx" % "scalafx_2.13" % "20.0.0-R31",
-  "org.apache.pekko" %% "pekko-actor" % "1.0.1",
-  "com.h2database" % "h2" % "1.4.200" % "test"
-)
 
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",
 
   version := versionNumber,
 
-  scalaVersion := "2.13.11",
+  scalaVersion := "3.1.1",
 
   Compile / mainClass := Some("dbtarzan.gui.Main"),
 
@@ -30,12 +23,23 @@ lazy val commonConfiguration = Seq(
 
   Test / resourceDirectory := baseDirectory.value / ".." / "src" / "test" / "resources",
 
-  Compile / scalacOptions ++= Seq("-Ywarn-unused:imports"),
-  Compile / scalacOptions --= Seq("-Xfatal-warnings"),
-  buildStrategy()
+//  Compile / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) Seq("-Xfatal-warnings", "-Ykind-projector") else Seq("-Werror", "-Wunused", "-deprecation", "-feature")),
+
+
+    buildStrategy()
+
+      //  Compile / scalacOptions ++= Seq("-Ywarn-unused:imports"),
+//  Compile / scalacOptions --= Seq("-Xfatal-warnings"),
 // scalacOptions += "-Ylog-classpath"
 )
 
+lazy val standardLibraries = Seq (
+  ("io.spray" %% "spray-json" % "1.3.6").cross(CrossVersion.for3Use2_13),
+  ("org.apache.pekko" %% "pekko-actor" % "1.0.1").cross(CrossVersion.for3Use2_13),
+  "com.h2database" % "h2" % "1.4.200" % "test",
+  "org.scalatest" %% "scalatest" % "3.2.16" % "test",
+  "org.scalafx" %% "scalafx" % "20.0.0-R31"
+)
 def buildStrategy() = {
   assembly / assemblyMergeStrategy := {
     case "module-info.class" => MergeStrategy.discard

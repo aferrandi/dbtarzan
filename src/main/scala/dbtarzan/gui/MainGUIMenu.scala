@@ -9,6 +9,7 @@ import dbtarzan.localization.Localization
 import dbtarzan.messages.Logger
 import dbtarzan.types.ConfigPath
 import scalafx.application.JFXApp.PrimaryStage
+import scalafx.application.JFXApp3
 import scalafx.scene.control.{Menu, MenuBar}
 
 
@@ -19,11 +20,11 @@ class MainGUIMenu(
                   encryptionKeyExtractor: EncryptionKeyExtractor,
                   global: Global) {
 
-  case class PostInitData(stage: PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef)
+  case class PostInitData(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef)
 
   private var postInitData: Option[PostInitData] = None
 
-  def postInit(stage: PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef): Unit = {
+  def postInit(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef): Unit = {
     this.postInitData = Some(PostInitData(stage, guiActor, connectionsActor))
   }
 

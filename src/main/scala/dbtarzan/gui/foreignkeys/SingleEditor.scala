@@ -42,8 +42,8 @@ class SingleEditor(
   private val chosenTableFromProperty = buildChosenTableProperty(orderedListColumnsFrom)
   private val chosenTableToProperty =  buildChosenTableProperty(orderedListColumnsTo)
   private val tableNamesBuffer: ObservableBuffer[TableIdForCombo] = ObservableBuffer.from[TableIdForCombo](tableIds.map(id => new TableIdForCombo(id)))
-  private val comboTableFrom = buildComboTable(localization.tableFrom, chosenTableFromProperty)
-  private val comboTableTo = buildComboTable(localization.tableTo, chosenTableToProperty)
+  private val comboTableFrom = buildComboTable(chosenTableFromProperty)
+  private val comboTableTo = buildComboTable(chosenTableToProperty)
 
   private val txtName = new TextField {
     text = ""
@@ -57,7 +57,7 @@ class SingleEditor(
     }) }
   }
 
-  private def buildComboTable(name : String, chosenTableProperty: ObjectProperty[TableIdForCombo]) = new ComboBox[TableIdForCombo] {
+  private def buildComboTable(chosenTableProperty: ObjectProperty[TableIdForCombo]) = new ComboBox[TableIdForCombo] {
       items = tableNamesBuffer
       editable = false
       cellFactory = (cell, value) => cell.text = value.comboLabel

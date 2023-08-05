@@ -30,10 +30,10 @@ class GlobalButtons(
   }
  
   def onSave(action : () => Unit ): Unit =
-    buttonSave.onAction = (event: ActionEvent)  => action()
+    buttonSave.onAction = (_: ActionEvent)  => action()
 
   def onCancel(action : () => Unit ): Unit =
-    buttonCancel.onAction = (event: ActionEvent)  => action()
+    buttonCancel.onAction = (_: ActionEvent)  => action()
   
   def control : Parent = layout
 }

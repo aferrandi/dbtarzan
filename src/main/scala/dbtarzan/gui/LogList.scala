@@ -33,11 +33,11 @@ class LogList(localization : Localization) extends TLogs with TControlBuilder {
     placeholder = Label("") // prevent "no content in table" message to appear when the table is empty
     columnResizePolicy = TableView.ConstrainedResizePolicy
     contextMenu = new ContextMenu(new MenuItem(localization.copyMessageToClipboard) {
-            onAction = (ev: ActionEvent) =>  try {
+            onAction = (_: ActionEvent) =>  try {
               JFXUtil.copyTextToClipboard(selectionToString())
               println("Message copied")
             } catch {
-              case ex : Exception => println("Copying message to the clipboard got ", ex)
+              case ex : Exception => println("Copying message to the clipboard got "+ex)
             }
           })
     stylesheets += "loglist.css"
@@ -45,9 +45,9 @@ class LogList(localization : Localization) extends TLogs with TControlBuilder {
 
   /* build the column on the left, that shows the icon (error, warn, info) */
   private def iconColumn() = new TableColumn[TLogMessage, Image] {
-    cellValueFactory = { msg => ObjectProperty(LogIcons.iconForMessage(msg.value)) }
+    cellValueFactory = { msg => ObjectProperty(LogIcons.iconForMessage(msg.value).delegate) }
     cellFactory = {
-      _ : TableColumn[TLogMessage, Image] => new TableCell[TLogMessage, Image] {
+      (_ : TableColumn[TLogMessage, Image]) => new TableCell[TLogMessage, Image] {
         item.onChange {
           (_, _, newImage) => graphic = new ImageView(newImage)
         }

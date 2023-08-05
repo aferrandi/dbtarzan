@@ -1,13 +1,12 @@
 package dbtarzan.gui.info
 
-import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.Index
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
 import scalafx.scene.Parent
 import scalafx.scene.layout.VBox
 
-class IndexesInfo(guiActor : ActorRef, localization : Localization) extends TControlBuilder {
+class IndexesInfo(localization : Localization) extends TControlBuilder {
 
   val content: VBox = new VBox {
     fillWidth = true
@@ -19,7 +18,7 @@ class IndexesInfo(guiActor : ActorRef, localization : Localization) extends TCon
 
   /* adds the database rows (the database table fields) to the table */
   def addRows(indexes: List[Index]) : Unit = {
-    tables = indexes.map(index => new IndexInfo(guiActor, localization, index))
+    tables = indexes.map(index => new IndexInfo(localization, index))
     content.children = tables.map(t => t.control)
     rowsAdded = true
   }

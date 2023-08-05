@@ -56,7 +56,7 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
     })
 
   def onForeignKeyToFile(use : DatabaseId => Unit) : Unit =
-  	JFXUtil.onContextMenu(menuForeignKeyToFile, list, {selectedDatabaseId : DatabaseId => 
+  	JFXUtil.onContextMenu(menuForeignKeyToFile, list, {(selectedDatabaseId : DatabaseId) =>
       println("Selected "+DatabaseIdUtil.databaseIdText(selectedDatabaseId))
       use(selectedDatabaseId)
     })

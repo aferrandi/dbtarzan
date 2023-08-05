@@ -50,7 +50,7 @@ object GlobalEditorStarter
             }
         }
         globalStage.initOwner(parentStage)    
-        globalStage.initStyle(StageStyle.UTILITY)
+        globalStage.initStyle(StageStyle.Utility)
         globalStage.show()
     }
 }

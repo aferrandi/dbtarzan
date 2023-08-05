@@ -7,7 +7,8 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
 
 /* the constraint text box (where:) */
 class QueryText(columns : Fields) {
-	val textBox = new AutoComplete(columns.fields.map(_.name), 10) {
+	val textBox: textBox = new textBox
+ class textBox extends AutoComplete(columns.fields.map(_.name), 10) {
 		text = ""
 		text.onChange { (_, _, _) => changeTextColorTo("black")}
 
@@ -16,7 +17,7 @@ class QueryText(columns : Fields) {
 	}
 
 	def onEnter(useText : (String, Boolean) => Unit) : Unit = {
-			textBox.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.ENTER) 
+			textBox.onKeyPressed = (ev: KeyEvent) => if(ev.code == KeyCode.Enter)
 				useText(textBox.text(), ev.controlDown)
   }
 

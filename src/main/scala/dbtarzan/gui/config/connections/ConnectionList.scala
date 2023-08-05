@@ -1,6 +1,6 @@
 package dbtarzan.gui.config.connections
 
-import scalafx.scene.control.{ ListView, ListCell, SplitPane, ContextMenu, MenuItem }
+import scalafx.scene.control.{ ListView, SplitPane, ContextMenu, MenuItem }
 import scalafx.scene.Parent
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
@@ -40,13 +40,13 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   def newData(): ConnectionData = ConnectionData("", newConnectionName, "","",None,"", Password(""),None, None, None, None, None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   def getSelectedIndex(): Option[Int] = {
-    var index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
+    val index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
     // println("Selected index:"+index)
     index
   }
 
   def onConnectionSelected(use : ConnectionData => Unit) : Unit = 
-    selectionModel().selectedIndex.onChange {  (item, oldIndex, newIndex) => {
+    selectionModel().selectedIndex.onChange {  (_, _, newIndex) => {
         //println("Selected index changed to "+newIndex) 
         Option(newIndex).map(_.intValue()).filter(_ >= 0).foreach(index => use(connectionDatas(index)))
       }}

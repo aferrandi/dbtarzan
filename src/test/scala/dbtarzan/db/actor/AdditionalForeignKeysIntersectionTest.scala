@@ -5,10 +5,10 @@ import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
 class AdditionalForeignKeysIntersectionTest extends AnyFlatSpec {
-  def albumTableId = TestDatabaseIds.simpleTableId("Album")
-  def artistTableId = TestDatabaseIds.simpleTableId("Artist")
-  def customerTableId = TestDatabaseIds.simpleTableId("Customer")
-  def foreignKeysByTable = Map(
+  def albumTableId: TableId = TestDatabaseIds.simpleTableId("Album")
+  def artistTableId: TableId = TestDatabaseIds.simpleTableId("Artist")
+  def customerTableId: TableId = TestDatabaseIds.simpleTableId("Customer")
+  def foreignKeysByTable: Map[TableId,ForeignKeys] = Map(
     artistTableId -> ForeignKeys(List(
           ForeignKey("key1",  FieldsOnTable(albumTableId, List("ArtistId")), FieldsOnTable(artistTableId, List("ArtistId")), ForeignKeyDirection.STRAIGHT)
           ))

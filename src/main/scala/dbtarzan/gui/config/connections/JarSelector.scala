@@ -19,7 +19,7 @@ class JarSelector(localization : Localization) extends TControlBuilder {
   } 
   private val btnFile = new Button {
     text = "..."
-    onAction = (event: ActionEvent)  => { chooseFile() }
+    onAction = (_: ActionEvent)  => { chooseFile() }
   }
  
   private val grid =  new GridPane {
@@ -59,7 +59,7 @@ class JarSelector(localization : Localization) extends TControlBuilder {
     )
   }
 
-  def onChange[J1 >: String](op: ⇒ Unit): Unit = txtJar.text.onChange(op)
+  def onChange[J1 >: String](op: => Unit): Unit = txtJar.text.onChange(op)
 
   def control : Parent = grid
 }

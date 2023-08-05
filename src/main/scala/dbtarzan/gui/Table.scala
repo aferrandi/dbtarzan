@@ -19,7 +19,7 @@ import java.lang
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/
-class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization) extends TControlBuilder {
+class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   val fields : List[Field] = dbTable.fields
   log.debug("ColumnNames: "+fields.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
@@ -105,7 +105,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
     rowClickListener = Some(listener)
 
   def setRowDoubleClickListener(listener: Row => Unit) : Unit =
-    JFXUtil.onAction(table, (row: CheckedRow, clicked: Boolean) => listener(row.row))
+    JFXUtil.onAction(table, (row: CheckedRow, _: Boolean) => listener(row.row))
 
 
   private def displayKeyForFields(headingsTexts : List[HeadingTextAndIcon]) : Unit =

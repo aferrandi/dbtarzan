@@ -61,7 +61,7 @@ class OneConnectionEditor(
   private val lblCatalog = new Label { text = localization.catalog+":" }
   private val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
-    onAction = (event: ActionEvent)  => OpenWeb.openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
+    onAction = (_: ActionEvent)  => OpenWeb.openWeb("https://vladmihalcea.com/jdbc-driver-connection-url-strings/")
   }
 
   private val grid =  new GridPane {
@@ -199,6 +199,6 @@ class OneConnectionEditor(
 
 
   def onSchemasLoad(action : () => Unit ): Unit =
-    btnSchemaChoices.onAction = (event: ActionEvent)  => action()
+    btnSchemaChoices.onAction = (_: ActionEvent)  => action()
 }
 

@@ -1,7 +1,6 @@
 package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.SplitPane
-import scalafx.Includes._
 
 import dbtarzan.gui.Table
 
@@ -21,7 +20,7 @@ class BrowsingTableSplitter(table : Table, foreignKeysAndInfo: ForeignKeysInfoSp
     center.dividerPositions_=(0.6, 0.8)
   }
 
-  def splitPanelWithoutRowDetailsView() = {
+  def splitPanelWithoutRowDetailsView(): Unit = {
     setSplitCenterItems(List(table.control, foreignKeysAndInfo.control))
     center.dividerPositions = 0.8
   }

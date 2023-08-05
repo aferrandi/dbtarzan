@@ -43,12 +43,12 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 		    items = List(
 		      new MenuItem(localization.connectionReset) {
 		        onAction = {
-		          e: ActionEvent => dbActor ! QueryReset(databaseId)
+              (_: ActionEvent) => dbActor ! QueryReset(databaseId)
 		        }
 		      },
 		      new MenuItem(localization.openAdditionalForeignKeys) {
 		        onAction = {
-		          e: ActionEvent => {
+              (_: ActionEvent) => {
                 additionalForeignKeyEditor = Some(AdditionalForeignKeysEditorStarter.openAdditionalForeignKeysEditor(
                   stage(),                 
                   dbActor, 
@@ -69,7 +69,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def control : Parent = pane
 
   private def stage() : Stage = 
-    new Stage(pane.scene.window().asInstanceOf[javafx.stage.Stage])
+    new Stage(pane.scene().window().asInstanceOf[javafx.stage.Stage])
 
   def handleQueryIdMessage(msg: TWithQueryId) : Unit = 
     tableTabs.handleQueryIdMessage(msg)

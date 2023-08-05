@@ -13,7 +13,7 @@ object RegisterDriver {
       val url = new URL("jar:file:" + spec.jar + "!/")
       val classLoader = new URLClassLoader(Array(url))
       val driverClass = Class.forName(spec.driver, true, classLoader)
-      val driverInstance = driverClass.newInstance().asInstanceOf[Driver]
+      val driverInstance = driverClass.getDeclaredConstructor().newInstance().asInstanceOf[Driver]
       DriverManager.registerDriver(new DriverShim(driverInstance))
   }
 }

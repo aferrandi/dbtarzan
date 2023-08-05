@@ -7,25 +7,25 @@ import spray.json._
 
 import java.nio.file.Path
 object TableJsonProtocol extends  DefaultJsonProtocol {
-  implicit val simpleDatabaseIdFormat: RootJsonFormat[SimpleDatabaseId] = jsonFormat(SimpleDatabaseId, "databaseName")
-  implicit val compositeIdFormat: RootJsonFormat[CompositeId] = jsonFormat(CompositeId, "compositeName")
-  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId, "origin")
-  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId, "databaseId", "simpleDatabaseId", "tableName")
+  implicit val simpleDatabaseIdFormat: RootJsonFormat[SimpleDatabaseId] = jsonFormat(SimpleDatabaseId.apply, "databaseName")
+  implicit val compositeIdFormat: RootJsonFormat[CompositeId] = jsonFormat(CompositeId.apply, "compositeName")
+  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId.apply, "origin")
+  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId.apply, "databaseId", "simpleDatabaseId", "tableName")
 }
 
 object ForeignKeysForTableJsonProtocol {
   import DefaultJsonProtocol._
   import TableJsonProtocol.tableIdFormat
   implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
-  implicit val fieldsOnTableFormat: RootJsonFormat[FieldsOnTable] = jsonFormat(FieldsOnTable, "table", "fields" )
-  implicit val foreignKeyFormat: RootJsonFormat[ForeignKey] = jsonFormat(ForeignKey, "name", "from", "to", "direction")
-  implicit val foreignKeysFormat: RootJsonFormat[ForeignKeys] = jsonFormat(ForeignKeys, "keys")
-  implicit val foreignKeysForTableFormat: RootJsonFormat[ForeignKeysForTable] = jsonFormat(ForeignKeysForTable, "name", "keys")
-  implicit val foreignKeysForTableListFormat: RootJsonFormat[ForeignKeysForTableList] = jsonFormat(ForeignKeysForTableList, "keys")
+  implicit val fieldsOnTableFormat: RootJsonFormat[FieldsOnTable] = jsonFormat(FieldsOnTable.apply, "table", "fields" )
+  implicit val foreignKeyFormat: RootJsonFormat[ForeignKey] = jsonFormat(ForeignKey.apply, "name", "from", "to", "direction")
+  implicit val foreignKeysFormat: RootJsonFormat[ForeignKeys] = jsonFormat(ForeignKeys.apply, "keys")
+  implicit val foreignKeysForTableFormat: RootJsonFormat[ForeignKeysForTable] = jsonFormat(ForeignKeysForTable.apply, "name", "keys")
+  implicit val foreignKeysForTableListFormat: RootJsonFormat[ForeignKeysForTableList] = jsonFormat(ForeignKeysForTableList.apply, "keys")
 }
 object AdditionalForeignKeysJsonProtocol {
   import ForeignKeysForTableJsonProtocol.fieldsOnTableFormat
-  implicit val foreignKeyFormat: RootJsonFormat[AdditionalForeignKey] = jsonFormat(AdditionalForeignKey, "name", "from", "to")
+  implicit val foreignKeyFormat: RootJsonFormat[AdditionalForeignKey] = jsonFormat(AdditionalForeignKey.apply, "name", "from", "to")
 }
 
 
@@ -33,7 +33,7 @@ case class AdditionalForeignKeyVer1(name: String, from : FieldsOnTableOneDb, to:
 
 object AdditionalForeignKeysVer1JsonProtocol {
   import ForeignKeysForTableJsonProtocolOneDb.fieldsOnTableFormatOneDb
-  implicit val foreignKeyFormatVer1: RootJsonFormat[AdditionalForeignKeyVer1] = jsonFormat(AdditionalForeignKeyVer1, "name", "from", "to")
+  implicit val foreignKeyFormatVer1: RootJsonFormat[AdditionalForeignKeyVer1] = jsonFormat(AdditionalForeignKeyVer1.apply, "name", "from", "to")
 }
 
 
@@ -61,12 +61,15 @@ class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
 	}
 
   private def readVer1(databaseId: DatabaseId, text: String): List[AdditionalForeignKey] = {
-    val simpleDatabaseId = databaseId.origin.left.get
-    text.parseJson.convertTo[List[AdditionalForeignKeyVer1]]
-      .map(k => AdditionalForeignKey(k.name,
-        FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.from.table), k.from.fields),
-        FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.to.table), k.to.fields)
-      ))
+    databaseId.origin match {
+      case Left(simpleDatabaseId: SimpleDatabaseId) =>
+        text.parseJson.convertTo[List[AdditionalForeignKeyVer1]]
+          .map(k => AdditionalForeignKey(k.name,
+            FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.from.table), k.from.fields),
+            FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.to.table), k.to.fields)
+          ))
+      case _ => throw new NoSuchElementException("The database can only be simple, not a composite")
+    }
   }
 
   def fileExist() : Boolean = FileReadWrite.fileExist(fileName)

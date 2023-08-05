@@ -11,16 +11,16 @@ import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData, log: TLogger) {
     private case class PrimaryKeyField(keyName : String, fieldName : String)
 
-	def primaryKeys(tableName : String) : PrimaryKeys = try {
-			using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName)) { rs =>
-				val rawKeysFields = readPrimaryKeys(rs)
-				log.debug("Primary keys ("+rawKeysFields.size+") loaded")
+  def primaryKeys(tableName : String) : PrimaryKeys = try {
+      using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName)) { rs =>
+        val rawKeysFields = readPrimaryKeys(rs)
+        log.debug("Primary keys ("+rawKeysFields.size+") loaded")
         buildPrimaryKeysFromFields(rawKeysFields)
       }
-		} catch {
-			case se : SQLException  => throw new Exception("Reading the primary keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
-			case ex : Throwable => throw new Exception("Reading the primary keys of the "+tableName +" table got", ex)
-		}
+    } catch {
+      case se : SQLException  => throw new Exception("Reading the primary keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
+      case ex : Throwable => throw new Exception("Reading the primary keys of the "+tableName +" table got", ex)
+    }
 
   private def buildPrimaryKeysFromFields(rawKeysFields: List[PrimaryKeyField]): PrimaryKeys = {
     val keys = rawKeysFields.groupBy(_.keyName).map({
@@ -32,11 +32,11 @@ class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaDat
   private def cleanFieldName(fieldNameRaw: String) : String =
       fieldNameRaw.trim.stripPrefix("[").stripSuffix("]")
 
-	private def readPrimaryKeys(rs : ResultSet) : List[PrimaryKeyField] = 
-		ResultSetReader.readRS(rs, r => {
-			val keyName = r.getString("PK_NAME")
-			val fieldNameRaw = r.getString("COLUMN_NAME")
-			val fieldName = cleanFieldName(fieldNameRaw)
-			PrimaryKeyField(keyName, fieldName)
-		})
+  private def readPrimaryKeys(rs : ResultSet) : List[PrimaryKeyField] =
+    ResultSetReader.readRS(rs, r => {
+      val keyName = r.getString("PK_NAME")
+      val fieldNameRaw = r.getString("COLUMN_NAME")
+      val fieldName = cleanFieldName(fieldNameRaw)
+      PrimaryKeyField(keyName, fieldName)
+    })
 }

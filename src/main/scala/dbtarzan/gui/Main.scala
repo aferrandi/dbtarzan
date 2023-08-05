@@ -10,33 +10,40 @@ import dbtarzan.gui.actor.GUIActor
 import dbtarzan.localization.Localizations
 import dbtarzan.messages._
 import dbtarzan.types.ConfigPath
-import scalafx.application.JFXApp
+import scalafx.application.JFXApp3
 
 /** Main class, starts the main gui, the actors, and connects them together */
-object Main extends JFXApp {
-  println(s"Named commend line arguments: ${parameters.named.mkString(",")}")
-  private val version = versionFromManifest()
-  private val configPaths = extractConnectionsConfigPath()
-  private val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
-  private val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
-  private val composites = readComposites(configPaths.compositeConfigPath)
-  private val localization = Localizations.of(globalData.language)
-  val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version, closeApp)
-  val actors = new ActorHandler(
-    () => new GUIActor(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization),
-    guiActor => new ConnectionsActor(connectionDatas, composites, guiActor, localization, configPaths.keyFilesDirPath)
+object Main extends JFXApp3 {
+  override def start(): Unit = {
+    println(s"Named commend line arguments: ${parameters.named.mkString(",")}")
+    val version = versionFromManifest()
+    val configPaths = extractConnectionsConfigPath()
+    val connectionDatas = readConnectionDatas(configPaths.connectionsConfigPath)
+    val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
+    val composites = readComposites(configPaths.compositeConfigPath)
+    val localization = Localizations.of(globalData.language)
+    val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version)
+    val actors = new ActorHandler(
+      () => new GUIActor(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization),
+      guiActor => new ConnectionsActor(connectionDatas, composites, guiActor, localization, configPaths.keyFilesDirPath)
     )
-  mainGUI.postInit(actors.guiActor, actors.connectionsActor)
-  val log = new Logger(actors.guiActor)
-  mainGUI.databaseList.setDatabaseIds(DatabaseIds(databaseIdsFromConnections(connectionDatas) ++ databaseIdsFromComposites(composites)))
-  mainGUI.onDatabaseSelected( { case (databaseId, encryptionKey) => {
-    log.info(localization.openingDatabase(DatabaseIdUtil.databaseIdText(databaseId)))
-    actors.connectionsActor ! QueryDatabase(databaseId, encryptionKey) 
+    mainGUI.postInit(actors.guiActor, actors.connectionsActor)
+    val log = new Logger(actors.guiActor)
+    mainGUI.databaseList.setDatabaseIds(DatabaseIds(databaseIdsFromConnections(connectionDatas) ++ databaseIdsFromComposites(composites)))
+    mainGUI.onDatabaseSelected({ case (databaseId, encryptionKey) => {
+      log.info(localization.openingDatabase(DatabaseIdUtil.databaseIdText(databaseId)))
+      actors.connectionsActor ! QueryDatabase(databaseId, encryptionKey)
     }})
-  mainGUI.onForeignKeyToFile( { 
-    case (databaseId, encryptionKey) => actors.connectionsActor ! CopyToFile(databaseId, encryptionKey) 
+    mainGUI.onForeignKeyToFile({
+      case (databaseId, encryptionKey) => actors.connectionsActor ! CopyToFile(databaseId, encryptionKey)
     })
-
+    mainGUI.onCloseApp(
+      () => actors.closeApp(() => {
+        scalafx.application.Platform.exit()
+        System.exit(0)
+      })
+    )
+  }
   private def databaseIdsFromConnections(connectionDatas : List[ConnectionData]): List[DatabaseId] =
     connectionDatas.map(c => DatabaseId(Left(SimpleDatabaseId(c.name))))
 
@@ -66,11 +73,8 @@ object Main extends JFXApp {
     composites.sortBy(_.compositeId.compositeName)
   }
 
-  def closeApp() : Unit = actors.closeApp(() => {
-    scalafx.application.Platform.exit()
-    System.exit(0)
-  })
 
   private def versionFromManifest() = Option(getClass.getPackage.getImplementationVersion).getOrElse("")
+
 }
 

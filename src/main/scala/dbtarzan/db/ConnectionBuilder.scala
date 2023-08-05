@@ -39,9 +39,12 @@ private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: Register
 		Props(classOf[DatabaseActor], databaseId, encriptionKey, datas, guiActor, connectionContext.self, localization, keyFilesDirPath).withDispatcher("my-pinned-dispatcher")
 	}	
 
+  /*
 	private def buildSubWorkerName(index : Int) : String = {
 		s"dbworker ${DatabaseIdUtil.databaseIdText(databaseId) + index}"
 	}
+
+   */
 }
 
 object ConnectionBuilder {

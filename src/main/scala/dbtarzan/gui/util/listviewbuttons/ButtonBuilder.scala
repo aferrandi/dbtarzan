@@ -10,7 +10,7 @@ object ButtonBuilder {
       text = icon
       stylesheets += "rowButton.css"
       onAction = {
-        (e: ActionEvent) => onClick(value)
+        (_: ActionEvent) => onClick(value)
       }
     }
   }

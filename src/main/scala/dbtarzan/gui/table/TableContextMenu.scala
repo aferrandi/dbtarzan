@@ -12,10 +12,10 @@ class TableContextMenu(queryId : QueryId, guiActor : ActorRef, localization : Lo
       new Menu(localization.copySelectionToClipboard) {
         items = List(
           new MenuItem(localization.onlyCells) {
-            onAction = (ev: ActionEvent) =>  guiActor ! CopySelectionToClipboard(queryId, false) 
+            onAction = (_: ActionEvent) =>  guiActor ! CopySelectionToClipboard(queryId, false)
           },
           new MenuItem(localization.cellsWithHeaders) {
-            onAction = (ev: ActionEvent) =>  guiActor ! CopySelectionToClipboard(queryId, true)
+            onAction = (_: ActionEvent) =>  guiActor ! CopySelectionToClipboard(queryId, true)
           }
         )
       }) 

@@ -113,7 +113,7 @@ class ConnectionsActor(datas : List[ConnectionData],
   }
 
   private def extractDatabaseIds() = DatabaseIds(
-      connectionsConfig.connections().map(SimpleDatabaseId).map(id => DatabaseId(Left(id))) ++
+      connectionsConfig.connections().map(c => SimpleDatabaseId(c)).map(id => DatabaseId(Left(id))) ++
         currentComposites.keys.map(id => DatabaseId(Right(id)))
     )
 
@@ -134,7 +134,7 @@ class ConnectionsActor(datas : List[ConnectionData],
     }
   }
 
-  def receive = {
+  def receive: PartialFunction[Any,Unit] = {
       case qry : QueryDatabase => queryDatabase(qry.databaseId, qry.encryptionKey)
 	    case qry : QueryClose => queryClose(qry.databaseId)
 	    case cpy : CopyToFile => startCopyWorker(cpy.databaseId, cpy.encryptionKey)

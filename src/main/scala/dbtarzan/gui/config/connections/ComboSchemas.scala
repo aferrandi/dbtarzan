@@ -36,7 +36,7 @@ class ComboSchemas() extends TControlBuilder with TCombo {
   }
 
   private def buildCell() = new ListCell[Option[SchemaName]] {
-    item.onChange { (value , oldValue, newValue) => {
+    item.onChange { (_ , _, newValue) => {
       val optValue = Option(newValue).flatten
       // the orElse is to avoid problems when removing items
       val valueOrEmpty = optValue.map(value => value.schema).orElse(Some(""))
@@ -60,7 +60,7 @@ class ComboSchemas() extends TControlBuilder with TCombo {
   def control : Parent = cmbSchemas
 
   def onChanged(useSchemas : () => Unit) : Unit = {
-    cmbSchemas.onAction = (ev: ActionEvent) => useSchemas()
+    cmbSchemas.onAction = (_: ActionEvent) => useSchemas()
   }
 }
 

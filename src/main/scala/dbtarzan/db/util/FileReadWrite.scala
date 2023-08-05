@@ -18,7 +18,7 @@ object FileReadWrite {
 
 	def readFile(name : Path) : String = {
     using(Source.fromFile(name.toFile, "utf-8")) { fr =>
-      fr.getLines.mkString
+      fr.getLines().mkString("")
     }
 	}
 }

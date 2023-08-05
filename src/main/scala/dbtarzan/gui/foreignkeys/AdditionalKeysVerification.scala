@@ -43,12 +43,12 @@ class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
         keys.filter(k => !singleKeyNoColumns(k) && k.from.fields.size != k.to.fields.size).map(_.name)
 
     private def nameDuplicates() : List[String] = 
-        keys.map(_.name).groupBy(identity).mapValues(_.size).filter({case (n, s) => s > 1}).keys.toList
+        keys.map(_.name).groupBy(identity).view.mapValues(_.size).filter({case (_, s) => s > 1}).keys.toList
     
     private def relationDuplicates(): List[String] =
         keys.groupBy(k => HashSet(k.from, k.to)).values.filter(_.size > 1).map(_.head.name).toList
 
-    def verify() = AdditionalKeysVerificationResult(
+    def verify(): AdditionalKeysVerificationResult = AdditionalKeysVerificationResult(
             nameEmpty(), 
             nameNewRow(), 
             noColumns(), 
@@ -60,6 +60,6 @@ class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
 }
 
 object AdditionalKeysVerification {
-    def verify(keys : List[AdditionalForeignKey]) = new AdditionalKeysVerification(keys).verify()
+    def verify(keys : List[AdditionalForeignKey]): AdditionalKeysVerificationResult = new AdditionalKeysVerification(keys).verify()
 }
 

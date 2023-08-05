@@ -2,7 +2,6 @@ package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.SplitPane
 import scalafx.scene.layout.BorderPane
-import scalafx.Includes._
 import scalafx.geometry.Orientation
 
 import dbtarzan.gui.info.Info
@@ -16,7 +15,7 @@ class ForeignKeysInfoSplitter(foreignKeys : BorderPane, info: Info) {
    /* builds the split panel */
   private def buildCenter() = new SplitPane {
     items ++= List(foreignKeys, info.control)
-    orientation() =  Orientation.VERTICAL
+    orientation() =  Orientation.Vertical
     maxHeight = Double.MaxValue    
     maxWidth = Double.MaxValue
     dividerPositions = 0.8

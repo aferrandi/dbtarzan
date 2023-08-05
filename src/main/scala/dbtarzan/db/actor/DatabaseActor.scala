@@ -47,7 +47,7 @@ class DatabaseActor(
     val schemaId = data.schema.map(schema => SchemaId(databaseId, simpleDatabaseId, schema))
     val attributes = QueryAttributes(data.identifierDelimiters, DBDefinition(schemaId, data.catalog), data.maxFieldSize)
     val limits = DBLimits(data.maxRows, data.queryTimeoutInSeconds)
-    Some(new DatabaseCore(connection, databaseId, simpleDatabaseId, attributes, limits, localization, log))
+    Some(new DatabaseCore(connection, databaseId, simpleDatabaseId, attributes, limits, log))
   } catch {
     case se : SQLException => {
       log.error(localization.errorConnectingToDatabase(DatabaseIdUtil.databaseIdText(databaseId))+" "+ExceptionToText.sqlExceptionText(se), se)
@@ -80,7 +80,7 @@ class DatabaseActor(
     try {
       connection.setReadOnly(true)
     } catch {
-      case e: Exception => None
+      case _: Exception => None
     }
   }
 
@@ -133,7 +133,7 @@ class DatabaseActor(
           try {
             core.closeConnection()
           } catch {
-            case e: Throwable =>
+            case _: Throwable =>
           }
         )
       )
@@ -240,7 +240,7 @@ class DatabaseActor(
       guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
     }, logError)
 
-	private def requestAdditionalForeignKeys(request : RequestAdditionalForeignKeys) : Unit = {
+	private def requestAdditionalForeignKeys() : Unit = {
 		guiActor ! ResponseAdditionalForeignKeys(databaseId, additionalForeignKeys)
 	}
 
@@ -264,11 +264,11 @@ class DatabaseActor(
     )
   }, e => guiActor ! ErrorRows(qry.queryId, e))
 
-  def receive = {
+  def receive: PartialFunction[Any,Unit] = {
 		case qry : QueryRows => queryRows(qry)
     case qry : QueryOneRow => queryOneRow(qry)
-		case qry : QueryClose => close() 	    
-		case qry : QueryReset => reset() 	    
+		case _ : QueryClose => close()
+		case _ : QueryReset => reset()
 		case qry : QueryTables => queryTables(qry) 
 		case qry : QueryTablesByPattern => queryTablesByPattern(qry) 
 		case qry : QueryColumns => queryColumns(qry)
@@ -278,7 +278,7 @@ class DatabaseActor(
 		case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)
     case qry : QueryIndexes => queryIndexes(qry)
-    case request: RequestAdditionalForeignKeys => requestAdditionalForeignKeys(request)
+    case _: RequestAdditionalForeignKeys => requestAdditionalForeignKeys()
 		case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
 	}
 }

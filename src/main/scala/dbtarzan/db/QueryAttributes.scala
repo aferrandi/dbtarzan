@@ -1,7 +1,7 @@
 package dbtarzan.db
 
 case class IdentifierDelimiters(start: Char, end: Char) {
-	def withDelimiters(identifier: String) : String = start + identifier + end			
+	def withDelimiters(identifier: String) : String = "" + start + identifier + end			
 }
 
 object IdentifierDelimitersValues {

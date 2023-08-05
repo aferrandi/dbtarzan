@@ -59,7 +59,7 @@ class CopyActor(databaseId: DatabaseId,
       val schemaId = data.schema.map(schema => SchemaId(databaseId, simpleDatabaseId, schema))
       val keysForTables = names.map(name => {
         val tableId = TableId(databaseId, simpleDatabaseId, name)
-        val foreignKeyLoader = new ForeignKeyLoader(dataWithConnection.connection, databaseId, simpleDatabaseId, DBDefinition(schemaId, data.catalog), localization, log)
+        val foreignKeyLoader = new ForeignKeyLoader(dataWithConnection.connection, databaseId, simpleDatabaseId, DBDefinition(schemaId, data.catalog), log)
         ForeignKeysForTable(tableId, foreignKeyLoader.foreignKeys(tableId))
       })
       foreignKeysFiles.get(simpleDatabaseId).foreach(foreignKeysFile =>

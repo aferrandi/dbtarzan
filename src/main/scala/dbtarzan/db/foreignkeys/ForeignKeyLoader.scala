@@ -3,19 +3,17 @@ package dbtarzan.db.foreignkeys
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
-import dbtarzan.localization.Localization
+
 import dbtarzan.messages.{DatabaseIdUtil, TLogger}
 
 import java.sql.{ResultSet, SQLException}
 import scala.collection.mutable.ListBuffer
 
-
-
 /**
 	The part of the database actor that reads the foreign keys
 	schema is the database schema (in case of Oracle and SQL server)
 */
-class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId, definition: DBDefinition, localization: Localization, log: TLogger) {
+class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId, definition: DBDefinition, log: TLogger) {
 	/* the foreign key between two tables, has a name */
 	case class ForeignKeyKey(name: String, fromTable : TableId, toTable : TableId)
 	/* a column of the foreign key */
@@ -75,7 +73,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId,
 		All the foreign keys from the table and TO the table (used in reverse order)
 	*/
 	def foreignKeys(tableId : TableId) : ForeignKeys = try {
-			var meta = connection.getMetaData
+			val meta = connection.getMetaData
 			using(meta.getImportedKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableId.tableName)) { rs =>
 				val keysImported = rsToForeignKeys(rs) 
 				using(meta.getExportedKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableId.tableName)) { rs =>

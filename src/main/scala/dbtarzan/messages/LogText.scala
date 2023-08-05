@@ -12,9 +12,9 @@ object LogText {
 
 	/* to show in the log view if it is an error, warning or info message */
 	def extractLogPrefix(msg : TLogMessage) : String =msg match {
-		case e: Error => "E"
-		case e: Warning => "W"  
-		case e: Info => "I"  
+		case _: Error => "E"
+		case _: Warning => "W"
+		case _: Info => "I"
 	} 
 	
 	/* long descrption, to show when the user examines the message */

@@ -14,7 +14,7 @@ class DBTable (structure : DBTableStructure) {
 	private def addFilterToExisting(additionalFilter : Filter) : Filter = 
 		structure.genericFilter
       .map("(" + _.text + ")\nAND (" + additionalFilter.text + ")")
-      .map(Filter)
+      .map(s => Filter(s))
 			.getOrElse(additionalFilter)
 
 	def withAdditionalFilter(additionalFilter : Filter): DBTableStructure =
