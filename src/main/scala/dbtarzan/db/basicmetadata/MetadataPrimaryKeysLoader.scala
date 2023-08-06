@@ -9,7 +9,7 @@ import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 /* to read the basic metadata (tables and columns) from the database */
 class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData, log: TLogger) {
-    private case class PrimaryKeyField(keyName : String, fieldName : String)
+  private case class PrimaryKeyField(keyName : String, fieldName : String)
 
   def primaryKeys(tableName : String) : PrimaryKeys = try {
       using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName)) { rs =>

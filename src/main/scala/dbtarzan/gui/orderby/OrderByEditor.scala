@@ -78,13 +78,11 @@ class OrderByEditor(
     bottom = saveCancelButtons()
   }
 
- private def saveCancelButtons() : HBox = {
-    new HBox {
+  private def saveCancelButtons() : HBox = new HBox {
       children = List(buttonSave(), new Region() { hgrow = Priority.Always }, buttonCancel() )
       padding = Insets(10)
       spacing = 10
     }
- }
 
   private def buttonCancel() = new Button {
     text = localization.cancel

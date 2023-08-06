@@ -14,7 +14,7 @@ class QueryLoader(connection : java.sql.Connection, log: TLogger) {
   /* does the queries in the database. Sends them back to the GUI in packets of 20 lines
        QueryRows gives the SQL query and tells how many rows must be read in total */
   def query(qry : QuerySql, maxRows: Int, queryTimeout: Duration, maxFieldSize: Option[Int], use : Rows => Unit) : Unit = {
-      log.debug(s"SQL: ${qry.sql}")
+      log.debug( s"SQL: ${qry.sql}")
       using(connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) { statement =>
         queryWithStatement(statement, qry, maxRows, queryTimeout, maxFieldSize, use)
       }
@@ -23,7 +23,7 @@ class QueryLoader(connection : java.sql.Connection, log: TLogger) {
   private def nextRow(rs : ResultSet, columnCount : Int) : Row =
     Row(Range(1, columnCount+1).map(i => rs.getString(i)).toList)
   
-  private def queryWithStatement(statement: Statement, qry : QuerySql, maxRows: Int, queryTimeout: Duration, maxFieldSize: Option[Int], use : Rows => Unit) : Unit = try {
+  private def queryWithStatement(statement: Statement, qry : QuerySql, maxRows: Int, queryTimeout: Duration, maxFieldSize: Option[Int], use : Rows => Unit) : Unit = try
     statement.setQueryTimeout(queryTimeout.toSeconds.toInt)
     statement.setMaxRows(maxRows)
     maxFieldSize.foreach(statement.setMaxFieldSize)
@@ -46,9 +46,7 @@ class QueryLoader(connection : java.sql.Connection, log: TLogger) {
     if(executionTime.isOver)
       throw new Exception("timeout reading rows (over "+queryTimeout.toSeconds+" seconds)")
     log.debug("Query terminated")
-  }
-  catch {
+  catch
     case se : SQLException  => throw new Exception("With query "+qry.sql+" got "+ExceptionToText.sqlExceptionText(se), se)
     case ex : Throwable => throw new Exception("With query "+qry.sql+" got", ex)
-  }
 }
