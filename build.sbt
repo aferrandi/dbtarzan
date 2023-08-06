@@ -25,10 +25,9 @@ lazy val commonConfiguration = Seq(
 
   Test / resourceDirectory := baseDirectory.value / ".." / "src" / "test" / "resources",
 
-//  Compile / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) Seq("-Xfatal-warnings", "-Ykind-projector") else Seq("-Werror", "-Wunused", "-deprecation", "-feature")),
+  Compile / scalacOptions ++= Seq("-Xfatal-warnings", "-Ykind-projector", "-deprecation"),
 
-
-    buildStrategy()
+  buildStrategy()
 
       //  Compile / scalacOptions ++= Seq("-Ywarn-unused:imports"),
 //  Compile / scalacOptions --= Seq("-Xfatal-warnings"),
@@ -57,26 +56,14 @@ def buildStrategy() = {
   }
 }
 
-val javaFXModules = Seq("base", "controls", "graphics", "media")
 def buildProject(name: String) = {
-  /*
-  val javaFXLibraries = javaFXModules.map(module =>
-    "org.openjfx" % s"javafx-$module" % "20" classifier name
-  )
-   */
   Project(name, file(s"prj${name}"))
-    .settings( commonConfiguration)
+    .settings(commonConfiguration)
     .settings(
       libraryDependencies ++= standardLibraries // ++ javaFXLibraries
     )
-    /*
-    .settings(
-      excludeDependenciesOfOtherOses(name)
-    )
-
-     */
 }
-
+/*
 def excludeDependenciesOfOtherOses(name: String) = {
   assembly / assemblyExcludedJars ++= {
     val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
@@ -84,7 +71,7 @@ def excludeDependenciesOfOtherOses(name: String) = {
     cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) && javaFXModules.exists(m => f.data.getName.contains(m)) }
   }
 }
-
+*/
 lazy val linux = buildProject("linux")
     .settings(Seq(
       Debian / debianPackageDependencies ++= Seq("openjdk-17-jre"),

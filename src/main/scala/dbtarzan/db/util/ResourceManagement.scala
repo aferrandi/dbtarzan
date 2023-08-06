@@ -1,6 +1,6 @@
 package dbtarzan.db.util
 
-import scala.language.reflectiveCalls
+import scala.reflect.Selectable.reflectiveSelectable
 
 /* like the try(){} function in java or the C# using statement, automatically closes the resources that it opens when they are not needed anymore 
 Here used to close an open SQL ressult set */

@@ -18,14 +18,13 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : Que
 	private def buildKeyValuesForRow(row : Row) : FKRow = {
 		val fromFields = follow.key.from.fields
 		val toFields = follow.key.to.fields
-		try {
+		try
 			val indexes = fromFields.map(field => mapNameToIndex(field.toUpperCase))
 			val values = indexes.map(index => row.values(index))
 			val fieldWithValues = toFields.zip(values).map({case (field, value) => FieldWithValue(field, value) })
 			FKRow(fieldWithValues)
-		} catch {
-			case e : Exception => throw new Exception("Building the key values for the row "+row+" from the map "+mapNameToIndex+" with foreign key  "+follow.key+" got", e)		
-		}
+		catch
+			case e : Exception => throw new Exception("Building the key values for the row "+row+" from the map "+mapNameToIndex+" with foreign key  "+follow.key+" got", e)
 	} 
 }
 

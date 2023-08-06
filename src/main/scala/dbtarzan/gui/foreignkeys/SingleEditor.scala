@@ -110,14 +110,12 @@ class SingleEditor(
     editorDisabled.value = false
   })
 
-  def toKey(): AdditionalForeignKey = {
-    val key = AdditionalForeignKey(
+  def toKey(): AdditionalForeignKey =
+    AdditionalForeignKey(
       txtName.text(),
       FieldsOnTable(chosenTableFromProperty.value.tableId, orderedListColumnsFrom.listData()),
       FieldsOnTable(chosenTableToProperty.value.tableId, orderedListColumnsTo.listData())
    )
-   key
-  }
 
   def control : Parent = grid
 

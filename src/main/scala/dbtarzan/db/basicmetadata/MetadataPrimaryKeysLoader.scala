@@ -9,18 +9,17 @@ import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 /* to read the basic metadata (tables and columns) from the database */
 class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaData, log: TLogger) {
-    private case class PrimaryKeyField(keyName : String, fieldName : String)
+  private case class PrimaryKeyField(keyName : String, fieldName : String)
 
-  def primaryKeys(tableName : String) : PrimaryKeys = try {
+  def primaryKeys(tableName : String) : PrimaryKeys = try
       using(meta.getPrimaryKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName)) { rs =>
         val rawKeysFields = readPrimaryKeys(rs)
         log.debug("Primary keys ("+rawKeysFields.size+") loaded")
         buildPrimaryKeysFromFields(rawKeysFields)
       }
-    } catch {
+    catch
       case se : SQLException  => throw new Exception("Reading the primary keys of the "+tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
       case ex : Throwable => throw new Exception("Reading the primary keys of the "+tableName +" table got", ex)
-    }
 
   private def buildPrimaryKeysFromFields(rawKeysFields: List[PrimaryKeyField]): PrimaryKeys = {
     val keys = rawKeysFields.groupBy(_.keyName).map({

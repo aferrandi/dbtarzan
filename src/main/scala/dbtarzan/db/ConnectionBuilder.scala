@@ -9,20 +9,19 @@ import dbtarzan.messages.DatabaseIdUtil
 
 import java.nio.file.Path
 private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path) {
-  def buildDBWorker() : ActorRef = try {
+  def buildDBWorker() : ActorRef = try
     registerDrivers()
     val name = "copyworker" + DatabaseIdUtil.databaseIdText(databaseId)
     connectionContext.actorOf(buildSubWorkerProps().withDispatcher("my-pinned-dispatcher"), name)
-  } catch {
-    case e: Exception => throw new Exception(s"Building the dbWorker for database ${databaseId} got", e)
-  }
+  catch
+    case e: Exception => throw new Exception(s"Building the dbWorker for database $databaseId got", e)
 
   def buildCopyWorker() : ActorRef = try {
     registerDrivers()
     val name = "copyworker" + DatabaseIdUtil.databaseIdText(databaseId)
     connectionContext.actorOf(Props(new CopyActor(databaseId, datas, encriptionKey, guiActor, localization, keyFilesDirPath)).withDispatcher("my-pinned-dispatcher"), name)
   } catch {
-    case e: Exception => throw new Exception(s"Getting the copyworker for ${databaseId} got", e)
+    case e: Exception => throw new Exception(s"Getting the copyworker for $databaseId got", e)
   }
 
   private def registerDrivers(): Unit =

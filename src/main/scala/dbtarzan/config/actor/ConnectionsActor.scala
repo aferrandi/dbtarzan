@@ -17,13 +17,12 @@ class ConnectionsActor(datas : List[ConnectionData],
                        guiActor : ActorRef,
                        localization : Localization,
                        keyFilesDirPath : Path) extends Actor {
-   private val mapDBWorker = mutable.HashMap.empty[DatabaseId, ActorRef]
-   private var connectionsConfig = new ConnectionsConfig(datas)
-   private var currentComposites : Map[CompositeId, Composite] = mapComposites(composites)
+  private val mapDBWorker = mutable.HashMap.empty[DatabaseId, ActorRef]
+  private var connectionsConfig = new ConnectionsConfig(datas)
+  private var currentComposites : Map[CompositeId, Composite] = mapComposites(composites)
 
-  private def mapComposites(composites: List[Composite]): Map[CompositeId, Composite] = {
+  private def mapComposites(composites: List[Composite]): Map[CompositeId, Composite] =
     composites.map(composite => composite.compositeId -> composite).toMap
-  }
 
   private val registerDriver = new RegisterDriver()
   private val log = new Logger(guiActor)
