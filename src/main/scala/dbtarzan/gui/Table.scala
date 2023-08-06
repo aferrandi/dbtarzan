@@ -63,10 +63,10 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
 
  /* gets the nth column from the database row */
   def buildColumn(field : Field, index : Int): TableColumn[CheckedRow,String] = new TableColumn[CheckedRow,String]() {
-		text = field.name
-		cellValueFactory = { _.value.values(index) } // when showing a row, shows the value for the column field
+    text = field.name
+    cellValueFactory = { _.value.values(index) } // when showing a row, shows the value for the column field
     prefWidth = 180
-	}.delegate
+  }.delegate
 
   /* the ckeck box column is special */
   def buildCheckColumn(): TableColumn[CheckedRow, lang.Boolean] =  {

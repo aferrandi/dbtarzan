@@ -37,7 +37,7 @@ class ConnectionButtons(localization: Localization) extends TControlBuilder {
     alignmentInParent = Pos.CenterRight
   }
 
-	private val layout = new HBox {
+  private val layout = new HBox {
     children = List(
       buttonNew,
       buttonRemove,
@@ -48,8 +48,8 @@ class ConnectionButtons(localization: Localization) extends TControlBuilder {
       buttonSave,
       buttonCancel
     )
-  	padding = Insets(10)
-  	spacing = 10
+    padding = Insets(10)
+    spacing = 10
   }
  
   def onNew(action : () => Unit ): Unit = 

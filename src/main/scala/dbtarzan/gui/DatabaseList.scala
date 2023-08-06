@@ -19,8 +19,8 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
   private val databaseIcon: Image = JFXUtil.loadIcon("database.png")
   private val compositeIcon: Image = JFXUtil.loadIcon("composite.png")
   private val list = new ListView[DatabaseId](buffer) {
-  	SplitPane.setResizableWithParent(this, value = false)
-  	contextMenu = new ContextMenu(menuForeignKeyToFile)   
+    SplitPane.setResizableWithParent(this, value = false)
+    contextMenu = new ContextMenu(menuForeignKeyToFile)
     cellFactory = (cell, value) => {
       cell.graphic = new Label {
         textFill = Color.Black
@@ -36,7 +36,7 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
   }
 
   def setDatabaseIds(databaseIds: DatabaseIds) : Unit = {
-    println("Got new database list:" + databaseIds)
+    println("Got new database list:" + databaseIds.names.map(DatabaseIdUtil.databaseIdText).mkString(","))
     JFXUtil.bufferSet(buffer, databaseIds.names.sortWith((id1, id2) =>
       sortByOriginThenByName(id1, id2)
     ))
@@ -56,7 +56,7 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
     })
 
   def onForeignKeyToFile(use : DatabaseId => Unit) : Unit =
-  	JFXUtil.onContextMenu(menuForeignKeyToFile, list, {(selectedDatabaseId : DatabaseId) =>
+    JFXUtil.onContextMenu(menuForeignKeyToFile, list, {(selectedDatabaseId : DatabaseId) =>
       println("Selected "+DatabaseIdUtil.databaseIdText(selectedDatabaseId))
       use(selectedDatabaseId)
     })

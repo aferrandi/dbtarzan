@@ -10,17 +10,17 @@ import scalafx.scene.text.Text
 
 
 object TableProgressBar {
-	val STEPS = 3
-	val PROGRESSTEP: Double = 1.0 / STEPS
+  val STEPS = 3
+  val PROGRESSTEP: Double = 1.0 / STEPS
 }
 
 /**
-	Progress bar that signals when we got (at least one row of) the query result and the foreign keys
+  Progress bar that signals when we got (at least one row of) the query result and the foreign keys
 */
 class TableProgressBar(complete: () => Unit) extends TControlBuilder {
-	private val bar = new ProgressBar() {
-		prefWidth = Double.MaxValue
-	}
+  private val bar = new ProgressBar() {
+    prefWidth = Double.MaxValue
+  }
 
   private val text = new Text() {
   }
@@ -31,27 +31,27 @@ class TableProgressBar(complete: () => Unit) extends TControlBuilder {
 
   private val setReceived = new HashSet[String]()
 
-	private def updateProgressBar() : Unit =  {
-		bar.progress() = setReceived.size * TableProgressBar.PROGRESSTEP
+  private def updateProgressBar() : Unit =  {
+    bar.progress() = setReceived.size * TableProgressBar.PROGRESSTEP
     text.text = setReceived.mkString(" + ")
-		if(setReceived.size >= TableProgressBar.STEPS)
-			complete()
-	}
+    if(setReceived.size >= TableProgressBar.STEPS)
+      complete()
+  }
 
-	def receivedPrimaryKeys() : Unit = {
-		setReceived += "Primary keys"
-		updateProgressBar()
-	}
+  def receivedPrimaryKeys() : Unit = {
+    setReceived += "Primary keys"
+    updateProgressBar()
+  }
 
-	def receivedForeignKeys() : Unit = {
-		setReceived += "Foreign keys"
-		updateProgressBar()
-	}
+  def receivedForeignKeys() : Unit = {
+    setReceived += "Foreign keys"
+    updateProgressBar()
+  }
 
-	def receivedRows() : Unit = {
-		setReceived += "Rows"
-		updateProgressBar()
-	}
+  def receivedRows() : Unit = {
+    setReceived += "Rows"
+    updateProgressBar()
+  }
 
-	def control : Parent = pane
+  def control : Parent = pane
 }

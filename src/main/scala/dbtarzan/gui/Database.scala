@@ -37,17 +37,17 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     SplitPane.setResizableWithParent(tableListWithTitle, value = false)
   }
 
-	private def buildMenu() = new MenuBar {
-		menus = List(
-		  new Menu(JFXUtil.threeLines) {
-		    items = List(
-		      new MenuItem(localization.connectionReset) {
-		        onAction = {
+  private def buildMenu() = new MenuBar {
+    menus = List(
+      new Menu(JFXUtil.threeLines) {
+        items = List(
+          new MenuItem(localization.connectionReset) {
+            onAction = {
               (_: ActionEvent) => dbActor ! QueryReset(databaseId)
-		        }
-		      },
-		      new MenuItem(localization.openAdditionalForeignKeys) {
-		        onAction = {
+            }
+          },
+          new MenuItem(localization.openAdditionalForeignKeys) {
+            onAction = {
               (_: ActionEvent) => {
                 additionalForeignKeyEditor = Some(AdditionalForeignKeysEditorStarter.openAdditionalForeignKeysEditor(
                   stage(),                 

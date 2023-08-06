@@ -22,8 +22,8 @@ class CompositeList(composites : List[Composite], localization : Localization) e
   private val menuAddComposite = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
   private val list = new ListView[Composite](compositesObservable) {
-  	SplitPane.setResizableWithParent(this, value = false)
-  	contextMenu = new ContextMenu(menuAddComposite, menuSave)
+    SplitPane.setResizableWithParent(this, value = false)
+    contextMenu = new ContextMenu(menuAddComposite, menuSave)
     cellFactory = (cell, value) => cell.text.value  = value.compositeId.compositeName
   }
 

@@ -34,18 +34,18 @@ object ForeignKeysForTableJsonProtocolOneDb {
 }
 
 class ForeignKeysFile(dirPath: Path, filename: String, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId) {
-	import DefaultJsonProtocol._
-	import ForeignKeysForTableJsonProtocolOneDb._
+  import DefaultJsonProtocol._
+  import ForeignKeysForTableJsonProtocolOneDb._
 
   val fileName : Path = dirPath.resolve(filename+".fgk")
 
-	def writeAsFile(list : List[ForeignKeysForTable]) : Unit = {
+  def writeAsFile(list : List[ForeignKeysForTable]) : Unit = {
     val keys = mapFromForeignKeys(list)
     FileReadWrite.writeFile(fileName, keys.toJson.prettyPrint)
   }
 
-	def readFromFile() : List[ForeignKeysForTable] = {
-		val text = FileReadWrite.readFile(fileName)
+  def readFromFile() : List[ForeignKeysForTable] = {
+    val text = FileReadWrite.readFile(fileName)
     val keys = text.parseJson.convertTo[ForeignKeysForTableListOneDb].keys
     mapToForeignKeys(keys)
   }

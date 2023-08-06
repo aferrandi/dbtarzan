@@ -34,5 +34,5 @@ class GUIActor(
             databases.showDatabase(err.databaseId)
             log.warning(localization.databaseAlreadyOpen(DatabaseIdUtil.databaseIdText(err.databaseId)))
         }
-	}
+  }
 }

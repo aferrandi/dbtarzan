@@ -24,7 +24,7 @@ class MetadataPrimaryKeysLoader(definition: DBDefinition, meta : DatabaseMetaDat
 
   private def buildPrimaryKeysFromFields(rawKeysFields: List[PrimaryKeyField]): PrimaryKeys = {
     val keys = rawKeysFields.groupBy(_.keyName).map({
-      case (keyName, fields) => PrimaryKey(keyName, fields.toList.map(_.fieldName))
+      case (keyName, fields) => PrimaryKey(keyName, fields.map(_.fieldName))
     }).toList
     PrimaryKeys(keys)
   }

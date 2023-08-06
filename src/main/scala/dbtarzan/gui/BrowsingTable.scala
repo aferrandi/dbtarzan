@@ -127,7 +127,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
       menus = List(buildOrderByMenu())
       stylesheets += "orderByMenuBar.css"
     }
-	}
+  }
               
   def switchRowDetailsView() : Unit = {
     rowDetailsView match {

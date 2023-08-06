@@ -1,17 +1,19 @@
+import sbt.ExclusionRule
+
 import scala.sys.process.*
 
 fork := true
 
 val versionNumber = "1.28"
 version := versionNumber
-scalaVersion := "3.1.1"
+scalaVersion := "3.1.3"
 
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",
 
   version := versionNumber,
 
-  scalaVersion := "3.1.1",
+  scalaVersion := "3.1.3",
 
   Compile / mainClass := Some("dbtarzan.gui.Main"),
 
@@ -38,7 +40,11 @@ lazy val standardLibraries = Seq (
   ("org.apache.pekko" %% "pekko-actor" % "1.0.1").cross(CrossVersion.for3Use2_13),
   "com.h2database" % "h2" % "1.4.200" % "test",
   "org.scalatest" %% "scalatest" % "3.2.16" % "test",
-  "org.scalafx" %% "scalafx" % "20.0.0-R31"
+  ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
+    ExclusionRule(organization="org.openjfx", name="javafx-web"),
+    ExclusionRule(organization="org.openjfx", name="javafx-swing"),
+    ExclusionRule(organization="org.openjfx", name="javafx-fxml")
+  )
 )
 def buildStrategy() = {
   assembly / assemblyMergeStrategy := {
@@ -51,26 +57,31 @@ def buildStrategy() = {
   }
 }
 
+val javaFXModules = Seq("base", "controls", "graphics", "media")
 def buildProject(name: String) = {
-  val javaFXModules = Seq("base", "controls", "graphics", "media")
+  /*
   val javaFXLibraries = javaFXModules.map(module =>
     "org.openjfx" % s"javafx-$module" % "20" classifier name
   )
+   */
   Project(name, file(s"prj${name}"))
     .settings( commonConfiguration)
     .settings(
-      libraryDependencies ++= standardLibraries ++ javaFXLibraries
+      libraryDependencies ++= standardLibraries // ++ javaFXLibraries
     )
+    /*
     .settings(
       excludeDependenciesOfOtherOses(name)
     )
+
+     */
 }
 
 def excludeDependenciesOfOtherOses(name: String) = {
   assembly / assemblyExcludedJars ++= {
     val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
     val cp = (assembly / fullClasspath).value
-    cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) }
+    cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) && javaFXModules.exists(m => f.data.getName.contains(m)) }
   }
 }
 
@@ -115,3 +126,5 @@ addCommandAlias("packageAll",
   "; packageMacOS" +
   "; packageSnap"
 )
+
+fork := true

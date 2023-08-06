@@ -23,10 +23,10 @@ class GlobalButtons(
     alignmentInParent = Pos.CenterRight
   }
 
-	private val layout = new HBox {
+  private val layout = new HBox {
     children = List(buttonSave, buttonCancel )
-  	padding = Insets(10)
-  	spacing = 10
+    padding = Insets(10)
+    spacing = 10
   }
  
   def onSave(action : () => Unit ): Unit =

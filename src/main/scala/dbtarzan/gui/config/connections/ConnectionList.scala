@@ -19,8 +19,8 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
   private val menuAddConnection = new MenuItem(localization.addConnection)
   private val menuSave = new MenuItem(localization.save)
   private val list = new ListView[ConnectionData](connectionDatas) {
-  	SplitPane.setResizableWithParent(this, value = false)
-  	contextMenu = new ContextMenu(menuAddConnection, menuSave)   
+    SplitPane.setResizableWithParent(this, value = false)
+    contextMenu = new ContextMenu(menuAddConnection, menuSave)   
     cellFactory = (cell, value) => {
         cell.text.value = value.name
     }

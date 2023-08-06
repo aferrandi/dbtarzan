@@ -44,11 +44,11 @@ class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
 
   val fileName : Path = dirPath.resolve(databaseName+".fak")
 
-	def writeAsFile(list : List[AdditionalForeignKey]) : Unit =
-		FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
-	
-	def readFromFile(databaseId: DatabaseId) : List[AdditionalForeignKey] = {
-		val text = FileReadWrite.readFile(fileName)
+  def writeAsFile(list : List[AdditionalForeignKey]) : Unit =
+    FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
+  
+  def readFromFile(databaseId: DatabaseId) : List[AdditionalForeignKey] = {
+    val text = FileReadWrite.readFile(fileName)
     try {
       text.parseJson.convertTo[List[AdditionalForeignKey]]
     } catch {
@@ -58,7 +58,7 @@ class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
         keys
       }
     }
-	}
+  }
 
   private def readVer1(databaseId: DatabaseId, text: String): List[AdditionalForeignKey] = {
     databaseId.origin match {

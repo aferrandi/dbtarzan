@@ -10,21 +10,21 @@ case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field])
 class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAttributes) {
   val sqlFieldBuilder = new SqlFieldBuilder(criteria.columns, attributes)
 
-	def buildClause() : String = {
-		val filter = buildFilter(criteria.fkRows)
-		filter
-	}
+  def buildClause() : String = {
+    val filter = buildFilter(criteria.fkRows)
+    filter
+  }
 
-	private def buildRowText(fkRow : FKRow): String =
-		fkRow.values.map(fkValue => sqlFieldBuilder.buildFieldText(fkValue)).mkString("(", " AND ", ")")
+  private def buildRowText(fkRow : FKRow): String =
+    fkRow.values.map(fkValue => sqlFieldBuilder.buildFieldText(fkValue)).mkString("(", " AND ", ")")
 
-	private def buildFilter(fkRows : List[FKRow]): String = {
-		val rowTexts = fkRows.map(fkRow => buildRowText(fkRow))
-		rowTexts.mkString("\nOR ")
-	}
+  private def buildFilter(fkRows : List[FKRow]): String = {
+    val rowTexts = fkRows.map(fkRow => buildRowText(fkRow))
+    rowTexts.mkString("\nOR ")
+  }
 }
 
 object ForeignKeyTextBuilder {
-	def buildClause(criteria : ForeignKeyCriteria, attributes :  QueryAttributes) : String = 
-		new ForeignKeyTextBuilder(criteria, attributes).buildClause()
+  def buildClause(criteria : ForeignKeyCriteria, attributes :  QueryAttributes) : String =
+    new ForeignKeyTextBuilder(criteria, attributes).buildClause()
 }

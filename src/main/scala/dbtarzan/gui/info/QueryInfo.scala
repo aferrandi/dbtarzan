@@ -8,10 +8,10 @@ import scalafx.scene.control.TextArea
 
 /** The read only text box showing the query sql, so that it can be seen anc copied */
 class QueryInfo(sql : QuerySql) extends TControlBuilder {
-	private val textBox = new TextArea {
-		text = sql.sql
+  private val textBox = new TextArea {
+    text = sql.sql
     editable = false
-	}
+  }
 
   def control : Parent = textBox
 }

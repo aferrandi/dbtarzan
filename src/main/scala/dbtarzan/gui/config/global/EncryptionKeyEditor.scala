@@ -30,12 +30,12 @@ class EncryptionKeyEditor(
   private val lblOriginalEncryptionKey = new Label { text = localization.originalEncryptionKey+":" }
   private val pwdOriginalEncryptionKey = new PasswordField {
     text.onChange { (_, _, _) => passwordTextChanged = true	}
-	}
+  }
 
   private val lblNewEncryptionKey1 = new Label { text = localization.newEncryptionKey1+":" }
   private val pwdNewEncryptionKey1 = new PasswordField {
     text.onChange { (_, _, _) => passwordTextChanged = true	}
-	}
+  }
 
   private val lblNewEncryptionKey2 = new Label { text = localization.newEncryptionKey2+":" }
   private val pwdNewEncryptionKey2 = new PasswordField {
