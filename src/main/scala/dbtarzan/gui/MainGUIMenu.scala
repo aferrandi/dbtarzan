@@ -37,9 +37,9 @@ class MainGUIMenu(
 
   private def buildSettingsMenu() = new Menu(localization.settings) {
     items = List(
-      JFXUtil.menuItem(localization.globalSettings, openGlobalEditor),
-      JFXUtil.menuItem(localization.editConnections, openConnectionsEditor),
-      JFXUtil.menuItem(localization.editComposites, openCompositeEditor)
+      JFXUtil.menuItem(localization.globalSettings, () => openGlobalEditor()),
+      JFXUtil.menuItem(localization.editConnections, () => openConnectionsEditor()),
+      JFXUtil.menuItem(localization.editComposites, () => openCompositeEditor())
     )
   }
 
