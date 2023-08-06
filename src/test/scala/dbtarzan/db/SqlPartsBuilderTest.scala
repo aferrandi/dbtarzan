@@ -37,7 +37,7 @@ class SqlPartsBuilderTest extends AnyFlatSpec {
 
   "a filter list of two filters" should "give a where clause with parens" in {
     val sql = SqlPartsBuilder.buildFilters(List("name = 'John'", "age = 27"))
-  	assert(" WHERE (\nname = 'John') AND (\nage = 27)" === sql)
+    assert(" WHERE (\nname = 'John') AND (\nage = 27)" === sql)
   }
 
   "a filter list of one filter" should "give a where clause with parens" in {

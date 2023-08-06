@@ -14,7 +14,7 @@ class ConnectionsConfigTest extends AnyFlatSpec {
         ConnectionData("mysql.jar", "mysql", "DriverMysql", "jdbc://mysql", None, "arturo", Password("fedele"), None, None, None, None, None, None, None)
       ))
     val data = config.connectionDataFor(SimpleDatabaseId("oracle"))
-  	assert("giovanni" === data.user)
+    assert("giovanni" === data.user)
   }
 
   "getting connection with non existing name" should "give an exception" in {

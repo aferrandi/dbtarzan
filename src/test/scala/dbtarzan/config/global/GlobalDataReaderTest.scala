@@ -8,16 +8,16 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 
 class GlobalDataReaderTest extends AnyFlatSpec {
-   import GlobalDataJsonProtocol._
+  import GlobalDataJsonProtocol._
 
   "A global configuration" should "be parseable" in {
-  	val data = GlobalData(
+    val data = GlobalData(
             Languages.ITALIAN,
             Some(EncryptionData(VerificationKey(Password("amp1V30NtnMEyaIRciBh"))))
-  		)
-  	val json = data.toJson.prettyPrint
-  	println(json)
-  	val extracted = GlobalDataReader.parseText(json)
-  	assert(extracted === data)
+      )
+    val json = data.toJson.prettyPrint
+    println(json)
+    val extracted = GlobalDataReader.parseText(json)
+    assert(extracted === data)
   }
 }

@@ -26,14 +26,14 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "tablenames" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tableNames()
-  	assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.names)
+    assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.names)
   }
 
 
   "columnNames of LAPTOP" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataColumnsLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
     val columnNames = metadataLoader.columnNames("LAPTOP")
-  	assert(
+    assert(
       List(
         Field("CODE", FieldType.INT, "INTEGER [10,0]"), 
         Field("MODEL", FieldType.STRING, "VARCHAR [50,0]"), 
@@ -48,37 +48,37 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "schemaNames" should "give a list of the schemas in the database" in {
     val metadataLoader = new MetadataSchemasLoader(connection.getMetaData, new FakeLogger())
     val schemasNames = metadataLoader.schemasNames()
-  	assert(List(SchemaName("INFORMATION_SCHEMA"), SchemaName("PUBLIC")) === schemasNames)
+    assert(List(SchemaName("INFORMATION_SCHEMA"), SchemaName("PUBLIC")) === schemasNames)
   }
 
 
   "tablesByPattern" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
     val tableNames = metadataLoader.tablesByPattern("PRI")
-  	assert(List("LAPTOP", "PC", "PRINTER") === tableNames.names)
+    assert(List("LAPTOP", "PC", "PRINTER") === tableNames.names)
   }
 
 
   "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
     val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
     val primaryKeys = metadataLoader.primaryKeys("LAPTOP")
-  	assert(List(PrimaryKey("PK_LAPTOP", List("CODE"))) === primaryKeys.keys)
+    assert(List(PrimaryKey("PK_LAPTOP", List("CODE"))) === primaryKeys.keys)
   }
 
- "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
+  "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
     val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys(laptopTableId)
-  	assert(
+    assert(
       List(
         ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable(laptopTableId, List("MODEL")), FieldsOnTable(productTableId, List("MODEL")), ForeignKeyDirection.STRAIGHT)
       ) 
       === foreignKeys.keys)
   }
 
-   "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
+  "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
     val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys(productTableId)
-  	assert(
+    assert(
       List(
         ForeignKey("FK_LAPTOP_PRODUCT", FieldsOnTable(productTableId, List("MODEL")), FieldsOnTable(laptopTableId, List("MODEL")), ForeignKeyDirection.TURNED),
         ForeignKey("FK_PC_PRODUCT", FieldsOnTable(productTableId, List("MODEL")), FieldsOnTable(pcTableId, List("MODEL")), ForeignKeyDirection.TURNED),

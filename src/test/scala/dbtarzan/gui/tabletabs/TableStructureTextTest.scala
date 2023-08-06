@@ -6,7 +6,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class TableStructureTextTest extends AnyFlatSpec {
   "simple structure" should "result in a text with only the name" in {
     val structure = DBTableStructure.build(TableDescription("structureName", None, None), Fields(List.empty), QueryAttributes.none())
-	  assert(TableStructureText.buildTabText(structure) === "structureName")
+    assert(TableStructureText.buildTabText(structure) === "structureName")
   }
 
   "structure with origin" should "result in a text with an arrow" in {

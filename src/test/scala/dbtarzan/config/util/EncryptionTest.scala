@@ -9,6 +9,6 @@ class EncyrptionTest extends AnyFlatSpec {
     val original = "zorbaIlGreco";
     val encrypted = encryption.encrypt(original)
     val decrypted = encryption.decrypt(encrypted)
-  	assert(decrypted === original)
+    assert(decrypted === original)
   }
 }

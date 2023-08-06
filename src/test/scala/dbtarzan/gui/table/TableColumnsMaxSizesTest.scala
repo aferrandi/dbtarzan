@@ -20,7 +20,7 @@ class TableColumnsMaxSizesTest extends AnyFlatSpec {
         Row(List("3", "a", "b", "0123456789")),
         Row(List("23", "a", "b", "01234"))
     ))
-	assert(sizes.maxLengths === List(2, 8, 18, 10))
+    assert(sizes.maxLengths === List(2, 8, 18, 10))
   }
    "maxLength for zero lines" should "not give an excepion"  in {
     val sizes = new TableColumnsMaxSizes(List(

@@ -9,13 +9,13 @@ class LogTextTest extends AnyFlatSpec {
   "An error message with exception" should "be parseable" in {
     val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", Some(new Exception("ex")))
     val text = LogText.extractLogMessage(error)
-  	assert("error:ex" === text)
+    assert("error:ex" === text)
   }
 
   "An error message without exception" should "be parseable" in {
     val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", None)
     val text = LogText.extractLogMessage(error)
-  	assert("error" === text)
+    assert("error" === text)
   }
 
   "A warning message" should "be parseable" in {

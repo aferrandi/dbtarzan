@@ -15,7 +15,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         QueryAttributes.none()
       )
     val sql = SqlBuilder.buildSql(structure)
-  	assert("SELECT * FROM customer" === sql.sql)
+    assert("SELECT * FROM customer" === sql.sql)
   }
 
   "a simple table with delimiters" should "give a query with delimiters" in {
