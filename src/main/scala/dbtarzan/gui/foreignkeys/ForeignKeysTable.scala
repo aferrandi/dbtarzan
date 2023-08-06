@@ -100,7 +100,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
   private def buttonColumn() = new TableColumn[AdditionalForeignKey, Boolean] {
     cellValueFactory = { msg => ObjectProperty(msg.value != null) }
     cellFactory = {
-      _ : TableColumn[AdditionalForeignKey, Boolean] => buildButtonCell()
+      (_ : TableColumn[AdditionalForeignKey, Boolean]) => buildButtonCell()
     }
     maxWidth = 36
     minWidth = 36
@@ -111,7 +111,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
       text = "x"
       stylesheets += "rowButton.css"
       onAction = {
-        (e: ActionEvent) => {
+        (_: ActionEvent) => {
           buffer.remove(rowIndex)
         }
       }

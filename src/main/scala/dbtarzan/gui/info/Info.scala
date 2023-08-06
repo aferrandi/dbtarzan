@@ -36,7 +36,7 @@ class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, indexesInfo: Index
       }
       content = indexesInfo.control
     }
-    tabs = List(
+    this.tabs = List(
       queryInfoTab,
       columnsTab,
       indexesTab
@@ -48,7 +48,7 @@ class Info(columnsTable: ColumnsTable, queryInfo : QueryInfo, indexesInfo: Index
         items = List(
           new MenuItem(localization.copyContentToClipboard) {
             onAction = {
-              e: ActionEvent => columnsTable.contentToClipboard()
+              (_: ActionEvent) => columnsTable.contentToClipboard()
             }
           })
         })

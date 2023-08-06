@@ -11,6 +11,6 @@ object DatabaseIdUtil {
 
   def extractSimpleDatabaseIds(databaseId: DatabaseId, composite: Composite) : List[SimpleDatabaseId] = databaseId.origin match {
     case Left(id) => List(id)
-    case Right(id) => composite.databaseIds
+    case Right(_) => composite.databaseIds
   }
 }

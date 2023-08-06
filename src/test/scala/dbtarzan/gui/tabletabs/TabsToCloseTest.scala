@@ -5,8 +5,8 @@ import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
 class TabsToCloseTest extends AnyFlatSpec {
-  val table1AId = QueryId(TestDatabaseIds.simpleTableId("table1"), "0x1232")
-  val table1BId = QueryId(TestDatabaseIds.simpleTableId("table1"), "0x3232")
+  val table1AId: QueryId = QueryId(TestDatabaseIds.simpleTableId("table1"), "0x1232")
+  val table1BId: QueryId = QueryId(TestDatabaseIds.simpleTableId("table1"), "0x3232")
 
   "adding and removing from tabsToCloe" should "find the original element but not the second time" in {
     val tabsToClose = new TabsToClose()

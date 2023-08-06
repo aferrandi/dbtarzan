@@ -4,7 +4,7 @@ import dbtarzan.db._
 import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers.contain
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.should
 
 class AdditionalForeignKeyToForeignKeyTest extends AnyFlatSpec {
   "building foreign key query with delimiters" should "give a query with delimiters" in {

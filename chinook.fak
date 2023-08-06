@@ -1,21 +1,31 @@
 [{
   "from": {
-    "fields": ["Composer"],
+    "fields": ["Company"],
     "table": {
       "databaseId": {
+        "origin": {
+          "databaseName": "chinook"
+        }
+      },
+      "simpleDatabaseId": {
         "databaseName": "chinook"
       },
-      "tableName": "Track"
+      "tableName": "Customer"
     }
   },
-  "name": "composer",
+  "name": "zcx",
   "to": {
-    "fields": ["Name"],
+    "fields": ["FirstName"],
     "table": {
       "databaseId": {
+        "origin": {
+          "databaseName": "chinook"
+        }
+      },
+      "simpleDatabaseId": {
         "databaseName": "chinook"
       },
-      "tableName": "Artist"
+      "tableName": "Employee"
     }
   }
 }]

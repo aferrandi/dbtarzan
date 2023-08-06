@@ -51,7 +51,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   private def buildTab(database : Database) = new Tab() {
     text = DatabaseIdUtil.databaseIdText(database.getId)
     content = database.control
-    onCloseRequest = (e : Event) => { sendClose(database.getId ) }
+    onCloseRequest = (_ : Event) => { sendClose(database.getId ) }
   }      
 
   /* requests to close all the database connections */

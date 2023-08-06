@@ -19,7 +19,7 @@ import java.lang
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/
-class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization) extends TControlBuilder {
+class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
   val fields : List[Field] = dbTable.fields
   log.debug("ColumnNames: "+fields.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
@@ -63,10 +63,10 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
 
  /* gets the nth column from the database row */
   def buildColumn(field : Field, index : Int): TableColumn[CheckedRow,String] = new TableColumn[CheckedRow,String]() {
-		text = field.name
-		cellValueFactory = { _.value.values(index) } // when showing a row, shows the value for the column field
+    text = field.name
+    cellValueFactory = { _.value.values(index) } // when showing a row, shows the value for the column field
     prefWidth = 180
-	}.delegate
+  }.delegate
 
   /* the ckeck box column is special */
   def buildCheckColumn(): TableColumn[CheckedRow, lang.Boolean] =  {
@@ -105,7 +105,7 @@ class Table(dbActor: ActorRef, guiActor : ActorRef, queryId : QueryId, dbTable :
     rowClickListener = Some(listener)
 
   def setRowDoubleClickListener(listener: Row => Unit) : Unit =
-    JFXUtil.onAction(table, (row: CheckedRow, clicked: Boolean) => listener(row.row))
+    JFXUtil.onAction(table, (row: CheckedRow, _: Boolean) => listener(row.row))
 
 
   private def displayKeyForFields(headingsTexts : List[HeadingTextAndIcon]) : Unit =

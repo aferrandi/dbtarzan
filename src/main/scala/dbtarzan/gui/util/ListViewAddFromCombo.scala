@@ -36,12 +36,12 @@ class ListViewAddFromCombo[T](
           )
         }
       }
-      BorderPane.setAlignment(panel.center.value, Pos.CENTER_LEFT)
+      BorderPane.setAlignment(panel.center.value, Pos.CenterLeft)
       cell.graphic = panel
     }
   }
 
-  comboBuffer.onChange((buffer, changes) =>
+  comboBuffer.onChange((buffer, _) =>
     comboEmpty.value = buffer.isEmpty
   )
 
@@ -72,7 +72,7 @@ class ListViewAddFromCombo[T](
     }
   }
 
-  buttonAdd.onAction = (event: ActionEvent)  => {
+  buttonAdd.onAction = (_: ActionEvent)  => {
     Option(comboAdd.selectionModel().selectedItem.value).foreach(
       choice => {
         listBuffer += choice

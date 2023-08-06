@@ -1,6 +1,5 @@
 package dbtarzan.gui.info
 
-import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{Index, OrderByDirection}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
@@ -11,8 +10,9 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Label, TableCell, TableColumn, TableView}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.VBox
+import scalafx.Includes._
 
-class IndexInfo(guiActor : ActorRef, localization : Localization, index: Index) extends TControlBuilder {
+class IndexInfo(localization : Localization, index: Index) extends TControlBuilder {
   case class TableLine(fieldName: String, direction: Option[OrderByDirection])
 
   private val buffer = ObservableBuffer.empty[TableLine]
@@ -50,9 +50,9 @@ class IndexInfo(guiActor : ActorRef, localization : Localization, index: Index) 
 
   /* the column with the description of the database field */
   private def directionColumn() = new TableColumn[TableLine, Image] {
-    cellValueFactory = { x => ObjectProperty(directionToImage(x.value.direction)) }
+    cellValueFactory = { (x: TableColumn.CellDataFeatures[TableLine, Image]) => ObjectProperty(directionToImage(x.value.direction).delegate) }
     cellFactory = {
-      _ : TableColumn[TableLine, Image] => new TableCell[TableLine, Image] {
+      (_ : TableColumn[TableLine, Image]) => new TableCell[TableLine, Image] {
         item.onChange {
           (_, _, newImage) => graphic = new ImageView(newImage)
         }

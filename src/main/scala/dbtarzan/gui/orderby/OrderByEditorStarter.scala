@@ -10,34 +10,34 @@ import dbtarzan.localization.Localization
 /* to start the order by editor. It handles all the cancel/closing/save events */
 object OrderByEditorStarter
 {
- def openOrderByEditor(parentStage : Stage, dbTable: DBTable, useNewTable : (DBTableStructure, Boolean) => Unit, localization : Localization) : Unit = {
-     val orderByStage = new Stage {
+  def openOrderByEditor(parentStage : Stage, dbTable: DBTable, useNewTable : (DBTableStructure, Boolean) => Unit, localization : Localization) : Unit = {
+    val orderByStage = new Stage {
       title = localization.chooseOrderByColumns
       width = 400
       height = 400
-      scene = buildScene(dbTable, useNewTable, localization) 
-      onCloseRequest = (event : WindowEvent) => { 
+      scene = buildScene(dbTable, useNewTable, localization)
+      onCloseRequest = (event : WindowEvent) => {
         event.consume()
-        scene.window().hide()
+        scene().window().hide()
       }
     }
-    orderByStage.initOwner(parentStage)    
-    orderByStage.initStyle(StageStyle.UTILITY)
+    orderByStage.initOwner(parentStage)
+    orderByStage.initStyle(StageStyle.Utility)
     orderByStage.show()
   }
 
   private def buildScene(dbTable: DBTable, useNewTable : (DBTableStructure, Boolean) => Unit, localization : Localization) = new Scene {
-      def onSave(orderByFields: OrderByFields) : Unit = {
-        useNewTable(dbTable.withOrderByFields(orderByFields), false)
-        window().hide()
-      }
+    def onSave(orderByFields: OrderByFields) : Unit = {
+      useNewTable(dbTable.withOrderByFields(orderByFields), false)
+      window().hide()
+    }
 
-      def onCancel() : Unit = {
-        window().hide()
-      }
+    def onCancel() : Unit = {
+      window().hide()
+    }
 
-      val editor = new OrderByEditor(dbTable.fields, dbTable.orderBys, onSave(_), () => onCancel(), localization)
+    val editor = new OrderByEditor(dbTable.fields, dbTable.orderBys, onSave(_), () => onCancel(), localization)
 
-      root = editor.control
+    root = editor.control
   }
 }

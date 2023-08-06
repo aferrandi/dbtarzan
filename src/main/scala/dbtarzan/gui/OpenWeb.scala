@@ -11,7 +11,7 @@ object OpenWeb {
       openWebTry2(url)
   }
   catch {
-    case e: Throwable => openWebTry2(url)
+    case _: Throwable => openWebTry2(url)
   }
 
   private def openWebTry2(url: String): Unit =

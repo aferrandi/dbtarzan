@@ -23,17 +23,17 @@ class GlobalButtons(
     alignmentInParent = Pos.CenterRight
   }
 
-	private val layout = new HBox {
+  private val layout = new HBox {
     children = List(buttonSave, buttonCancel )
-  	padding = Insets(10)
-  	spacing = 10
+    padding = Insets(10)
+    spacing = 10
   }
  
   def onSave(action : () => Unit ): Unit =
-    buttonSave.onAction = (event: ActionEvent)  => action()
+    buttonSave.onAction = (_: ActionEvent)  => action()
 
   def onCancel(action : () => Unit ): Unit =
-    buttonCancel.onAction = (event: ActionEvent)  => action()
+    buttonCancel.onAction = (_: ActionEvent)  => action()
   
   def control : Parent = layout
 }

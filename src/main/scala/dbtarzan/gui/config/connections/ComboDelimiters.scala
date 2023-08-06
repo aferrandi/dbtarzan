@@ -21,7 +21,7 @@ class ComboDelimiters() extends TControlBuilder with TCombo {
     value = None
     cellFactory = (cell, value) => {
       // the orElse is to avoid problems when removing items
-      val valueOrEmpty = value.map(v => v.start + " " + v.end).orElse(Some(""))
+      val valueOrEmpty = value.map(v => "" + v.start + " " + v.end).orElse(Some(""))
       valueOrEmpty.foreach({
         cell.text.value = _
       })
@@ -30,10 +30,10 @@ class ComboDelimiters() extends TControlBuilder with TCombo {
   }
  
   private def buildCell() = new ListCell[Option[IdentifierDelimiters]] {
-    item.onChange { (value , oldValue, newValue) => {
+    item.onChange { (_ , _, newValue) => {
         val optValue = Option(newValue).flatten
         // the orElse is to avoid problems when removing items
-        val valueOrEmpty = optValue.map(value => value.start+" "+value.end).orElse(Some(""))
+        val valueOrEmpty = optValue.map(value => "" + value.start+" "+value.end).orElse(Some(""))
         valueOrEmpty.foreach({ text.value = _ })
       }}}
 
@@ -47,7 +47,7 @@ class ComboDelimiters() extends TControlBuilder with TCombo {
   def control : Parent = cmbDelimiters
 
   def onChanged(useDelimiters : () => Unit) : Unit = {  
-    cmbDelimiters.onAction = (ev: ActionEvent) => useDelimiters()
+    cmbDelimiters.onAction = (_: ActionEvent) => useDelimiters()
   }
 }
 

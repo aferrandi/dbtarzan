@@ -17,7 +17,7 @@ class TableTabsMap[TBL <: TTableForMapWithId]() {
   private val mapTable = mutable.HashMap.empty[QueryId, TTableWithTab[TBL]]
 
   def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) : List[QueryId] = 
-    mapTable.filter({ case (id, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
+    mapTable.filter({ case (_, tableAndTab) => toCloseTabs.contains(tableAndTab.tab.delegate)}).keys.toList
  
   def addBrowsingTable(browsingTable : TBL, tab : javafx.scene.control.Tab) : Unit =
     mapTable += browsingTable.getId -> TTableWithTab[TBL](browsingTable, tab)

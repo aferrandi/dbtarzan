@@ -23,17 +23,17 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList(log)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
-  private val columnsTable = new ColumnsTable(structure.columns, guiActor, localization)
-  private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure), localization)
-  private val indexInfo = new IndexesInfo(guiActor, localization)
+  private val columnsTable = new ColumnsTable(structure.columns, localization)
+  private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure))
+  private val indexInfo = new IndexesInfo(localization)
   private val info = new Info(columnsTable, queryInfo, indexInfo, localization, () => {
     dbActor ! QueryIndexes(queryId)
   })
   private val dbTable = new DBTable(structure)
-  private val table = new Table(dbActor, guiActor, queryId, dbTable, localization)
+  private val table = new Table(guiActor, queryId, dbTable, localization)
   private val foreignKeysInfoSplitter = new ForeignKeysInfoSplitter(foreignKeyListWithTitle, info)
   private val splitter = new BrowsingTableSplitter(table, foreignKeysInfoSplitter)
-  private var useNewTable : (DBTableStructure, Boolean) => Unit = (table, closeCurrentTab) => {}
+  private var useNewTable : (DBTableStructure, Boolean) => Unit = (_, _) => {}
   private var rowDetailsView : Option[RowDetailsView] = None
   private val rowDetailsApplicant = new RowDetailsApplicant(structure)
   private val queryText = new QueryText(structure.columns) {
@@ -94,14 +94,14 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     layout.bottom = null
 
   private def stage() : Stage = 
-    new Stage(layout.scene.window().asInstanceOf[javafx.stage.Stage])
+    new Stage(layout.scene().window().asInstanceOf[javafx.stage.Stage])
 
   private def buildOrderByMenu() = new Menu(localization.orderBy) {
       items = dbTable.fields.map(f =>
         new MenuItem(f.name) {
-            onAction = { e: ActionEvent => guiActor ! RequestOrderByField(queryId, f) }
+            onAction = { (_: ActionEvent) => guiActor ! RequestOrderByField(queryId, f) }
         }) :+ new MenuItem(localization.more) {
-            onAction = { e: ActionEvent => guiActor ! RequestOrderByEditor(queryId) }
+            onAction = { (_: ActionEvent) => guiActor ! RequestOrderByEditor(queryId) }
         }
     }
 
@@ -127,7 +127,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
       menus = List(buildOrderByMenu())
       stylesheets += "orderByMenuBar.css"
     }
-	}
+  }
               
   def switchRowDetailsView() : Unit = {
     rowDetailsView match {
@@ -164,7 +164,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   def addOneRow(oneRow: ResponseOneRow): Unit =
     rowDetailsView.foreach(details => details.displayRow(oneRow.row))
 
-  def rowsError(ex : Exception) : Unit = queryText.showError()
+  def rowsError() : Unit = queryText.showError()
 
   /* adds the foreign keys to the foreign key list */
   def addForeignKeys(keys : ResponseForeignKeys) : Unit = {

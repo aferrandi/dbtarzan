@@ -40,7 +40,7 @@ object AdditionalForeignKeysEditorStarter
       }
     }
     additionalForeignKeysStage.initOwner(parentStage)    
-    additionalForeignKeysStage.initStyle(StageStyle.UTILITY)
+    additionalForeignKeysStage.initStyle(StageStyle.Utility)
     additionalForeignKeysStage.show()
     dbActor ! RequestAdditionalForeignKeys(databaseId)
     editor

@@ -24,7 +24,7 @@ class ActorHandler (guiActorSupplier : () =>  Actor,
       stopGui : Boolean <- gracefulStop(guiActor, 1 seconds)
       stopConfig : Boolean <- gracefulStop(connectionsActor, 1 seconds)
     } yield stopGui && stopConfig
-    stopAll.foreach(x => { 
+    stopAll.foreach(_ => { 
       system.terminate()
       println("shutdown")
       system.registerOnTermination(onExit)

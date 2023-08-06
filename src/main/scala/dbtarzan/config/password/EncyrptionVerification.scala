@@ -13,7 +13,7 @@ object EncryptionVerification {
     /* if the encryption key encrypted with the verification key matches this invariant, then it is correct */
     val alwaysTheSame: Password = Password("7ODu6l6eU5NgiZp7")
     /* AES allows only encyrption keys of that size */
-    val possibleEncryptionKeyLength = List(16, 24, 32)
+    val possibleEncryptionKeyLength: List[Int] = List(16, 24, 32)
 
     def toVerification(encryptionKey : EncryptionKey) : VerificationKey = {
         val res = new PasswordEncryption(encryptionKey).encrypt(alwaysTheSame)
@@ -25,7 +25,7 @@ object EncryptionVerification {
             val res = new PasswordEncryption(encryptionKey).decrypt(verificationKey.password)
             alwaysTheSame == res
         } catch {
-            case e : Exception => false
+            case _ : Exception => false
         }
     }
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#example: mkmacosx/package.sh $PWD 1.27
+#example: mkmacosx/package.sh $PWD 1.27 3.1.1
 
 DIR=$1
 VERSION=$2
-SCALA_VERSION=2.13
+SCALA_VERSION=$3
 JRE=jre17
 # delete previous versions
 rm -r $DIR/DBTarzan-*.app*

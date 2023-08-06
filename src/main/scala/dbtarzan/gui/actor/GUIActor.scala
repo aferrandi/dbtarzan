@@ -22,7 +22,7 @@ class GUIActor(
     }
   }
 
-  def receive = {
+  def receive: PartialFunction[Any,Unit] = {
         case rsp: TWithQueryId => runLater { databases.handleQueryIdMessage(rsp) }
         case rsp: TWithDatabaseId => runLater { databases.handleDatabaseIdMessage(rsp) }
         case rsp: TWithTableId => runLater { databases.handleTableIdMessage(rsp) }
@@ -34,5 +34,5 @@ class GUIActor(
             databases.showDatabase(err.databaseId)
             log.warning(localization.databaseAlreadyOpen(DatabaseIdUtil.databaseIdText(err.databaseId)))
         }
-	}
+  }
 }

@@ -6,7 +6,6 @@ import java.sql.Connection
 import java.sql.DriverManager
 import dbtarzan.db.foreignkeys.{FKRow, ForeignKeyCriteria, ForeignKeyLoader}
 import dbtarzan.db.basicmetadata.{MetadataColumnsLoader, MetadataPrimaryKeysLoader, MetadataSchemasLoader, MetadataTablesLoader}
-import dbtarzan.localization.English
 import dbtarzan.testutil.{FakeLogger, TestDatabaseIds}
 
 import scala.concurrent.duration._
@@ -16,13 +15,13 @@ import org.scalatest.flatspec.AnyFlatSpec
 class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   var connection: Connection = _
 
-  def productTableId = TestDatabaseIds.simpleTableId( "PRODUCT")
+  def productTableId: TableId = TestDatabaseIds.simpleTableId( "PRODUCT")
 
-  def laptopTableId = TestDatabaseIds.simpleTableId("LAPTOP")
+  def laptopTableId: TableId = TestDatabaseIds.simpleTableId("LAPTOP")
 
-  def pcTableId = TestDatabaseIds.simpleTableId("PC")
+  def pcTableId: TableId = TestDatabaseIds.simpleTableId("PC")
 
-  def printerTableId = TestDatabaseIds.simpleTableId("PRINTER")
+  def printerTableId: TableId = TestDatabaseIds.simpleTableId("PRINTER")
 
   "tablenames" should "give a sorted list of the table names" in {
     val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
@@ -67,7 +66,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   }
 
  "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new English(), new FakeLogger())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys(laptopTableId)
   	assert(
       List(
@@ -77,7 +76,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   }
 
    "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new English(), new FakeLogger())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys(productTableId)
   	assert(
       List(

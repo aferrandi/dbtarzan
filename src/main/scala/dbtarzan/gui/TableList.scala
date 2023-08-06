@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import scalafx.collections.ObservableBuffer
-import scalafx.scene.control.{ListCell, ListView}
+import scalafx.scene.control.ListView
 import dbtarzan.db.{TableId, TableIds}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, TableIdLabel}

@@ -15,7 +15,7 @@ object GlobalDataReader {
 			val text = FileReadWrite.readFile(path)
 			parseText(text)
 		} catch {
-		  case e: FileNotFoundException => GlobalData(Languages.default, None)
+		  case _: FileNotFoundException => GlobalData(Languages.default, None)
 		}
 	}
 

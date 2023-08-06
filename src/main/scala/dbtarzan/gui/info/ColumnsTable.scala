@@ -1,11 +1,9 @@
 package dbtarzan.gui.info
 
-import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{Field, Fields}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
 import scalafx.beans.property.StringProperty
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
@@ -13,8 +11,7 @@ import scalafx.scene.control.{TableColumn, TableView}
 
 
 /** The GUI table control showing the description of the columns of a database table */
-class ColumnsTable(fields: Fields, guiActor : ActorRef, localization : Localization) extends TControlBuilder {
-  private val log = new Logger(guiActor)
+class ColumnsTable(fields: Fields, localization : Localization) extends TControlBuilder {
   private val buffer = ObservableBuffer.empty[Field]
   /* the table */
   private val table = buildTable()

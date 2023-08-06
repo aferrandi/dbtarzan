@@ -37,7 +37,7 @@ class ConnectionButtons(localization: Localization) extends TControlBuilder {
     alignmentInParent = Pos.CenterRight
   }
 
-	private val layout = new HBox {
+  private val layout = new HBox {
     children = List(
       buttonNew,
       buttonRemove,
@@ -48,27 +48,27 @@ class ConnectionButtons(localization: Localization) extends TControlBuilder {
       buttonSave,
       buttonCancel
     )
-  	padding = Insets(10)
-  	spacing = 10
+    padding = Insets(10)
+    spacing = 10
   }
  
   def onNew(action : () => Unit ): Unit = 
-    buttonNew.onAction = (event: ActionEvent)  => action()
+    buttonNew.onAction = (_: ActionEvent)  => action()
 
   def onRemove(action : () => Unit ): Unit =
-    buttonRemove.onAction = (event: ActionEvent)  => action()
+    buttonRemove.onAction = (_: ActionEvent)  => action()
 
   def onDuplicate(action : () => Unit ): Unit =
-    buttonDuplicate.onAction = (event: ActionEvent)  => action()
+    buttonDuplicate.onAction = (_: ActionEvent)  => action()
 
   def onTest(action : () => Unit ): Unit =
-    buttonTest.onAction = (event: ActionEvent)  => action()
+    buttonTest.onAction = (_: ActionEvent)  => action()
 
   def onSave(action : () => Unit ): Unit =
-    buttonSave.onAction = (event: ActionEvent)  => action()
+    buttonSave.onAction = (_: ActionEvent)  => action()
 
   def onCancel(action : () => Unit ): Unit =
-    buttonCancel.onAction = (event: ActionEvent)  => action()
+    buttonCancel.onAction = (_: ActionEvent)  => action()
   
   def control : Parent = layout
 }

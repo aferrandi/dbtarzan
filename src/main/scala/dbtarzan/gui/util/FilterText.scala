@@ -10,7 +10,7 @@ class FilterText(action : String => Unit, localization : Localization)  extends 
   private val filterText = new TextField() {
     promptText = localization.filter
     margin = Insets(0,0,3,0)
-    text.onChange { (value , oldValue, newValue) => {
+    text.onChange { (_ , _, newValue) => {
       val optValue = Option(newValue)
       optValue.foreach({ action(_)  })
     }}

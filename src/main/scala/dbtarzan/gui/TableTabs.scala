@@ -115,14 +115,14 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
 
   private def addRows(table: TTableWithTab[BrowsingTable], rows : ResponseRows) : Unit = {
     table.table.addRows(rows)
-    table.tab.tooltip.value.text = table.table.rowsNumber+" rows"
+    table.tab.tooltip.value.text = "" + table.table.rowsNumber+" rows"
   }
 
   private def addOneRow(table: BrowsingTable, oneRow : ResponseOneRow) : Unit =
     table.addOneRow(oneRow)
 
   private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
-    table.rowsError(error.ex)
+    table.rowsError()
     log.error(localization.errorRequestingTheRows(error.queryId), error.ex)
   }
 

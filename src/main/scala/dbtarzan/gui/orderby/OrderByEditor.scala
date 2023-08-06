@@ -25,7 +25,7 @@ class OrderByEditor(
   onCancel : ()  => Unit,
   localization : Localization
 ) extends TControlBuilder {
-  private var saveButtonDisabled = BooleanProperty(true)
+  private val saveButtonDisabled = BooleanProperty(true)
 
   val upIcon: Image = JFXUtil.loadIcon("up.png")
   val downIcon: Image = JFXUtil.loadIcon("down.png")
