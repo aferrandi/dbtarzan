@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS COMPUTER;
+SET SCHEMA COMPUTER;
 -- from http://www.sqlbooks.ru
 
 CREATE TABLE Laptop (

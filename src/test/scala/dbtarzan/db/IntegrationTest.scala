@@ -24,49 +24,53 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   def printerTableId: TableId = TestDatabaseIds.simpleTableId("PRINTER")
 
   "tablenames" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
+    val metadataLoader = new MetadataTablesLoader(DBDefinition(Some(schemaId), None), connection.getMetaData)
     val tableNames = metadataLoader.tableNames()
     assert(List("LAPTOP", "PC", "PRINTER", "PRODUCT" ) === tableNames.names)
   }
 
 
+  private def schemaId = {
+    SchemaId(TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, SchemaName("COMPUTER"))
+  }
+
   "columnNames of LAPTOP" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataColumnsLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
+    val metadataLoader = new MetadataColumnsLoader(DBDefinition(Some(schemaId), None), connection.getMetaData, new FakeLogger())
     val columnNames = metadataLoader.columnNames("LAPTOP")
     assert(
       List(
-        Field("CODE", FieldType.INT, "INTEGER [10,0]"), 
-        Field("MODEL", FieldType.STRING, "VARCHAR [50,0]"), 
-        Field("SPEED", FieldType.INT, "INTEGER [10,0]"), 
-        Field("RAM", FieldType.INT, "INTEGER [10,0]"), 
-        Field("HD", FieldType.FLOAT, "DOUBLE [17,0]"),
-        Field("PRICE", FieldType.FLOAT, "DOUBLE [17,0] NULL"), 
-        Field("SCREEN",FieldType.INT, "INTEGER [10,0]")
+        Field("CODE", FieldType.INT, "INTEGER [32,0]"),
+        Field("MODEL", FieldType.STRING, "CHARACTER VARYING [50,0]"),
+        Field("SPEED", FieldType.INT, "INTEGER [32,0]"),
+        Field("RAM", FieldType.INT, "INTEGER [32,0]"),
+        Field("HD", FieldType.FLOAT, "DOUBLE PRECISION [53,0]"),
+        Field("PRICE", FieldType.FLOAT, "DOUBLE PRECISION [53,0] NULL"),
+        Field("SCREEN",FieldType.INT, "INTEGER [32,0]")
         ) === columnNames.fields)
   }
 
   "schemaNames" should "give a list of the schemas in the database" in {
     val metadataLoader = new MetadataSchemasLoader(connection.getMetaData, new FakeLogger())
     val schemasNames = metadataLoader.schemasNames()
-    assert(List(SchemaName("INFORMATION_SCHEMA"), SchemaName("PUBLIC")) === schemasNames)
+    assert(Set(SchemaName("INFORMATION_SCHEMA"), SchemaName("PUBLIC"), SchemaName("COMPUTER")) === schemasNames.toSet)
   }
 
 
   "tablesByPattern" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataTablesLoader(DBDefinition(None, None), connection.getMetaData)
+    val metadataLoader = new MetadataTablesLoader(DBDefinition(Some(schemaId), None), connection.getMetaData)
     val tableNames = metadataLoader.tablesByPattern("PRI")
     assert(List("LAPTOP", "PC", "PRINTER") === tableNames.names)
   }
 
 
   "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
-    val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(None, None), connection.getMetaData, new FakeLogger())
+    val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(Some(schemaId), None), connection.getMetaData, new FakeLogger())
     val primaryKeys = metadataLoader.primaryKeys("LAPTOP")
     assert(List(PrimaryKey("PK_LAPTOP", List("CODE"))) === primaryKeys.keys)
   }
 
   "foreignKeys of LAPTOP" should "give a list of foreign keys to PRODUCT" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new FakeLogger())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(Some(schemaId), None), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys(laptopTableId)
     assert(
       List(
@@ -76,7 +80,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   }
 
   "foreignKeys of PRODUCT" should "give a list of foreign keys to LAPTOP,PC and PRINTER" in {
-    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(None, None), new FakeLogger())
+    val foreignKeyLoader = new ForeignKeyLoader(connection, TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, DBDefinition(Some(schemaId), None), new FakeLogger())
     val foreignKeys = foreignKeyLoader.foreignKeys(productTableId)
     assert(
       List(
@@ -125,7 +129,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
 
   before {
     Class.forName("org.h2.Driver")
-    connection = DriverManager.getConnection( "jdbc:h2:mem:;INIT=runscript from 'classpath:sampledb/computer.sql';", "sa", "" )
+    connection = DriverManager.getConnection( "jdbc:h2:mem:;INIT=runscript from 'classpath:sampledb/computer.sql'", "sa", "" )
   }
 
   after {

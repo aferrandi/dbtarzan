@@ -37,8 +37,8 @@ lazy val commonConfiguration = Seq(
 lazy val standardLibraries = Seq (
   ("io.spray" %% "spray-json" % "1.3.6").cross(CrossVersion.for3Use2_13),
   ("org.apache.pekko" %% "pekko-actor" % "1.0.1").cross(CrossVersion.for3Use2_13),
-  "com.h2database" % "h2" % "1.4.200" % "test",
-  "org.scalatest" %% "scalatest" % "3.2.16" % "test",
+  "com.h2database" % "h2" % "2.2.220" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.16" % Test,
   ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
     ExclusionRule(organization="org.openjfx", name="javafx-web"),
     ExclusionRule(organization="org.openjfx", name="javafx-swing"),
