@@ -66,8 +66,10 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, l
         nullable = r.getInt("NULLABLE")
       )
     })
-    log.info(s"RawField: $rawFields")
-    val fields = rawFields.map(r => Field(r.fieldName, toType(r.fieldType), toTypeDescription(r.typeName, r.columnSize, r.decimalDigits, r.nullable)))
+//    log.info(s"RawField: $rawFields")
+    val fields = rawFields.map(r =>
+      Field(r.fieldName, toType(r.fieldType), toTypeDescription(r.typeName, r.columnSize, r.decimalDigits, r.nullable))
+    )
     log.info(s"Field: $fields")
     fields
   }

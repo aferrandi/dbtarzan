@@ -16,6 +16,7 @@ import scalafx.scene.control.{SelectionMode, TableColumn, TableView}
 import scalafx.scene.image.ImageView
 import scalafx.beans.property.{StringProperty, BooleanProperty, IntegerProperty, DoubleProperty}
 import scalafx.beans.value.ObservableValue
+import scalafx.geometry.Pos
 
 import java.lang
 
@@ -77,10 +78,12 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
   def buildIntColumn(field: Field, index: Int): TableColumn[CheckedRow, Int] = new TableColumn[CheckedRow, Int]() {
     text = field.name
     comparator = Ordering.Int
+    // style = "-fx-alignment: CENTER-RIGHT;"
     cellValueFactory = {
         _.value.values(index).asInstanceOf[ObservableValue[Int, Int]]
       } // when showing a row, shows the value for the column field
     prefWidth = 180
+
   }.delegate
 
   def buildFloatColumn(field: Field, index: Int): TableColumn[CheckedRow, Double] = new TableColumn[CheckedRow, Double]() {
