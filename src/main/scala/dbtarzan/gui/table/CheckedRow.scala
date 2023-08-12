@@ -1,11 +1,12 @@
 package dbtarzan.gui.table
 
-import scalafx.beans.property.{StringProperty, BooleanProperty}
-import dbtarzan.db.{Row, Rows, Field, FieldType}
+import dbtarzan.db.{Field, FieldType, Row, Rows}
+import scalafx.beans.property.{StringProperty, BooleanProperty, IntegerProperty, DoubleProperty}
 import scalafx.scene.control.MultipleSelectionModel
 
+
 /* One row of a table. The first column is for the check box, the others come from the database */
-case class CheckedRow(checked: BooleanProperty, values : List[StringProperty], row : Row)
+case class CheckedRow(checked: BooleanProperty, values : List[StringProperty|IntegerProperty|DoubleProperty], row : Row)
 
 /* needed to have the check box working */
 class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSelectionModel[CheckedRow]) {
@@ -40,14 +41,18 @@ class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSel
 			checked.remove(row)
 	
 	/* creates the fields of a row */
-	private def values(row : Row, columnNames: List[Field]) : List[StringProperty] = {
+	private def values(row : Row, columnNames: List[Field]) : List[StringProperty|IntegerProperty|DoubleProperty] = {
 		if(row.values.size != columnNames.size)
 			throw new Exception("column sizes "+columnNames+" <> row cells size "+row.values)
 		row.values.zipWithIndex.map({ case (value, i) => valueToProperty(columnNames(i), value)})
 	}
 	/* creates the cell in the row */
-	private def valueToProperty(field : Field, value : String) =
-		new StringProperty(this, field.name, toDisplayOnlyOneLine(field, value))
+	private def valueToProperty(field : Field, value : Any): StringProperty|IntegerProperty|DoubleProperty = field.fieldType match {
+    case FieldType.STRING => new StringProperty(this, field.name, toDisplayOnlyOneLine(field, value.asInstanceOf[String]))
+    case FieldType.INT => new IntegerProperty(this, field.name, value.asInstanceOf[Int])
+    case FieldType.FLOAT => new DoubleProperty(this, field.name, value.asInstanceOf[Double])
+  }
+
 	
 	/* text with multiple lines make tables unusable. Keep one line. The other lines are displayed in the RowDetailsView */
 	private def toDisplayOnlyOneLine(field : Field, value : String) : String = field.fieldType match {

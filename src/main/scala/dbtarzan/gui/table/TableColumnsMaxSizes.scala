@@ -21,14 +21,14 @@ class TableColumnsMaxSizes(columns : List[Field], rnd : Random) {
         indexes.map(i => arrRows(i))
     }
 
-    private def rowLengths(row : List[String]) : List[Int] = {
-        def nullableLength(s : String) : Int = if(s != null) s.length else 0
+    private def rowLengths(row : List[String|Int|Double]) : List[Int] = {
+        def nullableLength(s : String|Int|Double) : Int = if(s != null) s.toString.length else 0
         row.map(nullableLength)
     }
     private def max2Rows(a : List[Int], b: List[Int]) : List[Int] = 
         a.lazyZip(b).map(Math.max)
     
-    private def maxRows(rows : List[List[String]]) : List[Int] = {
+    private def maxRows(rows : List[List[String|Int|Double]]) : List[Int] = {
         val rowsSizes = rows.map(rowLengths)
         if(rowsSizes.nonEmpty)
             rowsSizes.tail.foldLeft(rowsSizes.head)(max2Rows)

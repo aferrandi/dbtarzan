@@ -14,6 +14,8 @@ import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.cell.CheckBoxTableCell
 import scalafx.scene.control.{SelectionMode, TableColumn, TableView}
 import scalafx.scene.image.ImageView
+import scalafx.beans.property.{StringProperty, BooleanProperty, IntegerProperty, DoubleProperty}
+import scalafx.beans.value.ObservableValue
 
 import java.lang
 
@@ -41,7 +43,11 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */
   def buildTable(): TableView[CheckedRow] = new TableView[CheckedRow](buffer) {
     columns += buildCheckColumn()
-    columns ++= fields.zipWithIndex.map({ case (field, i) => buildColumn(field, i) })
+    columns ++= fields.zipWithIndex.map({ case (field, i) => field.fieldType match {
+      case FieldType.STRING => buildStringColumn(field, i)
+      case FieldType.INT => buildIntColumn(field, i)
+      case FieldType.FLOAT => buildFloatColumn(field, i)
+    } })
     editable = true
     selectionModel().selectionMode() = SelectionMode.Multiple
     selectionModel().selectedItem.onChange(
@@ -62,12 +68,29 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
     buffer.foreach(row => row.checked.value = check)
 
  /* gets the nth column from the database row */
-  def buildColumn(field : Field, index : Int): TableColumn[CheckedRow,String] = new TableColumn[CheckedRow,String]() {
+  def buildStringColumn(field : Field, index : Int): TableColumn[CheckedRow,String] = new TableColumn[CheckedRow,String]() {
     text = field.name
-    cellValueFactory = { _.value.values(index) } // when showing a row, shows the value for the column field
+    cellValueFactory = { _.value.values(index).asInstanceOf[StringProperty] } // when showing a row, shows the value for the column field
     prefWidth = 180
   }.delegate
 
+  def buildIntColumn(field: Field, index: Int): TableColumn[CheckedRow, Int] = new TableColumn[CheckedRow, Int]() {
+    text = field.name
+    comparator = Ordering.Int
+    cellValueFactory = {
+        _.value.values(index).asInstanceOf[ObservableValue[Int, Int]]
+      } // when showing a row, shows the value for the column field
+    prefWidth = 180
+  }.delegate
+
+  def buildFloatColumn(field: Field, index: Int): TableColumn[CheckedRow, Double] = new TableColumn[CheckedRow, Double]() {
+    text = field.name
+    comparator = Ordering.Double.TotalOrdering
+    cellValueFactory = {
+      _.value.values(index).asInstanceOf[ObservableValue[Double, Double]]
+    } // when showing a row, shows the value for the column field
+    prefWidth = 180
+  }.delegate
   /* the ckeck box column is special */
   def buildCheckColumn(): TableColumn[CheckedRow, lang.Boolean] =  {
     val checkColumn = new TableColumn[CheckedRow, java.lang.Boolean] {

@@ -154,7 +154,7 @@ class DatabaseActor(
     val sql = SqlBuilder.buildSql(qry.structure)
     val maxRows = core.limits.maxRows.getOrElse(500)
     val queryTimeouts = core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
-    core.queryLoader.query(sql, maxRows, queryTimeouts, core.attributes.maxFieldSize, rows =>
+    core.queryLoader.query(sql, maxRows, queryTimeouts, core.attributes.maxFieldSize, qry.structure.columns, rows =>
         guiActor ! ResponseRows(qry.queryId, qry.structure, rows)
       )
   }, e => queryRowsHandleErr(qry, e))
@@ -260,7 +260,7 @@ class DatabaseActor(
 
   def queryOneRow(qry: QueryOneRow): Unit = withCore(qry.queryId, core => {
     val queryTimeput = core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
-    core.queryLoader.query(SqlBuilder.buildSql(qry.structure), 1, queryTimeput, None, rows =>
+    core.queryLoader.query(SqlBuilder.buildSql(qry.structure), 1, queryTimeput, None, qry.structure.columns, rows =>
       guiActor ! ResponseOneRow(qry.queryId, qry.structure, rows.rows.head)
     )
   }, e => guiActor ! ErrorRows(qry.queryId, e))

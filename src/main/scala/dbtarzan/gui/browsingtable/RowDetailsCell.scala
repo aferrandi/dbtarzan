@@ -51,9 +51,16 @@ class RowDetailsCell(field: Field) {
     private def isMultiline(s : String) : Boolean =
         Option(s).exists(_.contains('\n'))
 
-    def showText(text : String) : Unit = {
-        if(field.fieldType == FieldType.STRING && !alreadyMultiline && isMultiline(text))
+    def showText(value : String|Int|Double) : Unit = {
+      textControl.text = field.fieldType match {
+        case FieldType.STRING => {
+          val text = value.asInstanceOf[String]
+          if (! alreadyMultiline && isMultiline(text))
             replaceWithMultilineControl()
-        textControl.text = text
+          text
+        }
+        case FieldType.INT => value.toString
+        case FieldType.FLOAT => value.toString
+      }
     }
 }

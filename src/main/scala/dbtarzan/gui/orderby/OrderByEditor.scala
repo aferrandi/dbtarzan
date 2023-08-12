@@ -51,12 +51,12 @@ class OrderByEditor(
   private val list = buildList()
 
   private def fieldInBothDirections(field: Field) = {
-    OrderByDirection.directions().map(d => OrderByField(field, d))
+    OrderByDirection.values.map(d => OrderByField(field, d)).toList
   }
 
   private def buildList(): ListViewAddFromCombo[OrderByField] = {
     val list = ListViewAddFromComboBuilder.buildOrdered[OrderByField](localization.add, showField, comboStrategy)
-    val comboData = possibleOrderByFields.flatMap(f => OrderByDirection.directions().map(d => OrderByField(f, d)))
+    val comboData = possibleOrderByFields.flatMap(f => OrderByDirection.values.map(d => OrderByField(f, d)))
     list.setListAndComboData(currentOrderByFields, comboData)
     list.onChange(data =>
       saveButtonDisabled.value = data.isEmpty

@@ -5,15 +5,18 @@ import scala.sys.process.*
 fork := true
 
 val versionNumber = "1.28"
+val scala3Version = "3.1.3"
 version := versionNumber
-scalaVersion := "3.1.3"
+scalaVersion := scala3Version
 
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",
 
   version := versionNumber,
 
-  scalaVersion := "3.1.3",
+  scalaVersion :=  scala3Version,
+
+  Compile / scalaVersion := scala3Version,
 
   Compile / mainClass := Some("dbtarzan.gui.Main"),
 
@@ -42,13 +45,18 @@ lazy val standardLibraries = Seq (
   ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
     ExclusionRule(organization="org.openjfx", name="javafx-web"),
     ExclusionRule(organization="org.openjfx", name="javafx-swing"),
-    ExclusionRule(organization="org.openjfx", name="javafx-fxml")
+    ExclusionRule(organization="org.openjfx", name="javafx-fxml"),
+    ExclusionRule(organization="org.openjfx", name="javafx-swt")
   )
 )
+
+
+
 def buildStrategy() = {
   assembly / assemblyMergeStrategy := {
     case "module-info.class" => MergeStrategy.discard
     case PathList("META-INF", _*) => MergeStrategy.discard
+    case "application.conf" => MergeStrategy.concat
     case x => {
       val oldStrategy = (assembly / assemblyMergeStrategy).value
       oldStrategy(x)
@@ -60,18 +68,10 @@ def buildProject(name: String) = {
   Project(name, file(s"prj${name}"))
     .settings(commonConfiguration)
     .settings(
-      libraryDependencies ++= standardLibraries // ++ javaFXLibraries
+      libraryDependencies ++= standardLibraries
     )
 }
-/*
-def excludeDependenciesOfOtherOses(name: String) = {
-  assembly / assemblyExcludedJars ++= {
-    val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
-    val cp = (assembly / fullClasspath).value
-    cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) && javaFXModules.exists(m => f.data.getName.contains(m)) }
-  }
-}
-*/
+
 lazy val linux = buildProject("linux")
     .settings(Seq(
       Debian / debianPackageDependencies ++= Seq("openjdk-17-jre"),
@@ -113,5 +113,3 @@ addCommandAlias("packageAll",
   "; packageMacOS" +
   "; packageSnap"
 )
-
-fork := true
