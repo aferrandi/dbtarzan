@@ -11,17 +11,20 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 DBTarzan changelog
 =================
 
+- Release 1.28
+
+Updated to Scala 3, Java 17, JavaFX 20, ScalaFX 20.
+
+Use Pekko instead of Akka (which is not more open source), for the actors.
+
+Reads the values in the databases using the types INT, FLOAT, STRING, which should improve the performance and allow to sort the columns in the GUI table correctly.
+
+
 - Release 1.27
 
 able to explore different databases simultanously connecting them via virtual foreign keys,
 that can be added directly in DBTarzan.
 
-- Release 1.26
 
-show foreign keys earlier, making it possible to follow the foreign keys of a row without waiting all rows to be loaded.
-
-double-clicking on a row or pressing enter with the row selected shows the vertical row panel with all the data of the row
-
-does only allow to store connections with identifiers as names (not <NEW> for example)
 
 
