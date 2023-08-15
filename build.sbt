@@ -63,7 +63,8 @@ def buildStrategy() = {
 }
 
 def buildProject(name: String) = {
-  val javaFXModules = Seq("base", "controls", "graphics", "media")
+  // we need to add web and swing to avoid compile errors, but we remove them later
+  val javaFXModules = Seq("base", "controls", "graphics", "media", "web", "swing")
   val javaFXLibraries = javaFXModules.map(module =>
     "org.openjfx" % s"javafx-$module" % "20" classifier name
   )
@@ -77,11 +78,16 @@ def buildProject(name: String) = {
     )
 }
 
+def onlyFilesIncludingTextInName(cp: Classpath, toIncludes: Seq[String]) = {
+  cp.filter(f => toIncludes.exists(toInclude => f.data.getName.contains(toInclude)))
+}
 def excludeDependenciesOfOtherOses(name: String) = {
+  val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
+  val modulesBut = Seq("javafx-web", "javafx-swing")
   assembly / assemblyExcludedJars ++= {
-    val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
     val cp = (assembly / fullClasspath).value
-    cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) }
+    val toExclude = onlyFilesIncludingTextInName(cp, osnamesBut) ++ onlyFilesIncludingTextInName(cp, modulesBut)
+    toExclude
   }
 }
 
