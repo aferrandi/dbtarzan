@@ -43,14 +43,10 @@ lazy val standardLibraries = Seq (
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,
   ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
-    ExclusionRule(organization="org.openjfx", name="javafx-web"),
-    ExclusionRule(organization="org.openjfx", name="javafx-swing"),
-    ExclusionRule(organization="org.openjfx", name="javafx-fxml"),
-    ExclusionRule(organization="org.openjfx", name="javafx-swt")
+    // you cannot use the ibraries requested by scalafx because they are only the ones in the OS of this PC
+    ExclusionRule(organization="org.openjfx")
   )
 )
-
-
 
 def buildStrategy() = {
   assembly / assemblyMergeStrategy := {
@@ -65,11 +61,26 @@ def buildStrategy() = {
 }
 
 def buildProject(name: String) = {
+  val javaFXModules = Seq("base", "controls", "graphics", "media")
+  val javaFXLibraries = javaFXModules.map(module =>
+    "org.openjfx" % s"javafx-$module" % "15" classifier name
+  )
   Project(name, file(s"prj${name}"))
-    .settings(commonConfiguration)
+    .settings( commonConfiguration)
     .settings(
-      libraryDependencies ++= standardLibraries
+      libraryDependencies ++= standardLibraries ++ javaFXLibraries
     )
+    .settings(
+      excludeDependenciesOfOtherOses(name)
+    )
+}
+
+def excludeDependenciesOfOtherOses(name: String) = {
+  assembly / assemblyExcludedJars ++= {
+    val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
+    val cp = (assembly / fullClasspath).value
+    cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) }
+  }
 }
 
 lazy val linux = buildProject("linux")
