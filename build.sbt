@@ -44,11 +44,10 @@ lazy val standardLibraries = Seq (
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,
   ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
+    // you cannot use the ibraries requested by scalafx because they are only the ones in the OS of this PC
     ExclusionRule(organization="org.openjfx")
   )
 )
-
-
 
 def buildStrategy() = {
   assembly / assemblyMergeStrategy := {
@@ -67,6 +66,10 @@ def buildProject(name: String) = {
   val javaFXModules = Seq("base", "controls", "graphics", "media")
   val javaFXLibraries = javaFXModules.map(module =>
     "org.openjfx" % s"javafx-$module" % "15" classifier name
+  )
+  val javaFXModules = Seq("base", "controls", "graphics", "media")
+  val javaFXLibraries = javaFXModules.map(module =>
+    "org.openjfx" % s"javafx-$module" % "20" classifier name
   )
   Project(name, file(s"prj${name}"))
     .settings( commonConfiguration)
