@@ -29,7 +29,7 @@ lazy val commonConfiguration = Seq(
 
   Test / resourceDirectory := baseDirectory.value / ".." / "src" / "test" / "resources",
 
-  Compile / scalacOptions ++= Seq("-Xfatal-warnings", "-Ykind-projector", "-deprecation"),
+  Compile / scalacOptions ++= Seq("-Xfatal-warnings", "-Ykind-projector", "-deprecation", "-feature", "-language:implicitConversions"),
 
   buildStrategy()
 
@@ -39,7 +39,7 @@ lazy val commonConfiguration = Seq(
 )
 
 lazy val standardLibraries = Seq (
-  ("io.spray" %% "spray-json" % "1.3.6").cross(CrossVersion.for3Use2_13),
+  "com.github.losizm" %% "grapple" % "13.0.0",
   ("org.apache.pekko" %% "pekko-actor" % "1.0.1"),
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,
