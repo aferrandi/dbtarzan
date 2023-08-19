@@ -16,7 +16,7 @@ given JsonInput[ForeignKeyDirection] with
   }
 
 given JsonOutput[ForeignKeyDirection] with
-  def write(u: ForeignKeyDirection): JsonObject = JsonString(u.toString)
+  def write(u: ForeignKeyDirection): JsonValue = JsonString(u.toString)
 
 
 case class FieldsOnTableOneDb(table : String, fields : List[String])
@@ -66,7 +66,7 @@ class ForeignKeysFile(dirPath: Path, filename: String, databaseId: DatabaseId, s
 
   def writeAsFile(list : List[ForeignKeysForTable]) : Unit = {
     val keys = mapFromForeignKeys(list)
-    FileReadWrite.writeFile(fileName, Json.toJson(keys))
+    FileReadWrite.writeFile(fileName, Json.toPrettyPrint(Json.toJson(keys)))
   }
 
   def readFromFile() : List[ForeignKeysForTable] = {

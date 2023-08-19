@@ -15,11 +15,10 @@ class DatabaseAdditionalKeysToFile(
   ) {
   private def saveForeignKeysToFile(foreignKeysFile : AdditionalForeignKeysFile, keys : List[AdditionalForeignKey]): Unit = {
     log.info(localization.savingForeignKeys(foreignKeysFile.fileName.toString))
-    try {
+    try
       foreignKeysFile.writeAsFile(keys)
-    } catch {
+    catch
       case e : Exception => log.error(localization.errorWritingKeys(foreignKeysFile.fileName.toString), e)
-    }
   }
 
 
