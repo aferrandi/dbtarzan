@@ -1,13 +1,9 @@
 package dbtarzan.config.password
 
-import dbtarzan.db.IdentifierDelimiters
 import grapple.json.{*, given}
 
-object PasswordJsonInput {
-  def read(json: JsonValue): Password = Password(json.as[JsonString].value)
-}
+given JsonInput[Password] with
+  def read(json: JsonValue): Password = Password(json.as[String])
 
-object PasswordJsonOutput {
-  def write(u: Password): JsonObject = JsonString(u.key)
-}
-
+given JsonOutput[Password] with
+  def write(u: Password): JsonValue = JsonString(u.key)

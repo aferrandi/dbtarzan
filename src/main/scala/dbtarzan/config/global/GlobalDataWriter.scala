@@ -7,7 +7,7 @@ import grapple.json.{*, given}
 /* writes the databases configuration file */
 object GlobalDataWriter {
 	def write(path : Path, data : GlobalData) : Unit  = {
-		val text = Json.toJson(data)
+		val text = Json.toPrettyPrint(Json.toJson(data))
 		FileReadWrite.writeFile(path, text)		
 	}
 }

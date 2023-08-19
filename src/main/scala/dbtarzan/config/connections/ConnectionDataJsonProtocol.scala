@@ -2,7 +2,7 @@ package dbtarzan.config.connections
 
 import dbtarzan.db.{CompositeId, IdentifierDelimiters, SchemaName}
 import grapple.json.{*, given}
-import dbtarzan.config.password.*
+import dbtarzan.config.password.{*, given}
 import dbtarzan.config.connections.ConnectionData
 
 given JsonInput[IdentifierDelimiters] with
@@ -15,7 +15,7 @@ given JsonInput[SchemaName] with
   def read(json: JsonValue): SchemaName = SchemaName(json.as[String])
 
 given JsonOutput[SchemaName] with
-  def write(u: SchemaName): JsonObject = JsonString(u.schema)
+  def write(u: SchemaName): JsonValue = JsonString(u.schema)
 
 given JsonInput[ConnectionData] with
   def read(json: JsonValue): ConnectionData = ConnectionData(
@@ -24,8 +24,9 @@ given JsonInput[ConnectionData] with
     json("driver"),
     json("url"),
     json.map[SchemaName]("schema"),
+
     json("user"),
-    PasswordJsonInput.read(json("password")),
+    json("password").as[Password],
     json.map[Boolean]("passwordEncrypted"),
     json.map[Int]("instances"),
     json.map[IdentifierDelimiters]("identifierDelimiters"),
@@ -43,7 +44,7 @@ given JsonOutput[ConnectionData] with
     "url" -> u.url,
     "schema" -> u.schema,
     "user" -> u.user,
-    "password" -> PasswordJsonOutput.write(u.password),
+    "password" -> u.password,
     "passwordEncrypted" -> u.passwordEncrypted,
     "instances" -> u.instances,
     "identifierDelimiters" -> u.identifierDelimiters,
