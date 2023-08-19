@@ -40,7 +40,7 @@ lazy val commonConfiguration = Seq(
 
 lazy val standardLibraries = Seq (
   "com.github.losizm" %% "grapple" % "13.0.0",
-  ("org.apache.pekko" %% "pekko-actor" % "1.0.1"),
+  "org.apache.pekko" %% "pekko-actor" % "1.0.1",
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,
   ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(

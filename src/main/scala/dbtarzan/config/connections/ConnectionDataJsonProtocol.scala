@@ -6,19 +6,19 @@ import dbtarzan.config.password.*
 import dbtarzan.config.connections.ConnectionData
 
 given JsonInput[IdentifierDelimiters] with
-  def read(json: JsonValue) = IdentifierDelimiters(json("start").as[String].charAt(0), json("end").as[String].charAt(0))
+  def read(json: JsonValue): IdentifierDelimiters = IdentifierDelimiters(json("start").as[String].charAt(0), json("end").as[String].charAt(0))
 
 given JsonOutput[IdentifierDelimiters] with
-  def write(u: IdentifierDelimiters) = Json.obj("start" -> u.start.toString, "end" -> u.end.toString)
+  def write(u: IdentifierDelimiters): JsonObject = Json.obj("start" -> u.start.toString, "end" -> u.end.toString)
 
 given JsonInput[SchemaName] with
-  def read(json: JsonValue) = SchemaName(json.as[String])
+  def read(json: JsonValue): SchemaName = SchemaName(json.as[String])
 
 given JsonOutput[SchemaName] with
-  def write(u: SchemaName) = JsonString(u.schema)
+  def write(u: SchemaName): JsonObject = JsonString(u.schema)
 
 given JsonInput[ConnectionData] with
-  def read(json: JsonValue) = ConnectionData(
+  def read(json: JsonValue): ConnectionData = ConnectionData(
     json("jar"),
     json("name"),
     json("driver"),
@@ -36,7 +36,7 @@ given JsonInput[ConnectionData] with
   )
 
 given JsonOutput[ConnectionData] with
-  def write(u: ConnectionData) = Json.obj(
+  def write(u: ConnectionData): JsonObject = Json.obj(
     "jar" -> u.jar,
     "name" -> u.name,
     "driver" -> u.driver,
