@@ -72,7 +72,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId,
   /**
     All the foreign keys from the table and TO the table (used in reverse order)
   */
-  def foreignKeys(tableId : TableId) : ForeignKeys = try {
+  def foreignKeys(tableId : TableId) : ForeignKeys = try 
       val meta = connection.getMetaData
       using(meta.getImportedKeys(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableId.tableName)) { rs =>
         val keysImported = rsToForeignKeys(rs) 
@@ -84,9 +84,7 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId,
           ForeignKeys(keysSorted)
         } 
       }
-    }
-    catch {
+    catch 
       case se : SQLException  => throw new Exception("Reading the foreign keys of the "+tableId.tableName +" table got "+ExceptionToText.sqlExceptionText(se), se)
       case ex : Throwable => throw new Exception("Reading the foreign keys of the "+tableId.tableName +" table got", ex)
-    }
 }

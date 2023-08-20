@@ -9,7 +9,8 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.{ForeignKeyLoader, ForeignKeysFile}
+import dbtarzan.db.foreignkeys.ForeignKeyLoader
+import dbtarzan.db.foreignkeys.files.ForeignKeysFile
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
 

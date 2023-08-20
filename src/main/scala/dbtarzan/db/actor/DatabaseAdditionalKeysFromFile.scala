@@ -1,6 +1,6 @@
 package dbtarzan.db.actor
 
-import dbtarzan.db.foreignkeys.AdditionalForeignKeysFile
+import dbtarzan.db.foreignkeys.files.AdditionalForeignKeysFile
 import dbtarzan.db.{AdditionalForeignKey, DatabaseId}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{DatabaseIdUtil, Logger}

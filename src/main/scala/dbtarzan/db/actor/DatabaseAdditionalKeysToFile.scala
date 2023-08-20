@@ -2,7 +2,7 @@ package dbtarzan.db.actor
 
 import java.nio.file.Path
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.AdditionalForeignKeysFile
+import dbtarzan.db.foreignkeys.files.AdditionalForeignKeysFile
 import dbtarzan.localization.Localization
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
 import dbtarzan.messages.Logger

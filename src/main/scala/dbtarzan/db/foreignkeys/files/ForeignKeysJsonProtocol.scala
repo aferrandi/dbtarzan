@@ -1,11 +1,8 @@
-package dbtarzan.db.foreignkeys
+package dbtarzan.db.foreignkeys.files
 
-import dbtarzan.db.*
-import dbtarzan.db.util.FileReadWrite
-import grapple.json.{ *, given }
-
-import java.nio.file.Path
-
+import dbtarzan.db.ForeignKeyDirection
+import dbtarzan.db.foreignkeys.*
+import grapple.json.{*, given}
 case class DeserializationException(msg: String, cause: Throwable = null) extends RuntimeException(msg, cause)
 
 given JsonInput[ForeignKeyDirection] with
@@ -18,12 +15,6 @@ given JsonInput[ForeignKeyDirection] with
 given JsonOutput[ForeignKeyDirection] with
   def write(u: ForeignKeyDirection): JsonValue = JsonString(u.toString)
 
-
-case class FieldsOnTableOneDb(table : String, fields : List[String])
-case class ForeignKeyOneDb(name: String, from : FieldsOnTableOneDb, to: FieldsOnTableOneDb, direction : ForeignKeyDirection)
-case class ForeignKeysOneDb(keys : List[ForeignKeyOneDb])
-case class ForeignKeysForTableOneDb(table : String, keys : ForeignKeysOneDb)
-case class ForeignKeysForTableListOneDb(keys : List[ForeignKeysForTableOneDb])
 
 given JsonInput[FieldsOnTableOneDb] with
   def read(json: JsonValue): FieldsOnTableOneDb = FieldsOnTableOneDb(json("table"), json("fields").as[List[String]])
@@ -59,42 +50,3 @@ given JsonInput[ForeignKeysForTableListOneDb] with
 
 given JsonOutput[ForeignKeysForTableListOneDb] with
   def write(u: ForeignKeysForTableListOneDb): JsonObject = Json.obj("keys" -> u.keys)
-
-
-class ForeignKeysFile(dirPath: Path, filename: String, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId) {
-  val fileName : Path = dirPath.resolve(filename+".fgk")
-
-  def writeAsFile(list : List[ForeignKeysForTable]) : Unit = {
-    val keys = mapFromForeignKeys(list)
-    FileReadWrite.writeFile(fileName, Json.toPrettyPrint(Json.toJson(keys)))
-  }
-
-  def readFromFile() : List[ForeignKeysForTable] = {
-    val text = FileReadWrite.readFile(fileName)
-    val keys = Json.parse(text).as[ForeignKeysForTableListOneDb].keys
-    mapToForeignKeys(keys)
-  }
-
-  private def mapToForeignKeys(keys: List[ForeignKeysForTableOneDb]): List[ForeignKeysForTable] = {
-    keys.map(k => {
-      ForeignKeysForTable(TableId(databaseId, simpleDatabaseId, k.table),
-        ForeignKeys(k.keys.keys.map(l => ForeignKey(l.name,
-          FieldsOnTable(TableId(databaseId, simpleDatabaseId, l.from.table), l.from.fields),
-          FieldsOnTable(TableId(databaseId, simpleDatabaseId, l.to.table), l.to.fields),
-          l.direction)))
-      )
-    })
-  }
-
-  private def mapFromForeignKeys(keys: List[ForeignKeysForTable]): List[ForeignKeysForTableOneDb] = {
-    keys.map(k => ForeignKeysForTableOneDb(k.tableId.tableName,
-      ForeignKeysOneDb(k.keys.keys.map(l => ForeignKeyOneDb(l.name,
-        FieldsOnTableOneDb(l.from.table.tableName, l.from.fields),
-        FieldsOnTableOneDb(l.to.table.tableName, l.to.fields),
-        l.direction)))
-    ))
-  }
-
-  def fileExist() : Boolean = FileReadWrite.fileExist(fileName)
-}
-
