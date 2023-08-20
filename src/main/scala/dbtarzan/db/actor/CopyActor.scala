@@ -34,10 +34,7 @@ class CopyActor(databaseId: DatabaseId,
   private val driverManger = new DriverManagerWithEncryption(encryptionKey)
   private val datasWithConnections: List[DataWithConnection] = datas.map(data => DataWithConnection(data, driverManger.getConnection(data)))
   // private val queryLoader = new QueryLoader(connection, log)
-  private val foreignKeysFiles = datasWithConnections.map(data => {
-    val simpleDatabaseId = SimpleDatabaseId(data.data.name)
-    simpleDatabaseId -> new ForeignKeysFile(keyFilesDirPath, DatabaseIdUtil.databaseIdText(databaseId), databaseId, simpleDatabaseId)
-  }).toMap
+  private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, DatabaseIdUtil.databaseIdText(databaseId))
 
   /* gets all the tables in the database/schema from the database metadata */
   private def tableNames(dataWithConnection: DataWithConnection) : List[String] = {
@@ -63,18 +60,18 @@ class CopyActor(databaseId: DatabaseId,
         val foreignKeyLoader = new ForeignKeyLoader(dataWithConnection.connection, databaseId, simpleDatabaseId, DBDefinition(schemaId, data.catalog), log)
         ForeignKeysForTable(tableId, foreignKeyLoader.foreignKeys(tableId))
       })
-      foreignKeysFiles.get(simpleDatabaseId).foreach(foreignKeysFile =>
-        foreignKeysFile.writeAsFile(keysForTables)
-      )
+      foreignKeysFile.writeAsFile(keysForTables)
     })
   }
 
-    def receive: Receive = {
-      case CopyToFile => {
-        val filePath = keyFilesDirPath.resolve(DatabaseIdUtil.databaseIdText(databaseId))
-        log.info(localization.writingFile(filePath))
-        loadAllKeysAndWriteThemToFile()
-        log.info(localization.fileWritten(filePath))
-      }
-    }
+  private def copyToFIle(): Unit = {
+    val filePath = keyFilesDirPath.resolve(DatabaseIdUtil.databaseIdText(databaseId))
+    log.info(localization.writingFile(filePath))
+    loadAllKeysAndWriteThemToFile()
+    log.info(localization.fileWritten(filePath))
+  }
+
+  def receive: Receive = {
+    case CopyToFile => copyToFIle()
+  }
 }

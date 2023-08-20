@@ -14,18 +14,26 @@ class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
   val fileName : Path = dirPath.resolve(databaseName+".fak")
 
   def writeAsFile(list : List[AdditionalForeignKey]) : Unit =
-    FileReadWrite.writeFile(fileName, Json.toPrettyPrint(Json.toJson(list)))
+    FileReadWrite.writeFile(fileName, toText(list))
+
+  def toText(list : List[AdditionalForeignKey]): String = {
+    Json.toPrettyPrint(Json.toJson(list))
+  }
 
   def readFromFile(databaseId: DatabaseId) : List[AdditionalForeignKey] = {
     val text = FileReadWrite.readFile(fileName)
     try
-      Json.parse(text).as[List[AdditionalForeignKey]]
+      parsetText(text)
     catch
       case _: Throwable => {
         val keys = readVer1(databaseId, text)
         writeAsFile(keys)
         keys
     }
+  }
+
+  def parsetText(text: String): List[AdditionalForeignKey] = {
+    Json.parse(text).as[List[AdditionalForeignKey]]
   }
 
   private def readVer1(databaseId: DatabaseId, text: String): List[AdditionalForeignKey] = {
