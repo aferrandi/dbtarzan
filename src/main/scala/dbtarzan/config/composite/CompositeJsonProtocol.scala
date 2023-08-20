@@ -1,25 +1,25 @@
 package dbtarzan.config.composite
 
 import dbtarzan.db.{Composite, CompositeId, SimpleDatabaseId}
-import spray.json._
+import scala.language.implicitConversions
 
-object CompositeIdJsonProtocol extends DefaultJsonProtocol {
-  implicit val compositeIdFormat: RootJsonFormat[CompositeId] = jsonFormat(CompositeId.apply,
-    "compositeName"
-  )
-}
+import grapple.json.{ *, given }
 
-object SimpleDatabaseIdJsonProtocol extends DefaultJsonProtocol {
-  implicit val simpleDatabaseIdFormat: RootJsonFormat[SimpleDatabaseId] = jsonFormat(SimpleDatabaseId.apply,
-    "databaseName"
-  )
-}
+given JsonInput[CompositeId] with
+  def read(json: JsonValue): CompositeId = CompositeId(json("compositeName"))
 
-object CompositeJsonProtocol extends DefaultJsonProtocol {
-  import CompositeIdJsonProtocol._
-  import SimpleDatabaseIdJsonProtocol._
-  implicit val compositeFormat: RootJsonFormat[Composite] = jsonFormat(Composite.apply,
-  	"compositeId",
-    "databaseIds",
-  	)
-}
+given JsonOutput[CompositeId] with
+  def write(u: CompositeId): JsonObject = Json.obj("compositeName" -> u.compositeName)
+
+given JsonInput[SimpleDatabaseId] with
+  def read(json: JsonValue): SimpleDatabaseId = SimpleDatabaseId(json("databaseName"))
+
+given JsonOutput[SimpleDatabaseId] with
+  def write(u: SimpleDatabaseId): JsonObject = Json.obj("databaseName" -> u.databaseName)
+
+given JsonInput[Composite] with
+  def read(json: JsonValue): Composite = Composite(json("compositeId"), json("databaseIds").as[List[SimpleDatabaseId]])
+
+given JsonOutput[Composite] with
+  def write(u: Composite): JsonObject = Json.obj("compositeId" -> u.compositeId, "databaseIds" -> u.databaseIds)
+

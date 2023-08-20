@@ -1,33 +1,30 @@
 package dbtarzan.config.global
 
-import spray.json._
-
-import dbtarzan.config.password.PasswordJsonProtocol
-
-object LanguageJsonProtocol extends DefaultJsonProtocol {
+import dbtarzan.config.password.VerificationKey
+import dbtarzan.db.CompositeId
 import dbtarzan.localization.Language
-  implicit val languageFormat: RootJsonFormat[Language] = jsonFormat(Language.apply, "language")
-}
+import dbtarzan.config.password.{*, given}
+import grapple.json.{*, given}
+given JsonInput[Language] with
+  def read(json: JsonValue): Language = Language(json("language"))
 
-object VerificationKeyJsonProtocol extends DefaultJsonProtocol {
-  import PasswordJsonProtocol._
-  import dbtarzan.config.password.VerificationKey
-  implicit object VerificationKeyFormat extends JsonFormat[VerificationKey] {
-    def write(verificationKey: VerificationKey): JsString = PasswordFormat.write(verificationKey.password)
-    def read(json: JsValue): VerificationKey = VerificationKey(PasswordFormat.read(json))
-  }
-}
+given JsonOutput[Language] with
+  def write(u: Language): JsonObject = Json.obj("language" -> u.language)
 
-object EncryptionDataJsonProtocol extends DefaultJsonProtocol {
-import VerificationKeyJsonProtocol._
-  implicit val encryptionDataFormat: RootJsonFormat[EncryptionData] = jsonFormat(EncryptionData.apply, "verificationKey")
-}
+given JsonInput[VerificationKey] with
+  def read(json: JsonValue): VerificationKey = VerificationKey(json("password"))
 
-object GlobalDataJsonProtocol extends DefaultJsonProtocol {
-  import LanguageJsonProtocol._
-  import EncryptionDataJsonProtocol._
-  implicit val globalDataFormat: RootJsonFormat[GlobalData] = jsonFormat(GlobalData.apply,
-  	"language",
-    "encryptionData"
-  	)
-}
+given JsonOutput[VerificationKey] with
+  def write(u: VerificationKey): JsonObject = Json.obj("password" -> u.password)
+
+given JsonInput[EncryptionData] with
+  def read(json: JsonValue): EncryptionData = EncryptionData(json("verificationKey"))
+
+given JsonOutput[EncryptionData] with
+  def write(u: EncryptionData): JsonObject = Json.obj("verificationKey" -> u.verificationKey)
+
+given JsonInput[GlobalData] with
+  def read(json: JsonValue): GlobalData = GlobalData(json("language"), json.map[EncryptionData]("encryptionData"))
+
+given JsonOutput[GlobalData] with
+  def write(u: GlobalData): JsonObject = Json.obj("language" -> u.language, "encryptionData" -> u.encryptionData)

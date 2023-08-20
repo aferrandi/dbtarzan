@@ -1,11 +1,12 @@
 import sbt.ExclusionRule
 
+import scala.collection.immutable.Seq
 import scala.sys.process.*
 
 fork := true
 
-val versionNumber = "1.28"
-val scala3Version = "3.1.3"
+val versionNumber = "1.29"
+val scala3Version = "3.3.0"
 version := versionNumber
 scalaVersion := scala3Version
 
@@ -28,7 +29,7 @@ lazy val commonConfiguration = Seq(
 
   Test / resourceDirectory := baseDirectory.value / ".." / "src" / "test" / "resources",
 
-  Compile / scalacOptions ++= Seq("-Xfatal-warnings", "-Ykind-projector", "-deprecation"),
+  Compile / scalacOptions ++= Seq("-Xfatal-warnings", "-Ykind-projector", "-deprecation", "-feature", "-language:implicitConversions"),
 
   buildStrategy()
 
@@ -38,8 +39,8 @@ lazy val commonConfiguration = Seq(
 )
 
 lazy val standardLibraries = Seq (
-  ("io.spray" %% "spray-json" % "1.3.6").cross(CrossVersion.for3Use2_13),
-  ("org.apache.pekko" %% "pekko-actor" % "1.0.1").cross(CrossVersion.for3Use2_13),
+  "com.github.losizm" %% "grapple" % "13.0.0",
+  "org.apache.pekko" %% "pekko-actor" % "1.0.1",
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,
   ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
@@ -53,6 +54,7 @@ def buildStrategy() = {
     case "module-info.class" => MergeStrategy.discard
     case PathList("META-INF", _*) => MergeStrategy.discard
     case "application.conf" => MergeStrategy.concat
+    case "javafx-web" => MergeStrategy.discard
     case x => {
       val oldStrategy = (assembly / assemblyMergeStrategy).value
       oldStrategy(x)
@@ -61,7 +63,8 @@ def buildStrategy() = {
 }
 
 def buildProject(name: String) = {
-  val javaFXModules = Seq("base", "controls", "graphics", "media")
+  // we need to add web and swing to avoid compile errors, but we remove them later
+  val javaFXModules = Seq("base", "controls", "graphics", "media", "web", "swing")
   val javaFXLibraries = javaFXModules.map(module =>
     "org.openjfx" % s"javafx-$module" % "20" classifier name
   )
@@ -75,11 +78,16 @@ def buildProject(name: String) = {
     )
 }
 
+def onlyFilesIncludingTextInName(cp: Classpath, toIncludes: Seq[String]) = {
+  cp.filter(f => toIncludes.exists(toInclude => f.data.getName.contains(toInclude)))
+}
 def excludeDependenciesOfOtherOses(name: String) = {
+  val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
+  val modulesBut = Seq("javafx-web", "javafx-swing")
   assembly / assemblyExcludedJars ++= {
-    val osnamesBut = Seq("win", "mac", "linux").filter(n => n != name)
     val cp = (assembly / fullClasspath).value
-    cp filter { f => osnamesBut.exists(osName => f.data.getName.contains(osName)) }
+    val toExclude = onlyFilesIncludingTextInName(cp, osnamesBut) ++ onlyFilesIncludingTextInName(cp, modulesBut)
+    toExclude
   }
 }
 

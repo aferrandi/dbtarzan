@@ -1,46 +1,56 @@
 package dbtarzan.config.connections
 
-import dbtarzan.config.password.PasswordJsonProtocol
-import spray.json._
+import dbtarzan.db.{CompositeId, IdentifierDelimiters, SchemaName}
+import grapple.json.{*, given}
+import dbtarzan.config.password.{*, given}
+import dbtarzan.config.connections.ConnectionData
 
-object IdentifierDelimitersJsonProtocol extends DefaultJsonProtocol {
-import dbtarzan.db.IdentifierDelimiters
-  implicit val identifierDelimitersFormat: RootJsonFormat[IdentifierDelimiters] = jsonFormat(IdentifierDelimiters.apply,
-  	"start", 
-  	"end"
-  	)
-}
+given JsonInput[IdentifierDelimiters] with
+  def read(json: JsonValue): IdentifierDelimiters = IdentifierDelimiters(json("start").as[String].charAt(0), json("end").as[String].charAt(0))
 
-object SchemaJsonProtocol extends DefaultJsonProtocol {
-  import dbtarzan.db.SchemaName
-  implicit object SchemaFormat extends JsonFormat[SchemaName] {
-    def write(schema: SchemaName): JsString = JsString(schema.schema)
+given JsonOutput[IdentifierDelimiters] with
+  def write(u: IdentifierDelimiters): JsonObject = Json.obj("start" -> u.start.toString, "end" -> u.end.toString)
 
-    def read(json: JsValue): SchemaName = json match {
-      case JsString(key) => SchemaName(key)
-      case _ => throw new MatchError("can only make a Schema from a json string")
-    }
-  }
-}
+given JsonInput[SchemaName] with
+  def read(json: JsonValue): SchemaName = SchemaName(json.as[String])
 
-object ConnectionDataJsonProtocol extends DefaultJsonProtocol {
-import IdentifierDelimitersJsonProtocol._
-import PasswordJsonProtocol._
-import SchemaJsonProtocol._
-  implicit val connectionDataFormat: RootJsonFormat[ConnectionData] = jsonFormat(ConnectionData.apply,
-  	"jar", 
-  	"name", 
-  	"driver", 
-  	"url", 
-  	"schema", 
-  	"user", 
-  	"password", 
-    "passwordEncrypted", 
-  	"instances", 
-  	"identifierDelimiters",
-    "maxRows",
-		"queryTimeoutInSeconds",
-    "maxFieldSize",
-		"catalog"
-  	)
-}
+given JsonOutput[SchemaName] with
+  def write(u: SchemaName): JsonValue = JsonString(u.schema)
+
+given JsonInput[ConnectionData] with
+  def read(json: JsonValue): ConnectionData = ConnectionData(
+    json("jar"),
+    json("name"),
+    json("driver"),
+    json("url"),
+    json.map[SchemaName]("schema"),
+
+    json("user"),
+    json("password").as[Password],
+    json.map[Boolean]("passwordEncrypted"),
+    json.map[Int]("instances"),
+    json.map[IdentifierDelimiters]("identifierDelimiters"),
+    json.map[Int]("maxRows"),
+    json.map[Int]("queryTimeoutInSeconds"),
+    json.map[Int]("maxFieldSize"),
+    json.map[String]("catalog")
+  )
+
+given JsonOutput[ConnectionData] with
+  def write(u: ConnectionData): JsonObject = Json.obj(
+    "jar" -> u.jar,
+    "name" -> u.name,
+    "driver" -> u.driver,
+    "url" -> u.url,
+    "schema" -> u.schema,
+    "user" -> u.user,
+    "password" -> u.password,
+    "passwordEncrypted" -> u.passwordEncrypted,
+    "instances" -> u.instances,
+    "identifierDelimiters" -> u.identifierDelimiters,
+    "maxRows" -> u.maxRows,
+    "queryTimeoutInSeconds" -> u.queryTimeoutInSeconds,
+    "maxFieldSize" -> u.maxFieldSize,
+    "catalog" -> u.catalog
+  )
+

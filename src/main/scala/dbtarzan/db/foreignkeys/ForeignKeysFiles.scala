@@ -1,20 +1,23 @@
 package dbtarzan.db.foreignkeys
 
-import dbtarzan.db._
+import dbtarzan.db.*
 import dbtarzan.db.util.FileReadWrite
-import spray.json._
+import grapple.json.{ *, given }
 
 import java.nio.file.Path
 
-class ForeignKeyDirectionFormat extends RootJsonFormat[ForeignKeyDirection] {
-  def write(direction: ForeignKeyDirection): JsValue = JsString(DBEnumsText.foreignKeyDirectionToText(direction))
+case class DeserializationException(msg: String, cause: Throwable = null) extends RuntimeException(msg, cause)
 
-  def read(json: JsValue): ForeignKeyDirection = json match {
-    case JsString("STRAIGHT") => ForeignKeyDirection.STRAIGHT
-    case JsString("TURNED") => ForeignKeyDirection.TURNED
-    case _ => throw new DeserializationException("ForeignKeyDirection string expected")
+given JsonInput[ForeignKeyDirection] with
+  def read(json: JsonValue): ForeignKeyDirection = json.as[JsonString].value match {
+    case "STRAIGHT" => ForeignKeyDirection.STRAIGHT
+    case "TURNED" => ForeignKeyDirection.TURNED
+    case _ => throw DeserializationException("ForeignKeyDirection string expected")
   }
-}
+
+given JsonOutput[ForeignKeyDirection] with
+  def write(u: ForeignKeyDirection): JsonValue = JsonString(u.toString)
+
 
 case class FieldsOnTableOneDb(table : String, fields : List[String])
 case class ForeignKeyOneDb(name: String, from : FieldsOnTableOneDb, to: FieldsOnTableOneDb, direction : ForeignKeyDirection)
@@ -22,31 +25,53 @@ case class ForeignKeysOneDb(keys : List[ForeignKeyOneDb])
 case class ForeignKeysForTableOneDb(table : String, keys : ForeignKeysOneDb)
 case class ForeignKeysForTableListOneDb(keys : List[ForeignKeysForTableOneDb])
 
-object ForeignKeysForTableJsonProtocolOneDb {
-  import DefaultJsonProtocol._
+given JsonInput[FieldsOnTableOneDb] with
+  def read(json: JsonValue): FieldsOnTableOneDb = FieldsOnTableOneDb(json("table"), json("fields").as[List[String]])
 
-  implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
-  implicit val fieldsOnTableFormatOneDb: RootJsonFormat[FieldsOnTableOneDb] = jsonFormat(FieldsOnTableOneDb.apply, "table", "fields" )
-  implicit val foreignKeyFormatOneDb: RootJsonFormat[ForeignKeyOneDb] = jsonFormat(ForeignKeyOneDb.apply, "name", "from", "to", "direction")
-  implicit val foreignKeysFormatOneDb: RootJsonFormat[ForeignKeysOneDb] = jsonFormat(ForeignKeysOneDb.apply, "keys")
-  implicit val foreignKeysForTableFormatOneDb: RootJsonFormat[ForeignKeysForTableOneDb] = jsonFormat(ForeignKeysForTableOneDb.apply, "name", "keys")
-  implicit val foreignKeysForTableListFormatOneDb: RootJsonFormat[ForeignKeysForTableListOneDb] = jsonFormat(ForeignKeysForTableListOneDb.apply, "keys")
-}
+given JsonOutput[FieldsOnTableOneDb] with
+  def write(u: FieldsOnTableOneDb): JsonObject = Json.obj("table" -> u.table, "fields" -> u.fields)
+
+given JsonInput[ForeignKeyOneDb] with
+  def read(json: JsonValue): ForeignKeyOneDb = ForeignKeyOneDb(
+    json("name"),
+    json("from").as[FieldsOnTableOneDb],
+    json("to").as[FieldsOnTableOneDb],
+    json("direction").as[ForeignKeyDirection]
+  )
+
+given JsonOutput[ForeignKeyOneDb] with
+  def write(u: ForeignKeyOneDb): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to, "direction" -> u.direction)
+
+given JsonInput[ForeignKeysOneDb] with
+  def read(json: JsonValue): ForeignKeysOneDb = ForeignKeysOneDb(json("keys").as[List[ForeignKeyOneDb]])
+
+given JsonOutput[ForeignKeysOneDb] with
+  def write(u: ForeignKeysOneDb): JsonObject = Json.obj("keys" -> u.keys)
+
+given JsonInput[ForeignKeysForTableOneDb] with
+  def read(json: JsonValue): ForeignKeysForTableOneDb = ForeignKeysForTableOneDb(json("table"), json("keys").as[ForeignKeysOneDb])
+
+given JsonOutput[ForeignKeysForTableOneDb] with
+  def write(u: ForeignKeysForTableOneDb): JsonObject = Json.obj("table" -> u.table, "keys" -> u.keys)
+
+given JsonInput[ForeignKeysForTableListOneDb] with
+  def read(json: JsonValue): ForeignKeysForTableListOneDb = ForeignKeysForTableListOneDb(json("keys").as[List[ForeignKeysForTableOneDb]])
+
+given JsonOutput[ForeignKeysForTableListOneDb] with
+  def write(u: ForeignKeysForTableListOneDb): JsonObject = Json.obj("keys" -> u.keys)
+
 
 class ForeignKeysFile(dirPath: Path, filename: String, databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId) {
-  import DefaultJsonProtocol._
-  import ForeignKeysForTableJsonProtocolOneDb._
-
   val fileName : Path = dirPath.resolve(filename+".fgk")
 
   def writeAsFile(list : List[ForeignKeysForTable]) : Unit = {
     val keys = mapFromForeignKeys(list)
-    FileReadWrite.writeFile(fileName, keys.toJson.prettyPrint)
+    FileReadWrite.writeFile(fileName, Json.toPrettyPrint(Json.toJson(keys)))
   }
 
   def readFromFile() : List[ForeignKeysForTable] = {
     val text = FileReadWrite.readFile(fileName)
-    val keys = text.parseJson.convertTo[ForeignKeysForTableListOneDb].keys
+    val keys = Json.parse(text).as[ForeignKeysForTableListOneDb].keys
     mapToForeignKeys(keys)
   }
 

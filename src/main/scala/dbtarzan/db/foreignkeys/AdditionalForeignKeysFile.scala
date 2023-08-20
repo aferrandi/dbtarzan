@@ -1,69 +1,114 @@
 package dbtarzan.db.foreignkeys
 
 import dbtarzan.db.util.FileReadWrite
-import dbtarzan.db.{AdditionalForeignKey, CompositeId, DatabaseId, FieldsOnTable, ForeignKey, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList, SimpleDatabaseId, TableId}
-import spray.json.DefaultJsonProtocol._
-import spray.json._
+import dbtarzan.db.{AdditionalForeignKey, CompositeId, DatabaseId, FieldsOnTable, ForeignKey, ForeignKeyDirection, ForeignKeys, ForeignKeysForTable, ForeignKeysForTableList, SimpleDatabaseId, TableId}
+import dbtarzan.localization.Language
+import grapple.json.{*, given}
 
 import java.nio.file.Path
-object TableJsonProtocol extends  DefaultJsonProtocol {
-  implicit val simpleDatabaseIdFormat: RootJsonFormat[SimpleDatabaseId] = jsonFormat(SimpleDatabaseId.apply, "databaseName")
-  implicit val compositeIdFormat: RootJsonFormat[CompositeId] = jsonFormat(CompositeId.apply, "compositeName")
-  implicit val databaseIdFormat: RootJsonFormat[DatabaseId] = jsonFormat(DatabaseId.apply, "origin")
-  implicit val tableIdFormat: RootJsonFormat[TableId] = jsonFormat(TableId.apply, "databaseId", "simpleDatabaseId", "tableName")
-}
 
-object ForeignKeysForTableJsonProtocol {
-  import DefaultJsonProtocol._
-  import TableJsonProtocol.tableIdFormat
-  implicit val foreignKeyDirectionFormat: ForeignKeyDirectionFormat = new ForeignKeyDirectionFormat()
-  implicit val fieldsOnTableFormat: RootJsonFormat[FieldsOnTable] = jsonFormat(FieldsOnTable.apply, "table", "fields" )
-  implicit val foreignKeyFormat: RootJsonFormat[ForeignKey] = jsonFormat(ForeignKey.apply, "name", "from", "to", "direction")
-  implicit val foreignKeysFormat: RootJsonFormat[ForeignKeys] = jsonFormat(ForeignKeys.apply, "keys")
-  implicit val foreignKeysForTableFormat: RootJsonFormat[ForeignKeysForTable] = jsonFormat(ForeignKeysForTable.apply, "name", "keys")
-  implicit val foreignKeysForTableListFormat: RootJsonFormat[ForeignKeysForTableList] = jsonFormat(ForeignKeysForTableList.apply, "keys")
-}
-object AdditionalForeignKeysJsonProtocol {
-  import ForeignKeysForTableJsonProtocol.fieldsOnTableFormat
-  implicit val foreignKeyFormat: RootJsonFormat[AdditionalForeignKey] = jsonFormat(AdditionalForeignKey.apply, "name", "from", "to")
-}
+given JsonInput[SimpleDatabaseId] with
+  def read(json: JsonValue): SimpleDatabaseId = SimpleDatabaseId(json("databaseName"))
+
+given JsonOutput[SimpleDatabaseId] with
+  def write(u: SimpleDatabaseId): JsonObject = Json.obj("databaseName" -> u.databaseName)
+
+given JsonInput[CompositeId] with
+  def read(json: JsonValue): CompositeId = CompositeId(json("compositeName"))
+
+given JsonOutput[CompositeId] with
+  def write(u: CompositeId): JsonObject = Json.obj("compositeName" -> u.compositeName)
+
+given JsonInput[DatabaseId] with
+  def read(json: JsonValue): DatabaseId = DatabaseId(json("origin"))
+
+given JsonOutput[DatabaseId] with
+  def write(u: DatabaseId): JsonObject = Json.obj("origin" -> u.origin)
+
+given JsonInput[TableId] with
+  def read(json: JsonValue): TableId = TableId(json("databaseId"), json("simpleDatabaseId"), json("tableName"))
+
+given JsonOutput[TableId] with
+  def write(u: TableId): JsonObject = Json.obj("databaseId" -> u.databaseId, "simpleDatabaseId" -> u.simpleDatabaseId, "tableName" -> u.tableName)
+
+given JsonInput[FieldsOnTable] with
+  def read(json: JsonValue): FieldsOnTable = FieldsOnTable(json("table"), json("fields").as[List[String]])
+
+given JsonOutput[FieldsOnTable] with
+  def write(u: FieldsOnTable): JsonObject = Json.obj("table" -> u.table, "fields" -> u.fields)
+
+given JsonInput[ForeignKey] with
+  def read(json: JsonValue): ForeignKey = ForeignKey(
+    json("name"),
+    json("from").as[FieldsOnTable],
+    json("to").as[FieldsOnTable],
+    json("direction").as[ForeignKeyDirection]
+  )
+
+given JsonOutput[ForeignKey] with
+  def write(u: ForeignKey): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to, "direction" -> u.direction)
+
+given JsonInput[ForeignKeys] with
+  def read(json: JsonValue): ForeignKeys = ForeignKeys(json("keys").as[List[ForeignKey]])
+
+given JsonOutput[ForeignKeys] with
+  def write(u: ForeignKeys): JsonObject = Json.obj("keys" -> u.keys)
+
+given JsonInput[ForeignKeysForTable] with
+  def read(json: JsonValue): ForeignKeysForTable = ForeignKeysForTable(json("tableId"), json("keys").as[ForeignKeys])
+
+given JsonOutput[ForeignKeysForTable] with
+  def write(u: ForeignKeysForTable): JsonObject = Json.obj("tableId" -> u.tableId, "keys" -> u.keys)
+
+given JsonInput[AdditionalForeignKey] with
+  def read(json: JsonValue): AdditionalForeignKey = AdditionalForeignKey(
+    json("name"),
+    json("from").as[FieldsOnTable],
+    json("to").as[FieldsOnTable]
+  )
+
+given JsonOutput[AdditionalForeignKey] with
+  def write(u: AdditionalForeignKey): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to)
+
 
 
 case class AdditionalForeignKeyVer1(name: String, from : FieldsOnTableOneDb, to: FieldsOnTableOneDb)
 
-object AdditionalForeignKeysVer1JsonProtocol {
-  import ForeignKeysForTableJsonProtocolOneDb.fieldsOnTableFormatOneDb
-  implicit val foreignKeyFormatVer1: RootJsonFormat[AdditionalForeignKeyVer1] = jsonFormat(AdditionalForeignKeyVer1.apply, "name", "from", "to")
-}
+given JsonInput[AdditionalForeignKeyVer1] with
+  def read(json: JsonValue): AdditionalForeignKeyVer1 = AdditionalForeignKeyVer1(
+    json("name"),
+    json("from").as[FieldsOnTableOneDb],
+    json("to").as[FieldsOnTableOneDb]
+  )
+
+given JsonOutput[AdditionalForeignKeyVer1] with
+  def write(u: AdditionalForeignKeyVer1): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to)
 
 
 /* to write and read the additional foreign keys from a file. */
 class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
-  import AdditionalForeignKeysJsonProtocol._
-  import AdditionalForeignKeysVer1JsonProtocol._
 
   val fileName : Path = dirPath.resolve(databaseName+".fak")
 
   def writeAsFile(list : List[AdditionalForeignKey]) : Unit =
-    FileReadWrite.writeFile(fileName, list.toJson.prettyPrint)
-  
+    FileReadWrite.writeFile(fileName, Json.toPrettyPrint(Json.toJson(list)))
+
   def readFromFile(databaseId: DatabaseId) : List[AdditionalForeignKey] = {
     val text = FileReadWrite.readFile(fileName)
-    try {
-      text.parseJson.convertTo[List[AdditionalForeignKey]]
-    } catch {
+    try
+      Json.parse(text).as[List[AdditionalForeignKey]]
+    catch
       case _: Throwable => {
         val keys = readVer1(databaseId, text)
         writeAsFile(keys)
         keys
-      }
     }
   }
 
   private def readVer1(databaseId: DatabaseId, text: String): List[AdditionalForeignKey] = {
     databaseId.origin match {
       case Left(simpleDatabaseId: SimpleDatabaseId) =>
-        text.parseJson.convertTo[List[AdditionalForeignKeyVer1]]
+        Json.parse(text).as[List[AdditionalForeignKeyVer1]]
           .map(k => AdditionalForeignKey(k.name,
             FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.from.table), k.from.fields),
             FieldsOnTable(TableId(databaseId, simpleDatabaseId, k.to.table), k.to.fields)

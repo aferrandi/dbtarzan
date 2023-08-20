@@ -1,12 +1,9 @@
 package dbtarzan.config.password
 
-import spray.json._
+import grapple.json.{*, given}
 
-object PasswordJsonProtocol extends DefaultJsonProtocol {
-  implicit object PasswordFormat extends JsonFormat[Password] {
-    def write(password: Password): JsString = JsString(password.key)
-    def read(json: JsValue): Password = (json: @unchecked) match {
-      case JsString(key) => Password(key)
-    }
-  }
-}
+given JsonInput[Password] with
+  def read(json: JsonValue): Password = Password(json.as[String])
+
+given JsonOutput[Password] with
+  def write(u: Password): JsonValue = JsonString(u.key)
