@@ -16,4 +16,15 @@ class GlobalDataReaderTest extends AnyFlatSpec {
     val extracted = GlobalDataReader.parseText(json)
     assert(extracted === data)
   }
+
+  "A global configuration" should "be parseable also with no password" in {
+    val data = GlobalData(
+      Languages.ITALIAN,
+      None
+    )
+    val json = Json.toPrettyPrint(Json.toJson(data))
+    println(json)
+    val extracted = GlobalDataReader.parseText(json)
+    assert(extracted === data)
+  }
 }
