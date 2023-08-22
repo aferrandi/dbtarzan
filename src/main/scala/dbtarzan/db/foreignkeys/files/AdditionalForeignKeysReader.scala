@@ -4,7 +4,7 @@ import dbtarzan.db.*
 import grapple.json.{*, given}
 
 object AdditionalForeignKeysReader {
-  def parsetText(text: String): List[AdditionalForeignKey] = {
+  def parseText(text: String): List[AdditionalForeignKey] = {
     Json.parse(text).as[List[AdditionalForeignKey]]
   }
 

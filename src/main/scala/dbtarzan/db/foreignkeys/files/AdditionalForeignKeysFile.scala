@@ -19,7 +19,7 @@ class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
   def readFromFile(databaseId: DatabaseId) : List[AdditionalForeignKey] = {
     val text = FileReadWrite.readFile(fileName)
     try
-      AdditionalForeignKeysReader.parsetText(text)
+      AdditionalForeignKeysReader.parseText(text)
     catch
       case _: Throwable => {
         val keys = AdditionalForeignKeysReader.readVer1(databaseId, text)
