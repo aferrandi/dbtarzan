@@ -17,7 +17,10 @@ given JsonOutput[ForeignKeyDirection] with
 
 
 given JsonInput[FieldsOnTableOneDb] with
-  def read(json: JsonValue): FieldsOnTableOneDb = FieldsOnTableOneDb(json("table"), json("fields").as[List[String]])
+  def read(json: JsonValue): FieldsOnTableOneDb = FieldsOnTableOneDb(
+    json("table"),
+    json("fields").as[List[String]]
+  )
 
 given JsonOutput[FieldsOnTableOneDb] with
   def write(u: FieldsOnTableOneDb): JsonObject = Json.obj("table" -> u.table, "fields" -> u.fields)
@@ -31,7 +34,12 @@ given JsonInput[ForeignKeyOneDb] with
   )
 
 given JsonOutput[ForeignKeyOneDb] with
-  def write(u: ForeignKeyOneDb): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to, "direction" -> u.direction)
+  def write(u: ForeignKeyOneDb): JsonObject = Json.obj(
+    "name" -> u.name,
+    "from" -> u.from,
+    "to" -> u.to,
+    "direction" -> u.direction
+  )
 
 given JsonInput[ForeignKeysOneDb] with
   def read(json: JsonValue): ForeignKeysOneDb = ForeignKeysOneDb(json("keys").as[List[ForeignKeyOneDb]])
@@ -40,13 +48,21 @@ given JsonOutput[ForeignKeysOneDb] with
   def write(u: ForeignKeysOneDb): JsonObject = Json.obj("keys" -> u.keys)
 
 given JsonInput[ForeignKeysForTableOneDb] with
-  def read(json: JsonValue): ForeignKeysForTableOneDb = ForeignKeysForTableOneDb(json("table"), json("keys").as[ForeignKeysOneDb])
+  def read(json: JsonValue): ForeignKeysForTableOneDb = ForeignKeysForTableOneDb(
+    json.get("table") match {
+      case Some(table) => table
+      case _ => json("name") // backward compatibility
+    },
+    json("keys").as[ForeignKeysOneDb]
+  )
 
 given JsonOutput[ForeignKeysForTableOneDb] with
   def write(u: ForeignKeysForTableOneDb): JsonObject = Json.obj("table" -> u.table, "keys" -> u.keys)
 
 given JsonInput[ForeignKeysForTableListOneDb] with
-  def read(json: JsonValue): ForeignKeysForTableListOneDb = ForeignKeysForTableListOneDb(json("keys").as[List[ForeignKeysForTableOneDb]])
+  def read(json: JsonValue): ForeignKeysForTableListOneDb = ForeignKeysForTableListOneDb(
+    json("keys").as[List[ForeignKeysForTableOneDb]]
+  )
 
 given JsonOutput[ForeignKeysForTableListOneDb] with
   def write(u: ForeignKeysForTableListOneDb): JsonObject = Json.obj("keys" -> u.keys)

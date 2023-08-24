@@ -22,16 +22,30 @@ given JsonOutput[DatabaseId] with
   def write(u: DatabaseId): JsonObject = Json.obj("origin" -> u.origin)
 
 given JsonInput[TableId] with
-  def read(json: JsonValue): TableId = TableId(json("databaseId"), json("simpleDatabaseId"), json("tableName"))
+  def read(json: JsonValue): TableId = TableId(
+    json("databaseId"),
+    json("simpleDatabaseId"),
+    json("tableName")
+  )
 
 given JsonOutput[TableId] with
-  def write(u: TableId): JsonObject = Json.obj("databaseId" -> u.databaseId, "simpleDatabaseId" -> u.simpleDatabaseId, "tableName" -> u.tableName)
+  def write(u: TableId): JsonObject = Json.obj(
+    "databaseId" -> u.databaseId,
+    "simpleDatabaseId" -> u.simpleDatabaseId,
+    "tableName" -> u.tableName
+  )
 
 given JsonInput[FieldsOnTable] with
-  def read(json: JsonValue): FieldsOnTable = FieldsOnTable(json("table"), json("fields").as[List[String]])
+  def read(json: JsonValue): FieldsOnTable = FieldsOnTable(
+    json("table"),
+    json("fields").as[List[String]]
+  )
 
 given JsonOutput[FieldsOnTable] with
-  def write(u: FieldsOnTable): JsonObject = Json.obj("table" -> u.table, "fields" -> u.fields)
+  def write(u: FieldsOnTable): JsonObject = Json.obj(
+    "table" -> u.table,
+    "fields" -> u.fields
+  )
 
 given JsonInput[ForeignKey] with
   def read(json: JsonValue): ForeignKey = ForeignKey(
@@ -42,7 +56,12 @@ given JsonInput[ForeignKey] with
   )
 
 given JsonOutput[ForeignKey] with
-  def write(u: ForeignKey): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to, "direction" -> u.direction)
+  def write(u: ForeignKey): JsonObject = Json.obj(
+    "name" -> u.name,
+    "from" -> u.from,
+    "to" -> u.to,
+    "direction" -> u.direction
+  )
 
 given JsonInput[ForeignKeys] with
   def read(json: JsonValue): ForeignKeys = ForeignKeys(json("keys").as[List[ForeignKey]])
@@ -51,7 +70,10 @@ given JsonOutput[ForeignKeys] with
   def write(u: ForeignKeys): JsonObject = Json.obj("keys" -> u.keys)
 
 given JsonInput[ForeignKeysForTable] with
-  def read(json: JsonValue): ForeignKeysForTable = ForeignKeysForTable(json("tableId"), json("keys").as[ForeignKeys])
+  def read(json: JsonValue): ForeignKeysForTable = ForeignKeysForTable(
+    json("tableId"),
+    json("keys").as[ForeignKeys]
+  )
 
 given JsonOutput[ForeignKeysForTable] with
   def write(u: ForeignKeysForTable): JsonObject = Json.obj("tableId" -> u.tableId, "keys" -> u.keys)
@@ -64,8 +86,11 @@ given JsonInput[AdditionalForeignKey] with
   )
 
 given JsonOutput[AdditionalForeignKey] with
-  def write(u: AdditionalForeignKey): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to)
-
+  def write(u: AdditionalForeignKey): JsonObject = Json.obj(
+    "name" -> u.name,
+    "from" -> u.from,
+    "to" -> u.to
+  )
 
 given JsonInput[AdditionalForeignKeyVer1] with
   def read(json: JsonValue): AdditionalForeignKeyVer1 = AdditionalForeignKeyVer1(
@@ -75,5 +100,9 @@ given JsonInput[AdditionalForeignKeyVer1] with
   )
 
 given JsonOutput[AdditionalForeignKeyVer1] with
-  def write(u: AdditionalForeignKeyVer1): JsonObject = Json.obj("name" -> u.name, "from" -> u.from, "to" -> u.to)
+  def write(u: AdditionalForeignKeyVer1): JsonObject = Json.obj(
+    "name" -> u.name,
+    "from" -> u.from,
+    "to" -> u.to
+  )
 
