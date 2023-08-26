@@ -69,6 +69,7 @@ class CopyActor(databaseId: DatabaseId,
     log.info(localization.writingFile(filePath))
     loadAllKeysAndWriteThemToFile()
     log.info(localization.fileWritten(filePath))
+    context.stop(self)
   }
 
   def receive: Receive = {
