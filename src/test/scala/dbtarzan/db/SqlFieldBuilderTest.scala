@@ -13,6 +13,15 @@ class SqlFieldBuilderTest extends AnyFlatSpec {
     assert("name='John'" === text)
   }
 
+  "a null text field without attributes" should "give  [name IS NULL]" in {
+    val builder = new SqlFieldBuilder(
+      fields(),
+      QueryAttributes(None, DBDefinition(None, None), None)
+    )
+    val text = builder.buildFieldText(FieldWithValue("name", null))
+    assert("name IS NULL" === text)
+  }
+
   "a numeric field without attributes" should "give a simple [name = value]" in {
     val builder = new SqlFieldBuilder(
       fields(),
@@ -29,6 +38,17 @@ class SqlFieldBuilderTest extends AnyFlatSpec {
     )
     val text = builder.buildFieldText(FieldWithValue("age", "23"))
     assert("\"age\"=23" === text)
+  }
+
+  "a text field not found in the table fields" should "give a simple [name = 'value']" in {
+    val builder = new SqlFieldBuilder(
+      fields(),
+      QueryAttributes(None, DBDefinition(None, None), None)
+    )
+    val thrown = intercept[Exception] {
+      builder.buildFieldText(FieldWithValue("email", "john@john.com"))
+    }
+    assert(thrown.getMessage === "field email not found in column types Set(NAME, AGE)")
   }
 
   private def fields() = {

@@ -4,7 +4,6 @@ package dbtarzan.messages
 import java.time.LocalDateTime
 import org.scalatest.flatspec.AnyFlatSpec
 
-
 class LogTextTest extends AnyFlatSpec {
   "An error message with exception" should "be parseable" in {
     val error = Error(LocalDateTime.of(2020,1, 1, 10, 30), "error", Some(new Exception("ex")))
