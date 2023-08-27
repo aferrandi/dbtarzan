@@ -58,6 +58,7 @@ class English extends Localization {
     def checkAll = "Check All"
     def uncheckAll = "Uncheck All"
     def queryText = "Query text"
+    def filterFields = "Filter fields"
     def columnsDescription = "Columns Description"
     def copyMessageToClipboard = "Copy Message To Clipboard"
     def rowDetails = "Row Details"

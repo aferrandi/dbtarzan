@@ -59,6 +59,7 @@ class Spanish extends Localization {
     def uncheckAll = "Desmarcar todo"
     def copyMessageToClipboard = "Copiar mensaje al portapapeles"
     def queryText = "Texto De La Consulta"
+    def filterFields = "filtrar los campos"
     def columnsDescription = "Descripción De Las Columnas"    
     def rowDetails = "Detalles de la fila"  
     def buildForeignKeysFile = "Crear un archivo con las claves externas"

@@ -59,6 +59,7 @@ class Italian extends Localization {
     def uncheckAll = "Rimuovi tutte le spunte"
     def copyMessageToClipboard = "Copia Messaggio Nel Clipboard"
     def queryText = "Testo Della Query"
+    def filterFields = "Filtra i campi"
     def columnsDescription = "Descrizione Delle Colonne"
     def rowDetails = "Dettagli della riga"  
     def buildForeignKeysFile = "Crea file con le chiavi esterne"

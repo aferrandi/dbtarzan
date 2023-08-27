@@ -930,3 +930,9 @@ mkmacosx/._jdk*
 /sourceforge/release/DBTarzan-Install-1.27.exe
 /sourceforge/release/dbtarzan_1.27.0_amd64.snap
 /sourceforge/release/dbtarzan_1.27_all.deb
+/sourceforge/release/dbtarzan-assembly-1.28_linux.jar
+/sourceforge/release/dbtarzan-assembly-1.28_mac.jar
+/sourceforge/release/dbtarzan-assembly-1.28_win.jar
+/sourceforge/release/DBTarzan-Install-1.28.exe
+/sourceforge/release/dbtarzan_1.28.0_amd64.snap
+/sourceforge/release/dbtarzan_1.28_all.deb

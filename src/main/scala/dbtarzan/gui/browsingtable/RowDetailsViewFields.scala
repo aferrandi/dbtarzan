@@ -35,13 +35,17 @@ class RowDetailsViewFields(dbTable : DBTable) extends TControlBuilder {
   def filterFields(text: String): Unit = {
     val textLower = text.toLowerCase
     names.zip(cells).foreach(
-      {  case (name, cell) => {
+      {  case (name, cell) =>
         val visible = name.name.toLowerCase.contains(textLower)
-        cell.content.visible = visible
-        cell.content.managed = visible
-       }
+        changeFieldVisibility(cell, visible)
       }
     )
+  }
+
+  private def changeFieldVisibility(cell: RowDetailsCell, visible: Boolean): Unit = {
+    val content = cell.content
+    content.visible = visible
+    content.managed = visible
   }
 
   def control : Parent = cellsContainer

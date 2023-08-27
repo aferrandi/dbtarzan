@@ -59,6 +59,7 @@ trait Localization {
   def uncheckAll: String
   def copyMessageToClipboard : String
   def queryText : String
+  def filterFields: String
   def columnsDescription : String
   def rowDetails: String
   def buildForeignKeysFile: String

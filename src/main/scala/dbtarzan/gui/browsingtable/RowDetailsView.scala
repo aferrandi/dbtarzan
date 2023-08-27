@@ -2,7 +2,7 @@ package dbtarzan.gui.browsingtable
 
 import dbtarzan.db.{DBTable, Row}
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.gui.util.FilterText
+import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryTablesByPattern
 import scalafx.geometry.{Insets, Pos}
@@ -17,7 +17,7 @@ class RowDetailsView(dbTable : DBTable, localization : Localization) extends TCo
   private val filterText = new FilterText(text => rowDetailsViewFields.filterFields(text), localization)
 
   private val pane = new BorderPane {
-    top = filterText.control
+    top = JFXUtil.withLeftTitle(filterText.control, localization.filterFields)
     center = rowDetailsViewFields.control
   }
 
