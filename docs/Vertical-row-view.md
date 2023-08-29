@@ -29,3 +29,8 @@ The vertical row view can be shown or hidden very easily (it is just needed to p
 Additionally it is possible to copy the content of individual fields from the vertical row, differently from the [copy menu](Copy-Data) of the table.
 
 The vertical row displays the whole content of the fields of the row, also when they are big.
+
+### Filter fields
+
+On the top of the view there is a text box, called Filter fields.
+Writing on this text box, the view shows only the fields with a name **containing the text**.

@@ -11,6 +11,14 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 DBTarzan changelog
 =================
 
+- Release 1.29
+
+Replaced the (not more maintained) JSON Spray library with the Scala 3 compatible Grapple library.
+
+Uses only Scala 3, without Scala 2.13 compatibility layer
+
+In the vertical row view new text box to filter the displayed fields
+
 - Release 1.28
 
 Updated to Scala 3, Java 17, JavaFX 20, ScalaFX 20.
@@ -20,10 +28,6 @@ Use Pekko instead of Akka (which is not more open source), for the actors.
 Reads the values in the databases using the types INT, FLOAT, STRING, which should improve the performance and allow to sort the columns in the GUI table correctly.
 
 
-- Release 1.27
-
-able to explore different databases simultanously connecting them via virtual foreign keys,
-that can be added directly in DBTarzan.
 
 
 
