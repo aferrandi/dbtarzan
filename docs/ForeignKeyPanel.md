@@ -18,6 +18,7 @@ The foreign key panel displays:
 
 Select one or more rows and **double-click** on one of the foreign keys.
 This opens a new tab showing all the rows connected to the selected rows by the foreign key.
+Holding the _Ctrl_ button down in the same time will close the original tab.
 
 For example, selecting the album "Led Zeppelin I" and double-clicking on the Tracks foreign keys:
 
