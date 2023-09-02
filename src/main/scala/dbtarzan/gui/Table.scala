@@ -1,24 +1,18 @@
 package dbtarzan.gui
 
-import org.apache.pekko.actor.ActorRef
-import dbtarzan.db._
+import dbtarzan.db.*
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.gui.table._
+import dbtarzan.gui.table.*
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{Logger, _}
-import scalafx.Includes._
+import dbtarzan.messages.*
+import org.apache.pekko.actor.ActorRef
+import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
-import scalafx.scene.control.TableColumn._
-import scalafx.scene.control.cell.CheckBoxTableCell
+import scalafx.scene.control.TableColumn.*
 import scalafx.scene.control.{SelectionMode, TableColumn, TableView}
 import scalafx.scene.image.ImageView
-import scalafx.beans.property.{StringProperty, BooleanProperty, IntegerProperty, DoubleProperty}
-import scalafx.beans.value.ObservableValue
-import scalafx.geometry.Pos
-
-import java.lang
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/
@@ -43,11 +37,11 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
 
   /* builds table with the given columns with the possibility to check the rows and to select multiple rows */
   def buildTable(): TableView[CheckedRow] = new TableView[CheckedRow](buffer) {
-    columns += buildCheckColumn()
+    columns += TableColumnsBuild.buildCheckColumn()
     columns ++= fields.zipWithIndex.map({ case (field, i) => field.fieldType match {
-      case FieldType.STRING => buildStringColumn(field, i)
-      case FieldType.INT => buildIntColumn(field, i)
-      case FieldType.FLOAT => buildFloatColumn(field, i)
+      case FieldType.STRING => TableColumnsBuild.buildStringColumn(field, i)
+      case FieldType.INT => TableColumnsBuild.buildIntColumn(field, i)
+      case FieldType.FLOAT => TableColumnsBuild.buildFloatColumn(field, i)
     } })
     editable = true
     selectionModel().selectionMode() = SelectionMode.Multiple
@@ -67,45 +61,6 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
   /* check the check box of all the loaded rows */
   def checkAll(check : Boolean) : Unit =
     buffer.foreach(row => row.checked.value = check)
-
- /* gets the nth column from the database row */
-  def buildStringColumn(field : Field, index : Int): TableColumn[CheckedRow,String] = new TableColumn[CheckedRow,String]() {
-    text = field.name
-    cellValueFactory = { _.value.values(index).asInstanceOf[StringProperty] } // when showing a row, shows the value for the column field
-    prefWidth = 180
-  }.delegate
-
-  def buildIntColumn(field: Field, index: Int): TableColumn[CheckedRow, Int] = new TableColumn[CheckedRow, Int]() {
-    text = field.name
-    comparator = Ordering.Int
-    // style = "-fx-alignment: CENTER-RIGHT;"
-    cellValueFactory = {
-        _.value.values(index).asInstanceOf[ObservableValue[Int, Int]]
-      } // when showing a row, shows the value for the column field
-    prefWidth = 180
-
-  }.delegate
-
-  def buildFloatColumn(field: Field, index: Int): TableColumn[CheckedRow, Double] = new TableColumn[CheckedRow, Double]() {
-    text = field.name
-    comparator = Ordering.Double.TotalOrdering
-    cellValueFactory = {
-      _.value.values(index).asInstanceOf[ObservableValue[Double, Double]]
-    } // when showing a row, shows the value for the column field
-    prefWidth = 180
-  }.delegate
-  /* the ckeck box column is special */
-  def buildCheckColumn(): TableColumn[CheckedRow, lang.Boolean] =  {
-    val checkColumn = new TableColumn[CheckedRow, java.lang.Boolean] {
-        text = ""
-        cellValueFactory = { _.value.checked.delegate  }
-        prefWidth = 40
-        editable = true
-    }
-    log.debug("Check column created")
-    checkColumn.setCellFactory(CheckBoxTableCell.forTableColumn(checkColumn))
-    checkColumn
-  }
 
   private def selectedRows() : ObservableBuffer[CheckedRow]  =
     table.selectionModel().selectedItems
@@ -132,7 +87,6 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
 
   def setRowDoubleClickListener(listener: Row => Unit) : Unit =
     JFXUtil.onAction(table, (row: CheckedRow, _: Boolean) => listener(row.row))
-
 
   private def displayKeyForFields(headingsTexts : List[HeadingTextAndIcon]) : Unit =
     headingsTexts.foreach(ht => {

@@ -3,7 +3,7 @@ package dbtarzan.gui
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.config.password.{EncryptionKey, VerificationKey}
 import dbtarzan.db.DatabaseId
-import dbtarzan.gui.browsingtable.TableMenu
+import dbtarzan.gui.browsingtable.TableButtonBar
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.types.ConfigPath
@@ -86,7 +86,7 @@ class MainGUI(
 
   private def handleShortcut(ev : KeyEvent) : Unit =
     postInitData match {
-      case Some(pa) => TableMenu.handleKeyCombination(pa.guiActor, ev, () => databaseTabs.currentTableId)
+      case Some(pa) => TableButtonBar.handleKeyCombination(pa.guiActor, ev, () => databaseTabs.currentTableId)
       case None => println("MainGUI: guiActor not defined")
     }
 

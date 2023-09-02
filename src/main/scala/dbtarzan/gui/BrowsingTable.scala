@@ -1,20 +1,20 @@
 package dbtarzan.gui
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db._
-import dbtarzan.gui.browsingtable._
+import dbtarzan.db.*
+import dbtarzan.gui.browsingtable.*
 import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.orderby.OrderByEditorStarter
 import dbtarzan.gui.tabletabs.TTableForMapWithId
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages._
-import scalafx.Includes._
+import dbtarzan.messages.*
+import scalafx.Includes.*
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
-import scalafx.scene.control.{Menu, MenuBar, MenuItem}
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.control.{Button, Menu, MenuBar, MenuItem}
+import scalafx.scene.layout.{BorderPane, VBox}
 import scalafx.stage.Stage
 
 /* table + constraint input box + foreign keys */
@@ -50,10 +50,12 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   splitter.splitPanelWithoutRowDetailsView()
   private val progressBar = new TableProgressBar(removeProgressBar)
+  private val buttonBar = TableButtonBar.buildButtonBar(guiActor, queryId, localization)
+  JFXUtil.changeVBoxItemVisibility(buttonBar, false)
   private val layout = new BorderPane {
-    top = buildTop()
+    top =  new VBox { children = List(buttonBar, buildTop()) }
     center = splitter.control
-    bottom = progressBar.control
+    bottom =progressBar.control
   }
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
@@ -121,7 +123,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   private def buildTop() : BorderPane = new BorderPane {        
     stylesheets += "orderByMenuBar.css"
-    left = TableMenu.buildMainMenu(guiActor, queryId, localization)
+    left = new Button(JFXUtil.threeLines) {
+      stylesheets += "flatButton.css"
+      onAction = { _ => JFXUtil.changeVBoxItemVisibility(buttonBar, !buttonBar.isVisible) }
+    }
     center = JFXUtil.withLeftTitle(queryText.textBox, localization.where+":")
     right =new MenuBar {
       menus = List(buildOrderByMenu())

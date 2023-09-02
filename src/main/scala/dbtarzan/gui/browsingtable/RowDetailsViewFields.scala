@@ -2,6 +2,7 @@ package dbtarzan.gui.browsingtable
 
 import dbtarzan.db.{DBTable, Field, Row}
 import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.util.JFXUtil
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Parent
 import scalafx.scene.control.ScrollPane
@@ -43,9 +44,7 @@ class RowDetailsViewFields(dbTable : DBTable) extends TControlBuilder {
   }
 
   private def changeFieldVisibility(cell: RowDetailsCell, visible: Boolean): Unit = {
-    val content = cell.content
-    content.visible = visible
-    content.managed = visible
+    JFXUtil.changeVBoxItemVisibility(cell.content,visible)
   }
 
   def control : Parent = cellsContainer

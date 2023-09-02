@@ -76,6 +76,11 @@
       case _ => false
     }
 
+    def changeVBoxItemVisibility(item: Node, visible: Boolean): Unit = {
+      item.visible = visible
+      item.managed = visible
+    }
+
     def showInfoAlert(header : String, info : String) : Unit =
       new Alert(AlertType.Information) {
         headerText= header
