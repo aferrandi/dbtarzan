@@ -33,6 +33,8 @@ class Spanish extends Localization {
     def foreignKeys = "Llaves extranjeras"
     def connectionReset = "Restablecer la conexión"
     def orderBy = "Ordenar por"
+    def ascending = "Ascendente"
+    def descending = "Desciendente"
     def where = "Where"
     def more = "Más..."
     def message = "Mensaje"    

@@ -4,7 +4,7 @@ import dbtarzan.db.{Field, OrderByDirection, OrderByField, OrderByFields}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, ListViewAddFromCombo, ListViewAddFromComboBuilder, TComboStrategy}
 import dbtarzan.localization.Localization
-import scalafx.Includes._
+import scalafx.Includes.*
 import scalafx.beans.property.BooleanProperty
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
@@ -26,9 +26,6 @@ class OrderByEditor(
   localization : Localization
 ) extends TControlBuilder {
   private val saveButtonDisabled = BooleanProperty(true)
-
-  val upIcon: Image = JFXUtil.loadIcon("up.png")
-  val downIcon: Image = JFXUtil.loadIcon("down.png")
 
   private val currentOrderByFields = currentOrderBys.map(_.fields).getOrElse(List.empty[OrderByField])
 
@@ -65,13 +62,8 @@ class OrderByEditor(
   }
 
   private def iconFromDirection(value: Option[OrderByField]): Image = {
-    value.map(v =>
-      v.direction match {
-        case OrderByDirection.ASC => upIcon
-        case OrderByDirection.DESC => downIcon
-      }).orNull
+    value.map(v => UpDownIcons.iconFromDirection(v.direction)).orNull
   }
-
 
   private val layout = new BorderPane {
     center = list.control

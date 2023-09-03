@@ -76,7 +76,7 @@ case class CheckNoTableRows(queryId : QueryId)
 case class SwitchRowDetails(queryId : QueryId) 
     extends TWithQueryId
 
-case class RequestOrderByField(queryId : QueryId, field : Field) 
+case class RequestOrderByField(queryId : QueryId, field : Field, direction: OrderByDirection)
     extends TWithQueryId
 
 case class RequestOrderByEditor(queryId : QueryId) 

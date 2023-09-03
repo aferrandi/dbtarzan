@@ -56,7 +56,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
     case request : RequestRemovalTabsBefore => requestRemovalTabsBefore(request.queryId)
     case request : RequestRemovalThisTab => requestRemovalThisTab(request.queryId)
-    case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field))
+    case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field, order.direction))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
     case rows : ResponseRows => createTabWith(rows.queryId, rows.structure, addRows(_, rows))
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))

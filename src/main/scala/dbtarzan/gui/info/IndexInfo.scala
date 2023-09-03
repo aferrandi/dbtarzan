@@ -2,6 +2,7 @@ package dbtarzan.gui.info
 
 import dbtarzan.db.{Index, OrderByDirection}
 import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.orderby.UpDownIcons
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import scalafx.beans.property.{ObjectProperty, StringProperty}
@@ -10,7 +11,7 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Label, TableCell, TableColumn, TableView}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.VBox
-import scalafx.Includes._
+import scalafx.Includes.*
 
 class IndexInfo(localization : Localization, index: Index) extends TControlBuilder {
   case class TableLine(fieldName: String, direction: Option[OrderByDirection])
@@ -42,11 +43,7 @@ class IndexInfo(localization : Localization, index: Index) extends TControlBuild
   }
 
   private def directionToImage(direction: Option[OrderByDirection]): Image =
-    direction match {
-      case Some(OrderByDirection.ASC) => upIcon
-      case Some(OrderByDirection.DESC) => downIcon
-      case _ => upIcon
-    }
+    direction.map(UpDownIcons.iconFromDirection(_)).getOrElse(UpDownIcons.upIcon)
 
   /* the column with the description of the database field */
   private def directionColumn() = new TableColumn[TableLine, Image] {
@@ -67,6 +64,7 @@ class IndexInfo(localization : Localization, index: Index) extends TControlBuild
     val lines = index.fields.map(field => TableLine(field.name, field.direction))
     buffer ++= lines
   }
+
 
   def control : Parent = content
 }

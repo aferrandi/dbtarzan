@@ -33,6 +33,8 @@ trait Localization {
   def foreignKeys: String
   def connectionReset: String
   def orderBy: String
+  def ascending: String
+  def descending: String
   def where: String
   def more: String
   def message: String

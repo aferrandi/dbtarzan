@@ -33,6 +33,8 @@ class English extends Localization {
     def foreignKeys = "Foreign keys"
     def connectionReset = "Connection Reset"
     def orderBy = "Order by"
+    def ascending = "Ascending"
+    def descending = "Descending"
     def where = "Where"
     def more= "More..."
     def message = "Message"

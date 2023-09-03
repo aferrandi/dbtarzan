@@ -5,7 +5,7 @@ import dbtarzan.db.*
 import dbtarzan.gui.browsingtable.*
 import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.gui.orderby.OrderByEditorStarter
+import dbtarzan.gui.orderby.{OrderByEditorStarter, UpDownIcons}
 import dbtarzan.gui.tabletabs.TTableForMapWithId
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
@@ -14,6 +14,7 @@ import scalafx.Includes.*
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
 import scalafx.scene.control.{Button, Menu, MenuBar, MenuItem}
+import scalafx.scene.image.ImageView
 import scalafx.scene.layout.{BorderPane, VBox}
 import scalafx.stage.Stage
 
@@ -82,8 +83,8 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private def noMaxFieldSize(): Boolean =
     structure.attributes.maxFieldSize.isEmpty
 
-  def orderByField(field : Field) : Unit = {
-    val orderByFields = OrderByFields(List(OrderByField(field, OrderByDirection.ASC)))
+  def orderByField(field : Field, direction: OrderByDirection) : Unit = {
+    val orderByFields = OrderByFields(List(OrderByField(field, direction)))
     val newStructure = dbTable.withOrderByFields(orderByFields)
     useNewTable(newStructure, false)
   }
@@ -104,12 +105,22 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   private def buildOrderByMenu() = new Menu(localization.orderBy) {
       items = dbTable.fields.map(f =>
-        new MenuItem(f.name) {
-            onAction = { (_: ActionEvent) => guiActor ! RequestOrderByField(queryId, f) }
+        new Menu(f.name) {
+          items = List(
+            menuAscDesc(f, localization.ascending, OrderByDirection.ASC),
+            menuAscDesc(f, localization.descending, OrderByDirection.DESC)
+          )
         }) :+ new MenuItem(localization.more) {
             onAction = { (_: ActionEvent) => guiActor ! RequestOrderByEditor(queryId) }
         }
     }
+
+  private def menuAscDesc(field: Field, text: String, direction: OrderByDirection) = {
+    new MenuItem(text) {
+      graphic = new ImageView(UpDownIcons.iconFromDirection(direction))
+      onAction = { (_: ActionEvent) => guiActor ! RequestOrderByField(queryId, field, direction) }
+    }
+  }
 
   private def openTableConnectedByForeignKey(key : ForeignKey, closeCurrentTab : Boolean) : Unit = {
       log.debug("Selected "+key)
