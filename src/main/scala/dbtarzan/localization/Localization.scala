@@ -62,6 +62,7 @@ trait Localization {
   def filterFields: String
   def columnsDescription : String
   def rowDetails: String
+  def refresh: String
   def buildForeignKeysFile: String
   def areYouSureClose: String
   def areYouSureSaveConnections: String

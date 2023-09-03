@@ -1,5 +1,6 @@
 package dbtarzan.gui.browsingtable
 
+import dbtarzan.gui.browsingtable.TableButtonBar.button
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.*
@@ -44,7 +45,8 @@ object TableButtonBar {
         button(localization.closeAllTabs, "deleteAll", (_: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
         button(localization.checkAll, CHECK_ALL_KEY, "checkAll", (_: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
         button(localization.uncheckAll, CHECK_NONE_KEY, "checkNone", (_: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
-        button(localization.rowDetails, ROW_DETAILS_KEY, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId))
+        button(localization.rowDetails, ROW_DETAILS_KEY, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
+        button(localization.refresh, ROW_DETAILS_KEY, "refresh", (ev: ActionEvent) => guiActor ! ReloadQuery(queryId, false))
       )
       spacing = 5
     }

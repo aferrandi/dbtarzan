@@ -62,6 +62,7 @@ class English extends Localization {
     def columnsDescription = "Columns Description"
     def copyMessageToClipboard = "Copy Message To Clipboard"
     def rowDetails = "Row Details"
+    def refresh = "Refresh"
     def buildForeignKeysFile = "Build foreign keys file"
     def areYouSureClose = "Are you sure you want to close without saving?"
     def areYouSureSaveConnections = "Are you sure you want to save the connections?"

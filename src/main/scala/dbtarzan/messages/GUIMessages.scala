@@ -82,6 +82,9 @@ case class RequestOrderByField(queryId : QueryId, field : Field)
 case class RequestOrderByEditor(queryId : QueryId) 
     extends TWithQueryId
 
+case class ReloadQuery(queryId : QueryId, closeCurrentTab: Boolean)
+    extends TWithQueryId
+
 case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
 case class DatabaseIds(names : List[DatabaseId])

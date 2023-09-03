@@ -92,6 +92,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     OrderByEditorStarter.openOrderByEditor(stage(), dbTable, useNewTable, localization)
   }
 
+  def reloadQuery(closeCurrentTab: Boolean) : Unit = {
+    useNewTable(dbTable.structure, closeCurrentTab)
+  }
+
   private def removeProgressBar() : Unit = 
     layout.bottom = null
 

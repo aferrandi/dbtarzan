@@ -1,7 +1,7 @@
 package dbtarzan.db
 
 /* Represents the table of a database, or better the result of a query (where, order by) on a single table in the database */
-class DBTable (structure : DBTableStructure) {
+class DBTable (val structure : DBTableStructure) {
   def tableDescription : TableDescription = structure.description
 
   def fields : List[Field] = structure.columns.fields

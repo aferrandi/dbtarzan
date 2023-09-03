@@ -61,6 +61,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     case rows : ResponseRows => createTabWith(rows.queryId, rows.structure, addRows(_, rows))
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
+    case reloadQuery: ReloadQuery => tables.tableWithQueryId(reloadQuery.queryId, _.reloadQuery(reloadQuery.closeCurrentTab))
     case _ => log.error(localization.errorTableMessage(msg))
   }
 
