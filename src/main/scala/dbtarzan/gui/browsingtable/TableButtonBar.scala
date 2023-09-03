@@ -1,6 +1,5 @@
 package dbtarzan.gui.browsingtable
 
-import dbtarzan.gui.browsingtable.TableButtonBar.button
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.*
@@ -8,7 +7,7 @@ import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.event.ActionEvent
 import scalafx.scene.Node
-import scalafx.scene.control.{Button, ButtonBar}
+import scalafx.scene.control.Button
 import scalafx.scene.image.ImageView
 import scalafx.scene.input.{KeyCode, KeyCodeCombination, KeyCombination, KeyEvent}
 import scalafx.scene.layout.HBox
@@ -20,7 +19,8 @@ object TableButtonBar {
     val CLOSE_TAB_AFTER_KEY = new KeyCodeCombination(KeyCode.F, KeyCombination.ControlDown, KeyCombination.ShiftDown)
     val CHECK_ALL_KEY = new KeyCodeCombination(KeyCode.A, KeyCombination.ControlDown, KeyCombination.ShiftDown)
     val CHECK_NONE_KEY = new KeyCodeCombination(KeyCode.N, KeyCombination.ControlDown, KeyCombination.ShiftDown)
-    val ROW_DETAILS_KEY = new KeyCodeCombination(KeyCode.R, KeyCombination.ControlDown)
+    val REFRESH_KEY = new KeyCodeCombination(KeyCode.R, KeyCombination.ControlDown)
+    val REFRESH_KEEP_KEY = new KeyCodeCombination(KeyCode.R, KeyCombination.ControlDown, KeyCombination.ShiftDown)
 
     private def button(text: String, code: KeyCodeCombination, icon: String, ev : ActionEvent => Unit) : Button =
       new Button(text) {
@@ -45,8 +45,8 @@ object TableButtonBar {
         button(localization.closeAllTabs, "deleteAll", (_: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
         button(localization.checkAll, CHECK_ALL_KEY, "checkAll", (_: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
         button(localization.uncheckAll, CHECK_NONE_KEY, "checkNone", (_: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
-        button(localization.rowDetails, ROW_DETAILS_KEY, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
-        button(localization.refresh, ROW_DETAILS_KEY, "refresh", (ev: ActionEvent) => guiActor ! ReloadQuery(queryId, false))
+        button(localization.rowDetails, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
+        button(localization.refresh, REFRESH_KEY, "refresh", (ev: ActionEvent) => guiActor ! ReloadQuery(queryId, true))
       )
       spacing = 5
     }
@@ -58,6 +58,7 @@ object TableButtonBar {
             else if(CLOSE_TAB_AFTER_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RequestRemovalTabsAfter(id))
             else if(CHECK_ALL_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CheckAllTableRows(id))
             else if(CHECK_NONE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CheckNoTableRows(id))
-            else if(ROW_DETAILS_KEY.`match`(ev)) tableId().foreach(id => guiActor ! SwitchRowDetails(id))
+            else if(REFRESH_KEY.`match`(ev)) tableId().foreach(id => guiActor ! ReloadQuery(id, true))
+            else if(REFRESH_KEEP_KEY.`match`(ev)) tableId().foreach(id => guiActor ! ReloadQuery(id, false))
         }
 }
