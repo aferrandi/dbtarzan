@@ -7,8 +7,7 @@ import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.event.ActionEvent
 import scalafx.scene.Node
-import scalafx.scene.control.ButtonBar.ButtonData
-import scalafx.scene.control.{Button, ButtonBar, ToggleButton}
+import scalafx.scene.control.{Button, ButtonBar}
 import scalafx.scene.image.ImageView
 import scalafx.scene.input.{KeyCode, KeyCodeCombination, KeyCombination, KeyEvent}
 import scalafx.scene.layout.HBox
@@ -37,14 +36,6 @@ object TableButtonBar {
           graphic = new ImageView(JFXUtil.loadIcon(s"${icon}.png"))
       }
 
-    private def toggleButton(text: String, code: KeyCodeCombination, icon: String, ev : ActionEvent => Unit) : ToggleButton =
-      new ToggleButton(text) {
-        onAction = ev
-        tooltip = code.displayText
-        stylesheets += "flatButton.css"
-        graphic = new ImageView(JFXUtil.loadIcon(s"${icon}.png"))
-      }
-
     def buildButtonBar(guiActor: ActorRef, queryId : QueryId, localization : Localization): HBox = new HBox() {
       children = List(
         button(localization.closeThisTab, CLOSE_THIS_TAB, "deleteThis", (_: ActionEvent) => guiActor ! RequestRemovalThisTab(queryId)),
@@ -53,7 +44,7 @@ object TableButtonBar {
         button(localization.closeAllTabs, "deleteAll", (_: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.databaseId)),
         button(localization.checkAll, CHECK_ALL_KEY, "checkAll", (_: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
         button(localization.uncheckAll, CHECK_NONE_KEY, "checkNone", (_: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
-        toggleButton(localization.rowDetails, ROW_DETAILS_KEY, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId))
+        button(localization.rowDetails, ROW_DETAILS_KEY, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId))
       )
       spacing = 5
     }
