@@ -30,12 +30,14 @@ class OrderByEditor(
   private val currentOrderByFields = currentOrderBys.map(_.fields).getOrElse(List.empty[OrderByField])
 
   private val showField: Option[OrderByField] => BorderPane = (value: Option[OrderByField]) => new BorderPane {
-    center =   new Label {
+    left = new ImageView(iconFromDirection(value)) {
+      alignmentInParent = Pos.CenterLeft
+    }
+    center = new Label {
       alignmentInParent = Pos.CenterLeft
       textFill = Color.Black
-      text = value.map(v => v.field.name).getOrElse("")
+      text = value.map(_.field.name).getOrElse("")
     }
-    right = new ImageView(iconFromDirection(value))
     padding = Insets(0,20,0, 0)
   }
   private val comboStrategy = new TComboStrategy[OrderByField] {
