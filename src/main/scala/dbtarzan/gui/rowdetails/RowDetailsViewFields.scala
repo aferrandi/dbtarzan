@@ -1,17 +1,18 @@
-package dbtarzan.gui.browsingtable
+package dbtarzan.gui.rowdetails
 
 import dbtarzan.db.{DBTable, Field, Row}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.JFXUtil
+import dbtarzan.localization.Localization
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Parent
 import scalafx.scene.control.ScrollPane
 import scalafx.scene.layout.VBox
 
-class RowDetailsViewFields(dbTable : DBTable) extends TControlBuilder {
+class RowDetailsViewFields(dbTable : DBTable, localization: Localization) extends TControlBuilder {
   private val names: List[Field] = dbTable.fields
   /* the cell components */
-  private val cells : List[RowDetailsCell] = names.map({ case (field) => new RowDetailsCell(field)})
+  private val cells : List[RowDetailsCell] = names.map({ case (field) => new RowDetailsCell(field, localization)})
 
   private val cellsContainer = buildCellsContainer()
 

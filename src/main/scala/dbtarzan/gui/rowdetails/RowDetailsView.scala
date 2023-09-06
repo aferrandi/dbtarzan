@@ -1,4 +1,4 @@
-package dbtarzan.gui.browsingtable
+package dbtarzan.gui.rowdetails
 
 import dbtarzan.db.{DBTable, Row}
 import dbtarzan.gui.interfaces.TControlBuilder
@@ -12,7 +12,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
 
 /* displays one single line of the table, as a vertical list of the fields */
 class RowDetailsView(dbTable : DBTable, localization : Localization) extends TControlBuilder {
-  private val rowDetailsViewFields = new RowDetailsViewFields(dbTable)
+  private val rowDetailsViewFields = new RowDetailsViewFields(dbTable, localization)
 
   private val filterText = new FilterText(text => rowDetailsViewFields.filterFields(text), localization)
 

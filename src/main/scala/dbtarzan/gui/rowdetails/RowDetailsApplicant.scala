@@ -1,6 +1,7 @@
-package dbtarzan.gui.browsingtable
+package dbtarzan.gui.rowdetails
 
-import dbtarzan.db._
+import dbtarzan.db.*
+import dbtarzan.gui.browsingtable.ChooseBestPrimaryKey
 
 class RowDetailsApplicant(tableStructure: DBTableStructure) {
   private def chooseBestPrimaryKey = new ChooseBestPrimaryKey(tableStructure.columns.fields)

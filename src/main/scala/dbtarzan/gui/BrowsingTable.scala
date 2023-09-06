@@ -6,6 +6,7 @@ import dbtarzan.gui.browsingtable.*
 import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.orderby.{OrderByEditorStarter, UpDownIcons}
+import dbtarzan.gui.rowdetails.{RowDetailsApplicant, RowDetailsView}
 import dbtarzan.gui.tabletabs.TTableForMapWithId
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization

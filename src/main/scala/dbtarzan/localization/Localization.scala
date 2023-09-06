@@ -53,6 +53,9 @@ trait Localization {
   def choices: String
   def editGlobalSettings: String
   def addConnection: String
+  def expand: String
+  def open: String
+  def download: String
   def closeThisTab: String
   def closeTabsBeforeThis: String
   def closeTabsAfterThis: String

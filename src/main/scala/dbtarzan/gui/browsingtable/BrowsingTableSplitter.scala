@@ -1,8 +1,8 @@
 package dbtarzan.gui.browsingtable
 
 import scalafx.scene.control.SplitPane
-
 import dbtarzan.gui.Table
+import dbtarzan.gui.rowdetails.RowDetailsView
 
 /* splitter that seåareater table, details and potentially reoDetailsView  */
 class BrowsingTableSplitter(table : Table, foreignKeysAndInfo: ForeignKeysInfoSplitter) {
