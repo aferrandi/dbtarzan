@@ -7,7 +7,11 @@ import scalafx.scene.Node
 import scalafx.scene.control.*
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.layout.{BorderPane, VBox}
-import scalafx.Includes._
+import scalafx.Includes.*
+import scalafx.stage.FileChooser
+
+import java.io.FileWriter
+import scala.util.Using
 
 
 class RowDetailsCellText(field: Field, localization: Localization) extends TRowDetailsCell {
@@ -56,7 +60,14 @@ class RowDetailsCellText(field: Field, localization: Localization) extends TRowD
   }
 
   private def download(): Unit = {
-
+    val fileChooser = new FileChooser() {
+      title = localization.download
+    }
+    val file = fileChooser.showSaveDialog(mainControl.scene().window())
+    if (file != null)
+      Using(new FileWriter(file)) { writer =>
+        writer.write(currentText)
+      }
   }
 
 
