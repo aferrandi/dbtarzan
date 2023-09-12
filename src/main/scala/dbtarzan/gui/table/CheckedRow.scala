@@ -11,7 +11,6 @@ case class CheckedRow(checked: BooleanProperty, values : List[StringProperty|Int
 
 /* needed to have the check box working */
 class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSelectionModel[CheckedRow]) {
-	private val MAXLENGTH_BINARY_COLUMN = 300
 	def apply(rows : Rows, columnNames: List[Field]) : List[CheckedRow] =
 		rows.rows.map(row => buildCheckedRow(row, columnNames))
 		
@@ -54,7 +53,7 @@ class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSel
     case FieldType.STRING => new StringProperty(this, field.name, toDisplayOnlyOneLine(field, value.asInstanceOf[String]))
     case FieldType.INT => new IntegerProperty(this, field.name, value.asInstanceOf[Int])
     case FieldType.FLOAT => new DoubleProperty(this, field.name, value.asInstanceOf[Double])
-    case FieldType.BINARY => new StringProperty(this, field.name, truncateToFirstLine(value.asInstanceOf[Binary].truncate(MAXLENGTH_BINARY_COLUMN).asString))
+    case FieldType.BINARY => new StringProperty(this, field.name, truncateToFirstLine(value.asInstanceOf[Binary].asString))
   }
 
 	

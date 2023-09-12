@@ -60,8 +60,6 @@ class RowDetailsCellText(field: Field, localization: Localization) extends TRowD
       }.showAndWait()
   }
 
-
-
   private def download(): Unit = {
     currentValueMaybe match {
       case Some(value) => {
