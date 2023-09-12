@@ -15,6 +15,15 @@ object TableColumnsBuild {
     prefWidth = 180
   }.delegate
 
+  def buildBinaryColumn(field: Field, index: Int): TableColumn[CheckedRow, String] = new TableColumn[CheckedRow, String]() {
+    text = field.name
+    cellValueFactory = {
+      _.value.values(index).asInstanceOf[StringProperty]
+    } // when showing a row, shows the value for the column field
+    prefWidth = 180
+  }.delegate
+
+
   def buildIntColumn(field: Field, index: Int): TableColumn[CheckedRow, Int] = new TableColumn[CheckedRow, Int]() {
     text = field.name
     comparator = Ordering.Int

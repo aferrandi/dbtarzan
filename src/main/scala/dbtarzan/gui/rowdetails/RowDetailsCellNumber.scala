@@ -3,6 +3,7 @@ package dbtarzan.gui.rowdetails
 import dbtarzan.db.{Field, FieldType}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.types.Binaries.Binary
 import scalafx.scene.Node
 import scalafx.scene.control.*
 import scalafx.scene.layout.{BorderPane, VBox}
@@ -20,7 +21,7 @@ class RowDetailsCellNumber(field: Field) extends TRowDetailsCell {
   private val text = new TextField() {
     editable = false
   }
-  def showText(value : String|Int|Double) : Unit = {
+  def showText(value : String|Int|Double|Binary) : Unit = {
     text.text = Option(value).map(_.toString).getOrElse("")
   }
 

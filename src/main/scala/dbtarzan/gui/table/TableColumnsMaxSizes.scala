@@ -1,6 +1,8 @@
 package dbtarzan.gui.table
 
-import dbtarzan.db._
+import dbtarzan.db.*
+import dbtarzan.types.Binaries.Binary
+
 import scala.util.Random
 
 class TableColumnsMaxSizes(columns : List[Field], rnd : Random) {
@@ -21,14 +23,14 @@ class TableColumnsMaxSizes(columns : List[Field], rnd : Random) {
         indexes.map(i => arrRows(i))
     }
 
-    private def rowLengths(row : List[String|Int|Double]) : List[Int] = {
-        def nullableLength(s : String|Int|Double) : Int = if(s != null) s.toString.length else 0
+    private def rowLengths(row : List[String|Int|Double|Binary]) : List[Int] = {
+        def nullableLength(s : String|Int|Double|Binary) : Int = if(s != null) s.toString.length else 0
         row.map(nullableLength)
     }
     private def max2Rows(a : List[Int], b: List[Int]) : List[Int] = 
         a.lazyZip(b).map(Math.max)
     
-    private def maxRows(rows : List[List[String|Int|Double]]) : List[Int] = {
+    private def maxRows(rows : List[List[String|Int|Double|Binary]]) : List[Int] = {
         val rowsSizes = rows.map(rowLengths)
         if(rowsSizes.nonEmpty)
             rowsSizes.tail.foldLeft(rowsSizes.head)(max2Rows)

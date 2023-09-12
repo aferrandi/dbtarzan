@@ -1,5 +1,7 @@
 package dbtarzan.db
 
+import dbtarzan.types.Binaries.Binary
+
 
 case class SimpleDatabaseId(databaseName : String)
 /* The name given by the user to the composite identifies it */
@@ -35,9 +37,9 @@ case class ForeignKeys(keys : List[ForeignKey])
 */
 case class AdditionalForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable)
 /* a fields with its content in a row */
-case class FieldWithValue(field : String, value : String|Int|Double)
+case class FieldWithValue(field : String, value : String|Int|Double|Binary)
 /* a row. The values are in the same order as in the table description (FieldsOnTable) */
-case class Row(values : List[String|Int|Double])
+case class Row(values : List[String|Int|Double|Binary])
 /* rows in a table */
 case class Rows(rows : List[Row])
 /* a text filter to use it in a where clause */

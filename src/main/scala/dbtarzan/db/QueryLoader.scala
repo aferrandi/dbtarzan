@@ -3,15 +3,17 @@ package dbtarzan.db
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db.util.{ExceptionToText, ExecutionTime}
 import dbtarzan.messages.TLogger
+import dbtarzan.types.Binaries.Binary
 
 import java.sql.{ResultSet, SQLException, Statement}
 import scala.concurrent.duration.Duration
 
-def rowsetToValue(rs: ResultSet, i: Int, column: Field): String|Int|Double = {
+def rowsetToValue(rs: ResultSet, i: Int, column: Field): String|Int|Double|Binary = {
   column.fieldType match {
     case FieldType.STRING => rs.getString(i)
     case FieldType.INT => rs.getInt(i)
     case FieldType.FLOAT => rs.getDouble(i)
+    case FieldType.BINARY => Binary(rs.getBytes(i))
   }
 }
 

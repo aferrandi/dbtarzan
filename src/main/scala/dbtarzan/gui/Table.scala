@@ -42,6 +42,7 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
       case FieldType.STRING => TableColumnsBuild.buildStringColumn(field, i)
       case FieldType.INT => TableColumnsBuild.buildIntColumn(field, i)
       case FieldType.FLOAT => TableColumnsBuild.buildFloatColumn(field, i)
+      case FieldType.BINARY => TableColumnsBuild.buildBinaryColumn(field, i)
     } })
     editable = true
     selectionModel().selectionMode() = SelectionMode.Multiple

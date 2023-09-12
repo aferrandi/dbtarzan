@@ -6,6 +6,7 @@ object DBEnumsText {
           case FieldType.STRING => "STRING"
           case FieldType.INT => "INT"
           case FieldType.FLOAT => "FLOAT"
+          case FieldType.BINARY => "BINARY"
       }
 
     def orderByDirectionToText(direction : OrderByDirection): String =

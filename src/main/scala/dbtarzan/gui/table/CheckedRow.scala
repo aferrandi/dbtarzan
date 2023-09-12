@@ -1,7 +1,8 @@
 package dbtarzan.gui.table
 
 import dbtarzan.db.{Field, FieldType, Row, Rows}
-import scalafx.beans.property.{StringProperty, BooleanProperty, IntegerProperty, DoubleProperty}
+import dbtarzan.types.Binaries.Binary
+import scalafx.beans.property.{BooleanProperty, DoubleProperty, IntegerProperty, StringProperty}
 import scalafx.scene.control.MultipleSelectionModel
 
 
@@ -10,7 +11,8 @@ case class CheckedRow(checked: BooleanProperty, values : List[StringProperty|Int
 
 /* needed to have the check box working */
 class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSelectionModel[CheckedRow]) {
-	def apply(rows : Rows, columnNames: List[Field]) : List[CheckedRow] = 
+	private val MAXLENGTH_BINARY_COLUMN = 300
+	def apply(rows : Rows, columnNames: List[Field]) : List[CheckedRow] =
 		rows.rows.map(row => buildCheckedRow(row, columnNames))
 		
 	/* builds the row representation used as row of the table */
@@ -46,11 +48,13 @@ class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSel
 			throw new Exception("column sizes "+columnNames+" <> row cells size "+row.values)
 		row.values.zipWithIndex.map({ case (value, i) => valueToProperty(columnNames(i), value)})
 	}
-	/* creates the cell in the row */
+
+  /* creates the cell in the row */
 	private def valueToProperty(field : Field, value : Any): StringProperty|IntegerProperty|DoubleProperty = field.fieldType match {
     case FieldType.STRING => new StringProperty(this, field.name, toDisplayOnlyOneLine(field, value.asInstanceOf[String]))
     case FieldType.INT => new IntegerProperty(this, field.name, value.asInstanceOf[Int])
     case FieldType.FLOAT => new DoubleProperty(this, field.name, value.asInstanceOf[Double])
+    case FieldType.BINARY => new StringProperty(this, field.name, truncateToFirstLine(value.asInstanceOf[Binary].truncate(MAXLENGTH_BINARY_COLUMN).asString))
   }
 
 	

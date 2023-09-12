@@ -28,6 +28,7 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, l
       case java.sql.Types.CHAR => FieldType.STRING
       case java.sql.Types.INTEGER => FieldType.INT
       case java.sql.Types.FLOAT | java.sql.Types.DOUBLE => FieldType.FLOAT
+      case java.sql.Types.BINARY | java.sql.Types.BLOB | java.sql.Types.VARBINARY | java.sql.Types.LONGVARBINARY => FieldType.BINARY
       case _ => FieldType.STRING
     }
 
