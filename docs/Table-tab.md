@@ -29,17 +29,19 @@ From this tab:
 - using the [where clause](Where-clause) on the top you can open a new tab containing a **subset** of the results.
 - using the [order by](Order-By) menu on the top right, you can open a new tab with the same result **ordered** in a different way.
 
-### Menu
+### Button panel
 
-The menu by on the left of the where clause gives the possibility to:
+The button by on the left of the where clause opens a button panel with buttons with the follwing functionalities:
  - **close** this or other tabs
  - **check** or uncheck all rows 
  - open the [row details](Vertical-row-view) or vertical row, to have a better view of the **details** of a specific row.
+ - **refresh** this tab. Actually it closes the current tab and opens a new one with the same content updated.
 
 ![Accelerators](images/accelerators.png)
 
-All the menu items have a **key combination** associated.   
+All the buttons a **key combination** associated that is displayed as a tooltip.   
 For example to **close this table tab** you just have to click Ctrl-Delete.
+By the way it is possible to refresh the tab without closing the exising tab, by clicking Shift-Ctrl-R.
 
 ### Information
 

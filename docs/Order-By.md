@@ -9,7 +9,7 @@ categories: [GUI]
 
 ## Order by
 
-From version 1.10 it is possible to open a new tab from an existing one applying an ORDER BY clause to the tab's query.
+It is possible to open a new tab from an existing one applying an ORDER BY clause to the tab's query.
 This can be beneficial in all cases in which the table contains more than 500 rows (which means that dbtarzan cannot load it completely) and there is not a known WHERE clause that can be used to show only the meaningful rows.
 In this case applying ORDER BY clauses can help exploring the data in the table. 
 
@@ -17,9 +17,9 @@ To apply an ORDER BY clause to the existing tab use the **Order By** menu on the
 
 ![order by menu](images/orderbymenu.png)
 
-Choosing one column name from the menu the new tab will be ordered by that column in ascending order.
+Choosing one column name from the menu and the **order direction** from the submenu, the new tab will be ordered by that column in the selected order, ascending or descending.
 This can be enough in most cases.
-If instead you need to sort the table using multiple columns or in descending order, clicking on the menu's **More...** option, a dialog opens:
+If instead you need to sort the table using multiple columns, clicking on the menu's **More...** option, a dialog opens:
 
 ![order by dialog](images/orderbydialog.png)
 
