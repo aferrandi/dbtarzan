@@ -3,6 +3,7 @@ package dbtarzan.gui.rowdetails
 import dbtarzan.db.{Field, FieldType}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.messages.Logger
 import dbtarzan.types.Binaries.Binary
 import scalafx.Includes.*
 import scalafx.scene.Node
@@ -14,7 +15,7 @@ import java.io.{FileOutputStream, FileWriter}
 import scala.util.Using
 
 
-class RowDetailsCellText(field: Field, localization: Localization) extends TRowDetailsCell {
+class RowDetailsCellText(field: Field, localization: Localization, log: Logger) extends TRowDetailsCell {
   private var currentValueMaybe: Option[String|Binary] = None
   /* true if the field has been recognized as multiline text, so we don't need to check again if it is multilone */
   private var textControl: TextInputControl = new TextField() {
@@ -70,7 +71,7 @@ class RowDetailsCellText(field: Field, localization: Localization) extends TRowD
         if (file != null)
           FileDownload.downloadData(file, field, value)
       }
-      case _ => throw new RuntimeException(s"No data to store of type ${field.fieldType} in field ${field.name}")
+      case _ => log.error(s"No data to store of type ${field.fieldType} in field ${field.name}")
     }
   }
 

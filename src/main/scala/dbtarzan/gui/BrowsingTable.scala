@@ -164,7 +164,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private def showRowDetailsView(): Unit = {
     table.selectOneIfNoneSelected()
     table.firstSelectedRow().foreach(row => {
-      val view = new RowDetailsView(dbTable, localization)
+      val view = new RowDetailsView(dbTable, localization, log)
       splitter.splitPanelWithRowDetailsView(view)
       rowDetailsView = Some(view)
       openRowDisplay(row)

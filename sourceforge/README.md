@@ -11,6 +11,16 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 DBTarzan changelog
 =================
 
+- Release 1.30
+
+Now the columns have 4 types: int, float, string and binary.
+
+The veritcal row view has been updated. Text and binary columns can be expanded, opened in a dialog,  download their content to a text or binary file.
+
+The menu on top of the table tab has become a button panel, a button for each menu choices. A refresh button has been added, which refreshes the content of the tab (actually it opens a new one and closes the old one).
+
+Added the possibility to choose direction (ascending or descending) in the order by menu.
+
 - Release 1.29
 
 Replaced the (not more maintained) JSON Spray library with the Scala 3 compatible Grapple library.
@@ -19,13 +29,7 @@ Uses only Scala 3, without Scala 2.13 compatibility layer
 
 In the vertical row view new text box to filter the displayed fields
 
-- Release 1.28
 
-Updated to Scala 3, Java 17, JavaFX 20, ScalaFX 20.
-
-Use Pekko instead of Akka (which is not more open source), for the actors.
-
-Reads the values in the databases using the types INT, FLOAT, STRING, which should improve the performance and allow to sort the columns in the GUI table correctly.
 
 
 

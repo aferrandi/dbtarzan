@@ -4,15 +4,13 @@ import dbtarzan.db.{DBTable, Row}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.QueryTablesByPattern
-import scalafx.geometry.{Insets, Pos}
+import dbtarzan.messages.Logger
 import scalafx.scene.Parent
-import scalafx.scene.control.ScrollPane
-import scalafx.scene.layout.{BorderPane, VBox}
+import scalafx.scene.layout.BorderPane
 
 /* displays one single line of the table, as a vertical list of the fields */
-class RowDetailsView(dbTable : DBTable, localization : Localization) extends TControlBuilder {
-  private val rowDetailsViewFields = new RowDetailsViewFields(dbTable, localization)
+class RowDetailsView(dbTable : DBTable, localization : Localization, log: Logger) extends TControlBuilder {
+  private val rowDetailsViewFields = new RowDetailsViewFields(dbTable, localization, log)
 
   private val filterText = new FilterText(text => rowDetailsViewFields.filterFields(text), localization)
 
