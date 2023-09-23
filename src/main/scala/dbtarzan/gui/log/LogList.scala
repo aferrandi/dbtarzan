@@ -1,30 +1,31 @@
-package dbtarzan.gui
+package dbtarzan.gui.log
 
 import dbtarzan.gui.interfaces.{TControlBuilder, TLogs}
-import dbtarzan.gui.util.{JFXUtil, LogIcons}
+import dbtarzan.gui.util.{DateUtils, JFXUtil, LogIcons}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{LogText, TLogMessage}
-import scalafx.Includes._
+import scalafx.Includes.*
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
 import scalafx.scene.Parent
-import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.TableColumn._
-import scalafx.scene.control._
+import scalafx.scene.control.*
+import scalafx.scene.control.TableColumn.*
 import scalafx.scene.image.{Image, ImageView}
 
 import java.time.format.DateTimeFormatter
 
+
+
 /**
-  A list of the errors happened in the application, last error first
+ * A list of the errors happened in the application, last error first
 */
 class LogList(localization : Localization) extends TLogs with TControlBuilder {
   private val buffer = ObservableBuffer.empty[TLogMessage]
   private val logTable = buildTable()
-  private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+  private val formatter = DateUtils.timeFormatter()
 
-  JFXUtil.onAction(logTable, (selectedMessage : TLogMessage, _) => showMessageInDialogBox(selectedMessage))
+  JFXUtil.onAction(logTable, (selectedMessage : TLogMessage, _) => LogDialog.showMessageInDialogBox(localization, selectedMessage))
 
 /* builds table with the given columns with the possibility to check the rows and to select multiple rows */ 
   private def buildTable() = new TableView[TLogMessage](buffer) {
@@ -35,7 +36,7 @@ class LogList(localization : Localization) extends TLogs with TControlBuilder {
     contextMenu = new ContextMenu(new MenuItem(localization.copyMessageToClipboard) {
             onAction = (_: ActionEvent) =>  try {
               JFXUtil.copyTextToClipboard(selectionToString())
-              println("Message copied")
+              // println("Message copied")
             } catch {
               case ex : Exception => println("Copying message to the clipboard got "+ex)
             }
@@ -70,19 +71,6 @@ class LogList(localization : Localization) extends TLogs with TControlBuilder {
     maxWidth = 96
     minWidth = 96
   }
-
-
-  /* when you double-click on a line it shows the whole message in a dialog box */ 
-  private def showMessageInDialogBox(selectedMessage : TLogMessage) : Unit = 
-      new Alert(AlertType.Information) { 
-         headerText = localization.message
-         contentText= localization.details+":"
-         dialogPane().content =  new TextArea {
-              text = LogText.extractWholeLogText(selectedMessage)
-              editable = false
-              wrapText = true
-            } 
-         }.showAndWait()
 
   /* converts the selected part of the table to a string that can be written to the clipboard */
   private def selectionToString() : String = 

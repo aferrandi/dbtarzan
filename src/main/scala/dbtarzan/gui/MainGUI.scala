@@ -1,14 +1,15 @@
 package dbtarzan.gui
 
-import org.apache.pekko.actor.ActorRef
 import dbtarzan.config.password.{EncryptionKey, VerificationKey}
 import dbtarzan.db.DatabaseId
 import dbtarzan.gui.browsingtable.TableButtonBar
+import dbtarzan.gui.log.LogList
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.types.ConfigPath
-import scalafx.Includes._
-import scalafx.application.JFXApp.PrimaryStage
+import org.apache.pekko.actor.ActorRef
+import scalafx.Includes.*
+import scalafx.application.JFXApp3
 import scalafx.geometry.Orientation
 import scalafx.scene.Scene
 import scalafx.scene.control.SplitPane
@@ -16,7 +17,6 @@ import scalafx.scene.image.Image
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.layout.BorderPane
 import scalafx.stage.Screen
-import scalafx.application.JFXApp3
 
 /* the main GUI of dbtarzan. database list on the left, menu on the top, the rest in the middle.
   the actors are still not been created when calling the constructor, therefore they are passed as functions.
