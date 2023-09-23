@@ -11,6 +11,7 @@ class QueryInfo(sql : QuerySql) extends TControlBuilder {
   private val textBox = new TextArea {
     text = sql.sql
     editable = false
+    wrapText = true
   }
 
   def control : Parent = textBox
