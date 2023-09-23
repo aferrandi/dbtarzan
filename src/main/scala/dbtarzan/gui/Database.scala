@@ -54,7 +54,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
                   dbActor, 
                   guiActor,
                   databaseId,
-                  tableList.tableIds.tableIds,
+                  tableIds,
                   localization
                   ))
               }

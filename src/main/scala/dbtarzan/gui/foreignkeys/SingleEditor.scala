@@ -110,7 +110,7 @@ class SingleEditor(
     editorDisabled.value = false
   })
 
-  def toKey(): AdditionalForeignKey =
+  def retrieveKey(): AdditionalForeignKey =
     AdditionalForeignKey(
       txtName.text(),
       FieldsOnTable(chosenTableFromProperty.value.tableId, orderedListColumnsFrom.listData()),
@@ -120,15 +120,15 @@ class SingleEditor(
   def control : Parent = grid
 
   def onChanged(useKey : AdditionalForeignKey => Unit) : Unit = {
-     txtName.text.onChange(safe.onChange(() => useKey(toKey())))
+     txtName.text.onChange(safe.onChange(() => useKey(retrieveKey())))
      List(
       chosenTableFromProperty,
       chosenTableToProperty
-    ).foreach(_.onChange(safe.onChange(() => useKey(toKey()))))
+    ).foreach(_.onChange(safe.onChange(() => useKey(retrieveKey()))))
      List(
       orderedListColumnsFrom,
       orderedListColumnsTo
-    ).foreach(_.onChange(_ => safe.onChange(() => useKey(toKey()))))
+    ).foreach(_.onChange(_ => safe.onChange(() => useKey(retrieveKey()))))
   }
 
   private def handleColumnsForTable(tableId : TableId, columns : Fields, comboTable : ComboBox[TableIdForCombo], orderedListColumns : ListViewAddFromCombo[String]) : Unit = {
