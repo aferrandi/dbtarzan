@@ -166,7 +166,7 @@ class OneConnectionEditor(
         encryptPassword(Password(txtPassword.text())),
         Some(true),
         None,
-        cmbDelimiters.toDelimiters(),
+        cmbDelimiters.retrieveDelimiters(),
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
         txtMaxFieldSize.toOptInt,

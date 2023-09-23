@@ -19,13 +19,11 @@ class TableList(originalTableIds : List[TableId]) extends TControlBuilder {
     buffer ++= tableIds.tableIds
   }
 
-  def onTableSelected(useTable : TableId => Unit) : Unit = {
+  def onTableSelected(useTable : TableId => Unit) : Unit =
       JFXUtil.onAction(list, { (selectedTable : TableId, _) =>
         useTable(selectedTable)
         })
-    }
-  def control : Parent = list
 
-  def tableIds: TableIds = TableIds(buffer.toList)
+  def control : Parent = list
 }
 
