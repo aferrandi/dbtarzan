@@ -27,12 +27,13 @@ class CopyActor(databaseId: DatabaseId,
                 encryptionKey: EncryptionKey,
                 guiActor : ActorRef,
                 localization: Localization,
-                keyFilesDirPath : Path) extends Actor {
+                keyFilesDirPath : Path,
+                loginPasswords: LoginPasswords) extends Actor {
   case class DataWithConnection(data: ConnectionData, connection: Connection)
 
   private val log = new Logger(guiActor)
   private val driverManger = new DriverManagerWithEncryption(encryptionKey)
-  private val datasWithConnections: List[DataWithConnection] = datas.map(data => DataWithConnection(data, driverManger.getConnection(data)))
+  private val datasWithConnections: List[DataWithConnection] = datas.map(data => DataWithConnection(data, driverManger.getConnection(data, loginPasswords.loginPasswords.get(SimpleDatabaseId(data.name)))))
   // private val queryLoader = new QueryLoader(connection, log)
   private val foreignKeysFile = new ForeignKeysFile(keyFilesDirPath, DatabaseIdUtil.databaseIdText(databaseId))
 

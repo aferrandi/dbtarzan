@@ -9,7 +9,7 @@ import scalafx.Includes._
 import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
-import dbtarzan.db.{SchemaName}
+import dbtarzan.db.SchemaName
 import dbtarzan.gui.OpenWeb
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
@@ -48,6 +48,10 @@ class OneConnectionEditor(
     text = localization.advanced
     selected.onChange((_, _, newValue) => changeAdvancedVisibility(newValue))
   }
+  private val chkPassword = new CheckBox {
+    text = localization.password
+    selected.onChange((_, _, newValue) => txtPassword.editable = !newValue)
+  }
 
   private val cmbDelimiters = new ComboDelimiters()
   private val txtMaxRows = JFXUtil.numTextField()
@@ -82,6 +86,7 @@ class OneConnectionEditor(
     add(txtUser, 1, 4)    
     add(new Label { text = localization.password+":" }, 0, 5)
     add(txtPassword, 1, 5)
+    add(chkPassword, 2, 5)
     add(new Label { text = localization.schema+":" }, 0, 6)
     add(new HBox {
       children = List(cmbSchemas.control, btnSchemaChoices)
@@ -121,7 +126,9 @@ class OneConnectionEditor(
     txtUrl.text = data.url
     txtDriver.text = data.driver
     txtUser.text = data.user
-    txtPassword.text = decryptPasswordIfNeeded(data.password, data.passwordEncrypted.getOrElse(false)).key
+    txtPassword.text = data.password.map( password => decryptPasswordIfNeeded(password, data.passwordEncrypted.getOrElse(false)).key).getOrElse("")
+    txtPassword.editable = data.password.isDefined
+    chkPassword.selected = data.password.isDefined
     cmbSchemas.show(data.schema)
     cmbSchemas.clearSchemasToChooseFrom()
     cmbDelimiters.show(data.identifierDelimiters)
@@ -163,7 +170,7 @@ class OneConnectionEditor(
         txtUrl.text(),
         cmbSchemas.chosenSchema(),
         txtUser.text(),
-        encryptPassword(Password(txtPassword.text())),
+        if(chkPassword.selected.value) Some(encryptPassword(Password(txtPassword.text()))) else None,
         Some(true),
         None,
         cmbDelimiters.retrieveDelimiters(),
