@@ -49,8 +49,7 @@ class OneConnectionEditor(
     selected.onChange((_, _, newValue) => changeAdvancedVisibility(newValue))
   }
   private val chkPassword = new CheckBox {
-    text = localization.password
-    selected.onChange((_, _, newValue) => txtPassword.editable = !newValue)
+    selected.onChange((_, _, newValue) => txtPassword.disable = !newValue)
   }
 
   private val cmbDelimiters = new ComboDelimiters()
@@ -127,7 +126,7 @@ class OneConnectionEditor(
     txtDriver.text = data.driver
     txtUser.text = data.user
     txtPassword.text = data.password.map( password => decryptPasswordIfNeeded(password, data.passwordEncrypted.getOrElse(false)).key).getOrElse("")
-    txtPassword.editable = data.password.isDefined
+    txtPassword.disable = data.password.isEmpty
     chkPassword.selected = data.password.isDefined
     cmbSchemas.show(data.schema)
     cmbSchemas.clearSchemasToChooseFrom()

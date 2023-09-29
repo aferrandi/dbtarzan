@@ -19,14 +19,15 @@ object PasswordDialog {
     }.showAndWait().asInstanceOf[Option[LoginPasswords]]
   }
 
-
   private def mkPasswordFields(size: Int) : List[PasswordField] =
     List.range(0, size).map(_ => new PasswordField {
       text = ""
     })
 
   private def mkItems(localization: Localization, simpleDatabaseIds: List[SimpleDatabaseId], passwordFields: List[PasswordField]) =
-    simpleDatabaseIds.zip(passwordFields).map((id, passwordField) => JFXUtil.withLeftTitle(passwordField, s"${localization.databases} ${id}"))
+    simpleDatabaseIds.zip(passwordFields).map(
+      (id, passwordField) => JFXUtil.withLeftTitle(passwordField, s"${localization.databases} ${id.databaseName}")
+    )
 
   private def convertResult(simpleDatabaseIds: List[SimpleDatabaseId], passwordFields: List[PasswordField], dialogButton: ButtonType): LoginPasswords = {
     if (dialogButton == ButtonType.OK)
