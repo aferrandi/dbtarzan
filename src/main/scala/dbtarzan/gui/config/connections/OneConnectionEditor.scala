@@ -111,13 +111,17 @@ class OneConnectionEditor(
 
   private def decryptPasswordIfNeeded(password: Password, passwordEncrypted : Boolean) : Password =
       if(passwordEncrypted)
-        try { 
-          passwordEncryption.decrypt(password)
-        } catch {
-          case ex: Exception => throw new Exception("Decrypting the password "+password+" got", ex) 
-        }
+        decryptPassword(password)
       else
         password
+
+  private def decryptPassword(password: Password): Password = {
+    try {
+      passwordEncryption.decrypt(password)
+    } catch {
+      case ex: Exception => throw new Exception("Decrypting the password " + password + " got", ex)
+    }
+  }
 
   def show(data : ConnectionData) : Unit = safe.noChangeEventDuring(() => {
     txtName.text = data.name
@@ -125,7 +129,10 @@ class OneConnectionEditor(
     txtUrl.text = data.url
     txtDriver.text = data.driver
     txtUser.text = data.user
-    txtPassword.text = data.password.map( password => decryptPasswordIfNeeded(password, data.passwordEncrypted.getOrElse(false)).key).getOrElse("")
+    val passwordToDisplay = data.password.map(
+      password => decryptPasswordIfNeeded(password, data.passwordEncrypted.getOrElse(false)).key
+    ).getOrElse("")
+    txtPassword.text = passwordToDisplay
     txtPassword.disable = data.password.isEmpty
     chkPassword.selected = data.password.isDefined
     cmbSchemas.show(data.schema)
@@ -169,7 +176,7 @@ class OneConnectionEditor(
         txtUrl.text(),
         cmbSchemas.chosenSchema(),
         txtUser.text(),
-        if(chkPassword.selected.value) Some(encryptPassword(Password(txtPassword.text()))) else None,
+        passwordToData(),
         Some(true),
         None,
         cmbDelimiters.retrieveDelimiters(),
@@ -178,6 +185,12 @@ class OneConnectionEditor(
         txtMaxFieldSize.toOptInt,
         StringUtil.emptyToNone(txtCatalog.text())
     )
+
+  private def passwordToData(): Option[Password] =
+    if (chkPassword.selected.value)
+      Some(encryptPassword(Password(txtPassword.text())))
+    else
+      None
 
   def control : Parent = grid
 
@@ -191,7 +204,8 @@ class OneConnectionEditor(
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
       txtMaxFieldSize.text,
-      txtCatalog.text
+      txtCatalog.text,
+      chkPassword.selected
     ).foreach(_.onChange(safe.onChange(() => useData(toData))))
     jarSelector.onChange(safe.onChange(() => useData(toData)))
     List(
