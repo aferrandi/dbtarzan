@@ -217,7 +217,6 @@ class OneConnectionEditor(
   def schemasToChooseFrom(schemas: List[SchemaName]) : Unit =
     cmbSchemas.schemasToChooseFrom(schemas)
 
-
   def onSchemasLoad(action : () => Unit ): Unit =
     btnSchemaChoices.onAction = (_: ActionEvent)  => action()
 }

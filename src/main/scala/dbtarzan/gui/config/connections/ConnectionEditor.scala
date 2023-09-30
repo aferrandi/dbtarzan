@@ -59,10 +59,9 @@ class ConnectionEditor(
       showConnectionDataErrors(errors)
   }
 
-  def cancelIfPossible(cancel : () => Unit) : Unit = {
+  def cancelIfPossible(cancel : () => Unit) : Unit =
     if(JFXUtil.areYouSure(localization.areYouSureClose, localization.cancel))
         cancel()
-  }
 
   private def showConnectionDataErrors(errors : List[ConnectionDataErrors]) : Unit = {
     val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
@@ -85,12 +84,11 @@ class ConnectionEditor(
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
 
-  def onSchemasLoad(schemasLoad : (ConnectionData, Option[Password])  => Unit): Unit = {
+  def onSchemasLoad(schemasLoad : (ConnectionData, Option[Password])  => Unit): Unit =
     connection.onSchemasLoad(() => connection.toData.password match {
       case Some(password) => schemasLoad(connection.toData, None)
       case None => schemasLoad(connection.toData, PasswordDialog.show(localization, List(SimpleDatabaseId(connection.toData.name))).map(_.loginPasswords.head._2))
     })
-  }
 
   def testConnectionResult(rsp : ResponseTestConnection) : Unit =
     rsp.ex match {

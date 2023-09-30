@@ -37,34 +37,34 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   private val newConnectionName = "<NEW>"
 
-  def newData(): ConnectionData = ConnectionData("", newConnectionName, "","",None,"", None,None, None, None, None, None, None, None)
+  def newData(): ConnectionData = ConnectionData("", newConnectionName, "","",None,"", Some(Password("")),None, None, None, None, None, None, None)
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
-  def getSelectedIndex(): Option[Int] = {
+  def retrieveSelectedIndex(): Option[Int] = {
     val index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
     // println("Selected index:"+index)
     index
   }
 
-  def onConnectionSelected(use : ConnectionData => Unit) : Unit = 
+  def onConnectionSelected(use : ConnectionData => Unit) : Unit =
     selectionModel().selectedIndex.onChange {  (_, _, newIndex) => {
-        //println("Selected index changed to "+newIndex) 
+        //println("Selected index changed to "+newIndex)
         Option(newIndex).map(_.intValue()).filter(_ >= 0).foreach(index => use(connectionDatas(index)))
       }}
 
   /* there must be always at least one connection */
-  def removeCurrent() : Unit = 
+  def removeCurrent() : Unit =
     if(connectionDatas.nonEmpty)
-      getSelectedIndex().foreach(selectedIndex => {
+      retrieveSelectedIndex().foreach(selectedIndex => {
         connectionDatas.remove(selectedIndex)
         newSelectedIndex(selectedIndex).foreach(selectionModel().select(_))
       })
 
-  def duplicateCurrent() : Unit = 
+  def duplicateCurrent() : Unit =
     if(connectionDatas.nonEmpty)
-      getSelectedIndex().foreach(selectedIndex => {
+      retrieveSelectedIndex().foreach(selectedIndex => {
         val toDuplicate = connectionDatas(selectedIndex)
         connectionDatas += toDuplicate.copy(name = newConnectionName)
-        selectionModel().selectLast()   
+        selectionModel().selectLast()
       })
 
   /* returns errors validating the items in the list */
@@ -84,8 +84,8 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   def content() : List[ConnectionData] = connectionDatas.toList
 
-  def changeSelected(data : ConnectionData) : Unit = 
-    getSelectedIndex().foreach(selectedIndex => {
+  def changeSelected(data : ConnectionData) : Unit =
+    retrieveSelectedIndex().foreach(selectedIndex => {
       // println("Before setconnectionDatas of "+selectedIndex+":"+data)
       connectionDatas.update(selectedIndex, data)
       selectionModel().select(selectedIndex) // patch to avoid deselection when changing data
