@@ -26,7 +26,7 @@ given JsonInput[ConnectionData] with
     json.map[SchemaName]("schema"),
 
     json("user"),
-    json("password").as[Password],
+    json.map[Password]("password"),
     json.map[Boolean]("passwordEncrypted"),
     json.map[Int]("instances"),
     json.map[IdentifierDelimiters]("identifierDelimiters"),

@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db._
+import dbtarzan.db.*
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.config.connections.ConnectionData
 
@@ -87,7 +87,9 @@ case class ReloadQuery(queryId : QueryId, closeCurrentTab: Boolean)
 
 case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
-case class DatabaseIds(names : List[DatabaseId])
+case class DatabaseIds(ids : List[DatabaseId])
+
+case class DatabaseInfos(infos : List[DatabaseInfo])
 
 case class CompositeIds(compositeIds: List[CompositeId])
 

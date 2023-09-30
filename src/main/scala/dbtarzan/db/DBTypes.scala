@@ -1,5 +1,6 @@
 package dbtarzan.db
 
+import dbtarzan.config.password.Password
 import dbtarzan.types.Binaries.Binary
 
 
@@ -72,3 +73,7 @@ case class SchemaIds(schemaIds : List[SchemaId])
 case class IndexField(name: String, direction: Option[OrderByDirection])
 case class Index(name: String, fields: List[IndexField])
 case class Indexes(indexes: List[Index])
+case class SimpleDatabaseInfo(simpleDatabaseId: SimpleDatabaseId, needsPassword: Boolean)
+case class CompositeInfo(compositeId: CompositeId, databaseInfos: List[SimpleDatabaseInfo])
+case class DatabaseInfo(origin : Either[SimpleDatabaseInfo, CompositeInfo])
+case class LoginPasswords(loginPasswords : Map[SimpleDatabaseId, Password])

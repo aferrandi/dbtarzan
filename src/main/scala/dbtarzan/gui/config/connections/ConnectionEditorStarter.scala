@@ -38,8 +38,8 @@ object ConnectionEditorStarter
 
         editor.onSave(onSave)
         editor.onCancel(() => onCancel())
-        editor.onTestConnection(data => connectionsActor ! TestConnection(data, encryptionKey))
-        editor.onSchemasLoad(data => connectionsActor ! ExtractSchemas(data, encryptionKey))
+        editor.onTestConnection((data, password) => connectionsActor ! TestConnection(data, encryptionKey, password))
+        editor.onSchemasLoad((data, password) => connectionsActor ! ExtractSchemas(data, encryptionKey, password))
         onCloseRequest = (event : WindowEvent) => {
           event.consume()
           editor.cancelIfPossible(() => onCancel()) 

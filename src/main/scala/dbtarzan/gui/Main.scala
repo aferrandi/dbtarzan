@@ -3,12 +3,12 @@ package dbtarzan.gui
 import java.nio.file.{Path, Paths}
 import dbtarzan.config.actor.ConnectionsActor
 import dbtarzan.config.composite.CompositeReader
-import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader}
+import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader, ConnectionsDataMap, DatabaseInfoFromConfig}
 import dbtarzan.config.global.GlobalDataReader
 import dbtarzan.db.{Composite, DatabaseId, SimpleDatabaseId}
 import dbtarzan.gui.actor.GUIActor
 import dbtarzan.localization.Localizations
-import dbtarzan.messages._
+import dbtarzan.messages.*
 import dbtarzan.types.ConfigPath
 import scalafx.application.JFXApp3
 
@@ -29,13 +29,17 @@ object Main extends JFXApp3 {
     )
     mainGUI.postInit(actors.guiActor, actors.connectionsActor)
     val log = new Logger(actors.guiActor)
-    mainGUI.databaseList.setDatabaseIds(DatabaseIds(databaseIdsFromConnections(connectionDatas) ++ databaseIdsFromComposites(composites)))
-    mainGUI.onDatabaseSelected({ case (databaseId, encryptionKey) => {
-      log.info(localization.openingDatabase(DatabaseIdUtil.databaseIdText(databaseId)))
-      actors.connectionsActor ! QueryDatabase(databaseId, encryptionKey)
+    val connectionDataMap = new ConnectionsDataMap(connectionDatas)
+    mainGUI.databaseList.setDatabaseInfos(DatabaseInfos(
+      DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionDatas) ++ 
+        DatabaseInfoFromConfig.extractCompositeInfos(composites, connectionDataMap.connectionDataFor)
+    ))
+    mainGUI.onDatabaseSelected({ case (databaseInfo, encryptionKey, loginPasswords) => {
+      log.info(localization.openingDatabase(DatabaseIdUtil.databaseInfoText(databaseInfo)))
+      actors.connectionsActor ! QueryDatabase(DatabaseIdUtil.databaseIdFromInfo(databaseInfo), encryptionKey, loginPasswords )
     }})
     mainGUI.onForeignKeyToFile({
-      case (databaseId, encryptionKey) => actors.connectionsActor ! CopyToFile(databaseId, encryptionKey)
+      case (databaseInfo, encryptionKey, loginPasswords) => actors.connectionsActor ! CopyToFile(DatabaseIdUtil.databaseIdFromInfo(databaseInfo), encryptionKey, loginPasswords)
     })
     mainGUI.onCloseApp(
       () => actors.closeApp(() => {
@@ -44,11 +48,6 @@ object Main extends JFXApp3 {
       })
     )
   }
-  private def databaseIdsFromConnections(connectionDatas : List[ConnectionData]): List[DatabaseId] =
-    connectionDatas.map(c => DatabaseId(Left(SimpleDatabaseId(c.name))))
-
-  private def databaseIdsFromComposites(composites: List[Composite]): List[DatabaseId] =
-    composites.map(composite => DatabaseId(Right(composite.compositeId)))
 
   private def extractConnectionsConfigPath() : ConfigPath = {
     val configsPath = parameters.named.getOrElse("configPath", Option(System.getProperty("configPath")).getOrElse("."))

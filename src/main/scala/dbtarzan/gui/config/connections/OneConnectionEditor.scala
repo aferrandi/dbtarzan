@@ -9,7 +9,7 @@ import scalafx.Includes._
 import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
-import dbtarzan.db.{SchemaName}
+import dbtarzan.db.SchemaName
 import dbtarzan.gui.OpenWeb
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
@@ -48,6 +48,9 @@ class OneConnectionEditor(
     text = localization.advanced
     selected.onChange((_, _, newValue) => changeAdvancedVisibility(newValue))
   }
+  private val chkPassword = new CheckBox {
+    selected.onChange((_, _, newValue) => txtPassword.disable = !newValue)
+  }
 
   private val cmbDelimiters = new ComboDelimiters()
   private val txtMaxRows = JFXUtil.numTextField()
@@ -82,6 +85,7 @@ class OneConnectionEditor(
     add(txtUser, 1, 4)    
     add(new Label { text = localization.password+":" }, 0, 5)
     add(txtPassword, 1, 5)
+    add(chkPassword, 2, 5)
     add(new Label { text = localization.schema+":" }, 0, 6)
     add(new HBox {
       children = List(cmbSchemas.control, btnSchemaChoices)
@@ -107,13 +111,17 @@ class OneConnectionEditor(
 
   private def decryptPasswordIfNeeded(password: Password, passwordEncrypted : Boolean) : Password =
       if(passwordEncrypted)
-        try { 
-          passwordEncryption.decrypt(password)
-        } catch {
-          case ex: Exception => throw new Exception("Decrypting the password "+password+" got", ex) 
-        }
+        decryptPassword(password)
       else
         password
+
+  private def decryptPassword(password: Password): Password = {
+    try {
+      passwordEncryption.decrypt(password)
+    } catch {
+      case ex: Exception => throw new Exception("Decrypting the password " + password + " got", ex)
+    }
+  }
 
   def show(data : ConnectionData) : Unit = safe.noChangeEventDuring(() => {
     txtName.text = data.name
@@ -121,7 +129,12 @@ class OneConnectionEditor(
     txtUrl.text = data.url
     txtDriver.text = data.driver
     txtUser.text = data.user
-    txtPassword.text = decryptPasswordIfNeeded(data.password, data.passwordEncrypted.getOrElse(false)).key
+    val passwordToDisplay = data.password.map(
+      password => decryptPasswordIfNeeded(password, data.passwordEncrypted.getOrElse(false)).key
+    ).getOrElse("")
+    txtPassword.text = passwordToDisplay
+    txtPassword.disable = data.password.isEmpty
+    chkPassword.selected = data.password.isDefined
     cmbSchemas.show(data.schema)
     cmbSchemas.clearSchemasToChooseFrom()
     cmbDelimiters.show(data.identifierDelimiters)
@@ -163,15 +176,21 @@ class OneConnectionEditor(
         txtUrl.text(),
         cmbSchemas.chosenSchema(),
         txtUser.text(),
-        encryptPassword(Password(txtPassword.text())),
+        passwordToData(),
         Some(true),
         None,
-        cmbDelimiters.toDelimiters(),
+        cmbDelimiters.retrieveDelimiters(),
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
         txtMaxFieldSize.toOptInt,
         StringUtil.emptyToNone(txtCatalog.text())
     )
+
+  private def passwordToData(): Option[Password] =
+    if (chkPassword.selected.value)
+      Some(encryptPassword(Password(txtPassword.text())))
+    else
+      None
 
   def control : Parent = grid
 
@@ -185,7 +204,8 @@ class OneConnectionEditor(
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
       txtMaxFieldSize.text,
-      txtCatalog.text
+      txtCatalog.text,
+      chkPassword.selected
     ).foreach(_.onChange(safe.onChange(() => useData(toData))))
     jarSelector.onChange(safe.onChange(() => useData(toData)))
     List(

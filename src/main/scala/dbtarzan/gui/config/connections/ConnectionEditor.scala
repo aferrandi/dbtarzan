@@ -1,8 +1,10 @@
 package dbtarzan.gui.config.connections
 
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.password.EncryptionKey
+import dbtarzan.config.password.{EncryptionKey, Password}
+import dbtarzan.db.SimpleDatabaseId
 import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.login.PasswordDialog
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{ExceptionText, ResponseSchemaExtraction, ResponseTestConnection}
@@ -67,8 +69,15 @@ class ConnectionEditor(
     JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", errorText)
   }
 
-  def onTestConnection(test : ConnectionData  => Unit): Unit =
-    buttons.onTest(() => test(connection.toData))
+  def onTestConnection(test : (ConnectionData, Option[Password])  => Unit): Unit =
+    buttons.onTest(() => {
+      connection.toData.password match
+        case Some(password) => test(connection.toData, None)
+        case None =>
+          PasswordDialog.show(localization, List(SimpleDatabaseId(connection.toData.name))).foreach(loginPassword =>
+            test(connection.toData, Some(loginPassword.loginPasswords.head._2))
+          )
+      })
 
   def onSave(save : List[ConnectionData]  => Unit): Unit =
     buttons.onSave(() => saveIfPossible(save))
@@ -76,9 +85,10 @@ class ConnectionEditor(
   def onCancel(cancel : ()  => Unit): Unit =
     buttons.onCancel(() => cancelIfPossible(cancel))
 
-  def onSchemasLoad(schemasLoad : ConnectionData  => Unit): Unit = {
-    connection.onSchemasLoad(() => {
-      schemasLoad(connection.toData)
+  def onSchemasLoad(schemasLoad : (ConnectionData, Option[Password])  => Unit): Unit = {
+    connection.onSchemasLoad(() => connection.toData.password match {
+      case Some(password) => schemasLoad(connection.toData, None)
+      case None => schemasLoad(connection.toData, PasswordDialog.show(localization, List(SimpleDatabaseId(connection.toData.name))).map(_.loginPasswords.head._2))
     })
   }
 

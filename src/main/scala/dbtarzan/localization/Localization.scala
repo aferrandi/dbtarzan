@@ -20,6 +20,7 @@ trait Localization {
   def name : String
   def user : String
   def password : String
+  def passwords: String
   def schema : String
   def advanced: String
   def catalog : String
@@ -28,6 +29,7 @@ trait Localization {
   def queryTimeoutInSeconds : String
   def maxFieldSize: String
   def tables: String
+  def database: String
   def databases: String
   def composites: String
   def foreignKeys: String

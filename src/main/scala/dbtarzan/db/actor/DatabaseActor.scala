@@ -2,19 +2,19 @@ package dbtarzan.db.actor
 
 import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.password.EncryptionKey
-import dbtarzan.db._
+import dbtarzan.config.password.{EncryptionKey, Password}
+import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.AdditionalForeignKeyToForeignKey
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
-import dbtarzan.messages._
+import dbtarzan.messages.*
 
 import java.nio.file.Path
 import java.sql.{Connection, SQLException}
 import java.time.LocalDateTime
 import scala.collection.mutable
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 /* The actor that reads data from the database */
@@ -25,7 +25,8 @@ class DatabaseActor(
   guiActor : ActorRef,
   connectionActor: ActorRef,
   localization: Localization,
-  keyFilesDirPath: Path
+  keyFilesDirPath: Path,
+  loginPasswords: LoginPasswords
   ) extends Actor {
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
   private val log = new Logger(guiActor)
@@ -39,8 +40,8 @@ class DatabaseActor(
   private var additionalForeignKeys : List[AdditionalForeignKey] = additionalFromFile.loadAdditionalForeignKeysFromFile()
   private var additionalForeignKeysExploded : Map[TableId, ForeignKeys] = AdditionalForeignKeyToForeignKey.toForeignKeys(additionalForeignKeys)
 
-  private def buildOneCore(data: ConnectionData) : Option[DatabaseCore] = try {
-    val connection = createConnection.getConnection(data)
+  private def buildOneCore(data: ConnectionData, loginPassword: Option[Password]) : Option[DatabaseCore] = try {
+    val connection = createConnection.getConnection(data, loginPassword)
     setReadOnlyIfPossible(connection)
     log.info(localization.connectedTo(databaseIdText(databaseId)))
     val simpleDatabaseId = SimpleDatabaseId(data.name)
@@ -69,7 +70,7 @@ class DatabaseActor(
 
 
   private def buildCores(): Option[Map[SimpleDatabaseId, DatabaseCore]] = {
-    val cores = datas.map(data => buildOneCore(data))
+    val cores = datas.map(data => buildOneCore(data, loginPasswords.loginPasswords.get(SimpleDatabaseId(data.name))))
     if(cores.contains(None))
       None
     else

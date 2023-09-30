@@ -29,7 +29,7 @@ class GUIActor(
         case rsp: ResponseTestConnection => runLater { main.handleTestConnectionResponse(rsp) }
         case rsp: ResponseSchemaExtraction => runLater { main.handleSchemaExtractionResponse(rsp) }
         case msg: TLogMessage => runLater { logs.addLogMessage(msg) }
-        case msg: DatabaseIds => runLater { dbList.setDatabaseIds(msg) }
+        case msg: DatabaseInfos => runLater { dbList.setDatabaseInfos(msg) }
         case err: ErrorDatabaseAlreadyOpen => runLater {
             databases.showDatabase(err.databaseId)
             log.warning(localization.databaseAlreadyOpen(DatabaseIdUtil.databaseIdText(err.databaseId)))

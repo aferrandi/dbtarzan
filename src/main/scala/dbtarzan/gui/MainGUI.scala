@@ -1,11 +1,13 @@
 package dbtarzan.gui
 
 import dbtarzan.config.password.{EncryptionKey, VerificationKey}
-import dbtarzan.db.DatabaseId
+import dbtarzan.db.{DatabaseId, DatabaseInfo, LoginPasswords, SimpleDatabaseId}
 import dbtarzan.gui.browsingtable.TableButtonBar
 import dbtarzan.gui.log.LogList
+import dbtarzan.gui.login.PasswordDialog
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.messages.DatabaseIdUtil
 import dbtarzan.types.ConfigPath
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
@@ -62,15 +64,30 @@ class MainGUI(
   private def withExtractedEncryptionKey(use : EncryptionKey => Unit) : Unit =
     encryptionKeyExtractor.extractEncryptionKey(stage).foreach(use)
 
-  def onDatabaseSelected(use : (DatabaseId, EncryptionKey) => Unit) : Unit =
-    databaseList.onDatabaseSelected(databaseId => {
-      if(!databaseTabs.showDatabase(databaseId))
-        withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey))
-      }
+  def onDatabaseSelected(use : (DatabaseInfo, EncryptionKey, LoginPasswords) => Unit) : Unit =
+    databaseList.onDatabaseSelected(databaseInfo => {
+      if(!databaseTabs.showDatabase(DatabaseIdUtil.databaseIdFromInfo(databaseInfo))) {
+        loginPasswordsFromDialogIfNeeded(databaseInfo).foreach(loginPasswords =>
+          withExtractedEncryptionKey(encryptionKey => use(databaseInfo, encryptionKey, loginPasswords))
+        )
+      }}
     )
 
-  def onForeignKeyToFile(use : (DatabaseId, EncryptionKey) => Unit) : Unit =
-    databaseList.onForeignKeyToFile(databaseId => withExtractedEncryptionKey(encryptionKey => use(databaseId, encryptionKey)))
+
+
+  private def loginPasswordsFromDialogIfNeeded(databaseInfo: DatabaseInfo): Option[LoginPasswords] = {
+    val databasesThatNeedPasswords = DatabaseIdUtil.extractSimpleDatabasesThatNeedLoginPassword(databaseInfo)
+    if (databasesThatNeedPasswords.nonEmpty)
+      PasswordDialog.show(localization, databasesThatNeedPasswords)
+    else
+      Some(LoginPasswords(Map.empty))
+  }
+  def onForeignKeyToFile(use : (DatabaseInfo, EncryptionKey, LoginPasswords) => Unit) : Unit =
+    databaseList.onForeignKeyToFile(databaseInfo =>
+      loginPasswordsFromDialogIfNeeded(databaseInfo).foreach(loginPasswords =>
+        withExtractedEncryptionKey(encryptionKey => use(databaseInfo, encryptionKey, loginPasswords))
+      )
+    )
 
   private def buildStage() : JFXApp3.PrimaryStage = new JFXApp3.PrimaryStage {
       title = "DbTarzan "+version
