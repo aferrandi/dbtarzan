@@ -15,11 +15,11 @@ This example uses the Sqllite demo database, Chinook.
 
 ![Databases](images/databases.png)
 
-You get a list of the **tables** contained in the database:
+You get a [list](Table-list) of the **tables** contained in the database:
 
 ![Tables](images/tables.png)
 
-The list of tables can be [filtered](./Tables-Names-Filter). Open a table double-clicking on it:
+The list of tables can be filtered. Open a table double-clicking on it:
 
 ![Selection](images/selection.png)
 
