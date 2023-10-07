@@ -9,7 +9,7 @@ categories: [GUI]
 
 ## Usage
 
-Open a database from the list, double-clicking on it.
+Open a database from the [list](Database-list), double-clicking on it.
 If the database list is empty, add a database with the [Connections Editor](Connections-editor).
 This example uses the Sqllite demo database, Chinook.
 
