@@ -11,6 +11,17 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 DBTarzan changelog
 =================
 
+- Release 1.31
+
+Allows to have databases without storing their passwords in the connections configuration file, useful for example for production databases. The user enters the password at the moment he connects to the database.
+
+Better error message dialog with more concise error message with an "advanced" button, that shows the whole stack trace.
+
+Fixed a bug that did not allow to see the content of a table with a binary field with null values.
+
+Fixed a bug that was limiting the tables that could be selected when adding an additional foreign key.
+
+
 - Release 1.30
 
 Now the columns have 4 types: int, float, string and binary.
@@ -20,14 +31,6 @@ The veritcal row view has been updated. Text and binary columns can be expanded,
 The menu on top of the table tab has become a button panel, a button for each menu choices. A refresh button has been added, which refreshes the content of the tab (actually it opens a new one and closes the old one).
 
 Added the possibility to choose direction (ascending or descending) in the order by menu.
-
-- Release 1.29
-
-Replaced the (not more maintained) JSON Spray library with the Scala 3 compatible Grapple library.
-
-Uses only Scala 3, without Scala 2.13 compatibility layer
-
-In the vertical row view new text box to filter the displayed fields
 
 
 
