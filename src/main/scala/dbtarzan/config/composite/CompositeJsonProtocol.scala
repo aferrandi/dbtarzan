@@ -18,8 +18,16 @@ given JsonOutput[SimpleDatabaseId] with
   def write(u: SimpleDatabaseId): JsonObject = Json.obj("databaseName" -> u.databaseName)
 
 given JsonInput[Composite] with
-  def read(json: JsonValue): Composite = Composite(json("compositeId"), json("databaseIds").as[List[SimpleDatabaseId]])
+  def read(json: JsonValue): Composite = Composite(
+    json("compositeId"),
+    json("databaseIds").as[List[SimpleDatabaseId]],
+    json.map[Boolean]("showAlsoIndividualDatabases").getOrElse(false)
+  )
 
 given JsonOutput[Composite] with
-  def write(u: Composite): JsonObject = Json.obj("compositeId" -> u.compositeId, "databaseIds" -> u.databaseIds)
+  def write(u: Composite): JsonObject = Json.obj(
+    "compositeId" -> u.compositeId,
+    "databaseIds" -> u.databaseIds,
+    "includeIndividual" -> u.showAlsoIndividualDatabases
+  )
 

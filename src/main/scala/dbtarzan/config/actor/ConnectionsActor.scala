@@ -50,7 +50,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
   }
 
   /* creates the actor to serve the creation of foreign keys text files and start the copy */
-  private def startCopyWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit = {
+  private def startCopyWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit =
    datasFromDatabaseId(databaseId) match {
        case Some(datas) => {
          val copyActor = ConnectionBuilder.buildCopyWorker(databaseId, registerDriver, datas, encriptionKey, guiActor, context, localization, keyFilesDirPath, loginPasswords)
@@ -58,7 +58,6 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
        }
        case None => throw new Exception(s"No datas found for ${databaseId}")
    }
-  }
 
   /* if no actors are serving the queries to a specific database, creates them */
   private def queryDatabase(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit = {
@@ -96,11 +95,18 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
     guiActor ! extractDatabaseInfos()
   }
 
-  private def extractDatabaseInfos() = DatabaseInfos(
-      DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionsDataMap.connectionDatas) ++
-        DatabaseInfoFromConfig.extractCompositeInfos(currentComposites.values.toList, connectionsDataMap.connectionDataFor)
-    )
+  private def extractDatabaseInfos(): DatabaseInfos = {
+    val connectionsDataRemaining = connectionsNotInComposites()
+    val connectionInfos = DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionsDataRemaining)
+    val compositeInfos = DatabaseInfoFromConfig.extractCompositeInfos(currentComposites.values.toList, connectionsDataMap.connectionDataFor)
+    DatabaseInfos(connectionInfos ++ compositeInfos)
+  }
 
+  private def connectionsNotInComposites(): List[ConnectionData] = {
+    val connectionsToRemove = currentComposites.values.filter(co => !co.showAlsoIndividualDatabases).flatMap(co => co.databaseIds).map(id => id.databaseName).toSet
+    val connectionsDataRemaining = connectionsDataMap.connectionDatas.filter(cd => !connectionsToRemove.contains(cd.name))
+    connectionsDataRemaining
+  }
 
   private def testConnection(data: ConnectionData, encryptionKey : EncryptionKey, loginPassword: Option[Password]): Unit = {
     val connectionCore = new ConnectionCore(registerDriver, log, localization)

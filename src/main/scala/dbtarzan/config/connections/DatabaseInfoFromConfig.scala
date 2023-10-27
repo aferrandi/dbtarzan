@@ -15,5 +15,4 @@ object DatabaseInfoFromConfig {
         c.compositeId,
         c.databaseIds.map(id => SimpleDatabaseInfo(id, connectionDataFor(id).password.isEmpty))))))
   }
-
 }

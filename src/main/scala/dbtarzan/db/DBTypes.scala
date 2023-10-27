@@ -8,7 +8,7 @@ case class SimpleDatabaseId(databaseName : String)
 /* The name given by the user to the composite identifies it */
 case class CompositeId(compositeName: String)
 /* A composite is a composition of multiple databases */
-case class Composite(compositeId: CompositeId, databaseIds: List[SimpleDatabaseId])
+case class Composite(compositeId: CompositeId, databaseIds: List[SimpleDatabaseId], showAlsoIndividualDatabases: Boolean)
 /* The name given by the user to the database identifies it */
 case class DatabaseId(origin : Either[SimpleDatabaseId, CompositeId])
 /* The database id + the table name identifies a table */
