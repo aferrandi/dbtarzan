@@ -21,7 +21,7 @@ given JsonInput[Composite] with
   def read(json: JsonValue): Composite = Composite(
     json("compositeId"),
     json("databaseIds").as[List[SimpleDatabaseId]],
-    json.map[Boolean]("showAlsoIndividualDatabases").getOrElse(false)
+    json.map[Boolean]("showAlsoIndividualDatabases").getOrElse(true)
   )
 
 given JsonOutput[Composite] with
