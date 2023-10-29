@@ -28,18 +28,17 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
 
   private val log = new Logger(guiActor)
 
-  private def datasFromDatabaseId(databaseId: DatabaseId): Option[List[ConnectionData]] = {
+  private def datasFromDatabaseId(databaseId: DatabaseId): Option[List[ConnectionData]] =
     databaseId.origin match {
       case Left(simpleDatabaseId) => Some(List(connectionsDataMap.connectionDataFor(simpleDatabaseId)))
       case Right(compositeId) => currentComposites.get(compositeId).map(
         composite => composite.databaseIds.map(simpleDatabaseId => connectionsDataMap.connectionDataFor(simpleDatabaseId))
       )
     }
-  }
 
    /* creates the actors to serve the queries for a database */
-  private def getDBActor(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : ActorRef = {
-   datasFromDatabaseId(databaseId) match {
+  private def getDBActor(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : ActorRef =
+    datasFromDatabaseId(databaseId) match {
        case Some(datas) => {
          val dbActor = ConnectionBuilder.buildDBActor(databaseId, registerDriver, datas, encriptionKey, guiActor, context, localization, keyFilesDirPath, loginPasswords)
          mapDBWorker += databaseId -> dbActor
@@ -47,7 +46,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
        }
        case None => throw new Exception(s"No datas found for ${databaseId}")
      }
-  }
+
 
   /* creates the actor to serve the creation of foreign keys text files and start the copy */
   private def startCopyWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit =
@@ -76,7 +75,6 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
     }
   }
 
-
   /* closes all the database actors that serve the queries to a specific database */
   private def queryClose(databaseId : DatabaseId) : Unit = {
     log.debug("Closing the database "+DatabaseIdUtil.databaseIdText(databaseId))
@@ -87,26 +85,16 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
 
   private def newConnections(datas: List[ConnectionData]) : Unit = {
     connectionsDataMap = new ConnectionsDataMap(datas)
-    guiActor ! extractDatabaseInfos()
+    sendDatabaseInfos()
   }
 
   private def newComposites(composites: List[Composite]): Unit = {
     currentComposites = mapComposites(composites)
-    guiActor ! extractDatabaseInfos()
+    sendDatabaseInfos()
   }
 
-  private def extractDatabaseInfos(): DatabaseInfos = {
-    val connectionsDataRemaining = connectionsNotInComposites()
-    val connectionInfos = DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionsDataRemaining)
-    val compositeInfos = DatabaseInfoFromConfig.extractCompositeInfos(currentComposites.values.toList, connectionsDataMap.connectionDataFor)
-    DatabaseInfos(connectionInfos ++ compositeInfos)
-  }
-
-  private def connectionsNotInComposites(): List[ConnectionData] = {
-    val connectionsToRemove = currentComposites.values.filter(co => !co.showAlsoIndividualDatabases).flatMap(co => co.databaseIds).map(id => id.databaseName).toSet
-    val connectionsDataRemaining = connectionsDataMap.connectionDatas.filter(cd => !connectionsToRemove.contains(cd.name))
-    connectionsDataRemaining
-  }
+  private def sendDatabaseInfos(): Unit =
+    guiActor ! DatabaseInfoExtractor.extractDatabaseInfos(currentComposites.values.toList, connectionsDataMap)
 
   private def testConnection(data: ConnectionData, encryptionKey : EncryptionKey, loginPassword: Option[Password]): Unit = {
     val connectionCore = new ConnectionCore(registerDriver, log, localization)
