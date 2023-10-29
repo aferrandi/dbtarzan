@@ -1,7 +1,7 @@
 package dbtarzan.gui.foreignkeys
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, FieldsOnTable, SimpleDatabaseId, TableId}
+import dbtarzan.db.{VirtualalForeignKey, DatabaseId, FieldsOnTable, SimpleDatabaseId, TableId}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.TableIdLabel
 import dbtarzan.localization.Localization
@@ -18,10 +18,10 @@ object ForeignKeysTable {
     val newRowName = "<NEW>"
 }
 
-/** The GUI table control showing the currently edited additional foreign keys */
+/** The GUI table control showing the currently edited virtual foreign keys */
 class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization : Localization) extends TControlBuilder {
   private val log = new Logger(guiActor)
-  private val buffer = ObservableBuffer.empty[AdditionalForeignKey]
+  private val buffer = ObservableBuffer.empty[VirtualalForeignKey]
   /* the table */
   private val table = buildTable()
 
@@ -32,7 +32,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
 
 
   /* builds table with the two columns (name and description) */ 
-  def buildTable(): TableView[AdditionalForeignKey] = new TableView[AdditionalForeignKey](buffer) {
+  def buildTable(): TableView[VirtualalForeignKey] = new TableView[VirtualalForeignKey](buffer) {
     columns ++= List ( nameColumn(), tableFromColumn(), foreignKeysFromColumn(), tableToColumn(), foreignKeysToColumn(), buttonColumn())
     editable = false
     columnResizePolicy = TableView.ConstrainedResizePolicy
@@ -40,67 +40,67 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
 
 
    /* the column with the name of the foreign key */
-  private def nameColumn() = new TableColumn[AdditionalForeignKey, String] {
+  private def nameColumn() = new TableColumn[VirtualalForeignKey, String] {
     text = localization.name
     cellValueFactory = { x => new StringProperty(x.value.name) }
     resizable = true
   }
 
    /* the column with the from table of the foreign key */
-  private def tableFromColumn() = new TableColumn[AdditionalForeignKey, String] {
+  private def tableFromColumn() = new TableColumn[VirtualalForeignKey, String] {
     text = localization.tableFrom
     cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.from.table)) }
     resizable = true
   }
 
    /* the column with the to table of the foreign key */
-  private def tableToColumn() = new TableColumn[AdditionalForeignKey, String] {
+  private def tableToColumn() = new TableColumn[VirtualalForeignKey, String] {
     text = localization.tableTo
     cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.to.table)) }
     resizable = true
   }
 
    /* the column with the from columns of the foreign key */
-  private def foreignKeysFromColumn() = new TableColumn[AdditionalForeignKey, String] {
+  private def foreignKeysFromColumn() = new TableColumn[VirtualalForeignKey, String] {
     text = localization.columnsFrom
     cellValueFactory = { x => new StringProperty(x.value.from.fields.mkString(",")) }
     resizable = true
   }
 
    /* the column with the to columns of the foreign key */
-  private def foreignKeysToColumn() = new TableColumn[AdditionalForeignKey, String] {
+  private def foreignKeysToColumn() = new TableColumn[VirtualalForeignKey, String] {
     text = localization.columnsTo
     cellValueFactory = { x => new StringProperty(x.value.to.fields.mkString(",")) }
     resizable = true
   }
 
   /* adds new foreign keys to the table */
-  def addRows(additionalKeys : List[AdditionalForeignKey]) : Unit = 
-    buffer ++= additionalKeys
+  def addRows(virtualKeys : List[VirtualalForeignKey]) : Unit =
+    buffer ++= virtualKeys
     
-  def onSelected(action : AdditionalForeignKey => Unit) : Unit =
+  def onSelected(action : VirtualalForeignKey => Unit) : Unit =
     table.selectionModel().selectedItem.onChange(
       (_, _, row) => {
         Option(row).foreach(action(_))
     })
 
 
-  def refreshSelected(key : AdditionalForeignKey) : Unit =
+  def refreshSelected(key : VirtualalForeignKey) : Unit =
     lastSelectedIndex.foreach(i => buffer.update(i, key))
 
   /* adds an empty foreign key */
   def addEmptyRow() : Unit = {
     log.debug("Adding row")
     val emptyFields = FieldsOnTable(TableId(databaseId, SimpleDatabaseId(""), ""), List.empty)
-    buffer += AdditionalForeignKey(ForeignKeysTable.newRowName,  emptyFields,  emptyFields)
+    buffer += VirtualalForeignKey(ForeignKeysTable.newRowName,  emptyFields,  emptyFields)
     table.selectionModel().selectLast()
   }
 
    /* builds the column on the right with the button to remove the foreign key */
-  private def buttonColumn() = new TableColumn[AdditionalForeignKey, Boolean] {
+  private def buttonColumn() = new TableColumn[VirtualalForeignKey, Boolean] {
     cellValueFactory = { msg => ObjectProperty(msg.value != null) }
     cellFactory = {
-      (_ : TableColumn[AdditionalForeignKey, Boolean]) => buildButtonCell()
+      (_ : TableColumn[VirtualalForeignKey, Boolean]) => buildButtonCell()
     }
     maxWidth = 36
     minWidth = 36
@@ -118,7 +118,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
     }
 
    /* the cell of the button to remove the foreign key */
-  private def buildButtonCell() = new TableCell[AdditionalForeignKey, Boolean] {
+  private def buildButtonCell() = new TableCell[VirtualalForeignKey, Boolean] {
       item.onChange { (_ , _, value) => 
               if(value) {
                 graphic = deleteButton(tableRow().index())
@@ -128,7 +128,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
           }
         }
 
-  def control : TableView[AdditionalForeignKey] = table
+  def control : TableView[VirtualalForeignKey] = table
 
-  def currentForeignKeys() : List[AdditionalForeignKey] = buffer.toList
+  def currentForeignKeys() : List[VirtualalForeignKey] = buffer.toList
 }

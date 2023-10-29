@@ -33,7 +33,7 @@ class Italian extends Localization {
     def databases = "Database"
     def composites = "Combinazioni"
     def foreignKeys = "Chiavi esterne"
-    def connectionReset = "Resetta connessione"
+    def reconnect = "Riconnetti"
     def orderBy = "Ordina per"
     def ascending = "Crescente"
     def descending = "Decrescente"
@@ -97,7 +97,8 @@ class Italian extends Localization {
     def tableTo = "Tabella a"
     def columnsFrom = "Colonne da"
     def columnsTo = "Colonne a"
-    def openAdditionalForeignKeys = "Chiavi esterne aggiuntive"
+    def openVirtualForeignKeys = "Chiavi esterne virtuali"
+    def showAlsoIndividualDatabases = "Mostra anche i database individuali"
     def writingFile(fileName : Path): String = "Sto scrivendo il file "+fileName
     def fileWritten(fileName : Path): String = "File "+fileName+" scritto"
     def connectedTo(databaseName: String): String = "Connesso a "+databaseName
@@ -108,7 +109,7 @@ class Italian extends Localization {
     def noRowsFromForeignKey(keyName : String, keyToTable : String): String = "Nessuna riga selezionata con la chiave "+keyName+". Tabella "+keyToTable+" aperta senza filtro."
     def unorderedQueryResults = "Risultati non ordinati?"
     def globalChangesAfterRestart = "Riavviare l'applicazione per attivare queste modifiche"
-    def connectionResetted(databaseName : String): String = "Connessione al database "+databaseName+" resettata"
+    def connectionResetted(databaseName : String): String = "Riconnesso al database "+databaseName
     def databaseAlreadyOpen(databaseName : String): String =  "Il database "+databaseName+" e' gia' aperto"
     def connectionRefused = "Connessione rifiutata"
     def connectionSuccessful = "Connessione riuscita"
@@ -136,7 +137,7 @@ class Italian extends Localization {
     def errorTableMessage(msg : TWithQueryId): String = "Messaggio dalla tabella "+msg+" non riconosciuto"
     def errorNoTables(databaseName : String, schemasText : String): String = "Nessuna tabella letta dal database "+databaseName+". Schema errato? Schemi disponibili: "+schemasText
     def errorDisplayingRows = "La visualizzazione delle righe della tabella e' fallita a causa di"
-    def errorAFKVerification= "Chiavi esterne aggiuntive errate."
+    def errorVFKerification= "Chiavi esterne virtuali errate."
     def errorAFKEmptyNames = "Nomi vuoti"
     def errorAFKNameNewRow = "Nomi non validi"
     def errorAFKNoColumns(noColumns: List[String]): String = "Mancano colonne in "+noColumns.mkString(", ")
@@ -144,7 +145,7 @@ class Italian extends Localization {
     def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]): String = "Da e a con diverso numero di colonne in "+differentColumnsNumber.mkString(", ")
     def errorAFKDuplicateNames(nameDuplicates: List[String]): String = " Nomi duplicati: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]): String = "Ralazioni duplicate: "+relationDuplicates.mkString(", ")
-    def errorAFKAlreadyExisting(names : List[String]): String = "Le chiavi esterne aggiuntive "+names.mkString(", ")+" esistono gia' come chiavi esterne"
+    def errorAFKAlreadyExisting(names : List[String]): String = "Le chiavi esterne virtuali "+names.mkString(", ")+" esistono gia' come chiavi esterne"
     def errorRegisteringDriver(databaseName: String): String = "La registrazione del database "+databaseName+" e' fallita a causa di"
     def warningNoPrimaryKeyInTable(tableName: String): String = "La tabella "+tableName+" non ha chiavi primarie"
 }

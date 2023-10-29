@@ -8,7 +8,7 @@ case class SimpleDatabaseId(databaseName : String)
 /* The name given by the user to the composite identifies it */
 case class CompositeId(compositeName: String)
 /* A composite is a composition of multiple databases */
-case class Composite(compositeId: CompositeId, databaseIds: List[SimpleDatabaseId])
+case class Composite(compositeId: CompositeId, databaseIds: List[SimpleDatabaseId], showAlsoIndividualDatabases: Boolean)
 /* The name given by the user to the database identifies it */
 case class DatabaseId(origin : Either[SimpleDatabaseId, CompositeId])
 /* The database id + the table name identifies a table */
@@ -33,10 +33,10 @@ case class ForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable, dir
 /* the foreign keys involving a table */
 case class ForeignKeys(keys : List[ForeignKey])
 /* 
-    an additional foreign key does not have a direction (as a ForeignKey) becauee it gets actually resolved in a Foreign key (STRAIGHT) 
+    an virtual foreign key does not have a direction (as a ForeignKey) becauee it gets actually resolved in a Foreign key (STRAIGHT)
     and the same key from the "to" table to the "from" table (TURNED)
 */
-case class AdditionalForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable)
+case class VirtualalForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable)
 /* a fields with its content in a row */
 case class FieldWithValue(field : String, value : String|Int|Double|Binary)
 /* a row. The values are in the same order as in the table description (FieldsOnTable) */

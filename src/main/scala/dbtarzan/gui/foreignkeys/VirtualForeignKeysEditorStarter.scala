@@ -6,24 +6,24 @@ import scalafx.Includes._
 import org.apache.pekko.actor.ActorRef
 
 import dbtarzan.db.{ TableId, DatabaseId }
-import dbtarzan.messages.RequestAdditionalForeignKeys
+import dbtarzan.messages.RequestVirtualForeignKeys
 import dbtarzan.localization.Localization
 import dbtarzan.gui.util.TableIdLabel
 
-/* to start the additional foreign keys editor. It handles all the closing events. The other events are handled by the editor itself */
-object AdditionalForeignKeysEditorStarter
+/* to start the virtual foreign keys editor. It handles all the closing events. The other events are handled by the editor itself */
+object VirtualForeignKeysEditorStarter
 {
- def openAdditionalForeignKeysEditor(
+ def openVirtualForeignKeysEditor(
                                       parentStage : Stage,
                                       dbActor : ActorRef,
                                       guiActor: ActorRef,
                                       databaseId: DatabaseId,
                                       tableIds: List[TableId],
-                                      localization: Localization) : AdditionalForeignKeysEditor = {
-    println("open additional foreign keys editor")  
-    val editor = new AdditionalForeignKeysEditor(dbActor, guiActor, databaseId, tableIds.sortBy(TableIdLabel.toLabel), localization)
-    val additionalForeignKeysStage = new Stage {
-      title = localization.openAdditionalForeignKeys
+                                      localization: Localization) : VirtualForeignKeysEditor = {
+    println("open virtual foreign keys editor")
+    val editor = new VirtualForeignKeysEditor(dbActor, guiActor, databaseId, tableIds.sortBy(TableIdLabel.toLabel), localization)
+    val virtualForeignKeysStage = new Stage {
+      title = localization.openVirtualForeignKeys
       width = 800
       height = 600
       scene = new Scene {
@@ -39,10 +39,9 @@ object AdditionalForeignKeysEditorStarter
         root = editor.control
       }
     }
-    additionalForeignKeysStage.initOwner(parentStage)    
-    additionalForeignKeysStage.initStyle(StageStyle.Utility)
-    additionalForeignKeysStage.show()
-    dbActor ! RequestAdditionalForeignKeys(databaseId)
+    virtualForeignKeysStage.initOwner(parentStage)
+    virtualForeignKeysStage.initStyle(StageStyle.Utility)
+    virtualForeignKeysStage.show()
     editor
   }
 }

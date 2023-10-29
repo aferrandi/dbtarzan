@@ -1,11 +1,11 @@
 package dbtarzan.db.foreignkeys
 
-import dbtarzan.db.foreignkeys.files.{AdditionalForeignKeysReader, AdditionalForeignKeysWriter, ForeignKeysFile}
+import dbtarzan.db.foreignkeys.files.{VirtualForeignKeysReader, VirtualForeignKeysWriter, ForeignKeysFile}
 import grapple.json.{*, given}
 import org.scalatest.flatspec.AnyFlatSpec
 
-class AdditionalForeignKeyReaderTest extends AnyFlatSpec {
-  "Additional foreign keys" should "be parseable" in {
+class VirtualalForeignKeyReaderTest extends AnyFlatSpec {
+  "virtual foreign keys" should "be parseable" in {
     val jsonIn = """
       [{
       "name": "customerkeys",
@@ -39,8 +39,8 @@ class AdditionalForeignKeyReaderTest extends AnyFlatSpec {
       }
     }]
         """
-    val keys = AdditionalForeignKeysReader.parseText(jsonIn)
-    val jsonOut = AdditionalForeignKeysWriter.toText(keys)
+    val keys = VirtualForeignKeysReader.parseText(jsonIn)
+    val jsonOut = VirtualForeignKeysWriter.toText(keys)
     assert(jsonIn.replaceAll("\\s+", "") === jsonOut.replaceAll("\\s+", ""))
   }
 }

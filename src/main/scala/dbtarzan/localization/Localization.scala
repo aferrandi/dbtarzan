@@ -33,7 +33,7 @@ trait Localization {
   def databases: String
   def composites: String
   def foreignKeys: String
-  def connectionReset: String
+  def reconnect: String
   def orderBy: String
   def ascending: String
   def descending: String
@@ -97,7 +97,8 @@ trait Localization {
   def tableTo : String
   def columnsFrom : String
   def columnsTo : String
-  def openAdditionalForeignKeys: String
+  def openVirtualForeignKeys: String
+  def showAlsoIndividualDatabases: String
   def writingFile(fileName : Path) : String
   def fileWritten(fileName : Path) : String
   def connectedTo(databaseName : String) : String
@@ -136,7 +137,7 @@ trait Localization {
   def errorTableMessage(msg : TWithQueryId) : String
   def errorNoTables(databaseName : String, schemasText : String) : String
   def errorDisplayingRows: String
-  def errorAFKVerification: String
+  def errorVFKerification: String
   def errorAFKEmptyNames: String
   def errorAFKNameNewRow: String
   def errorAFKNoColumns(noColumns: List[String]) : String

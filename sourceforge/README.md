@@ -19,7 +19,7 @@ Better error message dialog with more concise error message with an "advanced" b
 
 Fixed a bug that did not allow to see the content of a table with a binary field with null values.
 
-Fixed a bug that was limiting the tables that could be selected when adding an additional foreign key.
+Fixed a bug that was limiting the tables that could be selected when adding an virtual foreign key.
 
 
 - Release 1.30

@@ -36,7 +36,7 @@ class CompositeList(composites : List[Composite], localization : Localization) e
 
   private def selectionModel() = list.selectionModel()
 
-  private def newComposite(): Composite = Composite(CompositeId(CompositeList.newCompositeName), List.empty)
+  private def newComposite(): Composite = Composite(CompositeId(CompositeList.newCompositeName), List.empty, false)
 
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
   private def selectedIndex(): Option[Int] = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)

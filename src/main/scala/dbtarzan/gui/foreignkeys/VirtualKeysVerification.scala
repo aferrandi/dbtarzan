@@ -1,9 +1,9 @@
 package dbtarzan.gui.foreignkeys
 
-import dbtarzan.db.AdditionalForeignKey
+import dbtarzan.db.VirtualalForeignKey
 import scala.collection.immutable.HashSet
 
-case class AdditionalKeysVerificationResult(
+case class VirtualKeysVerificationResult(
     nameEmpty: Boolean, 
     nameNewRow: Boolean, 
     noColumns: List[String], 
@@ -22,15 +22,15 @@ case class AdditionalKeysVerificationResult(
         relationDuplicates.isEmpty
 }
 
-/* checks for additional foreign keys problems before saving them, included duplications and missing data */
-class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
+/* checks for virtual foreign keys problems before saving them, included duplications and missing data */
+class VirtualKeysVerification(keys : List[VirtualalForeignKey]) {
     private def nameEmpty() : Boolean = 
         keys.map(_.name).exists(_.trim.isEmpty)
 
     private def nameNewRow() : Boolean = 
         keys.map(_.name).exists(_.trim == ForeignKeysTable.newRowName)
 
-    private def singleKeyNoColumns(key : AdditionalForeignKey) : Boolean = 
+    private def singleKeyNoColumns(key : VirtualalForeignKey) : Boolean =
         key.from.fields.isEmpty || key.to.fields.isEmpty
 
     private def noColumns() : List[String] = 
@@ -48,7 +48,7 @@ class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
     private def relationDuplicates(): List[String] =
         keys.groupBy(k => HashSet(k.from, k.to)).values.filter(_.size > 1).map(_.head.name).toList
 
-    def verify(): AdditionalKeysVerificationResult = AdditionalKeysVerificationResult(
+    def verify(): VirtualKeysVerificationResult = VirtualKeysVerificationResult(
             nameEmpty(), 
             nameNewRow(), 
             noColumns(), 
@@ -59,7 +59,7 @@ class AdditionalKeysVerification(keys : List[AdditionalForeignKey]) {
         )    
 }
 
-object AdditionalKeysVerification {
-    def verify(keys : List[AdditionalForeignKey]): AdditionalKeysVerificationResult = new AdditionalKeysVerification(keys).verify()
+object VirtualKeysVerification {
+    def verify(keys : List[VirtualalForeignKey]): VirtualKeysVerificationResult = new VirtualKeysVerification(keys).verify()
 }
 

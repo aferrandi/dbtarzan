@@ -33,7 +33,7 @@ class Spanish extends Localization {
     def databases = "Bases de datos"
     def composites = "Combinaciones"
     def foreignKeys = "Llaves extranjeras"
-    def connectionReset = "Restablecer la conexión"
+    def reconnect = "Reconectar"
     def orderBy = "Ordenar por"
     def ascending = "Ascendente"
     def descending = "Desciendente"
@@ -97,7 +97,8 @@ class Spanish extends Localization {
     def tableTo = "Tabla a"
     def columnsFrom = "Columnas de"
     def columnsTo = "Columnas a"
-    def openAdditionalForeignKeys = "Claves externas adicionales"
+    def openVirtualForeignKeys = "Claves foráneas virtuales"
+    def showAlsoIndividualDatabases = "Mostra también bases de datos individuales"
     def writingFile(fileName : Path): String = "Estoy escribiendo el archivo "+fileName
     def fileWritten(fileName : Path): String = "Archivo "+fileName+" escrito"
     def connectedTo(databaseName: String): String = "Conectado a "+databaseName
@@ -108,7 +109,7 @@ class Spanish extends Localization {
     def noRowsFromForeignKey(keyName : String, keyToTable : String): String = "Ninguna fila seleccionada con la clave "+keyName+". Tabla "+keyToTable+" abierta sin filtro."
     def unorderedQueryResults = "Resultados no ordenadas?"
     def globalChangesAfterRestart = "Reinicie la aplicación para activar estos cambios"
-    def connectionResetted(databaseName : String): String = "Conexión de base de datos "+databaseName+" restablecida"
+    def connectionResetted(databaseName : String): String = "Conexión de base de datos "+databaseName
     def connectionRefused = "Conexión denegada"
     def connectionSuccessful = "Conexión exitosa"
     def connectionToDatabaseSuccesful(databaseName: String): String = "Conexión de base de datos "+databaseName+" ha tenido éxito"
@@ -136,7 +137,7 @@ class Spanish extends Localization {
     def errorTableMessage(msg : TWithQueryId): String = "Mensaje de la tabla "+msg+" non riconosciuto"
     def errorNoTables(databaseName : String, schemasText : String): String = "Ninguna tabla leído de la base de datos "+databaseName+". Esquema incorrecto? Esquemas disponibles: "+schemasText
     def errorDisplayingRows = "La visualización de las filas de la tabla falló debido a"
-    def errorAFKVerification= "claves externas adicionales incorrecto."
+    def errorVFKerification= "claves foráneas virtuales incorrecto."
     def errorAFKEmptyNames = "Nombres vacios"
     def errorAFKNameNewRow = "Nombres inválidos"
     def errorAFKNoColumns(noColumns: List[String]): String = "Faltan columnas en "+noColumns.mkString(", ")
@@ -144,7 +145,7 @@ class Spanish extends Localization {
     def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]): String = "De y acon diferente número de columnas en "+differentColumnsNumber.mkString(", ")
     def errorAFKDuplicateNames(nameDuplicates: List[String]): String = "Nombres duplicados: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]): String = "Reacciones duplicadas: "+relationDuplicates.mkString(", ")
-    def errorAFKAlreadyExisting(names : List[String]): String = "Las claves externas adicionales "+names.mkString(", ")+" ya existen como claves externas"
+    def errorAFKAlreadyExisting(names : List[String]): String = "Las claves foráneas virtuales "+names.mkString(", ")+" ya existen como claves externas"
     def errorRegisteringDriver(databaseName: String): String = "El registro a la base de datos "+databaseName+" y 'fallado debido a"
     def warningNoPrimaryKeyInTable(tableName: String): String = "La tabla "+tableName+" no tiene una clave primaria"
 }

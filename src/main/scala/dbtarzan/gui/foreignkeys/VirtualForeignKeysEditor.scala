@@ -1,11 +1,11 @@
 package dbtarzan.gui.foreignkeys
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, DatabaseId, Fields, TableId}
+import dbtarzan.db.{VirtualalForeignKey, DatabaseId, Fields, TableId}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, StringUtil}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.UpdateAdditionalForeignKeys
+import dbtarzan.messages.UpdateVirtualForeignKeys
 import scalafx.geometry.Orientation
 import scalafx.scene.Parent
 import scalafx.scene.control.SplitPane
@@ -13,7 +13,7 @@ import scalafx.scene.layout.BorderPane
 
 
 /* table + constraint input box + foreign keys */
-class AdditionalForeignKeysEditor(
+class VirtualForeignKeysEditor(
                                    dbActor : ActorRef,
                                    guiActor: ActorRef,
                                    databaseId: DatabaseId,
@@ -22,7 +22,7 @@ class AdditionalForeignKeysEditor(
   ) extends TControlBuilder {
   private val keysTable = new ForeignKeysTable(databaseId, guiActor, localization)
   private val singleEditor = new SingleEditor(dbActor, tableIds, localization)
-  private val buttons = new AdditionalForeignKeysButtons(localization)
+  private val buttons = new VirtualForeignKeysButtons(localization)
   private val bottomPane = new BorderPane {
     center = singleEditor.control
     bottom = buttons.control
@@ -41,11 +41,11 @@ class AdditionalForeignKeysEditor(
 
   private def saveIfPossible(close : () => Unit) : Unit = {
       val keys = keysTable.currentForeignKeys()
-      val res = AdditionalKeysVerification.verify(keys)
+      val res = VirtualKeysVerification.verify(keys)
       if(res.correct) {
         if(JFXUtil.areYouSure(localization.areYouSureSaveConnections, localization.saveConnections))
           try { 
-            dbActor ! UpdateAdditionalForeignKeys(databaseId, keys)
+            dbActor ! UpdateVirtualForeignKeys(databaseId, keys)
             close()
           } 
           catch {
@@ -53,7 +53,7 @@ class AdditionalForeignKeysEditor(
           }
         } else 
           JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", 
-            localization.errorAFKVerification + " " + 
+            localization.errorVFKerification + " " +
             StringUtil.textIf(res.nameEmpty, () => localization.errorAFKEmptyNames +". ") +
             StringUtil.textIf(res.nameNewRow, () => localization.errorAFKNameNewRow +". ") +
             StringUtil.textIf(res.noColumns.nonEmpty, () => localization.errorAFKNoColumns(res.noColumns) +". ") +
@@ -74,8 +74,8 @@ class AdditionalForeignKeysEditor(
     buttons.onSave(() => saveIfPossible(close))
   }
 
-  def handleForeignKeys(additionalKeys : List[AdditionalForeignKey]) : Unit = 
-    keysTable.addRows(additionalKeys)
+  def handleForeignKeys(virtualKeys : List[VirtualalForeignKey]) : Unit =
+    keysTable.addRows(virtualKeys)
 
   def handleColumns(tableId : TableId, columns : Fields) : Unit =
     singleEditor.handleColumns(tableId, columns)

@@ -1,23 +1,23 @@
 ---
 
 layout: default
-title: Additional Foreign Keys Editor
+title: Virtual Foreign Keys Editor
 resource: true
 categories: [GUI]
 
 ---
 
-## Additional foreign keys editor
+## Virtual foreign keys editor
 
-To add [additional foreign keys](AdditionalForeignKeys) to DBTarzan's configuration., On the database's Tables menu click **Additional foreign keys**
+To add [virtual foreign keys](VirtualForeignKeys) to DBTarzan's configuration., On the database's Tables menu click **Virtual foreign keys**
 
-![Additiional foreign keys menu](images/databaseMenu.png)
+![Virtual foreign keys menu](images/databaseMenu.png)
 
-This opens the **Additional foreign keys editor**:
+This opens the **Virtual foreign keys editor**:
 
-![Additiional foreign keys editor](images/additionalForeignKeysEditor.png)
+![Virtual foreign keys editor](images/virtualForeignKeysEditor.png)
 
-With this editor it is possible to **add, change or delete** the additional foreign keys.
+With this editor it is possible to **add, change or delete** the virtual foreign keys.
 The editor is composed of:
 * A foreign keys **table** on the top.
 * The editor for a **single item** in the table.
@@ -32,13 +32,13 @@ It is possible to remove a row by clicking the **X** button on its right side.
 ### The single item editor
 
 The single item editor is composed on the follwing parts:
-* a text box for the additional foreign key name on the left top.
+* a text box for the virtual foreign key name on the left top.
 * The **from columns list** to select all the columns in the **from** table, on the left.
 * The **to columns list** to select all the columns in the **to** table, on the right.
 
 Every time something is changed in the single item editor, the relate row in the foreign keys table gets changed too.
 
-To fill up the content of an additional foreign key you need to:
+To fill up the content of an virtual foreign key you need to:
 * Give it a **name** on the name text box.
 * fill up the **from columns list** with the columns of the **from** table that are supposed to be in the foreign key, in the correct order.
 * fill up the **to columns list** with the columns of the **to** table that are supposed to be in the foreign key, in the correct order.
@@ -62,12 +62,12 @@ Pressing **Save** the foreign keys in the table are saved and the editor closed,
 * has proper non-empty from and to columns, in the same number
 * there are no duplications (same name, same from and to columns)
 
-After they are saved, the additional foreign keys are **checked against the existing database foreign keys**; if they match one or more of them, they are stored anyway (they are not harmful) but an error message is displayed in the log view.    
+After they are saved, the virtual foreign keys are **checked against the existing database foreign keys**; if they match one or more of them, they are stored anyway (they are not harmful) but an error message is displayed in the log view.    
 
 Pressing **Cancel** the editor is closed without saving.
 
 ### Composites
 
-If we are editing the additional foreign keys of a composite, the editor shows the tables names with their database as prefix, to avoid confusing tables of different databases.
+If we are editing the virtual foreign keys of a composite, the editor shows the tables names with their database as prefix, to avoid confusing tables of different databases.
 
-![Additiional foreign keys editor for composites](images/additionalforeignkeys_composite.png)
+![Virtual foreign keys editor for composites](images/virtualforeignkeys_composite.png)

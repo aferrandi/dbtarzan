@@ -1,6 +1,6 @@
 package dbtarzan.db.foreignkeys.files
 
-import dbtarzan.db.{AdditionalForeignKey, CompositeId, DatabaseId, FieldsOnTable, ForeignKey, ForeignKeyDirection, ForeignKeys, ForeignKeysForTable, SimpleDatabaseId, TableId}
+import dbtarzan.db.{VirtualalForeignKey, CompositeId, DatabaseId, FieldsOnTable, ForeignKey, ForeignKeyDirection, ForeignKeys, ForeignKeysForTable, SimpleDatabaseId, TableId}
 import grapple.json.{*, given}
 
 given JsonInput[SimpleDatabaseId] with
@@ -78,29 +78,29 @@ given JsonInput[ForeignKeysForTable] with
 given JsonOutput[ForeignKeysForTable] with
   def write(u: ForeignKeysForTable): JsonObject = Json.obj("tableId" -> u.tableId, "keys" -> u.keys)
 
-given JsonInput[AdditionalForeignKey] with
-  def read(json: JsonValue): AdditionalForeignKey = AdditionalForeignKey(
+given JsonInput[VirtualalForeignKey] with
+  def read(json: JsonValue): VirtualalForeignKey = VirtualalForeignKey(
     json("name"),
     json("from").as[FieldsOnTable],
     json("to").as[FieldsOnTable]
   )
 
-given JsonOutput[AdditionalForeignKey] with
-  def write(u: AdditionalForeignKey): JsonObject = Json.obj(
+given JsonOutput[VirtualalForeignKey] with
+  def write(u: VirtualalForeignKey): JsonObject = Json.obj(
     "name" -> u.name,
     "from" -> u.from,
     "to" -> u.to
   )
 
-given JsonInput[AdditionalForeignKeyVer1] with
-  def read(json: JsonValue): AdditionalForeignKeyVer1 = AdditionalForeignKeyVer1(
+given JsonInput[VirtualForeignKeyVer1] with
+  def read(json: JsonValue): VirtualForeignKeyVer1 = VirtualForeignKeyVer1(
     json("name"),
     json("from").as[FieldsOnTableOneDb],
     json("to").as[FieldsOnTableOneDb]
   )
 
-given JsonOutput[AdditionalForeignKeyVer1] with
-  def write(u: AdditionalForeignKeyVer1): JsonObject = Json.obj(
+given JsonOutput[VirtualForeignKeyVer1] with
+  def write(u: VirtualForeignKeyVer1): JsonObject = Json.obj(
     "name" -> u.name,
     "from" -> u.from,
     "to" -> u.to

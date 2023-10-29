@@ -93,7 +93,7 @@ case class DatabaseInfos(infos : List[DatabaseInfo])
 
 case class CompositeIds(compositeIds: List[CompositeId])
 
-case class ResponseAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
+case class ResponseVirtualForeignKeys(databaseId : DatabaseId, keys : List[VirtualalForeignKey])
     extends TWithDatabaseId
 
 case class ResponseTestConnection(data : ConnectionData,  ex: Option[Exception])
