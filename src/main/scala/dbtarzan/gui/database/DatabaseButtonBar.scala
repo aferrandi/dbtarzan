@@ -24,7 +24,7 @@ object DatabaseButtonBar {
     def buildButtonBar(dbActor: ActorRef, databaseId: DatabaseId, localization : Localization): HBox = new HBox() {
       children = List(
         button(localization.reconnect, "refresh", (ev: ActionEvent) => dbActor ! QueryReset(databaseId)),
-        button(localization.openVirtualForeignKeys, "deleteThis", (_: ActionEvent) => dbActor ! RequestVirtualForeignKeys(databaseId))
+        button(localization.openVirtualForeignKeys, "virtualForeignKey", (_: ActionEvent) => dbActor ! RequestVirtualForeignKeys(databaseId))
       )
       spacing = 1
     }

@@ -109,7 +109,7 @@ class English extends Localization {
     def noRowsFromForeignKey(keyName : String, keyToTable : String): String = "No rows selected with key "+keyName+". Open table "+keyToTable+" without filter."
     def unorderedQueryResults = "Unordered query results?"
     def globalChangesAfterRestart = "Please restart the application to activate these changes"
-    def connectionResetted(databaseName : String): String = "Connection to the database "+databaseName+" resetted"
+    def connectionResetted(databaseName : String): String = "Reconnected to the database "+databaseName
     def databaseAlreadyOpen(databaseName : String): String =  "Database "+databaseName+" already open"
     def connectionRefused = "Connection refused"
     def connectionSuccessful = "Connection success"
