@@ -32,4 +32,4 @@ If the connection to the database has been lost, it can be **resetted** from the
 
 ![Reset connection](images/databaseMenu.png)
 
-From the same menu, To add [additional foreign keys](AdditionalForeignKeys) can be added to the database or composite.
+From the same menu, To add [virtual foreign keys](VirtualForeignKeys) can be added to the database or composite.

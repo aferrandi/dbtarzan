@@ -28,6 +28,6 @@ How can we do it? There are no foreign keys among tables of distinct databases.
 Let's **add them** then!
 
 After we have put all these databases together in a [composite](Compositest-editor),
-we define [additional foreign keys](AdditionalForeignKeys) between the tables of these distinct databases.
+we define [virtual foreign keys](VirtualForeignKeys) between the tables of these distinct databases.
 They are displayed in DBTarzan as [normal foreign keys](ForeignKeyPanel), so it is just to select some rows and double-click the foreign keys as usual to go from one table the table of a different database.
 
