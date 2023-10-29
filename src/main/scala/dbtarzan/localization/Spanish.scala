@@ -98,6 +98,7 @@ class Spanish extends Localization {
     def columnsFrom = "Columnas de"
     def columnsTo = "Columnas a"
     def openAdditionalForeignKeys = "Claves externas adicionales"
+    def showAlsoIndividualDatabases = "Mostra también bases de datos individuales"
     def writingFile(fileName : Path): String = "Estoy escribiendo el archivo "+fileName
     def fileWritten(fileName : Path): String = "Archivo "+fileName+" escrito"
     def connectedTo(databaseName: String): String = "Conectado a "+databaseName

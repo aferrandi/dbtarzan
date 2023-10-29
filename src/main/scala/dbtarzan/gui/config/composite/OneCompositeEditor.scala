@@ -6,6 +6,7 @@ import dbtarzan.gui.util.{ListViewAddFromComboBuilder, OnChangeSafe, TComboStrat
 import dbtarzan.localization.Localization
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{Insets, Pos}
+import scalafx.Includes._
 import scalafx.scene.Parent
 import scalafx.scene.control._
 import scalafx.scene.layout.{ColumnConstraints, GridPane, Priority}
@@ -33,6 +34,10 @@ class OneCompositeEditor(
   private val lvwDatabaseId = ListViewAddFromComboBuilder.buildUnordered[SimpleDatabaseId](localization.add, showText, comboStrategy)
   lvwDatabaseId.setListAndComboData(List.empty, allDatabaseId)
 
+  private val showIndividual = new CheckBox {
+    text = localization.showAlsoIndividualDatabases
+  }
+
   private val grid =  new GridPane {
     columnConstraints = List(
       new ColumnConstraints() {},
@@ -43,6 +48,8 @@ class OneCompositeEditor(
     add(txtName, 1, 0)
     add(new Label { text = "Database ids:"; alignmentInParent = Pos.TopLeft }, 0, 1)
     add(lvwDatabaseId.control, 1, 1)
+    add(showIndividual, 1, 2)
+
     padding = Insets(10)
     vgap = 10
     hgap = 10
@@ -51,19 +58,24 @@ class OneCompositeEditor(
   def show(composite : Composite) : Unit =  safe.noChangeEventDuring(() => {
     txtName.text = composite.compositeId.compositeName
     lvwDatabaseId.setListAndComboData(composite.databaseIds, allDatabaseId)
+    showIndividual.selected = composite.showAlsoIndividualDatabases
   })
 
 
   def toComposite: Composite = Composite(
         CompositeId(txtName.text()),
-        lvwDatabaseId.listData()
+        lvwDatabaseId.listData(),
+        showIndividual.selected.value
     )
 
   def control : Parent = grid
 
   def onChanged(useData : Composite => Unit) : Unit = {
-      txtName.text.onChange(safe.onChange(() => useData(toComposite)))
-      lvwDatabaseId.onChange(_ => safe.onChange(() => useData(toComposite)))
+    List(
+      txtName.text,
+      showIndividual.selected
+    ).foreach(_.onChange(safe.onChange(() => useData(toComposite))))
+    lvwDatabaseId.onChange(_ => safe.onChange(() => useData(toComposite)))
   }
 }
 
