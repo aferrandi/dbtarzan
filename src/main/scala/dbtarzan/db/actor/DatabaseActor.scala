@@ -4,7 +4,7 @@ import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password}
 import dbtarzan.db.*
-import dbtarzan.db.foreignkeys.AdditionalForeignKeyToForeignKey
+import dbtarzan.db.foreignkeys.VirtualForeignKeyToForeignKey
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
@@ -34,11 +34,11 @@ class DatabaseActor(
   if(optCores.isEmpty)
     closeThisDBWorker()
   private val cache = new DatabaseWorkerCache()
-  private val additionalFromFile = new DatabaseAdditionalKeysFromFile(databaseId, localization, keyFilesDirPath, log)
-  private val additionalToFile = new DatabaseAdditionalKeysToFile(databaseId, localization, keyFilesDirPath, log)
+  private val virtualKeysFromFile = new DatabaseVirtualKeysFromFile(databaseId, localization, keyFilesDirPath, log)
+  private val virtualKeysToFile = new DatabaseVirtualKeysToFile(databaseId, localization, keyFilesDirPath, log)
   private val foreignKeysForCache  : mutable.HashMap[TableId, ForeignKeys] = buildForeignKeysForCache()
-  private var additionalForeignKeys : List[AdditionalForeignKey] = additionalFromFile.loadAdditionalForeignKeysFromFile()
-  private var additionalForeignKeysExploded : Map[TableId, ForeignKeys] = AdditionalForeignKeyToForeignKey.toForeignKeys(additionalForeignKeys)
+  private var virtualForeignKeys : List[VirtualalForeignKey] = virtualKeysFromFile.loadVirtualForeignKeysFromFile()
+  private var virtualForeignKeysExploded : Map[TableId, ForeignKeys] = VirtualForeignKeyToForeignKey.toForeignKeys(virtualForeignKeys)
 
   private def buildOneCore(data: ConnectionData, loginPassword: Option[Password]) : Option[DatabaseCore] = try {
     val connection = createConnection.getConnection(data, loginPassword)
@@ -147,7 +147,7 @@ class DatabaseActor(
       val foreignKeys = ForeignKeys(
           foreignKeysForCache.getOrElseUpdate(tableId,
               cache.cachedForeignKeys(tableId, core.foreignKeyLoader.foreignKeys(tableId))
-          ).keys ++ additionalForeignKeysExploded.get(tableId).map(_.keys).getOrElse(List.empty))
+          ).keys ++ virtualForeignKeysExploded.get(tableId).map(_.keys).getOrElse(List.empty))
       guiActor ! ResponseForeignKeys(qry.queryId, qry.structure, foreignKeys)
     }, logError)
 
@@ -242,19 +242,19 @@ class DatabaseActor(
     guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
   }, logError)
 
-  private def requestAdditionalForeignKeys() : Unit = {
-    guiActor ! ResponseAdditionalForeignKeys(databaseId, additionalForeignKeys)
+  private def requestVirtualForeignKeys() : Unit = {
+    guiActor ! ResponseVirtualForeignKeys(databaseId, virtualForeignKeys)
   }
 
-  private def updateAdditionalForeignKeys(update: UpdateAdditionalForeignKeys) : Unit = {
-    additionalForeignKeys = update.keys
-    additionalForeignKeysExploded = AdditionalForeignKeyToForeignKey.toForeignKeys(update.keys)
-    additionalToFile.saveAdditionalForeignKeys(update.keys)
-    logAdditionalForeignKeysErrorIfAlreadyExisting()
+  private def updateVirtualForeignKeys(update: UpdateVirtualForeignKeys) : Unit = {
+    virtualForeignKeys = update.keys
+    virtualForeignKeysExploded = VirtualForeignKeyToForeignKey.toForeignKeys(update.keys)
+    virtualKeysToFile.saveVirtualForeignKeys(update.keys)
+    logVirtualForeignKeysErrorIfAlreadyExisting()
   }
 
-  private def logAdditionalForeignKeysErrorIfAlreadyExisting(): Unit = {
-    val intersection = AdditionalForeignKeysIntersection.intersection(foreignKeysForCache, additionalForeignKeys)
+  private def logVirtualForeignKeysErrorIfAlreadyExisting(): Unit = {
+    val intersection = VirtualForeignKeysIntersection.intersection(foreignKeysForCache, virtualForeignKeys)
     if (intersection.nonEmpty)
       log.error(localization.errorAFKAlreadyExisting(intersection))
   }
@@ -280,7 +280,7 @@ class DatabaseActor(
     case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)
     case qry : QueryIndexes => queryIndexes(qry)
-    case _: RequestAdditionalForeignKeys => requestAdditionalForeignKeys()
-    case update: UpdateAdditionalForeignKeys => updateAdditionalForeignKeys(update)
+    case _: RequestVirtualForeignKeys => requestVirtualForeignKeys()
+    case update: UpdateVirtualForeignKeys => updateVirtualForeignKeys(update)
   }
 }

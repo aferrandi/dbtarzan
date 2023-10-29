@@ -3,7 +3,7 @@ package dbtarzan.gui
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableId}
 import dbtarzan.gui.database.DatabaseButtonBar
-import dbtarzan.gui.foreignkeys.{AdditionalForeignKeysEditor, AdditionalForeignKeysEditorStarter}
+import dbtarzan.gui.foreignkeys.{VirtualForeignKeysEditor, VirtualForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
@@ -20,7 +20,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private val log = new Logger(guiActor)
   private val tableList = new TableList(tableIds)
   private val tableTabs = new TableTabs(dbActor, guiActor, localization)
-  private var additionalForeignKeyEditor : Option[AdditionalForeignKeysEditor] = Option.empty
+  private var virtualForeignKeyEditor : Option[VirtualForeignKeysEditor] = Option.empty
   tableList.onTableSelected(tableId => dbActor ! QueryColumns(tableId))
   private val filterText = new FilterText(dbActor ! QueryTablesByPattern(databaseId, _), localization)
   private val pane = new SplitPane {
@@ -50,12 +50,12 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case tables : ResponseTablesByPattern => tableList.addTableNames(tables.tabeIds)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
     case _: RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
-    case additionalKeys: ResponseAdditionalForeignKeys =>  openAdditionalForeignKeysEditor(additionalKeys)
+    case virtualKeys: ResponseVirtualForeignKeys =>  openVirtualForeignKeysEditor(virtualKeys)
     case _ => log.error(localization.errorDatabaseMessage(msg))
   }
 
-  private def openAdditionalForeignKeysEditor(additionalKeys: ResponseAdditionalForeignKeys): Unit = {
-    additionalForeignKeyEditor = Some(AdditionalForeignKeysEditorStarter.openAdditionalForeignKeysEditor(
+  private def openVirtualForeignKeysEditor(virtualKeys: ResponseVirtualForeignKeys): Unit = {
+    virtualForeignKeyEditor = Some(VirtualForeignKeysEditorStarter.openVirtualForeignKeysEditor(
       stage(),
       dbActor,
       guiActor,
@@ -63,13 +63,13 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
       tableIds,
       localization
     ))
-    additionalForeignKeyEditor.foreach(_.handleForeignKeys(additionalKeys.keys))
+    virtualForeignKeyEditor.foreach(_.handleForeignKeys(virtualKeys.keys))
   }
 
   def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
     case columns : ResponseColumns => tableTabs.addColumns(columns)
     case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
-    case columns : ResponseColumnsForForeignKeys => additionalForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
+    case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case _ => log.error(localization.errorTableMessage(msg))
   }  
 

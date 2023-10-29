@@ -2,18 +2,18 @@ package dbtarzan.db.actor
 
 import java.nio.file.Path
 import dbtarzan.db._
-import dbtarzan.db.foreignkeys.files.AdditionalForeignKeysFile
+import dbtarzan.db.foreignkeys.files.VirtualForeignKeysFile
 import dbtarzan.localization.Localization
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
 import dbtarzan.messages.Logger
 
-class DatabaseAdditionalKeysToFile(
+class DatabaseVirtualKeysToFile(
   databaseId : DatabaseId,
   localization: Localization,
   keyFilesDirPath: Path,
   log : Logger
   ) {
-  private def saveForeignKeysToFile(foreignKeysFile : AdditionalForeignKeysFile, keys : List[AdditionalForeignKey]): Unit = {
+  private def saveForeignKeysToFile(foreignKeysFile : VirtualForeignKeysFile, keys : List[VirtualalForeignKey]): Unit = {
     log.info(localization.savingForeignKeys(foreignKeysFile.fileName.toString))
     try
       foreignKeysFile.writeAsFile(keys)
@@ -22,6 +22,6 @@ class DatabaseAdditionalKeysToFile(
   }
 
 
-  def saveAdditionalForeignKeys(keys : List[AdditionalForeignKey]) : Unit =
-    saveForeignKeysToFile(new AdditionalForeignKeysFile(keyFilesDirPath, databaseIdText(databaseId)), keys)
+  def saveVirtualForeignKeys(keys : List[VirtualalForeignKey]) : Unit =
+    saveForeignKeysToFile(new VirtualForeignKeysFile(keyFilesDirPath, databaseIdText(databaseId)), keys)
 }

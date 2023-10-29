@@ -8,21 +8,21 @@ import grapple.json.{*, given}
 
 import java.nio.file.Path
 
-/* to write and read the additional foreign keys from a file. */
-class AdditionalForeignKeysFile(dirPath: Path, databaseName : String) {
+/* to write and read the virtual foreign keys from a file. */
+class VirtualForeignKeysFile(dirPath: Path, databaseName : String) {
 
   val fileName : Path = dirPath.resolve(databaseName+".fak")
 
-  def writeAsFile(list : List[AdditionalForeignKey]) : Unit =
-    FileReadWrite.writeFile(fileName, AdditionalForeignKeysWriter.toText(list))
+  def writeAsFile(list : List[VirtualalForeignKey]) : Unit =
+    FileReadWrite.writeFile(fileName, VirtualForeignKeysWriter.toText(list))
 
-  def readFromFile(databaseId: DatabaseId) : List[AdditionalForeignKey] = {
+  def readFromFile(databaseId: DatabaseId) : List[VirtualalForeignKey] = {
     val text = FileReadWrite.readFile(fileName)
     try
-      AdditionalForeignKeysReader.parseText(text)
+      VirtualForeignKeysReader.parseText(text)
     catch
       case _: Throwable => {
-        val keys = AdditionalForeignKeysReader.readVer1(databaseId, text)
+        val keys = VirtualForeignKeysReader.readVer1(databaseId, text)
         writeAsFile(keys)
         keys
     }

@@ -100,7 +100,7 @@ class SingleEditor(
   }
 
 
-  def show(key : AdditionalForeignKey) : Unit = safe.noChangeEventDuring(() => {
+  def show(key : VirtualalForeignKey) : Unit = safe.noChangeEventDuring(() => {
     // println("show "+key)
     txtName.text = key.name
     chosenTableFromProperty.value = new TableIdForCombo(key.from.table)
@@ -110,8 +110,8 @@ class SingleEditor(
     editorDisabled.value = false
   })
 
-  def retrieveKey(): AdditionalForeignKey =
-    AdditionalForeignKey(
+  def retrieveKey(): VirtualalForeignKey =
+    VirtualalForeignKey(
       txtName.text(),
       FieldsOnTable(chosenTableFromProperty.value.tableId, orderedListColumnsFrom.listData()),
       FieldsOnTable(chosenTableToProperty.value.tableId, orderedListColumnsTo.listData())
@@ -119,7 +119,7 @@ class SingleEditor(
 
   def control : Parent = grid
 
-  def onChanged(useKey : AdditionalForeignKey => Unit) : Unit = {
+  def onChanged(useKey : VirtualalForeignKey => Unit) : Unit = {
      txtName.text.onChange(safe.onChange(() => useKey(retrieveKey())))
      List(
       chosenTableFromProperty,

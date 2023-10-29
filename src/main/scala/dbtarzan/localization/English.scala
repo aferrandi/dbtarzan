@@ -33,7 +33,7 @@ class English extends Localization {
     def databases = "Databases"
     def composites = "Composites"
     def foreignKeys = "Foreign keys"
-    def connectionReset = "Reset connection"
+    def reconnect = "Reconnect"
     def orderBy = "Order by"
     def ascending = "Ascending"
     def descending = "Descending"
@@ -97,7 +97,7 @@ class English extends Localization {
     def tableTo = "Table to"
     def columnsFrom = "Columns from"
     def columnsTo = "Columns to"
-    def openAdditionalForeignKeys = "Additional foreign keys"
+    def openVirtualForeignKeys = "Virtual foreign keys"
     def showAlsoIndividualDatabases = "Show also individual databases"
     def writingFile(fileName : Path): String = "Writing file "+fileName
     def fileWritten(fileName : Path): String = "File "+fileName+" written"
@@ -137,7 +137,7 @@ class English extends Localization {
     def errorTableMessage(msg : TWithQueryId): String = "Table message "+msg+" not recognized"
     def errorNoTables(databaseName : String, schemasText : String): String = "No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText
     def errorDisplayingRows = "Displaying the table rows got"
-    def errorAFKVerification= "Wrong additional foreign keys."
+    def errorVFKerification= "Wrong virtual foreign keys."
     def errorAFKEmptyNames = "Empty names"
     def errorAFKNameNewRow = "Not valid names"
     def errorAFKNoColumns(noColumns: List[String]): String = "Missing columns in "+noColumns.mkString(", ")
@@ -145,7 +145,7 @@ class English extends Localization {
     def errorAFKDifferentColumnsNumber(differentColumnsNumber: List[String]): String = "From and to with different columns number in "+differentColumnsNumber.mkString(", ")
     def errorAFKDuplicateNames(nameDuplicates: List[String]): String = " Duplicate names: "+nameDuplicates.mkString(", ")
     def errorAFKDuplicateRelations(relationDuplicates: List[String]): String = "Duplicate relations: "+relationDuplicates.mkString(", ")
-    def errorAFKAlreadyExisting(names : List[String]): String = "The additional foreign keys "+names.mkString(", ")+" already exist as foreign keys"
+    def errorAFKAlreadyExisting(names : List[String]): String = "The virtual foreign keys "+names.mkString(", ")+" already exist as foreign keys"
     def errorRegisteringDriver(databaseName: String): String = "Registering to the database "+databaseName+" got"
     def warningNoPrimaryKeyInTable(tableName: String): String = "No primary key in the table "+tableName
 }

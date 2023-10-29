@@ -1,7 +1,7 @@
 package dbtarzan.messages
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{AdditionalForeignKey, Composite, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, TableId}
+import dbtarzan.db.{VirtualalForeignKey, Composite, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, TableId}
 
 
 case class OriginalQuery(queryId : QueryId, closeCurrentTab : Boolean)
@@ -30,8 +30,8 @@ case class QuerySchemas(databaseId : DatabaseId)
 
 case class QueryReset(databaseId : DatabaseId) 
 
-case class UpdateAdditionalForeignKeys(databaseId : DatabaseId, keys : List[AdditionalForeignKey])
+case class UpdateVirtualForeignKeys(databaseId : DatabaseId, keys : List[VirtualalForeignKey])
 
-case class RequestAdditionalForeignKeys(databaseId : DatabaseId)
+case class RequestVirtualForeignKeys(databaseId : DatabaseId)
 
 case class Composites(composites: List[Composite])
