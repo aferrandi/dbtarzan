@@ -33,7 +33,7 @@ class English extends Localization {
     def databases = "Databases"
     def composites = "Composites"
     def foreignKeys = "Foreign keys"
-    def connectionReset = "Connection Reset"
+    def connectionReset = "Reset connection"
     def orderBy = "Order by"
     def ascending = "Ascending"
     def descending = "Descending"
