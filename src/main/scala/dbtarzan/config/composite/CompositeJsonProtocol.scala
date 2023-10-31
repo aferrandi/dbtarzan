@@ -28,6 +28,6 @@ given JsonOutput[Composite] with
   def write(u: Composite): JsonObject = Json.obj(
     "compositeId" -> u.compositeId,
     "databaseIds" -> u.databaseIds,
-    "includeIndividual" -> u.showAlsoIndividualDatabases
+    "showAlsoIndividualDatabases" -> u.showAlsoIndividualDatabases
   )
 
