@@ -3,7 +3,7 @@ DbTarzan
 
 [Cross platform](https://aferrandi.github.io/dbtarzan/Tested-databases-and-operating-systems.html) database **browser**.
 
-Explore the tables of a **relational database** (or [many](https://aferrandi.github.io/dbtarzan//Composites.html).of them) following the relations defined in their [foreign keys](https://aferrandi.github.io/dbtarzan/ForeignKeys.html).
+Explore the tables of a **relational database** (or [many](https://aferrandi.github.io/dbtarzan//Composites.html) of them) following the relations defined in their [foreign keys](https://aferrandi.github.io/dbtarzan/ForeignKeys.html).
 
 With DbTarzan you can find the information you need from the database in a fraction of the time, without writing queries.  
 If it is the first time you are looking into a database, with DbTarzan you get immediately a sense of the data in the tables and the relations among them.
