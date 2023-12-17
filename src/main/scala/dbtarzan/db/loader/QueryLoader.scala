@@ -1,21 +1,15 @@
-package dbtarzan.db
+package dbtarzan.db.loader
 
 import dbtarzan.db.util.ResourceManagement.using
 import dbtarzan.db.util.{ExceptionToText, ExecutionTime}
+import dbtarzan.db.{Field, FieldType, Fields, QuerySql, Row, Rows}
 import dbtarzan.messages.TLogger
 import dbtarzan.types.Binaries.Binary
 
 import java.sql.{ResultSet, SQLException, Statement}
 import scala.concurrent.duration.Duration
 
-def rowsetToValue(rs: ResultSet, i: Int, column: Field): String|Int|Double|Binary = {
-  column.fieldType match {
-    case FieldType.STRING => rs.getString(i)
-    case FieldType.INT => rs.getInt(i)
-    case FieldType.FLOAT => rs.getDouble(i)
-    case FieldType.BINARY => Binary(rs.getBytes(i))
-  }
-}
+
 
 /** The part of the database actor that runs the table queries */
 class QueryLoader(connection : java.sql.Connection, log: TLogger) {
@@ -37,26 +31,34 @@ class QueryLoader(connection : java.sql.Connection, log: TLogger) {
     statement.setQueryTimeout(queryTimeout.toSeconds.toInt)
     statement.setMaxRows(maxRows)
     maxFieldSize.foreach(statement.setMaxFieldSize)
-    val executionTime = new ExecutionTime(queryTimeout)
-    val rs = statement.executeQuery(qry.sql)
-    val meta = rs.getMetaData
-    val columnCount = meta.getColumnCount
-    log.debug("Column count:"+columnCount+". Rows to read :"+maxRows)
-    var rows = Vector.empty[Row]
-    var i = 0
-    while(i < maxRows && !executionTime.isOver && rs.next()) {
-      rows = rows :+ nextRow(rs, columnCount, columns)
-      if(rows.length >= BUNDLE_SIZE) {
-        use(Rows(rows.toList))
-        rows = Vector.empty[Row]
+    using(new ExecutionTime(queryTimeout, "reading rows")) { executionTime =>
+      val rs = statement.executeQuery(qry.sql)
+      val meta = rs.getMetaData
+      val columnCount = meta.getColumnCount
+      log.debug("Column count:" + columnCount + ". Rows to read :" + maxRows)
+      var rows = Vector.empty[Row]
+      var i = 0
+      while (i < maxRows && !executionTime.isOver && rs.next()) {
+        rows = rows :+ nextRow(rs, columnCount, columns)
+        if (rows.length >= BUNDLE_SIZE) {
+          use(Rows(rows.toList))
+          rows = Vector.empty[Row]
+        }
+        i += 1
       }
-      i += 1
+      use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
     }
-    use(Rows(rows.toList)) // send at least something so that the GUI knows that the task is terminated
-    if(executionTime.isOver)
-      throw new Exception("timeout reading rows (over "+queryTimeout.toSeconds+" seconds)")
     log.debug("Query terminated")
   catch
     case se : SQLException  => throw new Exception("With query "+qry.sql+" got "+ExceptionToText.sqlExceptionText(se), se)
     case ex : Throwable => throw new Exception("With query "+qry.sql+" got", ex)
+
+  private def rowsetToValue(rs: ResultSet, i: Int, column: Field): String|Int|Double|Binary = {
+    column.fieldType match {
+      case FieldType.STRING => rs.getString(i)
+      case FieldType.INT => rs.getInt(i)
+      case FieldType.FLOAT => rs.getDouble(i)
+      case FieldType.BINARY => Binary(rs.getBytes(i))
+    }
+  }
 }

@@ -1,6 +1,7 @@
 package dbtarzan.db.foreignkeys
 
-import dbtarzan.db._
+import dbtarzan.db.*
+import dbtarzan.db.sql.SqlFieldBuilder
 
 case class FKRow(values : List[FieldWithValue])
 

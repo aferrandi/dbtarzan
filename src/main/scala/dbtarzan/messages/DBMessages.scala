@@ -28,7 +28,9 @@ case class QueryIndexes(queryId : QueryId)
 
 case class QuerySchemas(databaseId : DatabaseId)
 
-case class QueryReset(databaseId : DatabaseId) 
+case class QueryReset(databaseId : DatabaseId)
+
+case class QueryRowsNumber(queryId : QueryId, structure : DBTableStructure)
 
 case class UpdateVirtualForeignKeys(databaseId : DatabaseId, keys : List[VirtualalForeignKey])
 

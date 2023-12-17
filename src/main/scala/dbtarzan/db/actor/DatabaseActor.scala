@@ -5,6 +5,7 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password}
 import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.VirtualForeignKeyToForeignKey
+import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
@@ -152,13 +153,14 @@ class DatabaseActor(
     }, logError)
 
   private def queryRows(qry: QueryRows) : Unit = withCore(qry.queryId, core => {
-    val sql = SqlBuilder.buildSql(qry.structure)
+    val sql = SqlBuilder.buildQuerySql(qry.structure)
     val maxRows = core.limits.maxRows.getOrElse(500)
-    val queryTimeouts = core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
+    val queryTimeouts = calcQueryTimeouts(core)
     core.queryLoader.query(sql, maxRows, queryTimeouts, core.attributes.maxFieldSize, qry.structure.columns, rows =>
         guiActor ! ResponseRows(qry.queryId, qry.structure, rows)
       )
   }, e => queryRowsHandleErr(qry, e))
+
   private def queryRowsHandleErr(qry: QueryRows, e: Exception): Unit =
     qry.original match {
       case Some(original) => guiActor ! ErrorRows(original.queryId, e)
@@ -223,6 +225,17 @@ class DatabaseActor(
     guiActor ! ResponseIndexes(qry.queryId, indexes)
   }, logError)
 
+  private def queryRowsNumber(qry: QueryRowsNumber): Unit = withCore(qry.queryId, core => {
+    val sql = SqlBuilder.buildCountSql(qry.structure)
+    val queryTimeouts = calcQueryTimeouts(core)
+    val rowsNumber = core.queryRowsNumberLoader.query(sql, queryTimeouts)
+    guiActor ! ResponseRowsNumber(qry.queryId, rowsNumber)
+  }, e => guiActor ! ErrorRows(qry.queryId, e))
+
+  private def calcQueryTimeouts(core: DatabaseCore) = {
+    core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
+  }
+
   private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
     val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
@@ -260,8 +273,8 @@ class DatabaseActor(
   }
 
   def queryOneRow(qry: QueryOneRow): Unit = withCore(qry.queryId, core => {
-    val queryTimeput = core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
-    core.queryLoader.query(SqlBuilder.buildSql(qry.structure), 1, queryTimeput, None, qry.structure.columns, rows =>
+    val queryTimeput = calcQueryTimeouts(core)
+    core.queryLoader.query(SqlBuilder.buildSingleRowSql(qry.structure), 1, queryTimeput, None, qry.structure.columns, rows =>
       guiActor ! ResponseOneRow(qry.queryId, qry.structure, rows.rows.head)
     )
   }, e => guiActor ! ErrorRows(qry.queryId, e))
@@ -280,6 +293,7 @@ class DatabaseActor(
     case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)
     case qry : QueryIndexes => queryIndexes(qry)
+    case qry : QueryRowsNumber => queryRowsNumber(qry)
     case _: RequestVirtualForeignKeys => requestVirtualForeignKeys()
     case update: UpdateVirtualForeignKeys => updateVirtualForeignKeys(update)
   }

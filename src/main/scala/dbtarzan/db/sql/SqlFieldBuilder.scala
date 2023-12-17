@@ -1,4 +1,6 @@
-package dbtarzan.db
+package dbtarzan.db.sql
+
+import dbtarzan.db.*
 
 class SqlFieldBuilder(columns : List[Field], attributes : QueryAttributes) {
   val typeByName: Map[String, FieldType] = columns.map(field => (field.name.toUpperCase, field.fieldType)).toMap

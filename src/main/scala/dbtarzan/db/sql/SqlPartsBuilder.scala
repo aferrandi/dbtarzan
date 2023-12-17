@@ -1,4 +1,6 @@
-package dbtarzan.db
+package dbtarzan.db.sql
+
+import dbtarzan.db.{DBEnumsText, OrderByField, OrderByFields}
 
 object SqlPartsBuilder {
   def buildFilters(filters : List[String]) : String = {

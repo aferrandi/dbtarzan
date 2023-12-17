@@ -46,6 +46,9 @@ case class ResponseForeignKeys(queryId : QueryId, structure : DBTableStructure, 
 case class ResponseIndexes(queryId : QueryId, indexes: Indexes)
   extends TWithQueryId
 
+case class ResponseRowsNumber(queryId : QueryId, rowsNumber: Int)
+  extends TWithQueryId
+
 case class ResponseColumnsFollow(tableId: TableId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 

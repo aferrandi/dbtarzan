@@ -1,6 +1,7 @@
 package dbtarzan.db
 
 import dbtarzan.db.foreignkeys.{FKRow, ForeignKeyCriteria}
+import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
@@ -14,7 +15,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure)
     assert("SELECT * FROM customer" === sql.sql)
   }
 
@@ -27,7 +28,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         DBTableStructureBuilder.buildAttributes()
         )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure)
     assert("SELECT * FROM [TST].[customer]" === sql.sql)
   }
 
@@ -40,7 +41,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure)
     assert("SELECT * FROM customer WHERE (\n(name='John' AND age=23))" === sql.sql)
   }
 
@@ -53,7 +54,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure)
     assert("SELECT * FROM customer WHERE (\nname = 'john')" === sql.sql)
   }
 
@@ -66,7 +67,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         Some(DBTableStructureBuilder.buildOrderByFields()),
         QueryAttributes.none()
     )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure)
     assert("SELECT * FROM customer ORDER BY name ASC, age DESC" === sql.sql)
   }
 
@@ -79,7 +80,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         Some(OrderByFields(List.empty[OrderByField])),
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure)
     assert("SELECT * FROM customer" === sql.sql)
   }
 
@@ -90,7 +91,7 @@ class SqlBuilderTest extends AnyFlatSpec {
       DBTableStructureBuilder.buildFields("John", "23"),
       QueryAttributes.none()
     )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildSingleRowSql(structure)
     assert("SELECT * FROM customer WHERE (\nname='John') AND (\nage=23)" === sql.sql)
   }
 
@@ -101,7 +102,7 @@ class SqlBuilderTest extends AnyFlatSpec {
       DBTableStructureBuilder.buildFields("John", "23"),
       DBTableStructureBuilder.buildAttributes()
     )
-    val sql = SqlBuilder.buildSql(structure)
+    val sql = SqlBuilder.buildSingleRowSql(structure)
     assert("SELECT * FROM [TST].[customer] WHERE (\n[name]='John') AND (\n[age]=23)" === sql.sql)
   }
 
