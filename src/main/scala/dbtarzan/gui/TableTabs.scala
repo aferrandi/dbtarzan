@@ -59,6 +59,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field, order.direction))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
     case rows : ResponseRows => createTabWith(rows.queryId, rows.structure, addRows(_, rows))
+    case rowsNumber: ResponseRowsNumber => tables.tableWithQueryId(rowsNumber.queryId, showRowsNumber(_, rowsNumber))
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
     case reloadQuery: ReloadQuery => tables.tableWithQueryId(reloadQuery.queryId, _.reloadQuery(reloadQuery.closeCurrentTab))
@@ -121,6 +122,10 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
 
   private def addOneRow(table: BrowsingTable, oneRow : ResponseOneRow) : Unit =
     table.addOneRow(oneRow)
+
+  private def showRowsNumber(table: BrowsingTable, rowsNumber: ResponseRowsNumber): Unit =
+    table.showRowsNumber(rowsNumber)
+
 
   private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
     table.rowsError()

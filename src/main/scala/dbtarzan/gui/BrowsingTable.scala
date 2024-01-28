@@ -2,6 +2,7 @@ package dbtarzan.gui
 
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.*
+import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.gui.browsingtable.*
 import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}
 import dbtarzan.gui.interfaces.TControlBuilder
@@ -26,7 +27,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val foreignKeyList = new ForeignKeyList(log)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, localization)
-  private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure))
+  private val queryInfo = new QueryInfo(SqlBuilder.buildQuerySql(structure), localization, () => {
+    dbActor ! QueryRowsNumber(queryId, structure : DBTableStructure)
+  })
   private val indexInfo = new IndexesInfo(localization)
   private val info = new Info(columnsTable, queryInfo, indexInfo, localization, () => {
     dbActor ! QueryIndexes(queryId)
@@ -57,7 +60,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val layout = new BorderPane {
     top =  new VBox { children = List(buttonBar, buildTop()) }
     center = splitter.control
-    bottom =progressBar.control
+    bottom = progressBar.control
   }
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
@@ -184,6 +187,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   def addOneRow(oneRow: ResponseOneRow): Unit =
     rowDetailsView.foreach(details => details.displayRow(oneRow.row))
+
+  def showRowsNumber(rowsNumber: ResponseRowsNumber): Unit =
+    queryInfo.showRowsNumber(rowsNumber.rowsNumber)
 
   def rowsError() : Unit = queryText.showError()
 

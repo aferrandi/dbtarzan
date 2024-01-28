@@ -10,6 +10,11 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 
 DBTarzan changelog
 =================
+- Release 1.32
+
+Check box in the composite editor to decide for each composite if the databases in the composite will be part of the database lists in the main UI. In this way if the database list is too big we can reduce it.
+
+Button bar instead of menu over the tables list in the main UI, to make the "Reconnect" button visible.
 
 - Release 1.31
 
@@ -20,17 +25,6 @@ Better error message dialog with more concise error message with an "advanced" b
 Fixed a bug that did not allow to see the content of a table with a binary field with null values.
 
 Fixed a bug that was limiting the tables that could be selected when adding an virtual foreign key.
-
-
-- Release 1.30
-
-Now the columns have 4 types: int, float, string and binary.
-
-The veritcal row view has been updated. Text and binary columns can be expanded, opened in a dialog,  download their content to a text or binary file.
-
-The menu on top of the table tab has become a button panel, a button for each menu choices. A refresh button has been added, which refreshes the content of the tab (actually it opens a new one and closes the old one).
-
-Added the possibility to choose direction (ascending or descending) in the order by menu.
 
 
 

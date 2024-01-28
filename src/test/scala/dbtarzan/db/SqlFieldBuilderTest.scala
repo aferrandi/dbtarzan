@@ -1,5 +1,6 @@
 package dbtarzan.db
 
+import dbtarzan.db.sql.SqlFieldBuilder
 import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
