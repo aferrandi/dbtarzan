@@ -9,6 +9,13 @@ import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.messages.*
+import scalafx.Includes.*
+import scalafx.event.ActionEvent
+import scalafx.scene.Parent
+import scalafx.scene.control.*
+import scalafx.scene.layout.{BorderPane, FlowPane, VBox}
+import scalafx.stage.Stage
+
 
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: List[TableId], log: Logger) extends TControlBuilder {

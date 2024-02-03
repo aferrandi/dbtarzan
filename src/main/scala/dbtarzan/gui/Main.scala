@@ -14,6 +14,7 @@ import dbtarzan.types.ConfigPath
 
 import scala.language.postfixOps
 import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
+import scalafx.application.JFXApp3
 
 /** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp3 {

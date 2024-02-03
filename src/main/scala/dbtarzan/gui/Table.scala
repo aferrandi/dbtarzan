@@ -8,6 +8,12 @@ import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.messages.*
 import org.apache.pekko.actor.ActorRef
+import scalafx.Includes.*
+import scalafx.collections.ObservableBuffer
+import scalafx.scene.Parent
+import scalafx.scene.control.TableColumn.*
+import scalafx.scene.control.{SelectionMode, TableColumn, TableView}
+import scalafx.scene.image.ImageView
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/

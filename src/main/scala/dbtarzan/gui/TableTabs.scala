@@ -8,6 +8,9 @@ import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, 
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.messages.*
+import scalafx.Includes._
+import scalafx.scene.Parent
+import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
 class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)

@@ -5,6 +5,8 @@ import dbtarzan.gui.interfaces.{TDatabaseList, TDatabases, TGlobal, TLogs}
 import dbtarzan.messages.*
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
+import scalafx.application.Platform
+
 case class GUIInitData(logActor: ActorRef)
 
 /* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */
