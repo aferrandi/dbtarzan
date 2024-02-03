@@ -5,7 +5,8 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.actor.{CopyActor, DatabaseActor}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{DatabaseIdUtil, Logger}
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.DatabaseIdUtil
 
 import java.nio.file.Path
 private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, log: Logger, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path, loginPasswords: LoginPasswords) {

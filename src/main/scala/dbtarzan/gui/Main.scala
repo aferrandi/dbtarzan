@@ -1,19 +1,19 @@
 package dbtarzan.gui
 
 import java.nio.file.{Path, Paths}
-import dbtarzan.config.actor.{ ConnectionsActor, ConnectionsInitData}
+import dbtarzan.config.actor.{ConnectionsActor, ConnectionsInitData}
 import dbtarzan.config.composite.CompositeReader
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader, ConnectionsDataMap, DatabaseInfoFromConfig}
 import dbtarzan.config.global.GlobalDataReader
 import dbtarzan.db.{Composite, DatabaseId, SimpleDatabaseId}
-import dbtarzan.gui.actor.{ GUIActor, GUIInitData }
+import dbtarzan.gui.actor.{GUIActor, GUIInitData}
 import dbtarzan.localization.Localizations
-import dbtarzan.log.actor.{ LogActor, LogInitData }
+import dbtarzan.log.actor.{LogActor, LogInitData, Logger}
 import dbtarzan.messages.*
 import dbtarzan.types.ConfigPath
-import scalafx.application.JFXApp3
+
 import scala.language.postfixOps
-import org.apache.pekko.actor.{ ActorRef, ActorSystem, Props}
+import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
 
 /** Main class, starts the main gui, the actors, and connects them together */
 object Main extends JFXApp3 {

@@ -6,9 +6,10 @@ import scalafx.Includes._
 import org.apache.pekko.actor.ActorRef
 
 import dbtarzan.db.{ TableId, DatabaseId }
-import dbtarzan.messages.{ RequestVirtualForeignKeys, Logger }
+import dbtarzan.messages.RequestVirtualForeignKeys
 import dbtarzan.localization.Localization
 import dbtarzan.gui.util.TableIdLabel
+import dbtarzan.log.actor.Logger
 
 /* to start the virtual foreign keys editor. It handles all the closing events. The other events are handled by the editor itself */
 object VirtualForeignKeysEditorStarter

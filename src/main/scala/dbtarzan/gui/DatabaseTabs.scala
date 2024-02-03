@@ -4,11 +4,8 @@ import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableId}
 import dbtarzan.gui.interfaces.{TControlBuilder, TDatabases}
 import dbtarzan.localization.Localization
-import dbtarzan.messages._
-import scalafx.Includes._
-import scalafx.event.Event
-import scalafx.scene.Parent
-import scalafx.scene.control.{Tab, TabPane}
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.*
 
 import scala.collection.mutable
 

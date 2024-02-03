@@ -2,9 +2,9 @@ package dbtarzan.gui.actor
 
 import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.gui.interfaces.{TDatabaseList, TDatabases, TGlobal, TLogs}
-import scalafx.application.Platform
-import dbtarzan.messages._
+import dbtarzan.messages.*
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 case class GUIInitData(logActor: ActorRef)
 
 /* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */

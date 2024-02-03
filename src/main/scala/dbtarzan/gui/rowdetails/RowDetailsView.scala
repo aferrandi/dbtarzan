@@ -4,7 +4,7 @@ import dbtarzan.db.{DBTable, Row}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
+import dbtarzan.log.actor.Logger
 import scalafx.scene.Parent
 import scalafx.scene.layout.BorderPane
 

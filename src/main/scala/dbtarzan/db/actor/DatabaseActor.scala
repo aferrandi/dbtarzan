@@ -8,6 +8,7 @@ import dbtarzan.db.foreignkeys.VirtualForeignKeyToForeignKey
 import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
 import dbtarzan.messages.*
 

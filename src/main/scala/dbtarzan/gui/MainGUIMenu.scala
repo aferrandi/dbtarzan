@@ -6,7 +6,7 @@ import dbtarzan.gui.config.connections.ConnectionEditorStarter
 import dbtarzan.gui.config.global.GlobalEditorStarter
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
+import dbtarzan.log.actor.Logger
 import dbtarzan.types.ConfigPath
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.JFXApp3

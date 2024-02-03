@@ -5,7 +5,7 @@ import dbtarzan.db.{VirtualalForeignKey, DatabaseId, FieldsOnTable, SimpleDataba
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.TableIdLabel
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
+import dbtarzan.log.actor.Logger
 import scalafx.Includes._
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer

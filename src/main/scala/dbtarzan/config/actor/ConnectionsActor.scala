@@ -7,7 +7,7 @@ import dbtarzan.db.*
 import dbtarzan.db.basicmetadata.MetadataSchemasLoader
 import dbtarzan.gui.actor.GUIActor
 import dbtarzan.localization.Localization
-import dbtarzan.log.actor.LogActor
+import dbtarzan.log.actor.{LogActor, Logger}
 import dbtarzan.messages.*
 
 import java.nio.file.Path

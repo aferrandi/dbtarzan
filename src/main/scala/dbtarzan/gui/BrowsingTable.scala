@@ -11,14 +11,8 @@ import dbtarzan.gui.rowdetails.{RowDetailsApplicant, RowDetailsView}
 import dbtarzan.gui.tabletabs.TTableForMapWithId
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.*
-import scalafx.Includes.*
-import scalafx.event.ActionEvent
-import scalafx.scene.Parent
-import scalafx.scene.control.{Button, Menu, MenuBar, MenuItem}
-import scalafx.scene.image.ImageView
-import scalafx.scene.layout.{BorderPane, VBox}
-import scalafx.stage.Stage
 
 /* table + constraint input box + foreign keys */
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization, log: Logger)

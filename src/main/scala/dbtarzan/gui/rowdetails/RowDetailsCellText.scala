@@ -3,7 +3,7 @@ package dbtarzan.gui.rowdetails
 import dbtarzan.db.{Field, FieldType}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
+import dbtarzan.log.actor.Logger
 import dbtarzan.types.Binaries.Binary
 import scalafx.Includes.*
 import scalafx.scene.Node

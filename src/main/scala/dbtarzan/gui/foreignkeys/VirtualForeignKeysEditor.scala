@@ -5,7 +5,8 @@ import dbtarzan.db.{DatabaseId, Fields, TableId, VirtualalForeignKey}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, StringUtil}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{Logger, UpdateVirtualForeignKeys}
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.UpdateVirtualForeignKeys
 import scalafx.geometry.Orientation
 import scalafx.scene.Parent
 import scalafx.scene.control.SplitPane

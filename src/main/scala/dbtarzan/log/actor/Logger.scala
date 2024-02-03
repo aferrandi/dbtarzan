@@ -1,6 +1,8 @@
-package dbtarzan.messages 
+package dbtarzan.log.actor
 
+import dbtarzan.messages.{Debug, Error, Info, TLogger, Warning}
 import org.apache.pekko.actor.ActorRef
+
 import java.time.LocalDateTime
 
 /* acts as a classic "Logger" class, but sends the messages to the guiActor */

@@ -8,16 +8,15 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import scalafx.Includes._
 import org.apache.pekko.actor.ActorRef
-
-import dbtarzan.messages.Logger
 import dbtarzan.config.global.GlobalData
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.connections.EncryptionKeyChange
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.{ Languages, Language, Localization }
+import dbtarzan.log.actor.Logger
 
 /**
-  table + constraint input box + foreign keys
+  *table + constraint input box + foreign keys
 */
 class GlobalEditor(
     data : GlobalData,

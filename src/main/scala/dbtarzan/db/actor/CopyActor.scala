@@ -8,11 +8,12 @@ import scala.collection.mutable.ListBuffer
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db._
+import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.ForeignKeyLoader
 import dbtarzan.db.foreignkeys.files.ForeignKeysFile
-import dbtarzan.messages._
+import dbtarzan.messages.*
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 
 import java.sql.Connection
 

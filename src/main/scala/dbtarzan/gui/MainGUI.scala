@@ -7,7 +7,8 @@ import dbtarzan.gui.log.LogList
 import dbtarzan.gui.login.PasswordDialog
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{ DatabaseIdUtil, Logger }
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.DatabaseIdUtil
 import dbtarzan.types.ConfigPath
 
 import org.apache.pekko.actor.ActorRef
