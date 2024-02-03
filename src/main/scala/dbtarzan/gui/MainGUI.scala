@@ -7,8 +7,9 @@ import dbtarzan.gui.log.LogList
 import dbtarzan.gui.login.PasswordDialog
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.DatabaseIdUtil
+import dbtarzan.messages.{ DatabaseIdUtil, Logger }
 import dbtarzan.types.ConfigPath
+
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
@@ -54,11 +55,11 @@ class MainGUI(
 
   stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
 
-  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
+  def postInit(guiActor: ActorRef, connectionsActor: ActorRef, log: Logger) : Unit = {
     this.postInitData = Some(PostInitData(guiActor, connectionsActor))
 
-    databaseTabs.postInit(guiActor, connectionsActor)
-    mainGUIMenu.postInit(stage, guiActor, connectionsActor)
+    databaseTabs.postInit(guiActor, connectionsActor, log)
+    mainGUIMenu.postInit(stage, guiActor, connectionsActor, log)
   } 
 
   private def withExtractedEncryptionKey(use : EncryptionKey => Unit) : Unit =

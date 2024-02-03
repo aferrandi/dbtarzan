@@ -14,28 +14,28 @@ import scala.collection.mutable
 
 case class DatabaseWithTab(database : Database, tab : Tab)
 
+case class PostInitData(guiActor: ActorRef, connectionsActor: ActorRef, log: Logger)
+
 /** All the tabs with one database for each*/
 class DatabaseTabs(localization : Localization) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
   private val databaseById = mutable.HashMap.empty[DatabaseId, DatabaseWithTab]
-  private var guiActor: Option[ActorRef]  = None
-  private var connectionsActor: Option[ActorRef] = None 
+  private var postInitData: Option[PostInitData]  = None
 
-  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
-      this.guiActor = Some(guiActor)
-      this.connectionsActor = Some(connectionsActor)
-  } 
+
+  def postInit(guiActor: ActorRef, connectionsActor: ActorRef, log: Logger) : Unit =
+      this.postInitData = Some(PostInitData(guiActor, connectionsActor, log))
 
   private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableIds : List[TableId]) : Database = {
-    println("add database tab for "+DatabaseIdUtil.databaseIdText(databaseId))
-    guiActor match {
-      case Some(ga) => addDatabaseTabWithGUIActor(dbActor, ga, databaseId, tableIds)
+    postInitData.foreach(_.log.debug("add database tab for "+DatabaseIdUtil.databaseIdText(databaseId)))
+    postInitData match {
+      case Some(pa) => addDatabaseTabWithGUIActor(dbActor, pa.guiActor, databaseId, tableIds, pa.log)
       case None => throw new Exception("guiActor is not defined")
     }
   }
 
-  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, someGuiActor: ActorRef, databaseId: DatabaseId, tableIds: List[TableId]) = {
-    val database = new Database(dbActor, someGuiActor, databaseId, localization, tableIds)
+  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, guiActor: ActorRef, databaseId: DatabaseId, tableIds: List[TableId], log: Logger) = {
+    val database = new Database(dbActor, guiActor, databaseId, localization, tableIds, log)
     val tab = buildTab(database)
     tabs += tab
     selectTab(tab)
@@ -45,7 +45,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
 
   /* requests to close the connection to the database to the central database actor */
   private def sendClose(databaseId : DatabaseId) : Unit = {
-    connectionsActor.foreach(_ ! QueryClose(databaseId))     
+    postInitData.foreach(_.connectionsActor ! QueryClose(databaseId))
   }
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {

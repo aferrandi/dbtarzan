@@ -22,9 +22,9 @@ import dbtarzan.localization.{ Languages, Language, Localization }
 class GlobalEditor(
     data : GlobalData,
     localization: Localization,
-    guiActor : ActorRef
+    guiActor : ActorRef,
+    log: Logger
   ) extends TControlBuilder {
-  private val log = new Logger(guiActor)
   private val languages: scalafx.collections.ObservableBuffer[Language] = ObservableBuffer.from[Language](Languages.languages)
 
   private val cmbLanguages = new ComboBox[Language] {

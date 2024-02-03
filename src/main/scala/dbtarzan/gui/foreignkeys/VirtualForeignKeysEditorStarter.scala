@@ -6,7 +6,7 @@ import scalafx.Includes._
 import org.apache.pekko.actor.ActorRef
 
 import dbtarzan.db.{ TableId, DatabaseId }
-import dbtarzan.messages.RequestVirtualForeignKeys
+import dbtarzan.messages.{ RequestVirtualForeignKeys, Logger }
 import dbtarzan.localization.Localization
 import dbtarzan.gui.util.TableIdLabel
 
@@ -16,12 +16,12 @@ object VirtualForeignKeysEditorStarter
  def openVirtualForeignKeysEditor(
                                       parentStage : Stage,
                                       dbActor : ActorRef,
-                                      guiActor: ActorRef,
                                       databaseId: DatabaseId,
                                       tableIds: List[TableId],
-                                      localization: Localization) : VirtualForeignKeysEditor = {
+                                      localization: Localization,
+                                      log: Logger) : VirtualForeignKeysEditor = {
     println("open virtual foreign keys editor")
-    val editor = new VirtualForeignKeysEditor(dbActor, guiActor, databaseId, tableIds.sortBy(TableIdLabel.toLabel), localization)
+    val editor = new VirtualForeignKeysEditor(dbActor, databaseId, tableIds.sortBy(TableIdLabel.toLabel), localization, log)
     val virtualForeignKeysStage = new Stage {
       title = localization.openVirtualForeignKeys
       width = 800

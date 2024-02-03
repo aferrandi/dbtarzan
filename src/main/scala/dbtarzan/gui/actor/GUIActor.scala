@@ -1,10 +1,11 @@
 package dbtarzan.gui.actor
 
-import org.apache.pekko.actor.Actor
+import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.gui.interfaces.{TDatabaseList, TDatabases, TGlobal, TLogs}
 import scalafx.application.Platform
 import dbtarzan.messages._
 import dbtarzan.localization.Localization
+case class GUIInitData(logActor: ActorRef)
 
 /* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */
 class GUIActor(
@@ -13,26 +14,35 @@ class GUIActor(
                  dbList : TDatabaseList,
                  main: TGlobal,
                  localization : Localization
-   ) extends Actor {
-  private val log = new Logger(self)
+              ) extends Actor {
+  var log: Option[Logger] = None
 
   def runLater[R](op: => R): Unit = {
     Platform.runLater {
-      try { op } catch { case e : Exception => log.error("UI", e) }
+      try { op } catch { case e : Exception => log.foreach(_.error("UI", e)) }
     }
   }
 
-  def receive: PartialFunction[Any,Unit] = {
+
+  def intiialized: Receive = {
         case rsp: TWithQueryId => runLater { databases.handleQueryIdMessage(rsp) }
         case rsp: TWithDatabaseId => runLater { databases.handleDatabaseIdMessage(rsp) }
         case rsp: TWithTableId => runLater { databases.handleTableIdMessage(rsp) }
         case rsp: ResponseTestConnection => runLater { main.handleTestConnectionResponse(rsp) }
         case rsp: ResponseSchemaExtraction => runLater { main.handleSchemaExtractionResponse(rsp) }
-        case msg: TLogMessage => runLater { logs.addLogMessage(msg) }
+        case msg: TLogMessageGUI => runLater { logs.addLogMessage(msg) }
         case msg: DatabaseInfos => runLater { dbList.setDatabaseInfos(msg) }
         case err: ErrorDatabaseAlreadyOpen => runLater {
             databases.showDatabase(err.databaseId)
-            log.warning(localization.databaseAlreadyOpen(DatabaseIdUtil.databaseIdText(err.databaseId)))
+            log.foreach(_.warning(localization.databaseAlreadyOpen(DatabaseIdUtil.databaseIdText(err.databaseId))))
         }
   }
+
+  def receive: PartialFunction[Any,Unit] = {
+    case initData : GUIInitData  => {
+      log = Some(new Logger(initData.logActor))
+      context.become(intiialized)
+    }
+  }
+
 }

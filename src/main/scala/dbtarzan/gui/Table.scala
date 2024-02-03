@@ -16,8 +16,7 @@ import scalafx.scene.image.ImageView
 
 
 /** The GUI table control showing the content of a database table in a GUI table*/
-class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization) extends TControlBuilder {
-  private val log = new Logger(guiActor)
+class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization, log: Logger) extends TControlBuilder {
   val fields : List[Field] = dbTable.fields
   log.debug("ColumnNames: "+fields.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
   /* the content of the table in terms of rows. Updated by the table itself */

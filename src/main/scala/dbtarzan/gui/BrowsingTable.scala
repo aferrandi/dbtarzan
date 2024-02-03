@@ -21,9 +21,8 @@ import scalafx.scene.layout.{BorderPane, VBox}
 import scalafx.stage.Stage
 
 /* table + constraint input box + foreign keys */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization)
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization, log: Logger)
   extends TControlBuilder with TTableForMapWithId {
-  private val log = new Logger(guiActor)
   private val foreignKeyList = new ForeignKeyList(log)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, localization)
@@ -35,7 +34,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     dbActor ! QueryIndexes(queryId)
   })
   private val dbTable = new DBTable(structure)
-  private val table = new Table(guiActor, queryId, dbTable, localization)
+  private val table = new Table(guiActor, queryId, dbTable, localization, log)
   private val foreignKeysInfoSplitter = new ForeignKeysInfoSplitter(foreignKeyListWithTitle, info)
   private val splitter = new BrowsingTableSplitter(table, foreignKeysInfoSplitter)
   private var useNewTable : (DBTableStructure, Boolean) => Unit = (_, _) => {}

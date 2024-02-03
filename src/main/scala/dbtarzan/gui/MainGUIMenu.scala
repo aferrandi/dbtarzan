@@ -20,12 +20,12 @@ class MainGUIMenu(
                   encryptionKeyExtractor: EncryptionKeyExtractor,
                   global: Global) {
 
-  case class PostInitData(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef)
+  case class PostInitData(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef, log: Logger)
 
   private var postInitData: Option[PostInitData] = None
 
-  def postInit(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef): Unit = {
-    this.postInitData = Some(PostInitData(stage, guiActor, connectionsActor))
+  def postInit(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef, log: Logger): Unit = {
+    this.postInitData = Some(PostInitData(stage, guiActor, connectionsActor, log))
   }
 
   def buildMenu(): MenuBar = new MenuBar {
@@ -52,7 +52,7 @@ class MainGUIMenu(
   private def openConnectionsEditor(): Unit = {
     postInitData match {
       case Some(pa) => {
-        new Logger(pa.guiActor).info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
+        pa.log.info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
         encryptionKeyExtractor.extractEncryptionKey(pa.stage) match {
           case Some(key) =>
             global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(pa.stage, pa.connectionsActor, configPaths.connectionsConfigPath, key, localization))
@@ -66,7 +66,7 @@ class MainGUIMenu(
   private def openCompositeEditor(): Unit = {
     postInitData match {
       case Some(pa) => {
-        new Logger(pa.guiActor).info(localization.editingCompositeFile(configPaths.compositeConfigPath))
+        pa.log.info(localization.editingCompositeFile(configPaths.compositeConfigPath))
         CompositeEditorStarter.openCompositeEditor(pa.stage, configPaths.compositeConfigPath, configPaths.connectionsConfigPath,  pa.connectionsActor, localization)
       }
       case None => println("MainGUI: guiActor not defined")
@@ -76,7 +76,7 @@ class MainGUIMenu(
   private def openGlobalEditor(): Unit = {
     postInitData match {
       case Some(pa) => {
-        new Logger(pa.guiActor).info("Editing global configuration file " + configPaths.globalConfigPath)
+        pa.log.info("Editing global configuration file " + configPaths.globalConfigPath)
         GlobalEditorStarter.openGlobalEditor(pa.stage, configPaths, localization, pa.guiActor)
       }
       case None => println("MainGUI: guiActor not defined")

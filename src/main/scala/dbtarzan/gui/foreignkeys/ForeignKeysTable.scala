@@ -19,8 +19,7 @@ object ForeignKeysTable {
 }
 
 /** The GUI table control showing the currently edited virtual foreign keys */
-class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization : Localization) extends TControlBuilder {
-  private val log = new Logger(guiActor)
+class ForeignKeysTable(databaseId: DatabaseId, localization : Localization, log: Logger) extends TControlBuilder {
   private val buffer = ObservableBuffer.empty[VirtualalForeignKey]
   /* the table */
   private val table = buildTable()
