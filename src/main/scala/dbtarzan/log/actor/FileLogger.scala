@@ -8,7 +8,7 @@ class FileLogger {
   val fw = new FileWriter("dbtarzan.log", true)
 
   def log(msg: TLogMessage): Unit = {
-    fw.append(toText(msg))
+    fw.append(s"${toText(msg)}\n")
     fw.flush()
   }
 
