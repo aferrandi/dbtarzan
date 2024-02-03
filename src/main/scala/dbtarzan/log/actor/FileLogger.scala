@@ -5,7 +5,7 @@ import dbtarzan.messages.{Debug, Error, ExceptionText, Info, TLogMessage, Warnin
 import java.io.FileWriter
 
 class FileLogger {
-  val fw = new FileWriter("dbtarzan.log", true)
+  val fw = new FileWriter("dbtarzan.log")
 
   def log(msg: TLogMessage): Unit = {
     fw.append(s"${toText(msg)}\n")
