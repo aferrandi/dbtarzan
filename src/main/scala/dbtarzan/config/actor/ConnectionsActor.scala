@@ -15,14 +15,14 @@ import scala.collection.mutable
 
 case class ConnectionsInitData(guiActor: ActorRef, logActor: ActorRef)
 
-case class ConnectionsInitState(guiActor: ActorRef, log: Logger)
-
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
 class ConnectionsActor(connectionsDatas : List[ConnectionData],
                        composites: List[Composite],
                        localization : Localization,
                        keyFilesDirPath : Path
                       ) extends Actor {
+  case class ConnectionsInitState(guiActor: ActorRef, log: Logger)
+  
   private val mapDBWorker = mutable.HashMap.empty[DatabaseId, ActorRef]
   private var connectionsDataMap = new ConnectionsDataMap(connectionsDatas)
   private var currentComposites : Map[CompositeId, Composite] = mapComposites(composites)

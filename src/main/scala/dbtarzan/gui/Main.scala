@@ -12,7 +12,7 @@ import dbtarzan.log.actor.{LogActor, LogInitData, Logger}
 import dbtarzan.messages.*
 import dbtarzan.types.ConfigPath
 
-import scala.language.postfixOps
+
 import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
 import scalafx.application.JFXApp3
 
@@ -26,10 +26,9 @@ object Main extends JFXApp3 {
     val globalData = GlobalDataReader.read(configPaths.globalConfigPath)
     val composites = readComposites(configPaths.compositeConfigPath)
     val localization = Localizations.of(globalData.language)
-    val mainGUI = new MainGUI(configPaths, localization, globalData.encryptionData.map(_.verificationKey), version)
     val system = ActorSystem("Sys")
     val guiActor: ActorRef = system.actorOf(Props(
-      new GUIActor(mainGUI.databaseTabs, mainGUI.logList, mainGUI.databaseList, mainGUI.global, localization)
+      new GUIActor(configPaths, connectionDatas, composites, globalData, localization, version)
     ).withDispatcher("my-pinned-dispatcher"), "guiWorker")
     val connectionsActor: ActorRef = system.actorOf(Props(
       new ConnectionsActor(connectionDatas, composites,localization, configPaths.keyFilesDirPath)
@@ -37,30 +36,11 @@ object Main extends JFXApp3 {
     val logActor: ActorRef = system.actorOf(Props(
       new LogActor()
     ).withDispatcher("my-pinned-dispatcher"), "logWorker")
-    guiActor ! GUIInitData(logActor)
+    guiActor ! GUIInitData(connectionsActor, logActor)
     connectionsActor ! ConnectionsInitData(guiActor, logActor)
     logActor ! LogInitData(guiActor)
 
     val log = new Logger(guiActor)
-    mainGUI.postInit(guiActor, connectionsActor, log)
-    val connectionDataMap = new ConnectionsDataMap(connectionDatas)
-    mainGUI.databaseList.setDatabaseInfos(DatabaseInfos(
-      DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionDatas) ++ 
-        DatabaseInfoFromConfig.extractCompositeInfos(composites, connectionDataMap.connectionDataFor)
-    ))
-    mainGUI.onDatabaseSelected({ case (databaseInfo, encryptionKey, loginPasswords) => {
-      log.info(localization.openingDatabase(DatabaseIdUtil.databaseInfoText(databaseInfo)))
-      connectionsActor ! QueryDatabase(DatabaseIdUtil.databaseIdFromInfo(databaseInfo), encryptionKey, loginPasswords )
-    }})
-    mainGUI.onForeignKeyToFile({
-      case (databaseInfo, encryptionKey, loginPasswords) => connectionsActor ! CopyToFile(DatabaseIdUtil.databaseIdFromInfo(databaseInfo), encryptionKey, loginPasswords)
-    })
-    mainGUI.onCloseApp(
-      () => closeApp(system, guiActor, connectionsActor, logActor, () => {
-        scalafx.application.Platform.exit()
-        System.exit(0)
-      })
-    )
   }
 
   private def extractConnectionsConfigPath() : ConfigPath = {
@@ -88,23 +68,5 @@ object Main extends JFXApp3 {
 
 
   private def versionFromManifest() = Option(getClass.getPackage.getImplementationVersion).getOrElse("")
-
-  def closeApp(system: ActorSystem, guiActor: ActorRef, connectionsActor: ActorRef, logActor: ActorRef, onExit: Runnable): Unit = {
-    println("application exit")
-    import org.apache.pekko.pattern.gracefulStop
-    import scala.concurrent._
-    import scala.concurrent.duration._
-    import ExecutionContext.Implicits.global
-    val stopAll = for {
-      stopGui: Boolean <- gracefulStop(guiActor, 1 seconds)
-      stopLog: Boolean <- gracefulStop(logActor, 1 seconds)
-      stopConfig: Boolean <- gracefulStop(connectionsActor, 1 seconds)
-    } yield stopGui && stopLog && stopConfig
-    stopAll.foreach(_ => {
-      system.terminate()
-      println("shutdown")
-      system.registerOnTermination(onExit)
-    })
-  }
 }
 
