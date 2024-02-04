@@ -96,7 +96,7 @@ class DatabaseTabs(guiActor: ActorRef,
   /* shows the tab of a database */
   def showDatabase(databaseId : DatabaseId) : Boolean = {
     val optTab = getTabByDatabaseId(databaseId)
-    println("database "+databaseId+" tab "+optTab)
+    log.debug(s"database ${databaseId} tab ${optTab}")
     optTab.foreach(tab => selectTab(tab))
     optTab.isDefined
   }

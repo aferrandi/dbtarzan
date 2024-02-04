@@ -252,7 +252,7 @@ class DatabaseActor(
   private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(qry.queryId, core => {
     val tableName = qry.queryId.tableId.tableName
     val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
-    println(s"Primary keys ${primaryKeys}")
+    log.debug(s"Primary keys ${primaryKeys}")
     guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
   }, logError)
 

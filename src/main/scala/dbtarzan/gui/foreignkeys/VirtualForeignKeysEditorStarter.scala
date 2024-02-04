@@ -21,7 +21,7 @@ object VirtualForeignKeysEditorStarter
                                       tableIds: List[TableId],
                                       localization: Localization,
                                       log: Logger) : VirtualForeignKeysEditor = {
-    println("open virtual foreign keys editor")
+    // println("open virtual foreign keys editor")
     val editor = new VirtualForeignKeysEditor(dbActor, databaseId, tableIds.sortBy(TableIdLabel.toLabel), localization, log)
     val virtualForeignKeysStage = new Stage {
       title = localization.openVirtualForeignKeys

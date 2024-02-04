@@ -39,7 +39,7 @@ class MainGUI(
   /* the log/error list on the bottom */
   val logList = new LogList(localization)
   /* the database/connection list on the left side */
-  val databaseList = new DatabaseList(localization)
+  val databaseList = new DatabaseList(log, localization)
 
   val global = new Global()
 
