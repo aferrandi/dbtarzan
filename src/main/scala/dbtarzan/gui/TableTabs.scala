@@ -1,20 +1,20 @@
 package dbtarzan.gui
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db._
+import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
-import dbtarzan.messages._
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.*
 import scalafx.Includes._
 import scalafx.scene.Parent
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization)
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
   extends TControlBuilder {
-  private val log = new Logger(guiActor)
   private val tabs = new TabPane()
   private val tables = new TableTabsMap[BrowsingTable]()
   private val tablesToClose = new TabsToClose()
@@ -104,7 +104,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     tables.withQueryId(queryId, table => removeTabs(List(table.tab)))
 
   private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : TTableWithTab[BrowsingTable] = {
-    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId, localization)
+    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId, localization, log)
     val tab = buildTab(structure, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)

@@ -5,7 +5,8 @@ import dbtarzan.config.password.{EncryptionKey, Password}
 import dbtarzan.db.{DriverManagerWithEncryption, DriverSpec, RegisterDriver, SchemaNames}
 import dbtarzan.db.basicmetadata.MetadataSchemasLoader
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{Logger, ResponseSchemaExtraction, ResponseTestConnection}
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.{ResponseSchemaExtraction, ResponseTestConnection}
 
 class ConnectionCore(registerDriver : RegisterDriver, log: Logger, localization : Localization) {
   def extractSchemas(data: ConnectionData, encryptionKey: EncryptionKey, loginPassword: Option[Password]): ResponseSchemaExtraction = {

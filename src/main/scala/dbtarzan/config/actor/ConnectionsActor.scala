@@ -5,18 +5,24 @@ import dbtarzan.config.connections.{ConnectionData, ConnectionsDataMap, Database
 import dbtarzan.config.password.{EncryptionKey, Password}
 import dbtarzan.db.*
 import dbtarzan.db.basicmetadata.MetadataSchemasLoader
+import dbtarzan.gui.actor.GUIActor
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.{LogActor, Logger}
 import dbtarzan.messages.*
 
 import java.nio.file.Path
 import scala.collection.mutable
 
+case class ConnectionsInitData(guiActor: ActorRef, logActor: ActorRef)
+
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
 class ConnectionsActor(connectionsDatas : List[ConnectionData],
                        composites: List[Composite],
-                       guiActor : ActorRef,
                        localization : Localization,
-                       keyFilesDirPath : Path) extends Actor {
+                       keyFilesDirPath : Path
+                      ) extends Actor {
+  case class ConnectionsInitState(guiActor: ActorRef, log: Logger)
+  
   private val mapDBWorker = mutable.HashMap.empty[DatabaseId, ActorRef]
   private var connectionsDataMap = new ConnectionsDataMap(connectionsDatas)
   private var currentComposites : Map[CompositeId, Composite] = mapComposites(composites)
@@ -26,7 +32,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
 
   private val registerDriver = new RegisterDriver()
 
-  private val log = new Logger(guiActor)
+  private var initState: Option[ConnectionsInitState] = None
 
   private def datasFromDatabaseId(databaseId: DatabaseId): Option[List[ConnectionData]] =
     databaseId.origin match {
@@ -37,82 +43,90 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
     }
 
    /* creates the actors to serve the queries for a database */
-  private def getDBActor(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : ActorRef =
+  private def getDBActor(state: ConnectionsInitState, databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : ActorRef =
     datasFromDatabaseId(databaseId) match {
        case Some(datas) => {
-         val dbActor = ConnectionBuilder.buildDBActor(databaseId, registerDriver, datas, encriptionKey, guiActor, context, localization, keyFilesDirPath, loginPasswords)
+         val dbActor = ConnectionBuilder.buildDBActor(databaseId, registerDriver, datas, encriptionKey, state.guiActor, state.log, context, localization, keyFilesDirPath, loginPasswords)
          mapDBWorker += databaseId -> dbActor
          dbActor
+
        }
        case None => throw new Exception(s"No datas found for ${databaseId}")
      }
 
 
   /* creates the actor to serve the creation of foreign keys text files and start the copy */
-  private def startCopyWorker(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit =
+  private def startCopyWorker(state: ConnectionsInitState, databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit =
    datasFromDatabaseId(databaseId) match {
        case Some(datas) => {
-         val copyActor = ConnectionBuilder.buildCopyWorker(databaseId, registerDriver, datas, encriptionKey, guiActor, context, localization, keyFilesDirPath, loginPasswords)
+         val copyActor = ConnectionBuilder.buildCopyWorker(databaseId, registerDriver, datas, encriptionKey, state.guiActor, state.log, context, localization, keyFilesDirPath, loginPasswords)
          copyActor ! CopyToFile
        }
        case None => throw new Exception(s"No datas found for ${databaseId}")
    }
 
   /* if no actors are serving the queries to a specific database, creates them */
-  private def queryDatabase(databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit = {
-      log.debug("Querying the tables of the database "+DatabaseIdUtil.databaseIdText(databaseId))
+  private def queryDatabase(state: ConnectionsInitState, databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit = {
+      state.log.debug("Querying the tables of the database "+DatabaseIdUtil.databaseIdText(databaseId))
       try {
         if(!mapDBWorker.isDefinedAt(databaseId)) {
-          val dbWorker = getDBActor(databaseId, encriptionKey, loginPasswords)
+          val dbWorker = getDBActor(state, databaseId, encriptionKey, loginPasswords)
           dbWorker ! QueryTables(databaseId, dbWorker)
         } else
-          guiActor ! ErrorDatabaseAlreadyOpen(databaseId)
+          state.guiActor ! ErrorDatabaseAlreadyOpen(databaseId)
     } catch {
       case e : Exception => {
-        log.error(localization.errorQueryingDatabase(DatabaseIdUtil.databaseIdText(databaseId)), e)
+        state.log.error(localization.errorQueryingDatabase(DatabaseIdUtil.databaseIdText(databaseId)), e)
         e.printStackTrace()
       }
     }
   }
 
   /* closes all the database actors that serve the queries to a specific database */
-  private def queryClose(databaseId : DatabaseId) : Unit = {
-    log.debug("Closing the database "+DatabaseIdUtil.databaseIdText(databaseId))
+  private def queryClose(state: ConnectionsInitState, databaseId : DatabaseId) : Unit = {
+    state.log.debug("Closing the database "+DatabaseIdUtil.databaseIdText(databaseId))
     mapDBWorker.remove(databaseId).foreach(
       dbActor => dbActor ! QueryClose(databaseId) // routed to all dbWorkers of the router
       )
   }
 
-  private def newConnections(datas: List[ConnectionData]) : Unit = {
+  private def newConnections(state: ConnectionsInitState, datas: List[ConnectionData]) : Unit = {
     connectionsDataMap = new ConnectionsDataMap(datas)
-    sendDatabaseInfos()
+    sendDatabaseInfos(state)
   }
 
-  private def newComposites(composites: List[Composite]): Unit = {
+  private def newComposites(state: ConnectionsInitState, composites: List[Composite]): Unit = {
     currentComposites = mapComposites(composites)
-    sendDatabaseInfos()
+    sendDatabaseInfos(state)
   }
 
-  private def sendDatabaseInfos(): Unit =
-    guiActor ! DatabaseInfoExtractor.extractDatabaseInfos(currentComposites.values.toList, connectionsDataMap)
+  private def sendDatabaseInfos(state: ConnectionsInitState): Unit =
+    state.guiActor ! DatabaseInfoExtractor.extractDatabaseInfos(currentComposites.values.toList, connectionsDataMap)
 
-  private def testConnection(data: ConnectionData, encryptionKey : EncryptionKey, loginPassword: Option[Password]): Unit = {
-    val connectionCore = new ConnectionCore(registerDriver, log, localization)
-    guiActor ! connectionCore.testConnection(data, encryptionKey, loginPassword)
+  private def testConnection(state: ConnectionsInitState, data: ConnectionData, encryptionKey : EncryptionKey, loginPassword: Option[Password]): Unit = {
+      val connectionCore = new ConnectionCore(registerDriver, state.log, localization)
+      state.guiActor ! connectionCore.testConnection(data, encryptionKey, loginPassword)
   }
 
-  private def extractSchemas(data: ConnectionData, encryptionKey: EncryptionKey, loginPassword: Option[Password]): Unit = {
-    val connectionCore = new ConnectionCore(registerDriver, log, localization)
-    guiActor ! connectionCore.extractSchemas(data, encryptionKey, loginPassword)
+  private def extractSchemas(state: ConnectionsInitState, data: ConnectionData, encryptionKey: EncryptionKey, loginPassword: Option[Password]): Unit = {
+      val connectionCore = new ConnectionCore(registerDriver, state.log, localization)
+      state.guiActor ! connectionCore.extractSchemas(data, encryptionKey, loginPassword)
   }
 
-  def receive: PartialFunction[Any,Unit] = {
-      case qry : QueryDatabase => queryDatabase(qry.databaseId, qry.encryptionKey, qry.loginPasswords)
-      case qry : QueryClose => queryClose(qry.databaseId)
-      case cpy : CopyToFile => startCopyWorker(cpy.databaseId, cpy.encryptionKey, cpy.loginPasswords)
-      case tst: TestConnection => testConnection(tst.data, tst.encryptionKey, tst.loginPassword)
-      case ext: ExtractSchemas => extractSchemas(ext.data, ext.encryptionKey, ext.loginPassword)
-      case datas: ConnectionDatas => newConnections(datas.datas)
-      case composites: Composites => newComposites(composites.composites)
+  def intiialized: Receive = {
+      case qry : QueryDatabase => initState.foreach(state => queryDatabase(state, qry.databaseId, qry.encryptionKey, qry.loginPasswords))
+      case qry : QueryClose => initState.foreach(state => queryClose(state, qry.databaseId))
+      case cpy : CopyToFile => initState.foreach(state => startCopyWorker(state, cpy.databaseId, cpy.encryptionKey, cpy.loginPasswords))
+      case tst: TestConnection => initState.foreach(state => testConnection(state, tst.data, tst.encryptionKey, tst.loginPassword))
+      case ext: ExtractSchemas => initState.foreach(state => extractSchemas(state, ext.data, ext.encryptionKey, ext.loginPassword))
+      case datas: ConnectionDatas => initState.foreach(state => newConnections(state, datas.datas))
+      case composites: Composites => initState.foreach(state => newComposites(state, composites.composites))
+  }
+
+  def receive: PartialFunction[Any, Unit] = {
+    case initData : ConnectionsInitData  => {
+      this.initState = Some(new ConnectionsInitState(initData.guiActor, new Logger(initData.logActor)))
+      context.become(intiialized)
+    }
   }
 }

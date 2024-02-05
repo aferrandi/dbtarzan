@@ -6,7 +6,7 @@ import dbtarzan.gui.config.connections.ConnectionEditorStarter
 import dbtarzan.gui.config.global.GlobalEditorStarter
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
+import dbtarzan.log.actor.Logger
 import dbtarzan.types.ConfigPath
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.JFXApp3
@@ -14,19 +14,14 @@ import scalafx.scene.control.{Menu, MenuBar}
 
 
 
-class MainGUIMenu(
+class MainGUIMenu(stage: () => JFXApp3.PrimaryStage,
+                  guiActor: ActorRef,
+                  connectionsActor: ActorRef,
+                  log: Logger,
                   configPaths: ConfigPath,
                   localization: Localization,
                   encryptionKeyExtractor: EncryptionKeyExtractor,
                   global: Global) {
-
-  case class PostInitData(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef)
-
-  private var postInitData: Option[PostInitData] = None
-
-  def postInit(stage: JFXApp3.PrimaryStage, guiActor: ActorRef, connectionsActor: ActorRef): Unit = {
-    this.postInitData = Some(PostInitData(stage, guiActor, connectionsActor))
-  }
 
   def buildMenu(): MenuBar = new MenuBar {
     menus = List(
@@ -50,36 +45,21 @@ class MainGUIMenu(
   }
 
   private def openConnectionsEditor(): Unit = {
-    postInitData match {
-      case Some(pa) => {
-        new Logger(pa.guiActor).info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
-        encryptionKeyExtractor.extractEncryptionKey(pa.stage) match {
-          case Some(key) =>
-            global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(pa.stage, pa.connectionsActor, configPaths.connectionsConfigPath, key, localization))
-          case None => println("MainGUI: encryptionKey not entered")
-        }
+      log.info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
+      encryptionKeyExtractor.extractEncryptionKey(stage()) match {
+        case Some(key) =>
+          global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(stage(), connectionsActor, configPaths.connectionsConfigPath, key, localization))
+        case None => println("MainGUI: encryptionKey not entered")
       }
-      case None => println("MainGUI: guiActor not defined")
-    }
   }
 
   private def openCompositeEditor(): Unit = {
-    postInitData match {
-      case Some(pa) => {
-        new Logger(pa.guiActor).info(localization.editingCompositeFile(configPaths.compositeConfigPath))
-        CompositeEditorStarter.openCompositeEditor(pa.stage, configPaths.compositeConfigPath, configPaths.connectionsConfigPath,  pa.connectionsActor, localization)
-      }
-      case None => println("MainGUI: guiActor not defined")
-    }
+      log.info(localization.editingCompositeFile(configPaths.compositeConfigPath))
+      CompositeEditorStarter.openCompositeEditor(stage(), configPaths.compositeConfigPath, configPaths.connectionsConfigPath,  connectionsActor, localization)
   }
 
   private def openGlobalEditor(): Unit = {
-    postInitData match {
-      case Some(pa) => {
-        new Logger(pa.guiActor).info("Editing global configuration file " + configPaths.globalConfigPath)
-        GlobalEditorStarter.openGlobalEditor(pa.stage, configPaths, localization, pa.guiActor)
-      }
-      case None => println("MainGUI: guiActor not defined")
-    }
+      log.info("Editing global configuration file " + configPaths.globalConfigPath)
+      GlobalEditorStarter.openGlobalEditor(stage(), configPaths, localization, guiActor, log)
   }
 }

@@ -9,7 +9,7 @@ categories: [Code]
 
 ## Build the application
 
-DBTarzan uses now **Java JVM 11** and **Scala 2.13**.
+DBTarzan uses now **Java JVM 17** and **Scala 3.1**.
 
 **JavaFX** uses different libraries for each OS. Therefore DBTarzan gets built for the following OSes:
 * Windows

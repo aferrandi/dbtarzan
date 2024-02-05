@@ -9,13 +9,13 @@ object LogIcons {
 	val warnIcon: Image = JFXUtil.loadIcon("warn.png")
 	val infoIcon: Image = JFXUtil.loadIcon("info.png")
 	  
-	def iconForMessage(msg : TLogMessage) : Image = msg match {
+	def iconForMessage(msg : TLogMessageGUI) : Image = msg match {
 		case _: Error => errorIcon
 		case _: Warning => warnIcon
 		case _: Info => infoIcon
 	}
 
-	def alertType(msg: TLogMessage): AlertType = msg match {
+	def alertType(msg: TLogMessageGUI): AlertType = msg match {
     case _: Error => AlertType.Error
     case _: Warning => AlertType.Warning
     case _: Info => AlertType.Information

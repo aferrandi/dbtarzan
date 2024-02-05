@@ -4,7 +4,8 @@ import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableId}
 import dbtarzan.gui.interfaces.{TControlBuilder, TDatabases}
 import dbtarzan.localization.Localization
-import dbtarzan.messages._
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.*
 import scalafx.Includes._
 import scalafx.event.Event
 import scalafx.scene.Parent
@@ -15,27 +16,21 @@ import scala.collection.mutable
 case class DatabaseWithTab(database : Database, tab : Tab)
 
 /** All the tabs with one database for each*/
-class DatabaseTabs(localization : Localization) extends TDatabases with TControlBuilder {
+class DatabaseTabs(guiActor: ActorRef,
+                    connectionsActor: ActorRef,
+                    log: Logger,
+                    localization : Localization) extends TDatabases with TControlBuilder {
   private val tabs = new TabPane()
   private val databaseById = mutable.HashMap.empty[DatabaseId, DatabaseWithTab]
-  private var guiActor: Option[ActorRef]  = None
-  private var connectionsActor: Option[ActorRef] = None 
 
-  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
-      this.guiActor = Some(guiActor)
-      this.connectionsActor = Some(connectionsActor)
-  } 
 
   private def addDatabaseTab(dbActor : ActorRef, databaseId : DatabaseId, tableIds : List[TableId]) : Database = {
-    println("add database tab for "+DatabaseIdUtil.databaseIdText(databaseId))
-    guiActor match {
-      case Some(ga) => addDatabaseTabWithGUIActor(dbActor, ga, databaseId, tableIds)
-      case None => throw new Exception("guiActor is not defined")
-    }
+    log.debug("add database tab for "+DatabaseIdUtil.databaseIdText(databaseId))
+    addDatabaseTabWithGUIActor(dbActor, guiActor, databaseId, tableIds, log)
   }
 
-  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, someGuiActor: ActorRef, databaseId: DatabaseId, tableIds: List[TableId]) = {
-    val database = new Database(dbActor, someGuiActor, databaseId, localization, tableIds)
+  private def addDatabaseTabWithGUIActor(dbActor: ActorRef, guiActor: ActorRef, databaseId: DatabaseId, tableIds: List[TableId], log: Logger) = {
+    val database = new Database(dbActor, guiActor, databaseId, localization, tableIds, log)
     val tab = buildTab(database)
     tabs += tab
     selectTab(tab)
@@ -45,7 +40,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
 
   /* requests to close the connection to the database to the central database actor */
   private def sendClose(databaseId : DatabaseId) : Unit = {
-    connectionsActor.foreach(_ ! QueryClose(databaseId))     
+    connectionsActor ! QueryClose(databaseId)
   }
   /* build the GUI tab for the database */
   private def buildTab(database : Database) = new Tab() {
@@ -101,7 +96,7 @@ class DatabaseTabs(localization : Localization) extends TDatabases with TControl
   /* shows the tab of a database */
   def showDatabase(databaseId : DatabaseId) : Boolean = {
     val optTab = getTabByDatabaseId(databaseId)
-    println("database "+databaseId+" tab "+optTab)
+    log.debug(s"database ${databaseId} tab ${optTab}")
     optTab.foreach(tab => selectTab(tab))
     optTab.isDefined
   }

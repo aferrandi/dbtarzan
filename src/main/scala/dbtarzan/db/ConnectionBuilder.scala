@@ -5,10 +5,11 @@ import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.actor.{CopyActor, DatabaseActor}
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.DatabaseIdUtil
 
 import java.nio.file.Path
-private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path, loginPasswords: LoginPasswords) {
+private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, log: Logger, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path, loginPasswords: LoginPasswords) {
   def buildDBWorker() : ActorRef = try
     registerDrivers()
     val name = "copyworker" + DatabaseIdUtil.databaseIdText(databaseId)
@@ -19,7 +20,7 @@ private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: Register
   def buildCopyWorker() : ActorRef = try {
     registerDrivers()
     val name = "copyworker" + DatabaseIdUtil.databaseIdText(databaseId)
-    connectionContext.actorOf(Props(new CopyActor(databaseId, datas, encriptionKey, guiActor, localization, keyFilesDirPath, loginPasswords)).withDispatcher("my-pinned-dispatcher"), name)
+    connectionContext.actorOf(Props(new CopyActor(databaseId, datas, encriptionKey, guiActor, localization, keyFilesDirPath, loginPasswords, log)).withDispatcher("my-pinned-dispatcher"), name)
   } catch {
     case e: Exception => throw new Exception(s"Getting the copyworker for $databaseId got", e)
   }
@@ -35,7 +36,7 @@ private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: Register
     )
 
   private def buildSubWorkerProps() : Props = {
-    Props(classOf[DatabaseActor], databaseId, encriptionKey, datas, guiActor, connectionContext.self, localization, keyFilesDirPath, loginPasswords).withDispatcher("my-pinned-dispatcher")
+    Props(classOf[DatabaseActor], databaseId, encriptionKey, datas, guiActor, connectionContext.self, log, localization, keyFilesDirPath, loginPasswords).withDispatcher("my-pinned-dispatcher")
   }
 
   /*
@@ -47,13 +48,13 @@ private class ConnectionBuilder(databaseId: DatabaseId, registerDriver: Register
 }
 
 object ConnectionBuilder {
-  def buildDBActor(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path, loginPasswords: LoginPasswords) : ActorRef = {
-    val builder = new ConnectionBuilder(databaseId, registerDriver, datas, encriptionKey, guiActor, connectionContext, localization, keyFilesDirPath, loginPasswords)
+  def buildDBActor(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, log : Logger, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path, loginPasswords: LoginPasswords) : ActorRef = {
+    val builder = new ConnectionBuilder(databaseId, registerDriver, datas, encriptionKey, guiActor, log, connectionContext, localization, keyFilesDirPath, loginPasswords)
     builder.buildDBWorker()
   }
 
-  def buildCopyWorker(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path, loginPasswords: LoginPasswords) : ActorRef = {
-    val builder = new ConnectionBuilder(databaseId, registerDriver, datas, encriptionKey, guiActor, connectionContext, localization, keyFilesDirPath, loginPasswords)
+  def buildCopyWorker(databaseId: DatabaseId, registerDriver: RegisterDriver, datas : List[ConnectionData], encriptionKey : EncryptionKey, guiActor : ActorRef, log : Logger, connectionContext : ActorContext, localization : Localization, keyFilesDirPath: Path, loginPasswords: LoginPasswords) : ActorRef = {
+    val builder = new ConnectionBuilder(databaseId, registerDriver, datas, encriptionKey, guiActor, log, connectionContext, localization, keyFilesDirPath, loginPasswords)
     builder.buildCopyWorker()
   }
 }

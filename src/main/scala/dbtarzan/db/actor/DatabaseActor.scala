@@ -8,6 +8,7 @@ import dbtarzan.db.foreignkeys.VirtualForeignKeyToForeignKey
 import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
 import dbtarzan.messages.*
 
@@ -25,12 +26,12 @@ class DatabaseActor(
   datas : List[ConnectionData],
   guiActor : ActorRef,
   connectionActor: ActorRef,
+  log: Logger,
   localization: Localization,
   keyFilesDirPath: Path,
   loginPasswords: LoginPasswords
   ) extends Actor {
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
-  private val log = new Logger(guiActor)
   private var optCores : Option[Map[SimpleDatabaseId, DatabaseCore]] = buildCores()
   if(optCores.isEmpty)
     closeThisDBWorker()
@@ -251,7 +252,7 @@ class DatabaseActor(
   private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(qry.queryId, core => {
     val tableName = qry.queryId.tableId.tableName
     val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
-    println(s"Primary keys ${primaryKeys}")
+    log.debug(s"Primary keys ${primaryKeys}")
     guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
   }, logError)
 

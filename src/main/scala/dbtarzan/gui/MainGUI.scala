@@ -7,8 +7,10 @@ import dbtarzan.gui.log.LogList
 import dbtarzan.gui.login.PasswordDialog
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.DatabaseIdUtil
 import dbtarzan.types.ConfigPath
+
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
@@ -24,20 +26,20 @@ import scalafx.stage.Screen
   the actors are still not been created when calling the constructor, therefore they are passed as functions.
  */
 class MainGUI(
+  guiActor: ActorRef,
+  connectionsActor: ActorRef,
   configPaths: ConfigPath,
   localization: Localization,
   verificationKey: Option[VerificationKey],
+  log: Logger,
   version: String)
 {
-  case class PostInitData(guiActor: ActorRef, connectionsActor: ActorRef)
-
-  private var postInitData: Option[PostInitData] = None
   /* the database tabs on the middle-right side */
-  val databaseTabs = new DatabaseTabs(localization)
+  val databaseTabs = new DatabaseTabs(guiActor, connectionsActor, log, localization)
   /* the log/error list on the bottom */
   val logList = new LogList(localization)
   /* the database/connection list on the left side */
-  val databaseList = new DatabaseList(localization)
+  val databaseList = new DatabaseList(log, localization)
 
   val global = new Global()
 
@@ -46,20 +48,17 @@ class MainGUI(
   /* the gui */
   private val encryptionKeyExtractor = new EncryptionKeyExtractor(verificationKey,  localization)
 
-  private val mainGUIMenu = new MainGUIMenu(configPaths, localization, encryptionKeyExtractor, global)
+
+  private val mainGUIMenu = new MainGUIMenu(retrieveStage, guiActor, connectionsActor, log, configPaths, localization, encryptionKeyExtractor, global)
 
   private val stage = buildStage()
+
 
   private var closeApp: Option[() => Unit] = None
 
   stage.scene().onKeyReleased = (ev: KeyEvent) => { handleShortcut(ev) }
-
-  def postInit(guiActor: ActorRef, connectionsActor: ActorRef) : Unit = {
-    this.postInitData = Some(PostInitData(guiActor, connectionsActor))
-
-    databaseTabs.postInit(guiActor, connectionsActor)
-    mainGUIMenu.postInit(stage, guiActor, connectionsActor)
-  } 
+  
+  private def retrieveStage(): JFXApp3.PrimaryStage  = stage
 
   private def withExtractedEncryptionKey(use : EncryptionKey => Unit) : Unit =
     encryptionKeyExtractor.extractEncryptionKey(stage).foreach(use)
@@ -102,10 +101,7 @@ class MainGUI(
   }
 
   private def handleShortcut(ev : KeyEvent) : Unit =
-    postInitData match {
-      case Some(pa) => TableButtonBar.handleKeyCombination(pa.guiActor, ev, () => databaseTabs.currentTableId)
-      case None => println("MainGUI: guiActor not defined")
-    }
+      TableButtonBar.handleKeyCombination(guiActor, ev, () => databaseTabs.currentTableId)
 
   private def buildMainView() = new BorderPane {
     top = mainGUIMenu.buildMenu()

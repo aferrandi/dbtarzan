@@ -8,23 +8,22 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import scalafx.Includes._
 import org.apache.pekko.actor.ActorRef
-
-import dbtarzan.messages.Logger
 import dbtarzan.config.global.GlobalData
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.config.connections.EncryptionKeyChange
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.{ Languages, Language, Localization }
+import dbtarzan.log.actor.Logger
 
 /**
-  table + constraint input box + foreign keys
+  *table + constraint input box + foreign keys
 */
 class GlobalEditor(
     data : GlobalData,
     localization: Localization,
-    guiActor : ActorRef
+    guiActor : ActorRef,
+    log: Logger
   ) extends TControlBuilder {
-  private val log = new Logger(guiActor)
   private val languages: scalafx.collections.ObservableBuffer[Language] = ObservableBuffer.from[Language](Languages.languages)
 
   private val cmbLanguages = new ComboBox[Language] {

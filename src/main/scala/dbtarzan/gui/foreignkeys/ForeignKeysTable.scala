@@ -5,7 +5,7 @@ import dbtarzan.db.{VirtualalForeignKey, DatabaseId, FieldsOnTable, SimpleDataba
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.TableIdLabel
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
+import dbtarzan.log.actor.Logger
 import scalafx.Includes._
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
@@ -19,8 +19,7 @@ object ForeignKeysTable {
 }
 
 /** The GUI table control showing the currently edited virtual foreign keys */
-class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization : Localization) extends TControlBuilder {
-  private val log = new Logger(guiActor)
+class ForeignKeysTable(databaseId: DatabaseId, localization : Localization, log: Logger) extends TControlBuilder {
   private val buffer = ObservableBuffer.empty[VirtualalForeignKey]
   /* the table */
   private val table = buildTable()

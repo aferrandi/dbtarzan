@@ -23,3 +23,7 @@ In the case of an error, only the error message is displayed.
 If you want more information, press the Advanced button that shows the message with the complete stack trace.
 
 ![Advanced](images/logDialogAdvanced.png)
+
+All the messages in this view together with the **debug** messages are written in a log file, called **dbtarzan.log**, 
+located in the same directory as the configuration files. 
+

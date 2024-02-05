@@ -3,7 +3,7 @@ package dbtarzan.db.actor
 import dbtarzan.db._
 import dbtarzan.db.foreignkeys.files.ForeignKeysFile
 import dbtarzan.localization.Localization
-import dbtarzan.messages.Logger
+import dbtarzan.log.actor.Logger
 
 import java.nio.file.Path
 

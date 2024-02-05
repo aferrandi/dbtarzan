@@ -1,10 +1,11 @@
 package dbtarzan.gui.foreignkeys
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{VirtualalForeignKey, DatabaseId, Fields, TableId}
+import dbtarzan.db.{DatabaseId, Fields, TableId, VirtualalForeignKey}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, StringUtil}
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.UpdateVirtualForeignKeys
 import scalafx.geometry.Orientation
 import scalafx.scene.Parent
@@ -15,12 +16,12 @@ import scalafx.scene.layout.BorderPane
 /* table + constraint input box + foreign keys */
 class VirtualForeignKeysEditor(
                                    dbActor : ActorRef,
-                                   guiActor: ActorRef,
                                    databaseId: DatabaseId,
                                    tableIds: List[TableId],
-                                   localization: Localization
+                                   localization: Localization,
+                                   log: Logger
   ) extends TControlBuilder {
-  private val keysTable = new ForeignKeysTable(databaseId, guiActor, localization)
+  private val keysTable = new ForeignKeysTable(databaseId, localization, log)
   private val singleEditor = new SingleEditor(dbActor, tableIds, localization)
   private val buttons = new VirtualForeignKeysButtons(localization)
   private val bottomPane = new BorderPane {

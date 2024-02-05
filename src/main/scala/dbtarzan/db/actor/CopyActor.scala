@@ -8,11 +8,12 @@ import scala.collection.mutable.ListBuffer
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.db.util.ResourceManagement.using
-import dbtarzan.db._
+import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.ForeignKeyLoader
 import dbtarzan.db.foreignkeys.files.ForeignKeysFile
-import dbtarzan.messages._
+import dbtarzan.messages.*
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 
 import java.sql.Connection
 
@@ -28,10 +29,11 @@ class CopyActor(databaseId: DatabaseId,
                 guiActor : ActorRef,
                 localization: Localization,
                 keyFilesDirPath : Path,
-                loginPasswords: LoginPasswords) extends Actor {
+                loginPasswords: LoginPasswords,
+                log : Logger
+               ) extends Actor {
   case class DataWithConnection(data: ConnectionData, connection: Connection)
 
-  private val log = new Logger(guiActor)
   private val driverManger = new DriverManagerWithEncryption(encryptionKey)
   private val datasWithConnections: List[DataWithConnection] = datas.map(data => DataWithConnection(data, driverManger.getConnection(data, loginPasswords.loginPasswords.get(SimpleDatabaseId(data.name)))))
   // private val queryLoader = new QueryLoader(connection, log)

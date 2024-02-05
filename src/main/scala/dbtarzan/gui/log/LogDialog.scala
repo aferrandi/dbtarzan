@@ -3,13 +3,13 @@ package dbtarzan.gui.log
 import dbtarzan.gui.util.DateUtils
 import dbtarzan.gui.util.LogIcons.alertType
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{LogText, TLogMessage}
+import dbtarzan.messages.{LogText, TLogMessageGUI}
 import scalafx.Includes.*
 import scalafx.beans.property.StringProperty
 import scalafx.scene.control.{Alert, ButtonType, TextArea, ToggleButton}
 import scalafx.scene.layout.BorderPane
 
-class LogDialog(localization: Localization, msg: TLogMessage) {
+class LogDialog(localization: Localization, msg: TLogMessageGUI) {
   private val printedText = new StringProperty(makePrintedText(false))
   private val watch = "\u23F1"
   private def makePrintedText(advanced: Boolean): String = {
@@ -41,7 +41,7 @@ class LogDialog(localization: Localization, msg: TLogMessage) {
 }
 
 object LogDialog {
-  def showMessageInDialogBox(localization: Localization, msg: TLogMessage): Unit = {
-   new LogDialog(localization: Localization, msg: TLogMessage).showMessageInDialogBox()
+  def showMessageInDialogBox(localization: Localization, msg: TLogMessageGUI): Unit = {
+   new LogDialog(localization: Localization, msg: TLogMessageGUI).showMessageInDialogBox()
   }
 }

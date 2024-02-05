@@ -7,6 +7,7 @@ import dbtarzan.gui.foreignkeys.{VirtualForeignKeysEditor, VirtualForeignKeysEdi
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.*
 import scalafx.Includes.*
 import scalafx.event.ActionEvent
@@ -15,11 +16,11 @@ import scalafx.scene.control.*
 import scalafx.scene.layout.{BorderPane, FlowPane, VBox}
 import scalafx.stage.Stage
 
+
 /* A panel containing all the tabs related to a database */
-class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: List[TableId]) extends TControlBuilder {
-  private val log = new Logger(guiActor)
+class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: List[TableId], log: Logger) extends TControlBuilder {
   private val tableList = new TableList(tableIds)
-  private val tableTabs = new TableTabs(dbActor, guiActor, localization)
+  private val tableTabs = new TableTabs(dbActor, guiActor, localization, log)
   private var virtualForeignKeyEditor : Option[VirtualForeignKeysEditor] = Option.empty
   tableList.onTableSelected(tableId => dbActor ! QueryColumns(tableId))
   private val filterText = new FilterText(dbActor ! QueryTablesByPattern(databaseId, _), localization)
@@ -58,10 +59,10 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     virtualForeignKeyEditor = Some(VirtualForeignKeysEditorStarter.openVirtualForeignKeysEditor(
       stage(),
       dbActor,
-      guiActor,
       databaseId,
       tableIds,
-      localization
+      localization,
+      log
     ))
     virtualForeignKeyEditor.foreach(_.handleForeignKeys(virtualKeys.keys))
   }
