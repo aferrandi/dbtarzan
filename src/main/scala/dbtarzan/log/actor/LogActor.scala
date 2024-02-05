@@ -18,10 +18,8 @@ case class LogInitData(guiActor: ActorRef)
 
 
 /* an actor that uses the database configuration to start database actors, acting as a database actors factory */
-class LogActor(
-                
-              ) extends Actor {
-  val fileLogger = new FileLogger()
+class LogActor(logConfigPath: Path) extends Actor {
+  val fileLogger = new FileLogger(logConfigPath)
   var guiActor : Option[ActorRef] = None
 
   def intiialized: Receive = {

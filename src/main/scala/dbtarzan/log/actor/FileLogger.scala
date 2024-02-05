@@ -3,9 +3,10 @@ package dbtarzan.log.actor
 import dbtarzan.messages.{Debug, Error, ExceptionText, Info, TLogMessage, Warning}
 
 import java.io.FileWriter
+import java.nio.file.Path
 
-class FileLogger {
-  val fw = new FileWriter("dbtarzan.log")
+class FileLogger(logConfigPath: Path) {
+  val fw = new FileWriter(logConfigPath.toFile())
 
   def log(msg: TLogMessage): Unit = {
     fw.append(s"${toText(msg)}\n")
