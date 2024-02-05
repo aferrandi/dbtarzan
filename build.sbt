@@ -5,7 +5,7 @@ import scala.sys.process.*
 
 fork := true
 
-val versionNumber = "1.32"
+val versionNumber = "1.33"
 val scala3Version = "3.3.1"
 version := versionNumber
 scalaVersion := scala3Version

@@ -12,11 +12,12 @@ import dbtarzan.config.connections.{EncryptionKeyChange, ConnectionDataPasswordC
 import dbtarzan.config.global.{ GlobalDataReader, GlobalDataWriter, GlobalData }
 import dbtarzan.localization.Localization
 import dbtarzan.types.ConfigPath
+import dbtarzan.log.actor.Logger
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
 object GlobalEditorStarter
 {
-    def openGlobalEditor(parentStage : Stage, configPaths: ConfigPath, localization : Localization, guiActor : ActorRef) : Unit = {
+    def openGlobalEditor(parentStage : Stage, configPaths: ConfigPath, localization : Localization, guiActor : ActorRef, log: Logger) : Unit = {
         val globalStage = new Stage {
             title = localization.editGlobalSettings
             width = 500
@@ -39,7 +40,7 @@ object GlobalEditorStarter
                 def onCancel() : Unit = 
                     window().hide()
 
-                val editor = new GlobalEditor(originalData, localization, guiActor)
+                val editor = new GlobalEditor(originalData, localization, guiActor, log)
                 editor.onSave((dataToSave, change) => onSave(dataToSave, change))
                 editor.onCancel(() => onCancel())
                 onCloseRequest = (event : WindowEvent) => { 

@@ -60,6 +60,6 @@ class MainGUIMenu(stage: () => JFXApp3.PrimaryStage,
 
   private def openGlobalEditor(): Unit = {
       log.info("Editing global configuration file " + configPaths.globalConfigPath)
-      GlobalEditorStarter.openGlobalEditor(stage(), configPaths, localization, guiActor)
+      GlobalEditorStarter.openGlobalEditor(stage(), configPaths, localization, guiActor, log)
   }
 }
