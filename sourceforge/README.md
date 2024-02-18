@@ -10,21 +10,19 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 
 DBTarzan changelog
 =================
+- Release 1.33
+
+Shows the number of rows in the table pressing the button Rows number under the query text o the bottom right panel.
+
+New log actor that writes all log in the dbactor.log file and sends the INFO, WARNING, ERROR logs to the GUI so that they can be displayed in the log view as they did before.
+
+
 - Release 1.32
 
 Check box in the composite editor to decide for each composite if the databases in the composite will be part of the database lists in the main UI. In this way if the database list is too big we can reduce it.
 
 Button bar instead of menu over the tables list in the main UI, to make the "Reconnect" button visible.
 
-- Release 1.31
-
-Allows to have databases without storing their passwords in the connections configuration file, useful for example for production databases. The user enters the password at the moment he connects to the database.
-
-Better error message dialog with more concise error message with an "advanced" button, that shows the whole stack trace.
-
-Fixed a bug that did not allow to see the content of a table with a binary field with null values.
-
-Fixed a bug that was limiting the tables that could be selected when adding an virtual foreign key.
 
 
 

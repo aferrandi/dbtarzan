@@ -1,13 +1,13 @@
 package dbtarzan.gui.util;
 
 import scalafx.geometry.Side
-import scalafx.scene.control.{ContextMenu, TextField}
+import scalafx.scene.control.{ContextMenu, MenuItem, TextField}
 
 import scala.collection.immutable.TreeSet
 
 class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextField {
   private val suggestionsSet =  TreeSet[String](suggestions.map(_.toLowerCase()): _*)
-  private val sugestionsPopup = new ContextMenu()
+  private val suggestionsPopup = new ContextMenu()
 
   text.onChange { (_, _, newText) => showSuggestions(newText) }
 
@@ -15,7 +15,7 @@ class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextF
     if (newText.nonEmpty)
       showSuggestionsForText(newText)
     else
-      sugestionsPopup.hide()
+      suggestionsPopup.hide()
   }
 
   private def showSuggestionsForText(newText: String): Unit = {
@@ -25,14 +25,17 @@ class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextF
       val searchResult = suggestionsSet.range(lastLower, lastLower + Character.MAX_VALUE)
       if (searchResult.nonEmpty) {
         fillSuggestions(before, searchResult)
-        if (!sugestionsPopup.isShowing) {
-          val len = newText.length - 1
-          val xInTextField = caretPosition(len)
-          sugestionsPopup.show(AutoComplete.this, Side.Bottom, xInTextField, 0)
-        }
+        if (!suggestionsPopup.isShowing)
+          showSuggestionsPopupWithRightSize(newText)
       } else
-        sugestionsPopup.hide()
+        suggestionsPopup.hide()
     }
+  }
+
+  private def showSuggestionsPopupWithRightSize(newText: String): Unit = {
+    val len = newText.length - 1
+    val xInTextField = caretPosition(len)
+    suggestionsPopup.show(AutoComplete.this, Side.Bottom, xInTextField, 0)
   }
 
   private def caretPosition(len: Int): Double =
@@ -49,12 +52,22 @@ class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextF
   private def fillSuggestions(before: String, searchResult: Set[String]): Unit = {
       val count = Math.min(searchResult.size, maxSuggestions)
       val menuItems = searchResult.take(count).map(result =>
-          JFXUtil.menuItem(result, () => {
-            text = before + result
-            this.positionCaret(text().length)
-            sugestionsPopup.hide()
-          })
+          singleSuggestionWordMenuItem(before, result)
       )
-      JFXUtil.bufferSet(sugestionsPopup.items, menuItems.map(_.delegate))
+      JFXUtil.bufferSet(suggestionsPopup.items, menuItems.map(_.delegate))
+  }
+
+  private def singleSuggestionWordMenuItem(before: String, resultWord: String): MenuItem = {
+    val suggestionOneWord = JFXUtil.menuItem(resultWord, () => {
+      appendWordToTextBox(before, resultWord)
+      suggestionsPopup.hide()
+    })
+    suggestionOneWord.mnemonicParsing = false
+    suggestionOneWord
+  }
+
+  private def appendWordToTextBox(before: String, resultWord: String): Unit = {
+    text = before + resultWord
+    this.positionCaret(text().length)
   }
 }
