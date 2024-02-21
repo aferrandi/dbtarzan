@@ -2,7 +2,7 @@ package dbtarzan.gui
 
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableId}
-import dbtarzan.gui.database.DatabaseButtonBar
+import dbtarzan.gui.database.{DatabaseButtonBar, TableListWIthSearch}
 import dbtarzan.gui.foreignkeys.{VirtualForeignKeysEditor, VirtualForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{FilterText, JFXUtil}
@@ -19,20 +19,17 @@ import scalafx.stage.Stage
 
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: List[TableId], log: Logger) extends TControlBuilder {
-  private val tableList = new TableList(tableIds)
+  private val tableListWithSearch = new TableListWIthSearch(dbActor, databaseId, tableIds, localization)
   private val tableTabs = new TableTabs(dbActor, guiActor, localization, log)
   private var virtualForeignKeyEditor : Option[VirtualForeignKeysEditor] = Option.empty
-  tableList.onTableSelected(tableId => dbActor ! QueryColumns(tableId))
-  private val filterText = new FilterText(dbActor ! QueryTablesByPattern(databaseId, _), localization)
+  tableListWithSearch.onTableSelected(tableId => dbActor ! QueryColumns(tableId))
+
   private val pane = new SplitPane {
     private val tableListWithTitle = new BorderPane {
       top = new VBox() {
         children = List(new Label(localization.tables), DatabaseButtonBar.buildButtonBar(dbActor, databaseId, localization))
       }
-      center = new BorderPane {
-        top = filterText.control
-        center = tableList.control
-      }
+      center = tableListWithSearch.control
     }
     items.addAll(tableListWithTitle, tableTabs.control)
     dividerPositions = 0.20
@@ -48,7 +45,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     tableTabs.handleQueryIdMessage(msg)
 
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
-    case tables : ResponseTablesByPattern => tableList.addTableNames(tables.tabeIds)
+    case tables : ResponseTablesByPattern => tableListWithSearch.addTableNames(tables.tabeIds)
     case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
     case _: RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
     case virtualKeys: ResponseVirtualForeignKeys =>  openVirtualForeignKeysEditor(virtualKeys)
