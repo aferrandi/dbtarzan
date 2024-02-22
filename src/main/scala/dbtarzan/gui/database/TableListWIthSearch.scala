@@ -1,7 +1,6 @@
 package dbtarzan.gui.database
 
 import dbtarzan.db.{DatabaseId, TableId, TableIds}
-import dbtarzan.gui.TableList
 import dbtarzan.gui.util.FilterText
 import dbtarzan.localization.Localization
 import dbtarzan.messages.QueryTablesByPattern

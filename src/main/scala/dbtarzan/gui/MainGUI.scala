@@ -5,12 +5,12 @@ import dbtarzan.db.{DatabaseId, DatabaseInfo, LoginPasswords, SimpleDatabaseId}
 import dbtarzan.gui.browsingtable.TableButtonBar
 import dbtarzan.gui.log.LogList
 import dbtarzan.gui.login.PasswordDialog
+import dbtarzan.gui.main.{DatabaseList, DatabaseTabs, EncryptionKeyExtractor, MainGUIMenu}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.messages.DatabaseIdUtil
 import dbtarzan.types.ConfigPath
-
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
@@ -72,15 +72,6 @@ class MainGUI(
       }}
     )
 
-
-
-  private def loginPasswordsFromDialogIfNeeded(databaseInfo: DatabaseInfo): Option[LoginPasswords] = {
-    val databasesThatNeedPasswords = DatabaseIdUtil.extractSimpleDatabasesThatNeedLoginPassword(databaseInfo)
-    if (databasesThatNeedPasswords.nonEmpty)
-      PasswordDialog.show(localization, databasesThatNeedPasswords)
-    else
-      Some(LoginPasswords(Map.empty))
-  }
   def onForeignKeyToFile(use : (DatabaseInfo, EncryptionKey, LoginPasswords) => Unit) : Unit =
     databaseList.onForeignKeyToFile(databaseInfo =>
       loginPasswordsFromDialogIfNeeded(databaseInfo).foreach(loginPasswords =>
@@ -98,6 +89,14 @@ class MainGUI(
             closeApp.foreach(_.apply())
           }
       }
+  }
+
+  private def loginPasswordsFromDialogIfNeeded(databaseInfo: DatabaseInfo): Option[LoginPasswords] = {
+    val databasesThatNeedPasswords = DatabaseIdUtil.extractSimpleDatabasesThatNeedLoginPassword(databaseInfo)
+    if (databasesThatNeedPasswords.nonEmpty)
+      PasswordDialog.show(localization, databasesThatNeedPasswords)
+    else
+      Some(LoginPasswords(Map.empty))
   }
 
   private def handleShortcut(ev : KeyEvent) : Unit =

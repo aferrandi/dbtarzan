@@ -1,4 +1,4 @@
-package dbtarzan.gui
+package dbtarzan.gui.main
 
 import dbtarzan.config.password.{EncryptionKey, PasswordEncryption, VerificationKey}
 import dbtarzan.localization.Localization

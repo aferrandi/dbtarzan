@@ -1,4 +1,4 @@
-package dbtarzan.gui
+package dbtarzan.gui.browsingtable
 
 import dbtarzan.db.{FieldsOnTable, ForeignKey, ForeignKeyDirection, ForeignKeys}
 import dbtarzan.gui.interfaces.TControlBuilder

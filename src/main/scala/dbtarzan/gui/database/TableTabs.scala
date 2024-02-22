@@ -1,14 +1,15 @@
-package dbtarzan.gui
+package dbtarzan.gui.database
 
-import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
+import dbtarzan.gui.BrowsingTable
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.messages.*
-import scalafx.Includes._
+import org.apache.pekko.actor.ActorRef
+import scalafx.Includes.*
 import scalafx.scene.Parent
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 

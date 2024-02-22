@@ -1,15 +1,14 @@
-package dbtarzan.gui
+package dbtarzan.gui.main
 
-import scalafx.Includes._
+import dbtarzan.config.password.{EncryptionKey, EncryptionVerification, VerificationKey}
+import dbtarzan.localization.Localization
+import scalafx.Includes.*
 import scalafx.application.Platform
 import scalafx.geometry.Insets
+import scalafx.scene.control.*
 import scalafx.scene.control.ButtonBar.ButtonData
-import scalafx.stage.Stage
-import scalafx.scene.control._
 import scalafx.scene.layout.GridPane
-
-import dbtarzan.config.password.{ EncryptionKey, VerificationKey, EncryptionVerification }
-import dbtarzan.localization.Localization
+import scalafx.stage.Stage
 
 class EncryptionKeyDialog(localization: Localization)  {
   class Content(stage : Stage, verificationKey : VerificationKey) {

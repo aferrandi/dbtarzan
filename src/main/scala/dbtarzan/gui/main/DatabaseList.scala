@@ -1,11 +1,11 @@
-package dbtarzan.gui
+package dbtarzan.gui.main
 
 import dbtarzan.db.{DatabaseId, DatabaseInfo}
 import dbtarzan.gui.interfaces.{TControlBuilder, TDatabaseList}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{DatabaseIdUtil, DatabaseIds, DatabaseInfos}
 import dbtarzan.log.actor.Logger
+import dbtarzan.messages.{DatabaseIdUtil, DatabaseIds, DatabaseInfos}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import scalafx.scene.control.*
