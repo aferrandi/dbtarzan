@@ -8,7 +8,7 @@ import org.apache.pekko.actor.ActorRef
 import scalafx.scene.Parent
 import scalafx.scene.layout.BorderPane
 
-class TableListWIthSearch(dbActor : ActorRef, databaseId : DatabaseId, tableIds: List[TableId], localization : Localization) {
+class TableListWIthFilter(dbActor : ActorRef, databaseId : DatabaseId, tableIds: List[TableId], localization : Localization) {
   private val tableList = new TableList(tableIds)
   private val filterText = new FilterText(dbActor ! QueryTablesByPattern(databaseId, _), localization)
   private val pane = new BorderPane {

@@ -171,7 +171,7 @@ class DatabaseActor(
   private def queryTables(qry: QueryTables) : Unit = withCores(cores => {
       val tableIds = cores.flatMap(core =>
         tableNamesToTableIds(core.simpleDatabaseId, core.tablesLoader.tableNames())
-      ).toList
+      )
       logTableNames(cores, tableIds)
       guiActor ! ResponseTables(qry.databaseId, TableIds(tableIds), qry.dbActor)
     }, ex => {

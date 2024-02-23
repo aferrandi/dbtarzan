@@ -29,8 +29,6 @@ class GUIActor(
 
   var state: Option[GUIInitState] = None
 
-
-
   def runLater[R](op: MainGUI => R): Unit = {
     Platform.runLater {
       state.foreach(s =>
