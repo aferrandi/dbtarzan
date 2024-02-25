@@ -32,8 +32,11 @@ case class QueryReset(databaseId : DatabaseId)
 
 case class QueryRowsNumber(queryId : QueryId, structure : DBTableStructure)
 
+case class QueryDatabasesByPattern(pattern: String)
+
 case class UpdateVirtualForeignKeys(databaseId : DatabaseId, keys : List[VirtualalForeignKey])
 
 case class RequestVirtualForeignKeys(databaseId : DatabaseId)
 
 case class Composites(composites: List[Composite])
+

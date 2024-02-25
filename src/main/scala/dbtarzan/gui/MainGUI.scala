@@ -5,7 +5,7 @@ import dbtarzan.db.{DatabaseId, DatabaseInfo, LoginPasswords, SimpleDatabaseId}
 import dbtarzan.gui.browsingtable.TableButtonBar
 import dbtarzan.gui.log.LogList
 import dbtarzan.gui.login.PasswordDialog
-import dbtarzan.gui.main.{DatabaseList, DatabaseTabs, EncryptionKeyExtractor, MainGUIMenu}
+import dbtarzan.gui.main.{DatabaseList, DatabaseListWithFilter, DatabaseTabs, EncryptionKeyExtractor, MainGUIMenu}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
@@ -39,7 +39,7 @@ class MainGUI(
   /* the log/error list on the bottom */
   val logList = new LogList(localization)
   /* the database/connection list on the left side */
-  val databaseList = new DatabaseList(log, localization)
+  val databaseList = new DatabaseListWithFilter(connectionsActor, log, localization)
 
   val global = new Global()
 

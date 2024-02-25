@@ -44,7 +44,7 @@ class GUIActor(
         case rsp: ResponseTestConnection => runLater { _.global.handleTestConnectionResponse(rsp) }
         case rsp: ResponseSchemaExtraction => runLater { _.global.handleSchemaExtractionResponse(rsp) }
         case msg: TLogMessageGUI => runLater { _.logList.addLogMessage(msg) }
-        case msg: DatabaseInfos => runLater { _.databaseList.setDatabaseInfos(msg) }
+        case msg: TWithDatabases => runLater { _.databaseList.handleDatabasesData(msg) }
         case err: ErrorDatabaseAlreadyOpen => runLater { mainGUI =>
           mainGUI.databaseTabs.showDatabase(err.databaseId)
           state.foreach(_.log.warning(localization.databaseAlreadyOpen(DatabaseIdUtil.databaseIdText(err.databaseId))))
@@ -54,10 +54,9 @@ class GUIActor(
   private def initGUI(connectionsActor: ActorRef, log: Logger, stopper: AppStopper) : MainGUI = {
     val mainGUI = new MainGUI(self, connectionsActor, configPaths, localization, globalData.encryptionData.map(_.verificationKey), log, version)
     val connectionDataMap = new ConnectionsDataMap(connectionDatas)
-    mainGUI.databaseList.setDatabaseInfos(DatabaseInfos(
-      DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionDatas) ++
-        DatabaseInfoFromConfig.extractCompositeInfos(composites, connectionDataMap.connectionDataFor)
-    ))
+    mainGUI.databaseList.setDatabaseInfos(
+      DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionDatas) ++ DatabaseInfoFromConfig.extractCompositeInfos(composites, connectionDataMap.connectionDataFor)
+    )
     mainGUI.onDatabaseSelected({ case (databaseInfo, encryptionKey, loginPasswords) => {
       log.info(localization.openingDatabase(DatabaseIdUtil.databaseInfoText(databaseInfo)))
       connectionsActor ! QueryDatabase(DatabaseIdUtil.databaseIdFromInfo(databaseInfo), encryptionKey, loginPasswords)

@@ -67,7 +67,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
 
   /* if no actors are serving the queries to a specific database, creates them */
   private def queryDatabase(state: ConnectionsInitState, databaseId : DatabaseId, encriptionKey : EncryptionKey, loginPasswords: LoginPasswords) : Unit = {
-      state.log.debug("Querying the tables of the database "+DatabaseIdUtil.databaseIdText(databaseId))
+      state.log.debug(s"Querying the tables of the database ${DatabaseIdUtil.databaseIdText(databaseId)}")
       try {
         if(!mapDBWorker.isDefinedAt(databaseId)) {
           val dbWorker = getDBActor(state, databaseId, encriptionKey, loginPasswords)
@@ -84,7 +84,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
 
   /* closes all the database actors that serve the queries to a specific database */
   private def queryClose(state: ConnectionsInitState, databaseId : DatabaseId) : Unit = {
-    state.log.debug("Closing the database "+DatabaseIdUtil.databaseIdText(databaseId))
+    state.log.debug(s"Closing the database ${DatabaseIdUtil.databaseIdText(databaseId)}")
     mapDBWorker.remove(databaseId).foreach(
       dbActor => dbActor ! QueryClose(databaseId) // routed to all dbWorkers of the router
       )
@@ -113,9 +113,16 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
       state.guiActor ! connectionCore.extractSchemas(data, encryptionKey, loginPassword)
   }
 
+  private def queryDatabasesByPattern(state: ConnectionsInitState, pattern: String): Unit = {
+    state.log.debug(s"Querying connections and composites by pattern: $pattern")
+    state.guiActor ! DatabaseInfoExtractor.extractDatabaseInfosByPattern(currentComposites.values.toList, connectionsDataMap, pattern)
+  }
+
+
   def intiialized: Receive = {
       case qry : QueryDatabase => initState.foreach(state => queryDatabase(state, qry.databaseId, qry.encryptionKey, qry.loginPasswords))
       case qry : QueryClose => initState.foreach(state => queryClose(state, qry.databaseId))
+      case qry : QueryDatabasesByPattern => initState.foreach(state => queryDatabasesByPattern(state, qry.pattern))
       case cpy : CopyToFile => initState.foreach(state => startCopyWorker(state, cpy.databaseId, cpy.encryptionKey, cpy.loginPasswords))
       case tst: TestConnection => initState.foreach(state => testConnection(state, tst.data, tst.encryptionKey, tst.loginPassword))
       case ext: ExtractSchemas => initState.foreach(state => extractSchemas(state, ext.data, ext.encryptionKey, ext.loginPassword))
