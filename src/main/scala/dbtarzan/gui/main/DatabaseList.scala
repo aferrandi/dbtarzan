@@ -36,9 +36,9 @@ class DatabaseList(log: Logger, localization : Localization) extends TControlBui
     case Right(_) => compositeIcon
   }
 
-  def setDatabaseInfos(databaseInfos: DatabaseInfos) : Unit = {
-    log.debug(s"Got new database list:${databaseInfos.infos.map(DatabaseIdUtil.databaseInfoText).mkString(",")}")
-    JFXUtil.bufferSet(buffer, databaseInfos.infos.sortWith((info1, info2) =>
+  def setDatabaseInfos(databaseInfos: List[DatabaseInfo]) : Unit = {
+    log.debug(s"Got new database list:${databaseInfos.map(DatabaseIdUtil.databaseInfoText).mkString(",")}")
+    JFXUtil.bufferSet(buffer, databaseInfos.sortWith((info1, info2) =>
       sortByOriginThenByName(info1, info2)
     ))
   }
