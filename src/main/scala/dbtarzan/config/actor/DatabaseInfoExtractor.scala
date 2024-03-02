@@ -20,8 +20,13 @@ object DatabaseInfoExtractor {
 
   def extractDatabaseInfosByPattern(currentComposites: List[Composite], connectionsDataMap: ConnectionsDataMap, pattern: String): ResponseDatabasesByPattern = {
     val patternLowerCase = pattern.toLowerCase()
-    val connectionInfos = DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionsDataMap.connectionDatas.filter(v => v.name.toLowerCase().contains(patternLowerCase)))
-    val compositeInfos = DatabaseInfoFromConfig.extractCompositeInfos(currentComposites.filter(v => v.compositeId.compositeName.toLowerCase().contains(patternLowerCase)), connectionsDataMap.connectionDataFor)
+    def containsPattern(text: String) =
+      text.toLowerCase().contains(patternLowerCase)
+
+    val connectionInfos = DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionsDataMap.connectionDatas.filter(v => containsPattern(v.name)))
+    val compositeInfos = DatabaseInfoFromConfig.extractCompositeInfos(currentComposites.filter(v =>
+      containsPattern(v.compositeId.compositeName) || v.databaseIds.exists(d => containsPattern(d.databaseName))
+    ), connectionsDataMap.connectionDataFor)
     ResponseDatabasesByPattern(connectionInfos ++ compositeInfos)
   }
 }
