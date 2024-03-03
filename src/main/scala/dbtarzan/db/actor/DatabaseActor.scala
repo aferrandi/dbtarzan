@@ -31,9 +31,8 @@ class DatabaseActor(
   keyFilesDirPath: Path,
   loginPasswords: LoginPasswords
   ) extends Actor {
-  private val createConnection = new DriverManagerWithEncryption(encryptionKey)
-  private var optCores : Option[Map[SimpleDatabaseId, DatabaseCore]] = buildCores()
-  if(optCores.isEmpty)
+  private val coreHandler = new CoresHandler(databaseId, encryptionKey, datas, loginPasswords, localization, log)
+  if(coreHandler.hasNoCores())
     closeThisDBWorker()
   private val cache = new DatabaseWorkerCache()
   private val virtualKeysFromFile = new DatabaseVirtualKeysFromFile(databaseId, localization, keyFilesDirPath, log)
@@ -42,26 +41,6 @@ class DatabaseActor(
   private var virtualForeignKeys : List[VirtualalForeignKey] = virtualKeysFromFile.loadVirtualForeignKeysFromFile()
   private var virtualForeignKeysExploded : Map[TableId, ForeignKeys] = VirtualForeignKeyToForeignKey.toForeignKeys(virtualForeignKeys)
 
-  private def buildOneCore(data: ConnectionData, loginPassword: Option[Password]) : Option[DatabaseCore] = try {
-    val connection = createConnection.getConnection(data, loginPassword)
-    setReadOnlyIfPossible(connection)
-    log.info(localization.connectedTo(databaseIdText(databaseId)))
-    val simpleDatabaseId = SimpleDatabaseId(data.name)
-    val schemaId = data.schema.map(schema => SchemaId(databaseId, simpleDatabaseId, schema))
-    val attributes = QueryAttributes(data.identifierDelimiters, DBDefinition(schemaId, data.catalog), data.maxFieldSize)
-    val limits = DBLimits(data.maxRows, data.queryTimeoutInSeconds)
-    Some(new DatabaseCore(connection, databaseId, simpleDatabaseId, attributes, limits, log))
-  } catch {
-    case se : SQLException => {
-      log.error(localization.errorConnectingToDatabase(DatabaseIdUtil.databaseIdText(databaseId))+" "+ExceptionToText.sqlExceptionText(se), se)
-      None
-    }
-    case e : Exception => {
-      log.error(localization.errorConnectingToDatabase(DatabaseIdUtil.databaseIdText(databaseId)), e)
-      None
-    }
-  }
-
   private def buildForeignKeysForCache(): mutable.HashMap[TableId, ForeignKeys] = {
     val keysForAllSimpleDatabases = datas.flatMap(data => {
       val foreignFromFile = new DatabaseForeignKeysFromFile(databaseId, SimpleDatabaseId(data.name), localization, keyFilesDirPath, log)
@@ -69,46 +48,6 @@ class DatabaseActor(
     })
     mutable.HashMap(keysForAllSimpleDatabases.toSeq: _*)
   }
-
-
-  private def buildCores(): Option[Map[SimpleDatabaseId, DatabaseCore]] = {
-    val cores = datas.map(data => buildOneCore(data, loginPasswords.loginPasswords.get(SimpleDatabaseId(data.name))))
-    if(cores.contains(None))
-      None
-    else
-      Some(cores.map(core => core.get.simpleDatabaseId -> core.get).toMap)
-  }
-
-  private def setReadOnlyIfPossible(connection: Connection): Unit = {
-    try {
-      connection.setReadOnly(true)
-    } catch {
-      case _: Exception => None
-    }
-  }
-
-
-
-  /* if connected execure the operation, otherwise send an error to the GUI */
-  private def withCore[R](simpleDatabaseId: SimpleDatabaseId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
-    optCores match {
-      case Some(cores) => cores.get(simpleDatabaseId).foreach(
-        core => ExceptionToHandler.handleErr(errHandler, operation(core))
-      )
-      case None => guiActor ! Error(LocalDateTime.now, "Database not connected", None)
-    }
-
-  private def withCore[R](queryId: QueryId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
-    withCore(queryId.tableId, operation, errHandler)
-
-  private def withCore[R](tableId: TableId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
-    withCore(tableId.simpleDatabaseId, operation, errHandler)
-
-  private def withCores[R](operation: List[DatabaseCore] => Any, errHandler: Exception => Unit): Unit =
-    optCores match {
-      case Some(cores) => ExceptionToHandler.handleErr(errHandler, operation(cores.values.toList))
-      case None => guiActor ! Error(LocalDateTime.now, "Database not connected", None)
-    }
 
   private def logError(e: Exception) : Unit = log.error("dbWorker", e)
 
@@ -119,32 +58,19 @@ class DatabaseActor(
   private def close() : Unit = ExceptionToHandler.handleErr(logError, {
     log.debug(s"Closing the database worker for ${DatabaseIdUtil.databaseIdText(databaseId)}")
     guiActor ! ResponseCloseDatabase(databaseId)
-    closeCore()
+    coreHandler.closeCore()
     context.stop(self)
   })
 
   private def reset() : Unit = ExceptionToHandler.handleErr(logError, {
     log.debug(s"ReseFting the connection of the database worker for ${DatabaseIdUtil.databaseIdText(databaseId)}")
-    closeCore()
-    optCores = buildCores()
+    coreHandler.closeCore()
+    coreHandler.buildCores()
     log.info(localization.connectionResetted(databaseIdText(databaseId)))
   })
 
-  private def closeCore(): Unit = {
-    optCores.foreach(cores =>
-        cores.values.foreach(core =>
-          try {
-            core.closeConnection()
-          } catch {
-            case _: Throwable =>
-          }
-        )
-      )
-    optCores = None
-  }
 
-
-  private def queryForeignKeys(qry : QueryForeignKeys) : Unit = withCore(qry.queryId, core => {
+  private def queryForeignKeys(qry : QueryForeignKeys) : Unit = coreHandler.withCore(qry.queryId, core => {
       val tableId = qry.queryId.tableId
       val foreignKeys = ForeignKeys(
           foreignKeysForCache.getOrElseUpdate(tableId,
@@ -153,7 +79,7 @@ class DatabaseActor(
       guiActor ! ResponseForeignKeys(qry.queryId, qry.structure, foreignKeys)
     }, logError)
 
-  private def queryRows(qry: QueryRows) : Unit = withCore(qry.queryId, core => {
+  private def queryRows(qry: QueryRows) : Unit = coreHandler.withCore(qry.queryId, core => {
     val sql = SqlBuilder.buildQuerySql(qry.structure)
     val maxRows = core.limits.maxRows.getOrElse(500)
     val queryTimeouts = calcQueryTimeouts(core)
@@ -168,7 +94,7 @@ class DatabaseActor(
       case None => log.error(localization.errorQueryingDatabase(databaseIdText(databaseId)), e)
     }
 
-  private def queryTables(qry: QueryTables) : Unit = withCores(cores => {
+  private def queryTables(qry: QueryTables) : Unit = coreHandler.withCores(cores => {
       val tableIds = cores.flatMap(core =>
         tableNamesToTableIds(core.simpleDatabaseId, core.tablesLoader.tableNames())
       )
@@ -197,7 +123,7 @@ class DatabaseActor(
     cores.flatMap(core => core.schemasLoader.schemasNames().map(schemaName => SchemaId(databaseId, core.simpleDatabaseId, schemaName))).toList
   }
 
-  private def querySchemas(qry: QuerySchemas) : Unit = withCores(cores => {
+  private def querySchemas(qry: QuerySchemas) : Unit = coreHandler.withCores(cores => {
     guiActor ! ResponseSchemas(qry.databaseId, SchemaIds(schemaIds(cores)))
   }, ex => {
     logError(ex)
@@ -209,24 +135,24 @@ class DatabaseActor(
     connectionActor ! QueryClose(databaseId)
   }
 
-  private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = withCores(cores => {
+  private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = coreHandler.withCores(cores => {
         val tableIds = cores.flatMap(core => tableNamesToTableIds(core.simpleDatabaseId, core.tablesLoader.tablesByPattern(qry.pattern)))
         guiActor ! ResponseTablesByPattern(qry.databaseId, TableIds(tableIds))
       }, logError)
 
-  private def queryColumns(qry: QueryColumns) : Unit = withCore(qry.tableId, core => {
+  private def queryColumns(qry: QueryColumns) : Unit = coreHandler.withCore(qry.tableId, core => {
       val tableName = qry.tableId.tableName
       val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
         guiActor ! ResponseColumns(qry.tableId, columns, core.attributes)
     }, logError)
 
-  private def queryIndexes(qry: QueryIndexes) : Unit = withCore(qry.queryId, core => {
+  private def queryIndexes(qry: QueryIndexes) : Unit = coreHandler.withCore(qry.queryId, core => {
     val tableName = qry.queryId.tableId.tableName
     val indexes = cache.cachedIndexes(tableName, core.indexesLoader.indexes(tableName))
     guiActor ! ResponseIndexes(qry.queryId, indexes)
   }, logError)
 
-  private def queryRowsNumber(qry: QueryRowsNumber): Unit = withCore(qry.queryId, core => {
+  private def queryRowsNumber(qry: QueryRowsNumber): Unit = coreHandler.withCore(qry.queryId, core => {
     val sql = SqlBuilder.buildCountSql(qry.structure)
     val queryTimeouts = calcQueryTimeouts(core)
     val rowsNumber = core.queryRowsNumberLoader.query(sql, queryTimeouts)
@@ -237,19 +163,19 @@ class DatabaseActor(
     core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
   }
 
-  private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  withCore(qry.tableId, core => {
+  private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
     val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
       guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
     }, logError)
 
-  private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = withCore(qry.tableId, core => {
+  private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
     val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
     guiActor ! ResponseColumnsForForeignKeys(qry.tableId, columns)
   }, logError)
 
-  private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = withCore(qry.queryId, core => {
+  private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = coreHandler.withCore(qry.queryId, core => {
     val tableName = qry.queryId.tableId.tableName
     val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
     log.debug(s"Primary keys ${primaryKeys}")
@@ -273,7 +199,7 @@ class DatabaseActor(
       log.error(localization.errorAFKAlreadyExisting(intersection))
   }
 
-  def queryOneRow(qry: QueryOneRow): Unit = withCore(qry.queryId, core => {
+  def queryOneRow(qry: QueryOneRow): Unit = coreHandler.withCore(qry.queryId, core => {
     val queryTimeput = calcQueryTimeouts(core)
     core.queryLoader.query(SqlBuilder.buildSingleRowSql(qry.structure), 1, queryTimeput, None, qry.structure.columns, rows =>
       guiActor ! ResponseOneRow(qry.queryId, qry.structure, rows.rows.head)
