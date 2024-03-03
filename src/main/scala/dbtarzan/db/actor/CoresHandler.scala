@@ -19,6 +19,7 @@ class CoresHandler(databaseId: DatabaseId,
                    log: Logger) {
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
   private var optCores: Option[Map[SimpleDatabaseId, DatabaseCore]] = buildCores()
+  
   def buildCores(): Option[Map[SimpleDatabaseId, DatabaseCore]] = {
     val cores = datas.map(data => buildOneCore(data, loginPasswords.loginPasswords.get(SimpleDatabaseId(data.name))))
     if(cores.contains(None))
@@ -26,6 +27,7 @@ class CoresHandler(databaseId: DatabaseId,
     else
       Some(cores.map(core => core.get.simpleDatabaseId -> core.get).toMap)
   }
+  
   private def setReadOnlyIfPossible(connection: Connection): Unit = {
     try {
       connection.setReadOnly(true)
@@ -89,6 +91,4 @@ class CoresHandler(databaseId: DatabaseId,
     )
     optCores = None
   }
-
-
 }
