@@ -38,12 +38,12 @@ class DatabaseInfoExtractorTest extends AnyFlatSpec {
     currentComposites
   }
 
-  "getting the infos matching a pattern" should "works and is case insensistive" in {
+  "getting the infos matching a pattern" should "work and is case insensistive" in {
     val currentComposites: List[Composite] = buldComposites
     val connectionData: ConnectionsDataMap = buldConnections
 
     containsNames(DatabaseInfoExtractor.extractDatabaseInfosByPattern(currentComposites, connectionData, "ORA"), Set("oracle", "Orapost", "oramy"))
-    containsNames(DatabaseInfoExtractor.extractDatabaseInfosByPattern(currentComposites, connectionData, "sQL"), Set("mysql", "postgreSql"))
+    containsNames(DatabaseInfoExtractor.extractDatabaseInfosByPattern(currentComposites, connectionData, "sQL"), Set("mysql", "postgreSql", "Orapost", "oramy"))
     assert(DatabaseInfoExtractor.extractDatabaseInfosByPattern(List.empty, ConnectionsDataMap(List.empty), "sQL").infos.isEmpty)
   }
 
