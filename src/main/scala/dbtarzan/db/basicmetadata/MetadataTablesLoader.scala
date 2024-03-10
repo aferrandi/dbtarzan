@@ -13,10 +13,10 @@ class MetadataTablesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
   /* gets the tables whose names or whose column names match a pattern */
   def tablesByPattern(pattern : String) : TableNames = try {
       val uppercasePattern = pattern.toUpperCase
-      val allStandardTables = using(meta.getTables(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, "%", Array("TABLE"))) { rs =>
+      val allStandardTables: List[TableAndSchema] = using(meta.getTables(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, "%", Array("TABLE"))) { rs =>
         readTableAndSchemas(rs)
       }
-      val tablesByColumnPattern = using(meta.getColumns(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, "%", "%"+uppercasePattern+"%")) { rs =>
+      val tablesByColumnPattern: Set[TableAndSchema] = using(meta.getColumns(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, "%", "%"+uppercasePattern+"%")) { rs =>
         readTableAndSchemas(rs)
       }.map(toUpperCase).toSet
       val matchingTables = allStandardTables.filter(t => {

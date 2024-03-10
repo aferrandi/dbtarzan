@@ -45,6 +45,9 @@ case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, 
 case class ResponseForeignKeys(queryId : QueryId, structure : DBTableStructure, keys : ForeignKeys)
     extends TWithQueryId
 
+case class ResponseForeignKeysByPatterns(queryId: QueryId, keys: ForeignKeys)
+  extends TWithQueryId
+
 case class ResponseIndexes(queryId : QueryId, indexes: Indexes)
   extends TWithQueryId
 

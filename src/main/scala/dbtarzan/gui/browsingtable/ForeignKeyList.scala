@@ -23,12 +23,21 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
 
   /** need to show only the "to table" as cell text. And a tooltip for each cell	*/
   def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
-    def moreThanOneItem(l : List[_]) = l.length > 1
-    log.debug("newForeignKeys "+newForeignKeys)
+    setForeignKeys(newForeignKeys)
+  }
+
+  private def setForeignKeys(newForeignKeys: ForeignKeys): Unit = {
+    def moreThanOneItem(l: List[_]) = l.length > 1
+    log.debug("newForeignKeys " + newForeignKeys)
     val allForeignKeys = buffer.toList.map(_.key) ++ newForeignKeys.keys
     val groupedByToTableInsensitive = allForeignKeys.groupBy(_.to.table.tableName.toUpperCase()).values
     val withSharingCheck = groupedByToTableInsensitive.flatMap(ks => ks.map(ForeignKeyWithSharingCheck(_, moreThanOneItem(ks))))
     JFXUtil.bufferSet(buffer, withSharingCheck)
+  }
+
+  def setForeignKeysByPattern(newForeignKeys : ForeignKeys) : Unit = {
+    buffer.clear()
+    setForeignKeys(newForeignKeys)
   }
 
   /* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */

@@ -3,7 +3,7 @@ package dbtarzan.db.actor
 import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password}
-import dbtarzan.db.*
+import dbtarzan.db.{ForeignKey, *}
 import dbtarzan.db.foreignkeys.VirtualForeignKeyToForeignKey
 import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.db.util.ExceptionToText
@@ -72,12 +72,24 @@ class DatabaseActor(
 
   private def queryForeignKeys(qry : QueryForeignKeys) : Unit = coreHandler.withCore(qry.queryId, core => {
       val tableId = qry.queryId.tableId
-      val foreignKeys = ForeignKeys(
-          foreignKeysForCache.getOrElseUpdate(tableId,
-              cache.cachedForeignKeys(tableId, core.foreignKeyLoader.foreignKeys(tableId))
-          ).keys ++ virtualForeignKeysExploded.get(tableId).map(_.keys).getOrElse(List.empty))
+      val foreignKeys = ForeignKeys(extractForeignKeys(core, tableId))
       guiActor ! ResponseForeignKeys(qry.queryId, qry.structure, foreignKeys)
     }, logError)
+
+  private def extractForeignKeys(core: DatabaseCore, tableId: TableId): List[ForeignKey] = {
+    foreignKeysForCache.getOrElseUpdate(tableId,
+      cache.cachedForeignKeys(tableId, core.foreignKeyLoader.foreignKeys(tableId))
+    ).keys ++ virtualForeignKeysExploded.get(tableId).map(_.keys).getOrElse(List.empty)
+  }
+
+
+  private def queryForeignKeysByPattern(qry : QueryForeignKeysByPattern) : Unit = coreHandler.withCore(qry.queryId, core => {
+    val tableId = qry.queryId.tableId
+    val foreignKeys = ForeignKeys(ForeignKeysByPattern.filterForeignKeysByPattern(extractForeignKeys(core, tableId), qry.pattern))
+    guiActor ! ResponseForeignKeysByPatterns(qry.queryId, foreignKeys)
+  }, logError)
+
+
 
   private def queryRows(qry: QueryRows) : Unit = coreHandler.withCore(qry.queryId, core => {
     val sql = SqlBuilder.buildQuerySql(qry.structure)
@@ -136,9 +148,9 @@ class DatabaseActor(
   }
 
   private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = coreHandler.withCores(cores => {
-        val tableIds = cores.flatMap(core => tableNamesToTableIds(core.simpleDatabaseId, core.tablesLoader.tablesByPattern(qry.pattern)))
-        guiActor ! ResponseTablesByPattern(qry.databaseId, TableIds(tableIds))
-      }, logError)
+      val tableIds = cores.flatMap(core => tableNamesToTableIds(core.simpleDatabaseId, core.tablesLoader.tablesByPattern(qry.pattern)))
+      guiActor ! ResponseTablesByPattern(qry.databaseId, TableIds(tableIds))
+    }, logError)
 
   private def queryColumns(qry: QueryColumns) : Unit = coreHandler.withCore(qry.tableId, core => {
       val tableName = qry.tableId.tableName
@@ -217,6 +229,7 @@ class DatabaseActor(
     case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
     case qry : QueryColumnsForForeignKeys => queryColumnsForForeignKeys(qry)
     case qry : QueryForeignKeys => queryForeignKeys(qry)
+    case qry : QueryForeignKeysByPattern => queryForeignKeysByPattern(qry)
     case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)
     case qry : QueryIndexes => queryIndexes(qry)
