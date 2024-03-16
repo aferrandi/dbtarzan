@@ -148,7 +148,7 @@ class DatabaseActor(
   }
 
   private def queryTablesByPattern(qry: QueryTablesByPattern) : Unit = coreHandler.withCores(cores => {
-      val tableIds = cores.flatMap(core => tableNamesToTableIds(core.simpleDatabaseId, core.tablesLoader.tablesByPattern(qry.pattern)))
+      val tableIds = cores.flatMap(core => tableNamesToTableIds(core.simpleDatabaseId, core.tableAndColumnByPattern.tablesByPattern(qry.pattern)))
       guiActor ! ResponseTablesByPattern(qry.databaseId, TableIds(tableIds))
     }, logError)
 
