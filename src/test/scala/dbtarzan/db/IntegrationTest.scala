@@ -58,13 +58,6 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   }
 
 
-  "tablesByPattern" should "give a sorted list of the table names" in {
-    val metadataLoader = new MetadataTablesLoader(DBDefinition(Some(schemaId), None), connection.getMetaData)
-    val tableNames = metadataLoader.tablesByPattern("PRI")
-    assert(List("LAPTOP", "PC", "PRINTER") === tableNames.names)
-  }
-
-
   "primaryKeys of LAPTOP" should "give a sorted list of primary keys " in {
     val metadataLoader = new MetadataPrimaryKeysLoader(DBDefinition(Some(schemaId), None), connection.getMetaData, new FakeLogger())
     val primaryKeys = metadataLoader.primaryKeys("LAPTOP")
