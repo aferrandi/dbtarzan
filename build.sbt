@@ -5,10 +5,10 @@ import scala.sys.process.*
 
 fork := true
 
-val versionNumber = "1.33"
-val scala3Version = "3.3.1"
-val javaFxVersion = "20"
-val scalaFxVersion = "20.0.0-R31"
+val versionNumber = "1.34"
+val scala3Version = "3.4.0"
+val javaFxVersion = "21"
+val scalaFxVersion = "21.0.0-R32"
 version := versionNumber
 scalaVersion := scala3Version
 

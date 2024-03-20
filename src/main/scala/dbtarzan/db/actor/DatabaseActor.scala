@@ -46,7 +46,7 @@ class DatabaseActor(
       val foreignFromFile = new DatabaseForeignKeysFromFile(databaseId, SimpleDatabaseId(data.name), localization, keyFilesDirPath, log)
       foreignFromFile.loadForeignKeysFromFile()
     })
-    mutable.HashMap(keysForAllSimpleDatabases.toSeq: _*)
+    mutable.HashMap(keysForAllSimpleDatabases.toSeq*)
   }
 
   private def logError(e: Exception) : Unit = log.error("dbWorker", e)
