@@ -52,6 +52,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     case check : CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
     case keys : ResponsePrimaryKeys => createTabWith(keys.queryId, keys.structure, _.table.addPrimaryKeys(keys))
     case keys : ResponseForeignKeys => createTabWith(keys.queryId, keys.structure, _.table.addForeignKeys(keys))
+    case keys: ResponseForeignKeysByPatterns => tables.tableWithQueryId(keys.queryId, _.setForeignKeysByPattern(keys))
     case indexes: ResponseIndexes =>  tables.tableWithQueryId(indexes.queryId, _.addIndexes(indexes))
     case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)

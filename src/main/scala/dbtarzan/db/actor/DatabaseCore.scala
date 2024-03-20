@@ -18,6 +18,7 @@ class DatabaseCore(connection : java.sql.Connection, databaseId: DatabaseId, val
   val queryRowsNumberLoader = new QueryRowsNumberLoader(connection, log)
   private val metaData: DatabaseMetaData = connection.getMetaData
   val tablesLoader = new MetadataTablesLoader(attributes.definition, metaData)
+  val tableAndColumnByPattern = new TableAndColumnByPattern(tablesLoader)
   val columnsLoader = new MetadataColumnsLoader(attributes.definition, metaData, log)
   val primaryKeysLoader = new MetadataPrimaryKeysLoader(attributes.definition, metaData, log)
   val schemasLoader = new MetadataSchemasLoader(metaData, log)

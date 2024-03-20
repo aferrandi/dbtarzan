@@ -25,7 +25,7 @@ import scalafx.stage.Stage
 /* table + constraint input box + foreign keys */
 class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization, log: Logger)
   extends TControlBuilder with TTableForMapWithId {
-  private val foreignKeyList = new ForeignKeyList(log)
+  private val foreignKeyList = new ForeignKeyListWithFilter(queryId, dbActor, log, localization)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, localization)
   private val queryInfo = new QueryInfo(SqlBuilder.buildQuerySql(structure), localization, () => {
@@ -200,6 +200,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     table.addForeignKeys(keys.keys)
     progressBar.receivedForeignKeys()
   }
+
+  def setForeignKeysByPattern(keys : ResponseForeignKeysByPatterns): Unit =
+    foreignKeyList.setForeignKeysByPattern(keys.keys)
+
 
   /* adds the foreign keys to the foreign key list */
   def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit = {

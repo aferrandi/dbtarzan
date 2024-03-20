@@ -22,7 +22,7 @@ class MetadataSchemasLoader(meta : DatabaseMetaData, log: TLogger) {
 
   private def readSchemas(rs : ResultSet) : List[SchemaName] =
     ResultSetReader.readRS(rs, r => {
-      val schemaName = r.getString("TABLE_SCHEM")
+      val schemaName = r.getString("TABLE_SCHEM") // yea, TABLE_SCHEMM, not TABLE_SCHEMMA
       SchemaName(schemaName)
     })
 }

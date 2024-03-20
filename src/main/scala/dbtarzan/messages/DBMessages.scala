@@ -24,6 +24,8 @@ case class QueryPrimaryKeys(queryId : QueryId, structure : DBTableStructure)
 
 case class QueryForeignKeys(queryId : QueryId, structure : DBTableStructure)
 
+case class QueryForeignKeysByPattern(queryId : QueryId, pattern: String)
+
 case class QueryIndexes(queryId : QueryId)
 
 case class QuerySchemas(databaseId : DatabaseId)
