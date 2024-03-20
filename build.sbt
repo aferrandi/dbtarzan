@@ -7,8 +7,11 @@ fork := true
 
 val versionNumber = "1.33"
 val scala3Version = "3.3.1"
+val javaFxVersion = "20"
+val scalaFxVersion = "20.0.0-R31"
 version := versionNumber
 scalaVersion := scala3Version
+
 
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",
@@ -43,7 +46,7 @@ lazy val standardLibraries = Seq (
   "org.apache.pekko" %% "pekko-actor" % "1.0.2",
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,
-  ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
+  ("org.scalafx" %% "scalafx" % scalaFxVersion).excludeAll(
     // you cannot use the ibraries requested by scalafx because they are only the ones in the OS of this PC
     ExclusionRule(organization="org.openjfx")
   )
@@ -66,7 +69,7 @@ def buildProject(name: String) = {
   // we need to add web and swing to avoid compile errors, but we remove them later
   val javaFXModules = Seq("base", "controls", "graphics", "media", "web", "swing")
   val javaFXLibraries = javaFXModules.map(module =>
-    "org.openjfx" % s"javafx-$module" % "20" classifier name
+    "org.openjfx" % s"javafx-$module" % javaFxVersion classifier name
   )
   Project(name, file(s"prj${name}"))
     .settings( commonConfiguration)
