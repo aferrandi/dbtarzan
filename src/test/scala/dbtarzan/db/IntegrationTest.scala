@@ -14,8 +14,10 @@ import scala.concurrent.duration.*
 import scala.language.postfixOps
 import org.scalatest.flatspec.AnyFlatSpec
 
+import scala.compiletime.uninitialized
+
 class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
-  var connection: Connection = _
+  var connection: Connection = uninitialized
 
   def productTableId: TableId = TestDatabaseIds.simpleTableId( "PRODUCT")
 
