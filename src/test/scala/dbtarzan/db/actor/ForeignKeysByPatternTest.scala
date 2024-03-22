@@ -1,8 +1,7 @@
 package dbtarzan.db.actor
 
-import dbtarzan.db.{DatabaseId, FieldsOnTable, ForeignKey, ForeignKeyDirection, SimpleDatabaseId, TableId}
+import dbtarzan.db.*
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.funsuite.*
 
 class ForeignKeysByPatternTest extends AnyFlatSpec {
 
