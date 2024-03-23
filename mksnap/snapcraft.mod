@@ -11,6 +11,7 @@ apps:
   dbtarzan:
     command: java.sh VERSION
     desktop: dbtarzan.desktop
+    extensions: [gnome]
     environment:        
         # If it does not find the fonts configuration it gives an error.
         XDG_DATA_HOME: $SNAP/usr/share
@@ -19,7 +20,8 @@ apps:
         JAVA_HOME: $SNAP/usr/lib/jvm/java-17-openjdk-amd64
         JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON"
         PATH: $SNAP/usr/lib/jvm/java-17-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-17-openjdk-amd64/jre/bin:$PATH
-        LD_LIBRARY_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-17-openjdk-amd64/jre/lib/amd64/
+        LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-17-openjdk-amd64/jre/lib/amd64/
+        LIBGL_DRIVERS_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/dri
     plugs: [desktop, home, x11, wayland, network, network-bind]
 
 parts:
@@ -27,7 +29,6 @@ parts:
   dbtarzan:
     plugin: dump
     source: source/
-    # without libcamberra... it complains that canberra-gtk is not available.
     build-packages: [ca-certificates, ca-certificates-java, openjdk-17-jre]
     stage-packages: [openjdk-17-jre, zlib1g]
     override-prime: |
