@@ -20,7 +20,7 @@ class CoresHandler(databaseId: DatabaseId,
   private val createConnection = new DriverManagerWithEncryption(encryptionKey)
   private var optCores: Option[Map[SimpleDatabaseId, DatabaseCore]] = buildCores()
   
-  def buildCores(): Option[Map[SimpleDatabaseId, DatabaseCore]] = {
+  private def buildCores(): Option[Map[SimpleDatabaseId, DatabaseCore]] = {
     val cores = datas.map(data => buildOneCore(data, loginPasswords.loginPasswords.get(SimpleDatabaseId(data.name))))
     if(cores.contains(None))
       None
@@ -79,7 +79,7 @@ class CoresHandler(databaseId: DatabaseId,
       case None => log.error("Database not connected")
     }
 
-  def closeCore(): Unit = {
+  private def closeCores(): Unit = {
     optCores.foreach(cores =>
       cores.values.foreach(core =>
         try {
@@ -91,4 +91,12 @@ class CoresHandler(databaseId: DatabaseId,
     )
     optCores = None
   }
+
+  def reset(): Unit = {
+    closeCores()
+    optCores = buildCores()
+  }
+
+  def stop(): Unit =
+    closeCores()
 }

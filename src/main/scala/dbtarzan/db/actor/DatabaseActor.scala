@@ -58,14 +58,13 @@ class DatabaseActor(
   private def close() : Unit = ExceptionToHandler.handleErr(logError, {
     log.debug(s"Closing the database worker for ${DatabaseIdUtil.databaseIdText(databaseId)}")
     guiActor ! ResponseCloseDatabase(databaseId)
-    coreHandler.closeCore()
+    coreHandler.stop()
     context.stop(self)
   })
 
   private def reset() : Unit = ExceptionToHandler.handleErr(logError, {
-    log.debug(s"ReseFting the connection of the database worker for ${DatabaseIdUtil.databaseIdText(databaseId)}")
-    coreHandler.closeCore()
-    coreHandler.buildCores()
+    log.debug(s"Resetting the connection of the database worker for ${DatabaseIdUtil.databaseIdText(databaseId)}")
+    coreHandler.reset()
     log.info(localization.connectionResetted(databaseIdText(databaseId)))
   })
 

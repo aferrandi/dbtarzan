@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#example: sourceforge/mkRelease.sh $PWD 1.27 3.1.3
+#example: sourceforge/mkRelease.sh $PWD 1.27 3.4.0
 ROOTDIR=$1
 VERSION=$2
 SCALA_VER=$3
