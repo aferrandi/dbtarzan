@@ -23,5 +23,9 @@ we need to enter it (or them, for composites) in the password dialog to login.
 
 ![Password Dialog](images/passwordDialog.png)
 
+Databases can be **filtered** entering text in the _Filter_ text box on the top.
+Only the following will be displayed:
+- the databases containing the filtering text in their name.
+- the [composites](Composites.md) containing the filtering text in their name or in the name of their databases.
 
 
