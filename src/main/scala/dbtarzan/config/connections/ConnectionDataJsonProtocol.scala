@@ -27,7 +27,6 @@ given JsonInput[ConnectionData] with
 
     json("user"),
     json.map[Password]("password"),
-    json.map[Boolean]("passwordEncrypted"),
     json.map[Int]("instances"),
     json.map[IdentifierDelimiters]("identifierDelimiters"),
     json.map[Int]("maxRows"),
@@ -45,7 +44,6 @@ given JsonOutput[ConnectionData] with
     "schema" -> u.schema,
     "user" -> u.user,
     "password" -> u.password,
-    "passwordEncrypted" -> u.passwordEncrypted,
     "instances" -> u.instances,
     "identifierDelimiters" -> u.identifierDelimiters,
     "maxRows" -> u.maxRows,

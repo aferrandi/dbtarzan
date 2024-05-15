@@ -109,17 +109,11 @@ class OneConnectionEditor(
     hgap = 10
   }
 
-  private def decryptPasswordIfNeeded(password: Password, passwordEncrypted : Boolean) : Password =
-      if(passwordEncrypted)
-        decryptPassword(password)
-      else
-        password
-
   private def decryptPassword(password: Password): Password = {
     try {
       passwordEncryption.decrypt(password)
     } catch {
-      case ex: Exception => throw new Exception("Decrypting the password " + password + " got", ex)
+      case ex: Exception => throw new Exception(s"Decrypting the password $password got", ex)
     }
   }
 
@@ -130,7 +124,7 @@ class OneConnectionEditor(
     txtDriver.text = data.driver
     txtUser.text = data.user
     val passwordToDisplay = data.password.map(
-      password => decryptPasswordIfNeeded(password, data.passwordEncrypted.getOrElse(false)).key
+      password => decryptPassword(password).key
     ).getOrElse("")
     txtPassword.text = passwordToDisplay
     txtPassword.disable = data.password.isEmpty
@@ -165,7 +159,7 @@ class OneConnectionEditor(
     try { 
       passwordEncryption.encrypt(password)
     } catch {
-      case ex: Exception => throw new Exception("Encrypting the password "+password+" got", ex) 
+      case ex: Exception => throw new Exception(s"Encrypting the password $password got", ex) 
     }
 
 
@@ -177,7 +171,6 @@ class OneConnectionEditor(
         cmbSchemas.chosenSchema(),
         txtUser.text(),
         passwordToData(),
-        Some(true),
         None,
         cmbDelimiters.retrieveDelimiters(),
         txtMaxRows.toOptInt,
