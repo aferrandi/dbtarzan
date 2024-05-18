@@ -5,10 +5,10 @@ import scala.sys.process.*
 
 fork := true
 
-val versionNumber = "1.34"
-val scala3Version = "3.4.0"
-val javaFxVersion = "21"
-val scalaFxVersion = "21.0.0-R32"
+val versionNumber = "1.35"
+val scala3Version = "3.4.2"
+val javaFxVersion = "22"
+val scalaFxVersion = "22.0.0-R33"
 version := versionNumber
 scalaVersion := scala3Version
 
@@ -42,7 +42,7 @@ lazy val commonConfiguration = Seq(
 )
 
 lazy val standardLibraries = Seq (
-  "com.github.losizm" %% "grapple" % "13.0.0",
+  "com.github.losizm" %% "grapple" % "15.0.0",
   "org.apache.pekko" %% "pekko-actor" % "1.0.2",
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,

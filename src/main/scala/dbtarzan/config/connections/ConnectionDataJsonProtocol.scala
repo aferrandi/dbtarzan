@@ -17,23 +17,24 @@ given JsonInput[SchemaName] with
 given JsonOutput[SchemaName] with
   def write(u: SchemaName): JsonValue = JsonString(u.schema)
 
-given JsonInput[ConnectionData] with
-  def read(json: JsonValue): ConnectionData = ConnectionData(
-    json("jar"),
-    json("name"),
-    json("driver"),
-    json("url"),
-    json.map[SchemaName]("schema"),
+given JsonInput[ConnectionData] =
+  json =>
+    ConnectionData(
+      json.getString("jar"),
+      json.getString("name"),
+      json.getString("driver"),
+      json.getString("url"),
+      json.readOption[SchemaName]("schema"),
+      json.getString("user"),
+      json.readOption[Password]("password"),
+      json.readOption[Int]("instances"),
+      json.readOption[IdentifierDelimiters]("identifierDelimiters"),
+      json.readOption[Int]("maxRows"),
+      json.readOption[Int]("queryTimeoutInSeconds"),
+      json.readOption[Int]("maxFieldSize"),
+      json.readOption[String]("catalog")
+    )
 
-    json("user"),
-    json.map[Password]("password"),
-    json.map[Int]("instances"),
-    json.map[IdentifierDelimiters]("identifierDelimiters"),
-    json.map[Int]("maxRows"),
-    json.map[Int]("queryTimeoutInSeconds"),
-    json.map[Int]("maxFieldSize"),
-    json.map[String]("catalog")
-  )
 
 given JsonOutput[ConnectionData] with
   def write(u: ConnectionData): JsonObject = Json.obj(
