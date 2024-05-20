@@ -23,9 +23,9 @@ class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAtt
     if(thereIsOnlyOneColumn() && attributes.maxInClauseCount.isDefined)
       buildInClause(fkRows)
     else
-      buildOrSequence()
+      buildOrSequence(fkRows)
 
-  private def buildOrSequence(): String = {
+  private def buildOrSequence(fkRows: List[FKRow]): String = {
     val rowTexts = fkRows.map(fkRow => buildRowText(fkRow))
     rowTexts.mkString("\nOR ")
   }
