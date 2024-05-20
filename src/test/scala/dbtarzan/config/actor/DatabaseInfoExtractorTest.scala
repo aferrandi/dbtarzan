@@ -23,9 +23,9 @@ class DatabaseInfoExtractorTest extends AnyFlatSpec {
 
   private def buldConnections = {
     val connectionData = new ConnectionsDataMap(List(
-      ConnectionData("oracle.jar", "oracle", "DriverOracle", "jdbc://oracle", None, "giovanni", Some(Password("malagodi")), Some(false), None, None, None, None, None, None),
-      ConnectionData("mysql.jar", "mysql", "DriverMysql", "jdbc://mysql", None, "arturo", Some(Password("fedele")), None, None, None, None, None, None, None),
-      ConnectionData("postgresql.jar", "postgreSql", "DriverPostgres", "jdbc://postgresql", None, "gianni", Some(Password("boncompagni")), None, None, None, None, None, None, None)
+      ConnectionData("oracle.jar", "oracle", "DriverOracle", "jdbc://oracle", None, "giovanni", Some(Password("malagodi")), None, None, None, None, None, None),
+      ConnectionData("mysql.jar", "mysql", "DriverMysql", "jdbc://mysql", None, "arturo", Some(Password("fedele")),None, None, None, None, None, None),
+      ConnectionData("postgresql.jar", "postgreSql", "DriverPostgres", "jdbc://postgresql", None, "gianni", Some(Password("boncompagni")), None, None, None, None, None, None)
     ))
     connectionData
   }

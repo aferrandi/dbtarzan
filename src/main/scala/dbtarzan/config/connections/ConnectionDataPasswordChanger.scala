@@ -28,8 +28,7 @@ class ConnectionDataPasswordChanger(change : EncryptionKeyChange) {
             original.url,
             original.schema,
             original.user,
-            original.password.map(password => reencryptPassword(password, original.passwordEncrypted.getOrElse(false))),
-            Some(true),
+            original.password.map(password => reencryptPassword(password)),
             original.instances,
             original.identifierDelimiters,
             original.maxRows,
@@ -38,11 +37,8 @@ class ConnectionDataPasswordChanger(change : EncryptionKeyChange) {
             original.catalog
             )
 
-    private def reencryptPassword(password : Password, passwordEncrypted : Boolean) : Password = {
-        val toEncrypt = if(passwordEncrypted)
-                            decrypter.decrypt(password)
-                        else 
-                            password
+    private def reencryptPassword(password : Password) : Password = {
+        val toEncrypt = decrypter.decrypt(password)
         encrypter.encrypt(toEncrypt)
     }
 
