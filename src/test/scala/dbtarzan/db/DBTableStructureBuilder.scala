@@ -7,7 +7,7 @@ object DBTableStructureBuilder {
 
   def buildForeignKeyCriteria(): ForeignKeyCriteria = {
     val rows = List(buildRow("John", "23"))
-    ForeignKeyCriteria(rows, buildColumns())
+    ForeignKeyCriteria(rows, buildColumns(), List("name", "age"))
   }
 
   def buildNameColumn(): Field = Field("name", FieldType.STRING, "")
@@ -30,7 +30,7 @@ object DBTableStructureBuilder {
   def buildRow(name: String, age: String): FKRow = FKRow(buildFields(name, age))
 
   def buildAttributes(): QueryAttributes =
-    QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(Some(SchemaId(TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, SchemaName("TST"))), None), None)
+    QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(Some(SchemaId(TestDatabaseIds.databaseId, TestDatabaseIds.simpleDatabaseId, SchemaName("TST"))), None), None, None)
 
   def buildFields(name: String, age: String): List[FieldWithValue] =
     List(
