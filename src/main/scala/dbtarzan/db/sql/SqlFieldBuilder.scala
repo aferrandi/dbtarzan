@@ -8,11 +8,13 @@ class SqlFieldBuilder(columns : List[Field], attributes : QueryAttributes) {
 
   def buildFieldText(fieldWithValue : FieldWithValue): String = {
     val field = fieldWithValue.field
-    typeByName.get(field.toUpperCase) match {
-      case Some(fieldType) => buildFieldValueWithType(fieldWithValue, fieldType)
-      case None => throw new Exception("field "+field+" not found in column types "+typeByName.keys)
-    }
+    buildFieldValueWithType(fieldWithValue, typeOfField(fieldWithValue.field))
   }
+  def typeOfField(field : String) : FieldType =
+    typeByName.get(field.toUpperCase) match {
+      case Some(fieldType) => fieldType
+      case None => throw new Exception("field " + field + " not found in column types " + typeByName.keys)
+    }
 
   private def buildFieldValueWithType(fieldWithValue : FieldWithValue, fieldType : FieldType): String = {
     val fieldRaw = fieldWithValue.field

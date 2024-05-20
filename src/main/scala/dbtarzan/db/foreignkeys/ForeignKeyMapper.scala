@@ -9,7 +9,7 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : Que
 
 	private def toFollowTable() : DBTableStructure = {
 		val fkRows= follow.rows.map(row => buildKeyValuesForRow(row))
-		val keyCriteria = ForeignKeyCriteria(fkRows, newColumns.fields, follow.key.to.fields.length)
+		val keyCriteria = ForeignKeyCriteria(fkRows, newColumns.fields, follow.key.to.fields)
 		val description = TableDescription(follow.key.to.table.tableName, Option(follow.key.from.table.tableName), None)
 		DBTableStructure(description, newColumns, Some(keyCriteria), None,  None, attributes)		
 	}
