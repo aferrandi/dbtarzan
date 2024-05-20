@@ -28,6 +28,7 @@ class English extends Localization {
     def maxRows = "Max Rows"
     def queryTimeoutInSeconds = "Query timeout in seconds"
     def maxFieldSize = "Max field size"
+    def maxInClauseCount = "Max in clause count"
     def tables = "Tables"
     def database = "Database"
     def databases = "Databases"

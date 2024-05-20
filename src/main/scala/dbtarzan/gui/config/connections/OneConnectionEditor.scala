@@ -56,11 +56,14 @@ class OneConnectionEditor(
   private val txtMaxRows = JFXUtil.numTextField()
   private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
   private val txtMaxFieldSize = JFXUtil.numTextField()
+  private val txtMaxInClauseCount = JFXUtil.numTextField()
+
 
   private val lblDelimiters = new Label { text = localization.delimiters+":" }
   private val lblMaxRows = new Label { text = localization.maxRows+":" }
   private val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
   private val lblMaxFieldSize = new Label { text = localization.maxFieldSize+":" }
+  private val lblMaxInClauseCount = new Label { text = localization.maxInClauseCount+":" }
   private val lblCatalog = new Label { text = localization.catalog+":" }
   private val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
@@ -100,9 +103,11 @@ class OneConnectionEditor(
     add(new HBox { children = List(txtQueryTimeoutInSeconds)}, 1, 10)
     add(lblMaxFieldSize, 0, 11)
     add(new HBox { children = List(txtMaxFieldSize)}, 1, 11)
-    add(lblCatalog, 0, 12)
-    add(txtCatalog, 1, 12)
-    add(linkToJdbcUrls, 1, 13)
+    add(lblMaxInClauseCount, 0, 12)
+    add(new HBox { children = List(txtMaxInClauseCount)}, 1, 12)
+    add(lblCatalog, 0, 13)
+    add(txtCatalog, 1, 13)
+    add(linkToJdbcUrls, 1, 14)
     GridPane.setHalignment(linkToJdbcUrls, HPos.Right)
     padding = Insets(10)
     vgap = 10
@@ -135,6 +140,7 @@ class OneConnectionEditor(
     txtMaxRows.fromOptInt(data.maxRows)
     txtQueryTimeoutInSeconds.fromOptInt(data.queryTimeoutInSeconds)
     txtMaxFieldSize.fromOptInt(data.maxFieldSize)
+    txtMaxInClauseCount.fromOptInt(data.maxInClauseCount)
     txtCatalog.text = StringUtil.noneToEmpty(data.catalog)
     chkAdvanced.selected = false
     changeAdvancedVisibility(false)
@@ -150,6 +156,8 @@ class OneConnectionEditor(
       txtQueryTimeoutInSeconds,
       lblMaxFieldSize,
       txtMaxFieldSize,
+      lblMaxInClauseCount,
+      txtMaxInClauseCount,
       lblCatalog,
       txtCatalog
     )
@@ -176,6 +184,7 @@ class OneConnectionEditor(
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
         txtMaxFieldSize.toOptInt,
+        txtMaxInClauseCount.toOptInt,
         StringUtil.emptyToNone(txtCatalog.text())
     )
 
@@ -197,6 +206,7 @@ class OneConnectionEditor(
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
       txtMaxFieldSize.text,
+      txtMaxInClauseCount.text,
       txtCatalog.text,
       chkPassword.selected
     ).foreach(_.onChange(safe.onChange(() => useData(toData))))

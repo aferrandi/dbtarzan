@@ -28,6 +28,7 @@ trait Localization {
   def maxRows : String
   def queryTimeoutInSeconds : String
   def maxFieldSize: String
+  def maxInClauseCount: String
   def tables: String
   def database: String
   def databases: String

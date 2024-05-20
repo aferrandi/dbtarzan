@@ -30,6 +30,7 @@ case class ConnectionData(
    queryTimeoutInSeconds : Option[Int],
    /* to avoid slow queries because of very large fields values. In bytes */
    maxFieldSize: Option[Int],
-   /* the catalog of the database containing the data, used when the schema is not enough (table user n MySQL)  */
+   maxInClauseCount: Option[Int],
+/* the catalog of the database containing the data, used when the schema is not enough (table user n MySQL)  */
    catalog: Option[String]
 )

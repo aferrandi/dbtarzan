@@ -42,7 +42,7 @@ class CoresHandler(databaseId: DatabaseId,
     log.info(localization.connectedTo(databaseIdText(databaseId)))
     val simpleDatabaseId = SimpleDatabaseId(data.name)
     val schemaId = data.schema.map(schema => SchemaId(databaseId, simpleDatabaseId, schema))
-    val attributes = QueryAttributes(data.identifierDelimiters, DBDefinition(schemaId, data.catalog), data.maxFieldSize)
+    val attributes = QueryAttributes(data.identifierDelimiters, DBDefinition(schemaId, data.catalog), data.maxFieldSize, data.maxInClauseCount)
     val limits = DBLimits(data.maxRows, data.queryTimeoutInSeconds)
     Some(new DatabaseCore(connection, databaseId, simpleDatabaseId, attributes, limits, log))
   } catch {

@@ -1,7 +1,7 @@
 package dbtarzan.db.foreignkeys
 
 import dbtarzan.db.*
-import dbtarzan.db.sql.SqlFieldBuilder
+import dbtarzan.db.sql.{SqlFieldBuilder, SqlPartsBuilder}
 
 case class FKRow(values : List[FieldWithValue])
 
@@ -20,8 +20,16 @@ class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAtt
     fkRow.values.map(fkValue => sqlFieldBuilder.buildFieldText(fkValue)).mkString("(", " AND ", ")")
 
   private def buildFilter(fkRows : List[FKRow]): String = {
-    val rowTexts = fkRows.map(fkRow => buildRowText(fkRow))
-    rowTexts.mkString("\nOR ")
+    if(criteria.columns.size == 1 && attributes.maxInClauseCount.isDefined) {
+      val firstColumn = criteria.columns.head
+      val count = attributes.maxInClauseCount.get
+      fkRows.map(fkRow => SqlPartsBuilder.buildFieldValueText(firstColumn.fieldType, fkRow.values.head.value)).grouped(count).map(
+        chunk => firstColumn.name+" IN ("+chunk.mkString(",")+")"
+      ).mkString("\nOR ")
+    } else {
+      val rowTexts = fkRows.map(fkRow => buildRowText(fkRow))
+      rowTexts.mkString("\nOR ")
+    }
   }
 }
 
