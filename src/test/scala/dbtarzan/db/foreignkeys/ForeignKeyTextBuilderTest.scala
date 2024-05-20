@@ -26,14 +26,23 @@ class ForeignKeyTextBuilderTest extends AnyFlatSpec {
     assert("" === text)
   }
 
-  "building foreign key query with multiple row" should "give a complex query" in {
+  "building foreign key query with multiple row and multiple columns" should "give a complex query" in {
     val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
     val criteria = ForeignKeyCriteria(rows, buildColumns(), buildFKColumns())
     val text = ForeignKeyTextBuilder.buildClause(criteria, noneAttributes())
     assert("(name='John' AND age=23)\nOR (name='Jane' AND age=33)" === text)
   }
 
+  "building foreign key query with multiple row but only one column" should "give a less complex query" in {
+    val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
+    val criteria = ForeignKeyCriteria(rows, buildColumns(), buildNameFKColumns())
+    val text = ForeignKeyTextBuilder.buildClause(criteria, inClauseAttributes())
+    assert("name IN ('John','Jane')" === text)
+  }
+
   private def noneAttributes() = QueryAttributes(None, DBDefinition(None, None), None, None)
+
+  private def inClauseAttributes() = QueryAttributes(None, DBDefinition(None, None), None, Some(1000))
 
   private def buildColumns() = List(
     Field("name", FieldType.STRING, ""),
@@ -43,6 +52,10 @@ class ForeignKeyTextBuilderTest extends AnyFlatSpec {
   private def buildFKColumns() = List(
     "name",
     "age"
+  )
+
+  private def buildNameFKColumns() = List(
+    "name"
   )
 
   private def buildRow(name : String, age: String) = FKRow(
