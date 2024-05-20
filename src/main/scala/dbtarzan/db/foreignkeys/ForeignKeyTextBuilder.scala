@@ -5,7 +5,7 @@ import dbtarzan.db.sql.{SqlFieldBuilder, SqlPartsBuilder}
 
 case class FKRow(values : List[FieldWithValue])
 
-case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field]) 
+case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field], fieldCount: Int)
 
 /* Builds the query clause related to the selected foreign key */
 class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAttributes) {
@@ -20,7 +20,8 @@ class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAtt
     fkRow.values.map(fkValue => sqlFieldBuilder.buildFieldText(fkValue)).mkString("(", " AND ", ")")
 
   private def buildFilter(fkRows : List[FKRow]): String = {
-    if(criteria.columns.size == 1 && attributes.maxInClauseCount.isDefined) {
+    print(s"size: ${criteria.columns.size} isDefined: ${attributes.maxInClauseCount.isDefined}")
+    if(criteria.fieldCount == 1 && attributes.maxInClauseCount.isDefined) {
       val firstColumn = criteria.columns.head
       val count = attributes.maxInClauseCount.get
       fkRows.map(fkRow => SqlPartsBuilder.buildFieldValueText(firstColumn.fieldType, fkRow.values.head.value)).grouped(count).map(
