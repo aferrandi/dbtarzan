@@ -13,9 +13,20 @@ object DatabaseInfoExtractor {
   }
 
   private def connectionsNotInComposites(currentComposites : List[Composite], connectionsDataMap: ConnectionsDataMap): List[ConnectionData] = {
-    val connectionsToRemove = currentComposites.filter(co => !co.showAlsoIndividualDatabases).flatMap(co => co.databaseIds).map(id => id.databaseName).toSet
+    val connectionsToRemove = extractConnectionsToRemove(currentComposites)
     val connectionsDataRemaining = connectionsDataMap.connectionDatas.filter(cd => !connectionsToRemove.contains(cd.name))
     connectionsDataRemaining
+  }
+
+  private def extractConnectionsToRemove(currentComposites: List[Composite]): Set[String] = {
+    val connectionsToRemoveIfNoCompositePreserves = connectionsIncludedInComposites(currentComposites, false)
+    val connectionsToPreserveAnyway = connectionsIncludedInComposites(currentComposites, true)
+    connectionsToRemoveIfNoCompositePreserves.diff(connectionsToPreserveAnyway)
+  }
+
+  private def connectionsIncludedInComposites(currentComposites: List[Composite], connectionsShowAlsoIndividualDatabases: Boolean) = {
+    currentComposites.filter(co => co.showAlsoIndividualDatabases == connectionsShowAlsoIndividualDatabases)
+      .flatMap(co => co.databaseIds).map(id => id.databaseName).toSet
   }
 
   def extractDatabaseInfosByPattern(currentComposites: List[Composite], connectionsDataMap: ConnectionsDataMap, pattern: String): ResponseDatabasesByPattern = {
