@@ -1,6 +1,6 @@
 package dbtarzan.gui.actor
 
-import dbtarzan.config.actor.ConnectionsActor
+import dbtarzan.config.actor.{ConnectionsActor, DatabaseInfoExtractor}
 import dbtarzan.config.password.VerificationKey
 import dbtarzan.gui.{AppStopper, MainGUI}
 import org.apache.pekko.actor.{Actor, ActorRef}
@@ -19,8 +19,7 @@ case class GUIInitData(connectionsActor: ActorRef, logActor: ActorRef)
 /* Receives messages from the other actors (DatabaseWorker and ConfigWorker) and thread-safely updates the GUIf */
 class GUIActor(
                 configPaths: ConfigPath,
-                connectionDatas: List[ConnectionData],
-                composites: List[Composite],
+                initialDatabaseInfos: DatabaseInfos,
                 globalData: GlobalData,
                 localization: Localization,
                 version: String
@@ -53,10 +52,7 @@ class GUIActor(
 
   private def initGUI(connectionsActor: ActorRef, log: Logger, stopper: AppStopper) : MainGUI = {
     val mainGUI = new MainGUI(self, connectionsActor, configPaths, localization, globalData.encryptionData.map(_.verificationKey), log, version)
-    val connectionDataMap = new ConnectionsDataMap(connectionDatas)
-    mainGUI.databaseList.setDatabaseInfos(
-      DatabaseInfoFromConfig.extractSimpleDatabaseInfos(connectionDatas) ++ DatabaseInfoFromConfig.extractCompositeInfos(composites, connectionDataMap.connectionDataFor)
-    )
+    mainGUI.databaseList.setDatabaseInfos(initialDatabaseInfos.infos)
     mainGUI.onDatabaseSelected({ case (databaseInfo, encryptionKey, loginPasswords) => {
       log.info(localization.openingDatabase(DatabaseIdUtil.databaseInfoText(databaseInfo)))
       connectionsActor ! QueryDatabase(DatabaseIdUtil.databaseIdFromInfo(databaseInfo), encryptionKey, loginPasswords)

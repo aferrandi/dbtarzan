@@ -49,7 +49,6 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
          val dbActor = ConnectionBuilder.buildDBActor(databaseId, registerDriver, datas, encriptionKey, state.guiActor, state.log, context, localization, keyFilesDirPath, loginPasswords)
          mapDBWorker += databaseId -> dbActor
          dbActor
-
        }
        case None => throw new Exception(s"No datas found for ${databaseId}")
      }
