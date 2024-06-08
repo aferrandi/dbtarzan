@@ -27,7 +27,7 @@ object ConnectionEditorStarter
     val connectionStage = new Stage {
       title = localization.editConnections
       width = 800
-      height = 650
+      height = 700
       scene = new Scene {
         def onSave(connectionsToSave: List[ConnectionData]) : Unit = {
             log.debug(s"Saving the connections ${connectionsToSave.map(c => c.name).mkString(",")}")

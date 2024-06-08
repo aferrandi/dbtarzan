@@ -16,6 +16,7 @@ object ConnectionDataValidation
       errorIf("Url cannot contain spaces", _ => Validation.containsWhitespace(data.url)),
       errorIf("Url must be in URL form", _ => !Validation.isValidJdbcURL(data.url)),
       errorIf("Empty driver", _ => data.driver.isEmpty),
+      errorIf("Zero max in clause", _ => data.maxInClauseCount.exists(v => v <= 0)),
       // errorIf("Empty user", _ => data.user.isEmpty),
       // errorIf("User cannot contain spaces", _ => Validation.containsWhtitespace(data.user)),
       // errorIf("Empty password", _ => data.password.isEmpty),

@@ -28,6 +28,7 @@ class Italian extends Localization {
     def maxRows = "Max Righe"    
     def queryTimeoutInSeconds = "Timeout query in secondi"
     def maxFieldSize = "Max dimensione campo"
+    def useInClause = "Usa in clause"
     def maxInClauseCount = "Max numero elementi in clause"
     def tables = "Tabelle"
     def database = "Database"

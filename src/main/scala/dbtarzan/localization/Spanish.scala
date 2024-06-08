@@ -27,6 +27,7 @@ class Spanish extends Localization {
     def delimiters = "Separadores"
     def maxRows = "Máximo de filas"
     def maxFieldSize = "Max tamaño campo"
+    def useInClause = "Usa in clause"
     def maxInClauseCount = "Número máximo de elementos in clause"
     def queryTimeoutInSeconds = "tiempo de espera de consulta en segundos"
     def tables = "Tablas"
