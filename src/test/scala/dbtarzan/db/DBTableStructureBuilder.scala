@@ -7,7 +7,7 @@ object DBTableStructureBuilder {
 
   def buildForeignKeyCriteria(): ForeignKeyCriteria = {
     val rows = List(buildRow("John", "23"))
-    ForeignKeyCriteria(rows, buildColumns(), List("name", "age"))
+    ForeignKeyCriteria(rows, buildColumns())
   }
 
   def buildNameColumn(): Field = Field("name", FieldType.STRING, "")

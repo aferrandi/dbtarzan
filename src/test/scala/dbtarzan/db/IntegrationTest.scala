@@ -95,7 +95,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
           List(FieldType.INT, FieldType.INT, FieldType.INT, FieldType.INT, FieldType.FLOAT, FieldType.STRING, FieldType.FLOAT).map(t => Field("x", t, ""))
           ),
         Some(
-          ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "")), List("model"))
+          ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "")))
           ),
         Some(Filter("speed > 450")),
         Some(OrderByFields(List(

@@ -8,10 +8,13 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : Que
 	val mapNameToIndex: Map[String, Int] = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
 
 	private def toFollowTable() : DBTableStructure = {
-		val fkRows= follow.rows.map(row => buildKeyValuesForRow(row))
-		val keyCriteria = ForeignKeyCriteria(fkRows, newColumns.fields, follow.key.to.fields)
-		val description = TableDescription(follow.key.to.table.tableName, Option(follow.key.from.table.tableName), None)
-		DBTableStructure(description, newColumns, Some(keyCriteria), None,  None, attributes)		
+		try {
+			val fkRows = follow.rows.map(row => buildKeyValuesForRow(row))
+			val keyCriteria = ForeignKeyCriteria(fkRows, follow.key.to.fields.map(name => newColumns.fields.find(f => f.name.equalsIgnoreCase(name)).get))
+			val description = TableDescription(follow.key.to.table.tableName, Option(follow.key.from.table.tableName), None)
+			DBTableStructure(description, newColumns, Some(keyCriteria), None, None, attributes)
+		} catch
+			case ex: Exception => throw  new Exception(s"Following to table with newColumns $newColumns and follow fields to ${follow.key.to.fields} got ", ex)
 	}
 
 	/* has a foreignkey FK(keyfrom, keyto), the columns from */
@@ -24,7 +27,7 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : Que
 			val fieldWithValues = toFields.zip(values).map({case (field, value) => FieldWithValue(field, value) })
 			FKRow(fieldWithValues)
 		catch
-			case e : Exception => throw new Exception("Building the key values for the row "+row+" from the map "+mapNameToIndex+" with foreign key  "+follow.key+" got", e)
+			case e : Exception => throw new Exception(s"Building the key values for the row $row from the map $mapNameToIndex with foreign key ${follow.key} got", e)
 	} 
 }
 

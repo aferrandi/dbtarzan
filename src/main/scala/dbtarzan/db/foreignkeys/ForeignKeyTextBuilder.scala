@@ -5,11 +5,11 @@ import dbtarzan.db.sql.{SqlFieldBuilder, SqlPartsBuilder}
 
 case class FKRow(values : List[FieldWithValue])
 
-case class ForeignKeyCriteria(fkRows : List[FKRow], columns : List[Field], columnsInForeignKey: List[String])
+case class ForeignKeyCriteria(fkRows : List[FKRow], columnsInForeignKey : List[Field])
 
 /* Builds the query clause related to the selected foreign key */
 class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAttributes) {
-  val sqlFieldBuilder = new SqlFieldBuilder(criteria.columns, attributes)
+  val sqlFieldBuilder = new SqlFieldBuilder(criteria.columnsInForeignKey, attributes)
 
   def buildClause() : String = {
     val filter = buildFilter(criteria.fkRows)
@@ -33,9 +33,9 @@ class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAtt
     val firstColumn = criteria.columnsInForeignKey.head
     val maxInClauseCount = attributes.maxInClauseCount.get
     fkRows
-      .map(fkRow => SqlPartsBuilder.buildFieldValueText(sqlFieldBuilder.typeOfField(firstColumn), fkRow.values.head.value))
+      .map(fkRow => SqlPartsBuilder.buildFieldValueText(sqlFieldBuilder.typeOfField(firstColumn.name), fkRow.values.head.value))
       .grouped(maxInClauseCount)
-      .map(chunk => firstColumn + " IN (" + chunk.mkString(",") + ")")
+      .map(chunk => s"${firstColumn.name.toLowerCase()} IN (${chunk.mkString(",")})")
       .mkString("\nOR ")
   }
 
