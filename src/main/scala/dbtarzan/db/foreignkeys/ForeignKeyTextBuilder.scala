@@ -31,10 +31,12 @@ class ForeignKeyTextBuilder(criteria : ForeignKeyCriteria, attributes : QueryAtt
   }
   private def buildInClause(fkRows: List[FKRow]): String = {
     val firstColumn = criteria.columnsInForeignKey.head
-    val count = attributes.maxInClauseCount.get
-    fkRows.map(fkRow => SqlPartsBuilder.buildFieldValueText(sqlFieldBuilder.typeOfField(firstColumn), fkRow.values.head.value)).grouped(count).map(
-      chunk => firstColumn + " IN (" + chunk.mkString(",") + ")"
-    ).mkString("\nOR ")
+    val maxInClauseCount = attributes.maxInClauseCount.get
+    fkRows
+      .map(fkRow => SqlPartsBuilder.buildFieldValueText(sqlFieldBuilder.typeOfField(firstColumn), fkRow.values.head.value))
+      .grouped(maxInClauseCount)
+      .map(chunk => firstColumn + " IN (" + chunk.mkString(",") + ")")
+      .mkString("\nOR ")
   }
 
   private def thereIsOnlyOneColumn(): Boolean =

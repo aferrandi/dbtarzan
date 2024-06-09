@@ -26,19 +26,34 @@ class ForeignKeyTextBuilderTest extends AnyFlatSpec {
     assert("" === text)
   }
 
-  "building foreign key query with multiple row and multiple columns" should "give a complex query" in {
+  "building foreign key query with multiple row and multiple columns with in clause active" should "give a complex query" in {
+    val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
+    val criteria = ForeignKeyCriteria(rows, buildColumns(), buildFKColumns())
+    val text = ForeignKeyTextBuilder.buildClause(criteria, inClauseAttributes())
+    assert("(name='John' AND age=23)\nOR (name='Jane' AND age=33)" === text)
+  }
+
+  "building foreign key query with multiple row and multiple columns without in clause" should "give a complex query" in {
     val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
     val criteria = ForeignKeyCriteria(rows, buildColumns(), buildFKColumns())
     val text = ForeignKeyTextBuilder.buildClause(criteria, noneAttributes())
     assert("(name='John' AND age=23)\nOR (name='Jane' AND age=33)" === text)
   }
 
-  "building foreign key query with multiple row but only one column" should "give a less complex query" in {
+  "building foreign key query with multiple row but only one column with in clause active" should "give a less complex query" in {
     val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
     val criteria = ForeignKeyCriteria(rows, buildColumns(), buildNameFKColumns())
     val text = ForeignKeyTextBuilder.buildClause(criteria, inClauseAttributes())
     assert("name IN ('John','Jane')" === text)
   }
+
+  "building foreign key query with multiple row but only one column without in clause" should "give a less complex query" in {
+    val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
+    val criteria = ForeignKeyCriteria(rows, buildColumns(), buildNameFKColumns())
+    val text = ForeignKeyTextBuilder.buildClause(criteria, noneAttributes())
+    assert("(name='John') OR (name='Jane')" === text)
+  }
+
 
   private def noneAttributes() = QueryAttributes(None, DBDefinition(None, None), None, None)
 
