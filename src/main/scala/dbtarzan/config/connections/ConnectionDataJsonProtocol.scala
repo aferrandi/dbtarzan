@@ -32,6 +32,7 @@ given JsonInput[ConnectionData] =
       json.readOption[Int]("maxRows"),
       json.readOption[Int]("queryTimeoutInSeconds"),
       json.readOption[Int]("maxFieldSize"),
+      json.readOption[Int]("maxInClauseCount"),
       json.readOption[String]("catalog")
     )
 
@@ -50,6 +51,7 @@ given JsonOutput[ConnectionData] with
     "maxRows" -> u.maxRows,
     "queryTimeoutInSeconds" -> u.queryTimeoutInSeconds,
     "maxFieldSize" -> u.maxFieldSize,
+    "maxInClauseCount" -> u.maxInClauseCount,
     "catalog" -> u.catalog
   )
 

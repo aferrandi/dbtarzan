@@ -56,11 +56,18 @@ class OneConnectionEditor(
   private val txtMaxRows = JFXUtil.numTextField()
   private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
   private val txtMaxFieldSize = JFXUtil.numTextField()
+  private val chkInClause = new CheckBox {
+    selected.onChange((_, _, newValue) => txtMaxInClauseCount.disable = !newValue)
+  }
+  private val txtMaxInClauseCount = JFXUtil.numTextField()
+
 
   private val lblDelimiters = new Label { text = localization.delimiters+":" }
   private val lblMaxRows = new Label { text = localization.maxRows+":" }
   private val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
   private val lblMaxFieldSize = new Label { text = localization.maxFieldSize+":" }
+  private val lblUseInClause = new Label { text = localization.useInClause+":" }
+  private val lblMaxInClauseCount = new Label { text = localization.maxInClauseCount+":" }
   private val lblCatalog = new Label { text = localization.catalog+":" }
   private val linkToJdbcUrls = new Hyperlink {
     text = "Jdbc connections url strings"
@@ -100,9 +107,13 @@ class OneConnectionEditor(
     add(new HBox { children = List(txtQueryTimeoutInSeconds)}, 1, 10)
     add(lblMaxFieldSize, 0, 11)
     add(new HBox { children = List(txtMaxFieldSize)}, 1, 11)
-    add(lblCatalog, 0, 12)
-    add(txtCatalog, 1, 12)
-    add(linkToJdbcUrls, 1, 13)
+    add(lblUseInClause, 0, 12)
+    add(chkInClause, 1, 12)
+    add(lblMaxInClauseCount, 0, 13)
+    add(new HBox { children = List(txtMaxInClauseCount)}, 1, 13)
+    add(lblCatalog, 0, 14)
+    add(txtCatalog, 1, 14)
+    add(linkToJdbcUrls, 1, 15)
     GridPane.setHalignment(linkToJdbcUrls, HPos.Right)
     padding = Insets(10)
     vgap = 10
@@ -135,6 +146,9 @@ class OneConnectionEditor(
     txtMaxRows.fromOptInt(data.maxRows)
     txtQueryTimeoutInSeconds.fromOptInt(data.queryTimeoutInSeconds)
     txtMaxFieldSize.fromOptInt(data.maxFieldSize)
+    chkInClause.selected = data.maxInClauseCount.isDefined
+    txtMaxInClauseCount.fromOptInt(data.maxInClauseCount)
+    txtMaxInClauseCount.disable = data.maxInClauseCount.isEmpty
     txtCatalog.text = StringUtil.noneToEmpty(data.catalog)
     chkAdvanced.selected = false
     changeAdvancedVisibility(false)
@@ -150,6 +164,10 @@ class OneConnectionEditor(
       txtQueryTimeoutInSeconds,
       lblMaxFieldSize,
       txtMaxFieldSize,
+      lblUseInClause,
+      chkInClause,
+      lblMaxInClauseCount,
+      txtMaxInClauseCount,
       lblCatalog,
       txtCatalog
     )
@@ -176,12 +194,20 @@ class OneConnectionEditor(
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
         txtMaxFieldSize.toOptInt,
+        inClauseToData(),
         StringUtil.emptyToNone(txtCatalog.text())
     )
 
   private def passwordToData(): Option[Password] =
     if (chkPassword.selected.value)
       Some(encryptPassword(Password(txtPassword.text())))
+    else
+      None
+
+  private def inClauseToData(): Option[Int] =
+    if (chkInClause.selected.value) {
+      Some(txtMaxInClauseCount.toOptInt.getOrElse(0))
+    }
     else
       None
 
@@ -197,8 +223,10 @@ class OneConnectionEditor(
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
       txtMaxFieldSize.text,
+      txtMaxInClauseCount.text,
       txtCatalog.text,
-      chkPassword.selected
+      chkPassword.selected,
+      chkInClause.selected
     ).foreach(_.onChange(safe.onChange(() => useData(toData))))
     jarSelector.onChange(safe.onChange(() => useData(toData)))
     List(

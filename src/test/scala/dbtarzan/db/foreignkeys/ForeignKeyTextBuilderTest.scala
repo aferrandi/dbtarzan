@@ -7,7 +7,7 @@ class ForeignKeyTextBuilderTest extends AnyFlatSpec {
   "building foreign key query with delimiters" should "give a query with delimiters" in {
     val rows = List(buildRow("John", "23"))
     val criteria = ForeignKeyCriteria(rows, buildColumns())
-    val attributes = QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(None, None), None)
+    val attributes = QueryAttributes(Some(IdentifierDelimitersValues.squareBrackets), DBDefinition(None, None), None, None)
     val text = ForeignKeyTextBuilder.buildClause(criteria, attributes)
     assert("([name]='John' AND [age]=23)" === text)
   }
@@ -26,18 +26,47 @@ class ForeignKeyTextBuilderTest extends AnyFlatSpec {
     assert("" === text)
   }
 
-  "building foreign key query with multiple row" should "give a complex query" in {
+  "building foreign key query with multiple row and multiple columns with in clause active" should "give a complex query" in {
+    val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
+    val criteria = ForeignKeyCriteria(rows, buildColumns())
+    val text = ForeignKeyTextBuilder.buildClause(criteria, inClauseAttributes())
+    assert("(name='John' AND age=23)\nOR (name='Jane' AND age=33)" === text)
+  }
+
+  "building foreign key query with multiple row and multiple columns without in clause" should "give a complex query" in {
     val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
     val criteria = ForeignKeyCriteria(rows, buildColumns())
     val text = ForeignKeyTextBuilder.buildClause(criteria, noneAttributes())
     assert("(name='John' AND age=23)\nOR (name='Jane' AND age=33)" === text)
   }
 
-  private def noneAttributes() = QueryAttributes(None, DBDefinition(None, None), None)
+  "building foreign key query with multiple row but only one column with in clause active" should "give a less complex query" in {
+    val rows = List(buildRow("John", "23"), buildRow("Jane", "33"))
+    val criteria = ForeignKeyCriteria(rows, builColumnsOnlyName())
+    val text = ForeignKeyTextBuilder.buildClause(criteria, inClauseAttributes())
+    assert("name IN ('John','Jane')" === text)
+  }
+
+  "building foreign key query with multiple row but only one column without in clause" should "give a less complex query" in {
+    val rows = List(buildRowOnlyName("John"), buildRowOnlyName("Jane"))
+    val criteria = ForeignKeyCriteria(rows, builColumnsOnlyName())
+    val text = ForeignKeyTextBuilder.buildClause(criteria, noneAttributes())
+    assert("(name='John')\nOR (name='Jane')" === text)
+  }
+
+
+  private def noneAttributes() = QueryAttributes(None, DBDefinition(None, None), None, None)
+
+  private def inClauseAttributes() = QueryAttributes(None, DBDefinition(None, None), None, Some(1000))
 
   private def buildColumns() = List(
-  Field("name", FieldType.STRING, ""),
-  Field("age", FieldType.INT, "")
+    Field("name", FieldType.STRING, ""),
+    Field("age", FieldType.INT, "")
+  )
+
+
+  private def builColumnsOnlyName() = List(
+    Field("name", FieldType.STRING, ""),
   )
 
   private def buildRow(name : String, age: String) = FKRow(
@@ -45,4 +74,9 @@ class ForeignKeyTextBuilderTest extends AnyFlatSpec {
     FieldWithValue("name", name),
     FieldWithValue("age", age)
   ))
+
+  private def buildRowOnlyName(name: String) = FKRow(
+    List(
+      FieldWithValue("name", name)
+    ))
 }

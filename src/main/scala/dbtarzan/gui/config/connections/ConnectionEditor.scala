@@ -7,6 +7,7 @@ import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.login.PasswordDialog
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.{ExceptionText, ResponseSchemaExtraction, ResponseTestConnection}
 import scalafx.scene.Parent
 import scalafx.scene.control.SplitPane
@@ -16,7 +17,8 @@ import scalafx.scene.layout.BorderPane
 class ConnectionEditor(
   connectionDatas : List[ConnectionData],
   encryptionKey : EncryptionKey,
-  localization: Localization
+  localization: Localization,
+  log: Logger
   ) extends TControlBuilder {
   private val list = new ConnectionList(connectionDatas, localization)
   private val connection = new OneConnectionEditor(encryptionKey, localization)
@@ -65,6 +67,7 @@ class ConnectionEditor(
 
   private def showConnectionDataErrors(errors : List[ConnectionDataErrors]) : Unit = {
     val errorText = errors.map(error => error.name + ":" + error.errors.mkString(",")).mkString(";")
+    log.error(errorText)
     JFXUtil.showErrorAlert(localization.errorSavingConnections+": ", errorText)
   }
 

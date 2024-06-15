@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import java.nio.file.{Path, Paths}
-import dbtarzan.config.actor.{ConnectionsActor, ConnectionsInitData}
+import dbtarzan.config.actor.{ConnectionsActor, ConnectionsInitData, DatabaseInfoExtractor}
 import dbtarzan.config.composite.CompositeReader
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader, ConnectionsDataMap, DatabaseInfoFromConfig}
 import dbtarzan.config.global.GlobalDataReader
@@ -11,8 +11,6 @@ import dbtarzan.localization.Localizations
 import dbtarzan.log.actor.{LogActor, LogInitData, Logger}
 import dbtarzan.messages.*
 import dbtarzan.types.ConfigPath
-
-
 import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
 import scalafx.application.JFXApp3
 
@@ -27,8 +25,9 @@ object Main extends JFXApp3 {
     val composites = readComposites(configPaths.compositeConfigPath)
     val localization = Localizations.of(globalData.language)
     val system = ActorSystem("Sys")
+    val databaseInfos = DatabaseInfoExtractor.extractDatabaseInfos(composites, ConnectionsDataMap(connectionDatas))
     val guiActor: ActorRef = system.actorOf(Props(
-      new GUIActor(configPaths, connectionDatas, composites, globalData, localization, version)
+      new GUIActor(configPaths, databaseInfos, globalData, localization, version)
     ).withDispatcher("my-pinned-dispatcher"), "guiWorker")
     val connectionsActor: ActorRef = system.actorOf(Props(
       new ConnectionsActor(connectionDatas, composites,localization, configPaths.keyFilesDirPath)

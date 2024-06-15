@@ -8,8 +8,8 @@ import grapple.json.{ *, given }
 class ConnectionDataReaderTest extends AnyFlatSpec {
   "A list of connections" should "be parseable" in {
     val values= List(
-      ConnectionData("oracle.jar", "oracle", "DriverOracle", "jdbc://oracle", None, "giovanni", Some(Password("malagodi")), None, None, None, None, None, None),
-      ConnectionData("mysql.jar", "mysql", "DriverMysql", "jdbc://mysql", None, "arturo", Some(Password("fedele")), Some(2), Some(IdentifierDelimitersValues.doubleQuotes), Some(300), Some(20), None, Some("catalog"))
+      ConnectionData("oracle.jar", "oracle", "DriverOracle", "jdbc://oracle", None, "giovanni", Some(Password("malagodi")), None, None, None, None, None, None, None),
+      ConnectionData("mysql.jar", "mysql", "DriverMysql", "jdbc://mysql", None, "arturo", Some(Password("fedele")), Some(2), Some(IdentifierDelimitersValues.doubleQuotes), Some(300), Some(20), None, None, Some("catalog"))
       )
     val json = Json.toPrettyPrint(Json.toJson(values))
     println(json)

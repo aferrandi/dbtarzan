@@ -22,6 +22,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         Some(300),
         Some(20),
         Some(1000),
+        Some(1000),
         None
       )
     )
@@ -38,6 +39,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         None,
         "",
         Some(Password("")),
+        None,
         None,
         None,
         None,
@@ -64,6 +66,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         None,
         None,
         Some (100),
+        Some(1000),
         None
       )
     )

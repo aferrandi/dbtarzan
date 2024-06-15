@@ -2,14 +2,15 @@ package dbtarzan.gui.config.connections
 
 import scalafx.stage.{Stage, StageStyle, WindowEvent}
 import scalafx.scene.Scene
-import scalafx.Includes._
+import scalafx.Includes.*
 import org.apache.pekko.actor.ActorRef
-import java.nio.file.Path
 
+import java.nio.file.Path
 import dbtarzan.config.connections.{ConnectionData, ConnectionDataReader, ConnectionDataWriter}
 import dbtarzan.messages.{ConnectionDatas, ExtractSchemas, TestConnection}
 import dbtarzan.config.password.EncryptionKey
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
 object ConnectionEditorStarter
@@ -19,15 +20,17 @@ object ConnectionEditorStarter
           connectionsActor : ActorRef,
           configPath: Path,
           encryptionKey : EncryptionKey,
-          localization: Localization) : ConnectionEditor = {
+          localization: Localization,
+          log: Logger) : ConnectionEditor = {
     val connectionData: List[ConnectionData] = ConnectionDataReader.read(configPath)
-    val editor = new ConnectionEditor(connectionData, encryptionKey, localization)
+    val editor = new ConnectionEditor(connectionData, encryptionKey, localization, log)
     val connectionStage = new Stage {
       title = localization.editConnections
       width = 800
-      height = 600
+      height = 700
       scene = new Scene {
         def onSave(connectionsToSave: List[ConnectionData]) : Unit = {
+            log.debug(s"Saving the connections ${connectionsToSave.map(c => c.name).mkString(",")}")
             ConnectionDataWriter.write(configPath, connectionsToSave)
             connectionsActor ! ConnectionDatas(connectionsToSave)
             window().hide()

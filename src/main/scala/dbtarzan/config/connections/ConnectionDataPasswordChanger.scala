@@ -34,6 +34,7 @@ class ConnectionDataPasswordChanger(change : EncryptionKeyChange) {
             original.maxRows,
             original.queryTimeoutInSeconds,
             original.maxFieldSize,
+            original.maxInClauseCount,
             original.catalog
             )
 

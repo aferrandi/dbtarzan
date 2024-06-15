@@ -177,8 +177,8 @@ class DatabaseActor(
   private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
     val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-      guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
-    }, logError)
+    guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
+  }, logError)
 
   private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName

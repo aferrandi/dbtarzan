@@ -50,7 +50,7 @@ class MainGUIMenu(stage: () => JFXApp3.PrimaryStage,
       log.info(localization.editingConnectionFile(configPaths.connectionsConfigPath))
       encryptionKeyExtractor.extractEncryptionKey(stage()) match {
         case Some(key) =>
-          global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(stage(), connectionsActor, configPaths.connectionsConfigPath, key, localization))
+          global.setConnectionEditor(ConnectionEditorStarter.openConnectionsEditor(stage(), connectionsActor, configPaths.connectionsConfigPath, key, localization, log))
         case None => println("MainGUI: encryptionKey not entered")
       }
   }
