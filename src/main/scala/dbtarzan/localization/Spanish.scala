@@ -27,6 +27,8 @@ class Spanish extends Localization {
     def delimiters = "Separadores"
     def maxRows = "Máximo de filas"
     def maxFieldSize = "Max tamaño campo"
+    def useInClause = "Usa in clause"
+    def maxInClauseCount = "Número máximo de elementos in clause"
     def queryTimeoutInSeconds = "tiempo de espera de consulta en segundos"
     def tables = "Tablas"
     def database = "Base de datos"
@@ -117,6 +119,7 @@ class Spanish extends Localization {
     def editingConnectionFile(fileName: Path): String = "Estoy editando el archivo de configuración de las conexiones " + fileName
     def editingCompositeFile(fileName: Path): String = "Estoy editando el archivo de configuración de las combinaciones " + fileName
     def indexes = "Indices"
+    def rowsNumber = "Numero de filas"
     def errorConnectingToDatabase(databaseName : String): String = "La conexión a la base de datos "+databaseName+" y 'fallado debido a"
     def errorQueryingDatabase(databaseName : String): String = "La apertura de la base de datos "+databaseName+" y 'fallado debido a"
     def errorRequestingTheRows(queryId : QueryId): String = "La solicitud de las filas de "+queryId+" y 'fallado debido a"

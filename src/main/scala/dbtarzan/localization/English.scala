@@ -28,6 +28,8 @@ class English extends Localization {
     def maxRows = "Max Rows"
     def queryTimeoutInSeconds = "Query timeout in seconds"
     def maxFieldSize = "Max field size"
+    def useInClause = "Use in clause"
+    def maxInClauseCount = "Max in clause count"
     def tables = "Tables"
     def database = "Database"
     def databases = "Databases"
@@ -117,6 +119,7 @@ class English extends Localization {
     def editingConnectionFile(fileName: Path): String = "Editing connections configuration file " + fileName
     def editingCompositeFile(fileName: Path): String = "Editing composite configuration file " + fileName
     def indexes = "Indexes"
+    def rowsNumber = "Rows number"
     def errorConnectingToDatabase(databaseName : String): String = "Cronnecting to the database "+databaseName+" got"
     def errorQueryingDatabase(databaseName : String): String = "Querying the database "+databaseName+" got"
     def errorRequestingTheRows(queryId : QueryId): String = "Requesting the rows for the tab "+queryId+" got"

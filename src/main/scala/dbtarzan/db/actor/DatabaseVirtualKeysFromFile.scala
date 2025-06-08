@@ -3,7 +3,8 @@ package dbtarzan.db.actor
 import dbtarzan.db.foreignkeys.files.VirtualForeignKeysFile
 import dbtarzan.db.{VirtualalForeignKey, DatabaseId}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{DatabaseIdUtil, Logger}
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.DatabaseIdUtil
 
 import java.nio.file.Path
 

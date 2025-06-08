@@ -4,8 +4,8 @@ import java.nio.file.Path
 import dbtarzan.db._
 import dbtarzan.db.foreignkeys.files.VirtualForeignKeysFile
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
-import dbtarzan.messages.Logger
 
 class DatabaseVirtualKeysToFile(
   databaseId : DatabaseId,

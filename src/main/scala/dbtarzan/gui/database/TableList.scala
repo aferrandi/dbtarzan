@@ -1,11 +1,11 @@
-package dbtarzan.gui
+package dbtarzan.gui.database
 
-import scalafx.collections.ObservableBuffer
-import scalafx.scene.control.ListView
 import dbtarzan.db.{TableId, TableIds}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{JFXUtil, TableIdLabel}
+import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
+import scalafx.scene.control.ListView
 
 /* The list of tables to choose from */
 class TableList(originalTableIds : List[TableId]) extends TControlBuilder {

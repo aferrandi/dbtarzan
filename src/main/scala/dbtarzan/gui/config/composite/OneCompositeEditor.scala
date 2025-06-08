@@ -26,11 +26,12 @@ class OneCompositeEditor(
     textFill = Color.Black
     text = value.map(id => id.databaseName).getOrElse("")
   }
+
   private val comboStrategy = new TComboStrategy[SimpleDatabaseId] {
     override def removeFromCombo(comboBuffer: ObservableBuffer[SimpleDatabaseId], item: SimpleDatabaseId): Unit = comboBuffer -= item
-
     override def addToCombo(comboBuffer: ObservableBuffer[SimpleDatabaseId], item: SimpleDatabaseId): Unit = comboBuffer += item
   }
+
   private val lvwDatabaseId = ListViewAddFromComboBuilder.buildUnordered[SimpleDatabaseId](localization.add, showText, comboStrategy)
   lvwDatabaseId.setListAndComboData(List.empty, allDatabaseId)
 
@@ -60,7 +61,6 @@ class OneCompositeEditor(
     lvwDatabaseId.setListAndComboData(composite.databaseIds, allDatabaseId)
     showIndividual.selected = composite.showAlsoIndividualDatabases
   })
-
 
   def toComposite: Composite = Composite(
         CompositeId(txtName.text()),

@@ -1,20 +1,21 @@
-package dbtarzan.gui
+package dbtarzan.gui.database
 
-import org.apache.pekko.actor.ActorRef
-import dbtarzan.db._
+import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
+import dbtarzan.gui.BrowsingTable
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
-import dbtarzan.messages._
-import scalafx.Includes._
+import dbtarzan.log.actor.Logger
+import dbtarzan.messages.*
+import org.apache.pekko.actor.ActorRef
+import scalafx.Includes.*
 import scalafx.scene.Parent
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization)
+class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
   extends TControlBuilder {
-  private val log = new Logger(guiActor)
   private val tabs = new TabPane()
   private val tables = new TableTabsMap[BrowsingTable]()
   private val tablesToClose = new TabsToClose()
@@ -51,6 +52,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     case check : CheckNoTableRows => tables.tableWithQueryId(check.queryId, _.checkNoTableRows())
     case keys : ResponsePrimaryKeys => createTabWith(keys.queryId, keys.structure, _.table.addPrimaryKeys(keys))
     case keys : ResponseForeignKeys => createTabWith(keys.queryId, keys.structure, _.table.addForeignKeys(keys))
+    case keys: ResponseForeignKeysByPatterns => tables.tableWithQueryId(keys.queryId, _.setForeignKeysByPattern(keys))
     case indexes: ResponseIndexes =>  tables.tableWithQueryId(indexes.queryId, _.addIndexes(indexes))
     case switch: SwitchRowDetails => tables.tableWithQueryId(switch.queryId, _.switchRowDetailsView())
     case request : RequestRemovalTabsAfter => requestRemovalTabsAfter(request.queryId)
@@ -59,6 +61,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     case order : RequestOrderByField => tables.tableWithQueryId(order.queryId, _.orderByField(order.field, order.direction))
     case order : RequestOrderByEditor => tables.tableWithQueryId(order.queryId, _.startOrderByEditor())
     case rows : ResponseRows => createTabWith(rows.queryId, rows.structure, addRows(_, rows))
+    case rowsNumber: ResponseRowsNumber => tables.tableWithQueryId(rowsNumber.queryId, showRowsNumber(_, rowsNumber))
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
     case reloadQuery: ReloadQuery => tables.tableWithQueryId(reloadQuery.queryId, _.reloadQuery(reloadQuery.closeCurrentTab))
@@ -103,7 +106,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     tables.withQueryId(queryId, table => removeTabs(List(table.tab)))
 
   private def buildBrowsingTable(queryId: QueryId, structure : DBTableStructure) : TTableWithTab[BrowsingTable] = {
-    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId, localization)
+    val browsingTable = new BrowsingTable(dbActor, guiActor, structure, queryId, localization, log)
     val tab = buildTab(structure, browsingTable)
     tabs += tab
     tabs.selectionModel().select(tab)
@@ -121,6 +124,10 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
 
   private def addOneRow(table: BrowsingTable, oneRow : ResponseOneRow) : Unit =
     table.addOneRow(oneRow)
+
+  private def showRowsNumber(table: BrowsingTable, rowsNumber: ResponseRowsNumber): Unit =
+    table.showRowsNumber(rowsNumber)
+
 
   private def rowsError(table: BrowsingTable, error: ErrorRows) : Unit = {
     table.rowsError()

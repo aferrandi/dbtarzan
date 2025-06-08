@@ -2,6 +2,7 @@ package dbtarzan.gui
 
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.*
+import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.gui.browsingtable.*
 import dbtarzan.gui.info.{ColumnsTable, IndexesInfo, Info, QueryInfo}
 import dbtarzan.gui.interfaces.TControlBuilder
@@ -10,6 +11,7 @@ import dbtarzan.gui.rowdetails.{RowDetailsApplicant, RowDetailsView}
 import dbtarzan.gui.tabletabs.TTableForMapWithId
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.*
 import scalafx.Includes.*
 import scalafx.event.ActionEvent
@@ -19,20 +21,22 @@ import scalafx.scene.image.ImageView
 import scalafx.scene.layout.{BorderPane, VBox}
 import scalafx.stage.Stage
 
+
 /* table + constraint input box + foreign keys */
-class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization)
+class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTableStructure, queryId : QueryId, localization: Localization, log: Logger)
   extends TControlBuilder with TTableForMapWithId {
-  private val log = new Logger(guiActor)
-  private val foreignKeyList = new ForeignKeyList(log)
+  private val foreignKeyList = new ForeignKeyListWithFilter(queryId, dbActor, log, localization)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, localization)
-  private val queryInfo = new QueryInfo(SqlBuilder.buildSql(structure))
+  private val queryInfo = new QueryInfo(SqlBuilder.buildQuerySql(structure), localization, () => {
+    dbActor ! QueryRowsNumber(queryId, structure : DBTableStructure)
+  })
   private val indexInfo = new IndexesInfo(localization)
   private val info = new Info(columnsTable, queryInfo, indexInfo, localization, () => {
     dbActor ! QueryIndexes(queryId)
   })
   private val dbTable = new DBTable(structure)
-  private val table = new Table(guiActor, queryId, dbTable, localization)
+  private val table = new Table(guiActor, queryId, dbTable, localization, log)
   private val foreignKeysInfoSplitter = new ForeignKeysInfoSplitter(foreignKeyListWithTitle, info)
   private val splitter = new BrowsingTableSplitter(table, foreignKeysInfoSplitter)
   private var useNewTable : (DBTableStructure, Boolean) => Unit = (_, _) => {}
@@ -57,7 +61,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val layout = new BorderPane {
     top =  new VBox { children = List(buttonBar, buildTop()) }
     center = splitter.control
-    bottom =progressBar.control
+    bottom = progressBar.control
   }
   foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
 
@@ -185,6 +189,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   def addOneRow(oneRow: ResponseOneRow): Unit =
     rowDetailsView.foreach(details => details.displayRow(oneRow.row))
 
+  def showRowsNumber(rowsNumber: ResponseRowsNumber): Unit =
+    queryInfo.showRowsNumber(rowsNumber.rowsNumber)
+
   def rowsError() : Unit = queryText.showError()
 
   /* adds the foreign keys to the foreign key list */
@@ -193,6 +200,10 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     table.addForeignKeys(keys.keys)
     progressBar.receivedForeignKeys()
   }
+
+  def setForeignKeysByPattern(keys : ResponseForeignKeysByPatterns): Unit =
+    foreignKeyList.setForeignKeysByPattern(keys.keys)
+
 
   /* adds the foreign keys to the foreign key list */
   def addPrimaryKeys(keys : ResponsePrimaryKeys) : Unit = {

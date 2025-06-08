@@ -1,11 +1,12 @@
 package dbtarzan.gui.interfaces
 
-import dbtarzan.messages._
+import dbtarzan.db.DatabaseInfo
+import dbtarzan.messages.*
 
 /**
 	The GUI actor needs to update the GUI without knowing the GUI itself. These are interfaces for this purpose
 */
 trait TDatabaseList {
-	def setDatabaseInfos(rows : DatabaseInfos) : Unit
+	def setDatabaseInfos(rows : List[DatabaseInfo]) : Unit
 }
 

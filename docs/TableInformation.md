@@ -21,6 +21,8 @@ Shows the **query** that extracted the content displayed in the table.
 It can be **copied**, just selecting it and copying the selection.
 So you can for example run the query in **other applications**.
 
+Pressing the button **Rows number** on the bottom, shows the number of rows retrieved by the query (not only the ones displayed, all of them). 
+
 ### Table Fields
 
 ![Table fields](images/tableFields.png)

@@ -1,9 +1,10 @@
-package dbtarzan.gui
+package dbtarzan.gui.main
 
 import dbtarzan.db.{DatabaseId, DatabaseInfo}
 import dbtarzan.gui.interfaces.{TControlBuilder, TDatabaseList}
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.log.actor.Logger
 import dbtarzan.messages.{DatabaseIdUtil, DatabaseIds, DatabaseInfos}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
@@ -13,7 +14,7 @@ import scalafx.scene.paint.Color
 
 
 /*	The list of database to choose from*/
-class DatabaseList(localization : Localization) extends TControlBuilder with TDatabaseList {
+class DatabaseList(log: Logger, localization : Localization) extends TControlBuilder with TDatabaseList {
   private val menuForeignKeyToFile = new MenuItem(localization.buildForeignKeysFile)
   private val buffer = ObservableBuffer.empty[DatabaseInfo]
   private val databaseIcon: Image = JFXUtil.loadIcon("database.png")
@@ -35,9 +36,9 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
     case Right(_) => compositeIcon
   }
 
-  def setDatabaseInfos(databaseInfos: DatabaseInfos) : Unit = {
-    println("Got new database list:" + databaseInfos.infos.map(DatabaseIdUtil.databaseInfoText).mkString(","))
-    JFXUtil.bufferSet(buffer, databaseInfos.infos.sortWith((info1, info2) =>
+  def setDatabaseInfos(databaseInfos: List[DatabaseInfo]) : Unit = {
+    log.debug(s"Got new database list:${databaseInfos.map(DatabaseIdUtil.databaseInfoText).mkString(",")}")
+    JFXUtil.bufferSet(buffer, databaseInfos.sortWith((info1, info2) =>
       sortByOriginThenByName(info1, info2)
     ))
   }
@@ -51,13 +52,13 @@ class DatabaseList(localization : Localization) extends TControlBuilder with TDa
 
   def onDatabaseSelected(use : DatabaseInfo => Unit) : Unit =
     JFXUtil.onAction(list, (selectedDatabaseInfo : DatabaseInfo, _) => {
-      println("Selected "+DatabaseIdUtil.databaseInfoText(selectedDatabaseInfo))
+      log.debug(s"Selected ${DatabaseIdUtil.databaseInfoText(selectedDatabaseInfo)}")
       use(selectedDatabaseInfo)
     })
 
   def onForeignKeyToFile(use : DatabaseInfo => Unit) : Unit =
     JFXUtil.onContextMenu(menuForeignKeyToFile, list, {(selectedDatabaseInfo : DatabaseInfo) =>
-      println("Selected "+DatabaseIdUtil.databaseInfoText(selectedDatabaseInfo))
+      log.debug(s"Selected ${DatabaseIdUtil.databaseInfoText(selectedDatabaseInfo)}")
       use(selectedDatabaseInfo)
     })
 

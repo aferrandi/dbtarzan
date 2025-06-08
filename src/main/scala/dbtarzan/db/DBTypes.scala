@@ -3,6 +3,7 @@ package dbtarzan.db
 import dbtarzan.config.password.Password
 import dbtarzan.types.Binaries.Binary
 
+type FieldValue = String | Int | Double | Binary
 
 case class SimpleDatabaseId(databaseName : String)
 /* The name given by the user to the composite identifies it */
@@ -38,7 +39,7 @@ case class ForeignKeys(keys : List[ForeignKey])
 */
 case class VirtualalForeignKey(name: String, from : FieldsOnTable, to: FieldsOnTable)
 /* a fields with its content in a row */
-case class FieldWithValue(field : String, value : String|Int|Double|Binary)
+case class FieldWithValue(field : String, value : FieldValue)
 /* a row. The values are in the same order as in the table description (FieldsOnTable) */
 case class Row(values : List[String|Int|Double|Binary])
 /* rows in a table */

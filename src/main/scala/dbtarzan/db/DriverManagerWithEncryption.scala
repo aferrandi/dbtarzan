@@ -20,9 +20,6 @@ class DriverManagerWithEncryption(key : EncryptionKey) extends ConnectionProvide
     case None => throw new Exception(s"No password found for database ${data.name}")
 
   private def withValidStoredPassword(data: ConnectionData, storedPassword: Password) = {
-    if (data.passwordEncrypted.getOrElse(false))
       getConnectionFromPassword(data, passwordEncryption.decrypt(storedPassword))
-    else
-      getConnectionFromPassword(data, storedPassword)
   }
 }

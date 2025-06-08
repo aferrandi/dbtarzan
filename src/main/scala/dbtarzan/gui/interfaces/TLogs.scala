@@ -1,7 +1,7 @@
 package dbtarzan.gui.interfaces
 
-import dbtarzan.messages.TLogMessage
+import dbtarzan.messages.TLogMessageGUI
 
 trait TLogs {
-	def addLogMessage(msg : TLogMessage) : Unit
+	def addLogMessage(msg : TLogMessageGUI) : Unit
 }

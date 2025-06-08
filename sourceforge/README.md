@@ -10,21 +10,23 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 
 DBTarzan changelog
 =================
-- Release 1.32
+- Release 1.34
 
-Check box in the composite editor to decide for each composite if the databases in the composite will be part of the database lists in the main UI. In this way if the database list is too big we can reduce it.
+Possibility to filter the foreign keys with a text, useful when having many foreign keys in the table.
 
-Button bar instead of menu over the tables list in the main UI, to make the "Reconnect" button visible.
+Possibility to filter the databases names with a text, useful when having many databases. In cases of composites matches also the simple databases contained in the composites.
 
-- Release 1.31
+Uses JavaFX 21 and the related ScalaFX library.
 
-Allows to have databases without storing their passwords in the connections configuration file, useful for example for production databases. The user enters the password at the moment he connects to the database.
+Fixed the filtering of tables so that also the fields are matched against the pattern.
 
-Better error message dialog with more concise error message with an "advanced" button, that shows the whole stack trace.
+- Release 1.33
 
-Fixed a bug that did not allow to see the content of a table with a binary field with null values.
+Shows the number of rows in the table pressing the button Rows number under the query text o the bottom right panel.
 
-Fixed a bug that was limiting the tables that could be selected when adding an virtual foreign key.
+New log actor that writes all log in the dbactor.log file and sends the INFO, WARNING, ERROR logs to the GUI so that they can be displayed in the log view as they did before.
+
+
 
 
 

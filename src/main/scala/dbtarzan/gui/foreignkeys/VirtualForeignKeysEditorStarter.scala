@@ -9,6 +9,7 @@ import dbtarzan.db.{ TableId, DatabaseId }
 import dbtarzan.messages.RequestVirtualForeignKeys
 import dbtarzan.localization.Localization
 import dbtarzan.gui.util.TableIdLabel
+import dbtarzan.log.actor.Logger
 
 /* to start the virtual foreign keys editor. It handles all the closing events. The other events are handled by the editor itself */
 object VirtualForeignKeysEditorStarter
@@ -16,12 +17,12 @@ object VirtualForeignKeysEditorStarter
  def openVirtualForeignKeysEditor(
                                       parentStage : Stage,
                                       dbActor : ActorRef,
-                                      guiActor: ActorRef,
                                       databaseId: DatabaseId,
                                       tableIds: List[TableId],
-                                      localization: Localization) : VirtualForeignKeysEditor = {
-    println("open virtual foreign keys editor")
-    val editor = new VirtualForeignKeysEditor(dbActor, guiActor, databaseId, tableIds.sortBy(TableIdLabel.toLabel), localization)
+                                      localization: Localization,
+                                      log: Logger) : VirtualForeignKeysEditor = {
+    // println("open virtual foreign keys editor")
+    val editor = new VirtualForeignKeysEditor(dbActor, databaseId, tableIds.sortBy(TableIdLabel.toLabel), localization, log)
     val virtualForeignKeysStage = new Stage {
       title = localization.openVirtualForeignKeys
       width = 800

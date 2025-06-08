@@ -1,5 +1,6 @@
 package dbtarzan.db
 
+import dbtarzan.db.sql.SqlPartsBuilder
 import org.scalatest.flatspec.AnyFlatSpec
 
 class SqlPartsBuilderTest extends AnyFlatSpec {

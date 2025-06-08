@@ -9,6 +9,8 @@ trait TWithDatabaseId { def databaseId : DatabaseId }
 trait TWithQueryId { def queryId : QueryId }
 
 trait TWithTableId { def tableId : TableId }
+
+trait TWithDatabases { }
       
 case class ResponseRows(queryId : QueryId, structure : DBTableStructure, rows : Rows)
     extends TWithQueryId
@@ -43,7 +45,13 @@ case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, 
 case class ResponseForeignKeys(queryId : QueryId, structure : DBTableStructure, keys : ForeignKeys)
     extends TWithQueryId
 
+case class ResponseForeignKeysByPatterns(queryId: QueryId, keys: ForeignKeys)
+  extends TWithQueryId
+
 case class ResponseIndexes(queryId : QueryId, indexes: Indexes)
+  extends TWithQueryId
+
+case class ResponseRowsNumber(queryId : QueryId, rowsNumber: Int)
   extends TWithQueryId
 
 case class ResponseColumnsFollow(tableId: TableId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
@@ -85,11 +93,14 @@ case class RequestOrderByEditor(queryId : QueryId)
 case class ReloadQuery(queryId : QueryId, closeCurrentTab: Boolean)
     extends TWithQueryId
 
+case class ResponseDatabasesByPattern(infos : List[DatabaseInfo])
+  extends TWithDatabases
 case class ErrorDatabaseAlreadyOpen(databaseId : DatabaseId)
 
 case class DatabaseIds(ids : List[DatabaseId])
 
 case class DatabaseInfos(infos : List[DatabaseInfo])
+  extends TWithDatabases
 
 case class CompositeIds(compositeIds: List[CompositeId])
 
@@ -99,3 +110,5 @@ case class ResponseVirtualForeignKeys(databaseId : DatabaseId, keys : List[Virtu
 case class ResponseTestConnection(data : ConnectionData,  ex: Option[Exception])
 
 case class ResponseSchemaExtraction(data : ConnectionData,  schemas: Option[SchemaNames],  ex: Option[Exception])
+
+

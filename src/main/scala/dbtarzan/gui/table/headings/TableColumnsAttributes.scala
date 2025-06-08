@@ -6,7 +6,7 @@ import scala.collection.mutable
 case class HeadingText(key: String, attributes: BitSet)
 
 class TableColumnsAttributes(keys : List[String]) {
-  private val keysAttributes = mutable.Map(keys.map(n => (n, BitSet.empty))*)
+  private val keysAttributes = mutable.Map(keys.map(n => (n, BitSet.empty)) *)
 
   def addKeys(keysToAdd : List[String], state : Int) : List[HeadingText] = {
     try {

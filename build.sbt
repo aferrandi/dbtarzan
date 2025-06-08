@@ -5,7 +5,7 @@ import scala.sys.process.*
 
 fork := true
 
-val versionNumber = "1.33"
+val versionNumber = "1.36"
 val scala3Version = "3.3.6"
 val jvmVersion = "21"
 val scalaFxVersion = "23.0.1-R34"
@@ -13,6 +13,7 @@ val javaFxVersion = "23"
 
 version := versionNumber
 scalaVersion := scala3Version
+
 
 lazy val commonConfiguration = Seq(
   name := "dbtarzan",

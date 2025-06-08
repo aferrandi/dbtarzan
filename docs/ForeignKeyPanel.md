@@ -28,7 +28,11 @@ the tracks of the album get displayed:
 
 ![Foreign keys to](images/foreignKeysTo.png)
 
-Each foreign key is displayed with specific [tags](Foreignkey-tags) that show the type of foreign key, 
+Each foreign key is displayed with specific [tags](Foreignkey-tags) that show the type of foreign key,
+
+Foreign keys can be **filtered** entering text in the _Filter_ text box on the top. 
+Only the keys containing the filtering text in their name, the name of the connected table 
+or the names of the fields involved in the foreign key will be displayed.
 
 When databases have complex structures loading the foreign keys can be slow.
 To fix this problem try to [preload the foreign keys](Foreign-keys-preloading).

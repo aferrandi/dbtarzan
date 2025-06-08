@@ -17,11 +17,11 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         Some(SchemaName("chinook")),
         "root",
         Some(Password("pwd")),
-        Some(false),
         None,
         Some(IdentifierDelimiters('[', ']')),
         Some(300),
         Some(20),
+        Some(1000),
         Some(1000),
         None
       )
@@ -39,7 +39,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         None,
         "",
         Some(Password("")),
-        Some(false),
+        None,
         None,
         None,
         None,
@@ -61,12 +61,12 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         None,
         "",
         Some(Password("")),
-        Some(false),
         None,
         None,
         None,
         None,
         Some (100),
+        Some(1000),
         None
       )
     )

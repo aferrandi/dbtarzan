@@ -15,6 +15,7 @@ class FilterText(action : String => Unit, localization : Localization)  extends 
       optValue.foreach({ action(_)  })
     }}
   }
-
+  
+  def clean() : Unit = filterText.text = ""
   def control : Parent = filterText
 }

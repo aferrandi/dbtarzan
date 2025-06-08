@@ -28,6 +28,8 @@ class Italian extends Localization {
     def maxRows = "Max Righe"    
     def queryTimeoutInSeconds = "Timeout query in secondi"
     def maxFieldSize = "Max dimensione campo"
+    def useInClause = "Usa in clause"
+    def maxInClauseCount = "Max numero elementi in clause"
     def tables = "Tabelle"
     def database = "Database"
     def databases = "Database"
@@ -117,6 +119,7 @@ class Italian extends Localization {
     def editingConnectionFile(fileName: Path): String = "Sto editando il file di configurazione delle connessioni " + fileName
     def editingCompositeFile(fileName: Path): String = "Sto editando il file di configurazione delle combinazioni " + fileName
     def indexes = "Indici"
+    def rowsNumber = "Numero di righe"
     def errorConnectingToDatabase(databaseName : String): String = "La connessione al database "+databaseName+" e' fallita a causa di"
     def errorQueryingDatabase(databaseName : String): String = "L'apertura del database "+databaseName+" e' fallita a causa di"
     def errorRequestingTheRows(queryId : QueryId): String = "La richiesta delle righe di "+queryId+" e' fallita a a causa di"

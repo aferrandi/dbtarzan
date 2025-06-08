@@ -20,8 +20,6 @@ case class ConnectionData(
    user: String,
    /* the password to login to the database */
    password: Option[Password],
-   /* if true the password is encrypter. Used to be able to edit the password in configuration file */
-   passwordEncrypted: Option[Boolean],
    /* the number of connections that the application will open against this database (1 if not defined) */
    instances: Option[Int],
    /* the identifiers delimiters to prevent having troubles with reserved words */
@@ -32,6 +30,8 @@ case class ConnectionData(
    queryTimeoutInSeconds : Option[Int],
    /* to avoid slow queries because of very large fields values. In bytes */
    maxFieldSize: Option[Int],
+   /* maximum amounts of elements in an in clause for this database */
+   maxInClauseCount: Option[Int],
    /* the catalog of the database containing the data, used when the schema is not enough (table user n MySQL)  */
    catalog: Option[String]
 )
