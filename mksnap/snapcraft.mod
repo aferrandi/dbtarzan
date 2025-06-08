@@ -19,8 +19,8 @@ apps:
         # Standard libraries for Java
         JAVA_HOME: $SNAP/usr/lib/jvm/java-21-openjdk-amd64
         JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON"
-        PATH: $SNAP/usr/lib/jvm/java-17-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-17-openjdk-amd64/jre/bin:$PATH
-        LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-17-openjdk-amd64/jre/lib/amd64/
+        PATH: $SNAP/usr/lib/jvm/java-21-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-21-openjdk-amd64/jre/bin:$PATH
+        LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-21-openjdk-amd64/jre/lib/amd64/
         LIBGL_DRIVERS_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/dri
     plugs: [desktop, home, x11, wayland, network, network-bind]
 
@@ -29,8 +29,8 @@ parts:
   dbtarzan:
     plugin: dump
     source: source/
-    build-packages: [ca-certificates, ca-certificates-java, openjdk-17-jre]
-    stage-packages: [openjdk-17-jre, zlib1g]
+    build-packages: [ca-certificates, ca-certificates-java, openjdk-21-jre]
+    stage-packages: [openjdk-21-jre, zlib1g]
     override-prime: |
         snapcraftctl prime
         rm -vf usr/lib/jvm/java-21-openjdk-*/lib/security/blacklisted.certs

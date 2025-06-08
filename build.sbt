@@ -6,7 +6,7 @@ import scala.sys.process.*
 fork := true
 
 val versionNumber = "1.36"
-val scala3Version = "3.3.6"
+val scala3Version = "3.6.4"
 val jvmVersion = "21"
 val scalaFxVersion = "23.0.1-R34"
 val javaFxVersion = "23"
@@ -34,7 +34,7 @@ lazy val commonConfiguration = Seq(
 
   Test / resourceDirectory := baseDirectory.value / ".." / "src" / "test" / "resources",
 
-  Compile / scalacOptions ++= Seq("-Xfatal-warnings", "-Ykind-projector", "-deprecation", "-feature", "-language:implicitConversions"),
+  Compile / scalacOptions ++= Seq("-Xfatal-warnings", "-Xkind-projector", "-deprecation", "-feature", "-language:implicitConversions"),
 
   buildStrategy()
 

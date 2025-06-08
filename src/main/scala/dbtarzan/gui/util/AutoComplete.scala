@@ -7,7 +7,7 @@ import scala.collection.immutable.TreeSet
 
 class AutoComplete(suggestions: List[String], maxSuggestions: Int) extends TextField {
   private val suggestionsSet =  TreeSet[String](suggestions.map(_.toLowerCase())*)
-  private val sugestionsPopup = new ContextMenu()
+  private val suggestionsPopup = new ContextMenu()
 
   text.onChange { (_, _, newText) => showSuggestions(newText) }
 
