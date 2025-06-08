@@ -24,7 +24,7 @@ class ForeignKeyList(log: TLogger) extends TControlBuilder {
   /** need to show only the "to table" as cell text. And a tooltip for each cell	*/
 
   def addForeignKeys(newForeignKeys : ForeignKeys) : Unit = {
-    def moreThanOneItem(l : List[_]) = l.length > 1
+    def moreThanOneItem(l : List[?]) = l.length > 1
     log.debug("newForeignKeys "+newForeignKeys)
     val allForeignKeys = buffer.toList.map(_.key) ++ newForeignKeys.keys
     val groupedByToTableInsensitive = allForeignKeys.groupBy(_.to.table.tableName.toUpperCase()).values

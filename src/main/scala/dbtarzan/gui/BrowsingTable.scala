@@ -99,7 +99,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   }
 
   private def removeProgressBar() : Unit = 
-    layout.bottom = null
+    layout.setBottom(null)
 
   private def stage() : Stage = 
     new Stage(layout.scene().window().asInstanceOf[javafx.stage.Stage])

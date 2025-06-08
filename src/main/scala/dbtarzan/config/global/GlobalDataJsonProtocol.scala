@@ -24,7 +24,7 @@ given JsonOutput[EncryptionData] with
   def write(u: EncryptionData): JsonObject = Json.obj("verificationKey" -> u.verificationKey)
 
 given JsonInput[GlobalData] with
-  def read(json: JsonValue): GlobalData = GlobalData(json("language"), json.map[EncryptionData]("encryptionData"))
+  def read(json: JsonValue): GlobalData = GlobalData(json("language"), json.readOption[EncryptionData]("encryptionData"))
 
 given JsonOutput[GlobalData] with
   def write(u: GlobalData): JsonObject = Json.obj("language" -> u.language, "encryptionData" -> u.encryptionData)

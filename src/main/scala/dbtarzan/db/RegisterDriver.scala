@@ -1,8 +1,7 @@
 package dbtarzan.db
 
-import java.net.{URL, URLClassLoader}
+import java.net.{URI, URL, URLClassLoader}
 import java.sql.{Driver, DriverManager}
-
 import scala.collection.mutable
 
 case class DriverSpec(jar : String, driver : String)
@@ -10,7 +9,7 @@ case class DriverSpec(jar : String, driver : String)
 object RegisterDriver {
   private def registerDriver(spec: DriverSpec) : Unit = {
       // Load the driver
-      val url = new URL("jar:file:" + spec.jar + "!/")
+      val url = new URI("jar:file:" + spec.jar + "!/").toURL
       val classLoader = new URLClassLoader(Array(url))
       val driverClass = Class.forName(spec.driver, true, classLoader)
       val driverInstance = driverClass.getDeclaredConstructor().newInstance().asInstanceOf[Driver]

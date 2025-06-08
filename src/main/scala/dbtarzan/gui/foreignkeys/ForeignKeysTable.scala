@@ -13,7 +13,6 @@ import scalafx.event.ActionEvent
 import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.{Button, TableCell, TableColumn, TableView}
 
-
 object ForeignKeysTable {
     val newRowName = "<NEW>"
 }
@@ -35,7 +34,7 @@ class ForeignKeysTable(databaseId: DatabaseId, guiActor : ActorRef, localization
   def buildTable(): TableView[VirtualalForeignKey] = new TableView[VirtualalForeignKey](buffer) {
     columns ++= List ( nameColumn(), tableFromColumn(), foreignKeysFromColumn(), tableToColumn(), foreignKeysToColumn(), buttonColumn())
     editable = false
-    columnResizePolicy = TableView.ConstrainedResizePolicy
+    columnResizePolicy = javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
   }
 
 

@@ -32,7 +32,7 @@ class LogList(localization : Localization) extends TLogs with TControlBuilder {
     columns ++= List ( iconColumn(), producedColumn(), textColumn())
     editable = true
     placeholder = Label("") // prevent "no content in table" message to appear when the table is empty
-    columnResizePolicy = TableView.ConstrainedResizePolicy
+    columnResizePolicy = javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
     contextMenu = new ContextMenu(new MenuItem(localization.copyMessageToClipboard) {
             onAction = (_: ActionEvent) =>  try {
               JFXUtil.copyTextToClipboard(selectionToString())

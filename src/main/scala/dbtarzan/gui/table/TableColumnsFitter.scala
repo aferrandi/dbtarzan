@@ -17,7 +17,7 @@ class TableColumnsFitter[S](table : TableView[S], columns : List[Field]) {
     private val maxSizes = new TableColumnsMaxSizes(columns, new Random())
     private val charSize = JFXUtil.averageCharacterSize()
 
-    private def resizeColumn(column : TableColumn[S, _], size : Int) : Unit = {
+    private def resizeColumn(column : TableColumn[S, ?], size : Int) : Unit = {
         val x = TableColumnsFitter.logistic((size+2)) 
         column.prefWidth = x * charSize
     }

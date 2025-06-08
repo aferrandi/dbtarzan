@@ -5,7 +5,7 @@ SNAPDIR=$ROOTDIR/mksnap
 cd $SNAPDIR
 snap remove dbtarzan
 snap install dbtarzan_$VERSION.0_amd64.snap --devmode
-mkdir ~/snap/dbtarzan/common
+mkdir -p ~/snap/dbtarzan/common
 cp $ROOTDIR/connections.config ~/snap/dbtarzan/common/
 cp $ROOTDIR/composites.config ~/snap/dbtarzan/common/
 cp $ROOTDIR/global.config ~/snap/dbtarzan/common/

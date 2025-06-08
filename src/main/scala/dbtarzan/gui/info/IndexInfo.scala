@@ -13,6 +13,7 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.VBox
 import scalafx.Includes.*
 
+
 class IndexInfo(localization : Localization, index: Index) extends TControlBuilder {
   case class TableLine(fieldName: String, direction: Option[OrderByDirection])
 
@@ -32,7 +33,7 @@ class IndexInfo(localization : Localization, index: Index) extends TControlBuild
   def buildTable(): TableView[TableLine] = new TableView[TableLine](buffer) {
     columns ++= List ( fieldNameColumn(), directionColumn())
     editable = false
-    columnResizePolicy = TableView.ConstrainedResizePolicy
+    columnResizePolicy = javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
     stylesheets += "loglist.css"
   }
 

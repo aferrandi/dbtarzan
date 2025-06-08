@@ -22,7 +22,7 @@ class ColumnsTable(fields: Fields, localization : Localization) extends TControl
   def buildTable(): TableView[Field] = new TableView[Field](buffer) {
     columns ++= List ( nameColumn(), descriptionColumn())
     editable = false
-    columnResizePolicy = TableView.ConstrainedResizePolicy
+    columnResizePolicy = javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
   }
 
    /* the column with the name of the database field */

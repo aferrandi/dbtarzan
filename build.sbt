@@ -5,8 +5,12 @@ import scala.sys.process.*
 
 fork := true
 
-val versionNumber = "1.32"
-val scala3Version = "3.3.1"
+val versionNumber = "1.33"
+val scala3Version = "3.3.6"
+val jvmVersion = "21"
+val scalaFxVersion = "23.0.1-R34"
+val javaFxVersion = "23"
+
 version := versionNumber
 scalaVersion := scala3Version
 
@@ -39,11 +43,11 @@ lazy val commonConfiguration = Seq(
 )
 
 lazy val standardLibraries = Seq (
-  "com.github.losizm" %% "grapple" % "13.0.0",
-  "org.apache.pekko" %% "pekko-actor" % "1.0.1",
+  "com.github.losizm" %% "grapple" % "17.0.0",
+  "org.apache.pekko" %% "pekko-actor" % "1.1.3",
   "com.h2database" % "h2" % "2.2.220" % Test,
   "org.scalatest" %% "scalatest" % "3.2.16" % Test,
-  ("org.scalafx" %% "scalafx" % "20.0.0-R31").excludeAll(
+  ("org.scalafx" %% "scalafx" % scalaFxVersion).excludeAll(
     // you cannot use the ibraries requested by scalafx because they are only the ones in the OS of this PC
     ExclusionRule(organization="org.openjfx")
   )
@@ -66,7 +70,7 @@ def buildProject(name: String) = {
   // we need to add web and swing to avoid compile errors, but we remove them later
   val javaFXModules = Seq("base", "controls", "graphics", "media", "web", "swing")
   val javaFXLibraries = javaFXModules.map(module =>
-    "org.openjfx" % s"javafx-$module" % "20" classifier name
+    "org.openjfx" % s"javafx-$module" % javaFxVersion classifier name
   )
   Project(name, file(s"prj${name}"))
     .settings( commonConfiguration)
@@ -93,7 +97,7 @@ def excludeDependenciesOfOtherOses(name: String) = {
 
 lazy val linux = buildProject("linux")
     .settings(Seq(
-      Debian / debianPackageDependencies ++= Seq("openjdk-17-jre"),
+      Debian / debianPackageDependencies ++= Seq(s"openjdk-$jvmVersion-jre"),
       bashScriptExtraDefines += """addApp "--configPath=$HOME/.config/dbtarzan"""",
       maintainer := "Andrea Ferrandi <ferrandi.andrea@gmail.com>",
       packageSummary := "DBTarzan Package",
