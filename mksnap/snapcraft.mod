@@ -1,5 +1,5 @@
 name: dbtarzan
-base: core22
+base: core24
 version: 'VERSION.0' 
 summary: Database browser
 description: Explore the tables of a relational database following the relations defined in their foreign keys.
