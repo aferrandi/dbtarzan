@@ -1,7 +1,7 @@
 package dbtarzan.gui.log
 
 import dbtarzan.gui.interfaces.{TControlBuilder, TLogs}
-import dbtarzan.gui.util.{DateUtils, JFXUtil, LogIcons}
+import dbtarzan.gui.util.{DateUtils, JFXUtil, LogIcons, TableUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.messages.{LogText, TLogMessageGUI}
 import scalafx.Includes.*
@@ -45,19 +45,7 @@ class LogList(localization : Localization) extends TLogs with TControlBuilder {
   }
 
   /* build the column on the left, that shows the icon (error, warn, info) */
-  private def iconColumn() = new TableColumn[TLogMessageGUI, Image] {
-    cellValueFactory = { msg => ObjectProperty(LogIcons.iconForMessage(msg.value).delegate) }
-    cellFactory = {
-      (_ : TableColumn[TLogMessageGUI, Image]) => new TableCell[TLogMessageGUI, Image] {
-        item.onChange {
-          (_, _, newImage) => graphic = new ImageView(newImage)
-        }
-      }
-    }
-    maxWidth = 24
-    minWidth = 24
-  }
-
+  private def iconColumn() = TableUtil.buildImageTableColumn[TLogMessageGUI](x => LogIcons.iconForMessage(x.value))
   /* build the column on the right, that shows the message text */
   private def textColumn() = new TableColumn[TLogMessageGUI, String] {
     cellValueFactory = { x => new StringProperty(LogText.extractLogMessage(x.value)) }
