@@ -1,16 +1,16 @@
 package dbtarzan.gui.foreignkeys
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{VirtualalForeignKey, DatabaseId, FieldsOnTable, SimpleDatabaseId, TableId}
+import dbtarzan.db.{DatabaseId, FieldsOnTable, ForeignKey, SimpleDatabaseId, TableId, VirtualalForeignKey}
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.gui.util.TableIdLabel
+import dbtarzan.gui.util.{TableIdLabel, TableUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
-import scalafx.Includes._
+import scalafx.Includes.*
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
-import scalafx.scene.control.TableColumn._
+import scalafx.scene.control.TableColumn.*
 import scalafx.scene.control.{Button, TableCell, TableColumn, TableView}
 
 object ForeignKeysTable {
@@ -38,39 +38,19 @@ class ForeignKeysTable(databaseId: DatabaseId, localization : Localization, log:
 
 
    /* the column with the name of the foreign key */
-  private def nameColumn() = new TableColumn[VirtualalForeignKey, String] {
-    text = localization.name
-    cellValueFactory = { x => new StringProperty(x.value.name) }
-    resizable = true
-  }
+  private def nameColumn() = TableUtil.buildTextTableColumn[VirtualalForeignKey](localization.name, _.value.name)
 
    /* the column with the from table of the foreign key */
-  private def tableFromColumn() = new TableColumn[VirtualalForeignKey, String] {
-    text = localization.tableFrom
-    cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.from.table)) }
-    resizable = true
-  }
+  private def tableFromColumn() = TableUtil.buildTextTableColumn[VirtualalForeignKey](localization.tableFrom, x => TableIdLabel.toLabel(x.value.from.table))
 
    /* the column with the to table of the foreign key */
-  private def tableToColumn() = new TableColumn[VirtualalForeignKey, String] {
-    text = localization.tableTo
-    cellValueFactory = { x => new StringProperty(TableIdLabel.toLabel(x.value.to.table)) }
-    resizable = true
-  }
+  private def tableToColumn() = TableUtil.buildTextTableColumn[VirtualalForeignKey](localization.tableTo, x => TableIdLabel.toLabel(x.value.to.table))
 
    /* the column with the from columns of the foreign key */
-  private def foreignKeysFromColumn() = new TableColumn[VirtualalForeignKey, String] {
-    text = localization.columnsFrom
-    cellValueFactory = { x => new StringProperty(x.value.from.fields.mkString(",")) }
-    resizable = true
-  }
+  private def foreignKeysFromColumn() = TableUtil.buildTextTableColumn[VirtualalForeignKey](localization.columnsFrom, _.value.from.fields.mkString(","))
 
    /* the column with the to columns of the foreign key */
-  private def foreignKeysToColumn() = new TableColumn[VirtualalForeignKey, String] {
-    text = localization.columnsTo
-    cellValueFactory = { x => new StringProperty(x.value.to.fields.mkString(",")) }
-    resizable = true
-  }
+  private def foreignKeysToColumn() = TableUtil.buildTextTableColumn[VirtualalForeignKey](localization.columnsTo, _.value.to.fields.mkString(","))
 
   /* adds new foreign keys to the table */
   def addRows(virtualKeys : List[VirtualalForeignKey]) : Unit =
