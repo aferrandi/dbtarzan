@@ -15,10 +15,10 @@ object TableColumnsFitter {
 
 class TableColumnsFitter[S](table : TableView[S], columns : List[Field]) {
     private val maxSizes = new TableColumnsMaxSizes(columns, new Random())
-    private val charSize = JFXUtil.averageCharacterSize()
+    private val charSize = JFXUtil.averageCharacterWidth()
 
     private def resizeColumn(column : TableColumn[S, ?], size : Int) : Unit = {
-        val x = TableColumnsFitter.logistic((size+2)) 
+        val x = TableColumnsFitter.logistic(size+2)
         column.prefWidth = x * charSize
     }
 

@@ -101,10 +101,16 @@
         new Image(getClass.getResourceAsStream(fileName))
 
 
-    def averageCharacterSize() : Double = {
+    def averageCharacterWidth() : Double = {
       val s = "XXXXX"
       val text = new Text(s)
       text.getBoundsInLocal.getWidth / s.length;
+    }
+
+    def averageCharacterHeight(): Double = {
+      val s = "X"
+      val text = new Text(s)
+      text.getBoundsInLocal.getHeight;
     }
 
     def menuItem(text: String, action:() => Unit): MenuItem = new MenuItem(text) {

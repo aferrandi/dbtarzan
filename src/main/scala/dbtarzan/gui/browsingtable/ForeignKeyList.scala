@@ -22,6 +22,7 @@ class ForeignKeyList(localization : Localization, log: TLogger) extends TControl
     text = ""
     editable = false
     wrapText = true
+    maxHeight = JFXUtil.averageCharacterHeight() * 6
   }
 
   private val layout = new BorderPane {
