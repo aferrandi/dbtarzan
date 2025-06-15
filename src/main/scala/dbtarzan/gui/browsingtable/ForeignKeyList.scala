@@ -9,14 +9,24 @@ import scalafx.Includes.*
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
-import scalafx.scene.control.{TableCell, TableColumn, TableView}
+import scalafx.scene.control.{Label, SelectionMode, TableCell, TableColumn, TableView, TextArea}
 import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.layout.{BorderPane, VBox}
 
 
 /**	foreign keys list */
 class ForeignKeyList(localization : Localization, log: TLogger) extends TControlBuilder {
   private val buffer = ObservableBuffer.empty[ForeignKey]
   private val keyTable = buildTable()
+  private val keyDescription = new TextArea {
+    text = ""
+    editable = false
+    wrapText = true
+  }
+
+  private val layout = new BorderPane {
+    center = keyTable
+  }
 
 
   /* builds table with the two columns (name and description) */
@@ -24,7 +34,23 @@ class ForeignKeyList(localization : Localization, log: TLogger) extends TControl
     columns ++= List(directionColumn(), tableToColumn(), tableFromFields(), tableToFields())
     editable = false
     columnResizePolicy = javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
+    selectionModel().selectedItem.onChange(
+      (_, _, key) => {
+        keyDescription.visible = true
+        keyDescription.text = keyToText(key)
+        layout.bottom = keyDescription
+      }
+    )
   }
+
+  private def keyToText(key: ForeignKey): String =
+    List(
+      s"Name:${key.name}",
+      f"From Table:${TableIdLabel.toLabel(key.from.table)}",
+      s"From Fields:${key.from.fields.mkString(" ")}",
+      s"To Table:${TableIdLabel.toLabel(key.to.table)}",
+      s"To Columns:${key.to.fields.mkString(" ")}"
+    ).mkString("\n")
 
   /* the column with the from table description  */
   private def tableFromFields() = TableUtil.buildTextTableColumn[ForeignKey](localization.columnsFrom, _.value.from.fields.mkString(" "))
@@ -62,6 +88,7 @@ class ForeignKeyList(localization : Localization, log: TLogger) extends TControl
         Option(selectedKey).foreach(key => useKey(key, ctrlDown))
       })
 
-  def control : Parent = keyTable
+
+  def control : Parent = layout
 }
 

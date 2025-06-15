@@ -3,7 +3,7 @@ package dbtarzan.gui.info
 import dbtarzan.db.{Index, OrderByDirection}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.orderby.UpDownIcons
-import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.util.{JFXUtil, TableUtil}
 import dbtarzan.localization.Localization
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
@@ -37,28 +37,13 @@ class IndexInfo(localization : Localization, index: Index) extends TControlBuild
     stylesheets += "loglist.css"
   }
 
-  private def fieldNameColumn() = new TableColumn[TableLine, String] {
-    text = localization.field
-    cellValueFactory = { x => new StringProperty(x.value.fieldName) }
-    resizable = true
-  }
+  private def fieldNameColumn() = TableUtil.buildTextTableColumn[TableLine](localization.field, _.value.fieldName )
 
   private def directionToImage(direction: Option[OrderByDirection]): Image =
-    direction.map(UpDownIcons.iconFromDirection(_)).getOrElse(UpDownIcons.upIcon)
+    direction.map(UpDownIcons.iconFromDirection).getOrElse(UpDownIcons.upIcon)
 
   /* the column with the description of the database field */
-  private def directionColumn() = new TableColumn[TableLine, Image] {
-    cellValueFactory = { (x: TableColumn.CellDataFeatures[TableLine, Image]) => ObjectProperty(directionToImage(x.value.direction).delegate) }
-    cellFactory = {
-      (_ : TableColumn[TableLine, Image]) => new TableCell[TableLine, Image] {
-        item.onChange {
-          (_, _, newImage) => graphic = new ImageView(newImage)
-        }
-      }
-    }
-    maxWidth = 24
-    minWidth = 24
-  }
+  private def directionColumn() = TableUtil.buildImageTableColumn[TableLine](x => directionToImage(x.value.direction))
 
   /* adds the database rows (the database table fields) to the table */
   private def addIndex(index: Index) : Unit = {
