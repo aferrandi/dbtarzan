@@ -2,9 +2,8 @@ package dbtarzan.gui.info
 
 import dbtarzan.db.{Field, Fields}
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.gui.util.JFXUtil
+import dbtarzan.gui.util.{JFXUtil, TableUtil}
 import dbtarzan.localization.Localization
-import scalafx.beans.property.StringProperty
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
 import scalafx.scene.control.{TableColumn, TableView}
@@ -26,18 +25,10 @@ class ColumnsTable(fields: Fields, localization : Localization) extends TControl
   }
 
    /* the column with the name of the database field */
-  private def nameColumn() = new TableColumn[Field, String] {
-    text = localization.field
-    cellValueFactory = { x => new StringProperty(x.value.name) }
-    resizable = true
-  }
+  private def nameColumn() = TableUtil.buildTextTableColumn[Field](localization.field, _.value.name)
 
   /* the column with the description of the database field */
-  private def descriptionColumn() = new TableColumn[Field, String] {
-    text = localization.description
-    cellValueFactory = { x => new StringProperty(x.value.typeDescription) }
-    resizable = true
-  }
+  private def descriptionColumn() = TableUtil.buildTextTableColumn[Field](localization.description, _.value.typeDescription)
 
   private def contentAsText() : String =
     "Name\tDescription\n" +  fields.fields.map(f => s"${f.name}\t${f.typeDescription}").mkString("\n")

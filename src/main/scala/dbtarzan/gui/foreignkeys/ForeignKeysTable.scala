@@ -1,13 +1,12 @@
 package dbtarzan.gui.foreignkeys
 
-import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{DatabaseId, FieldsOnTable, ForeignKey, SimpleDatabaseId, TableId, VirtualalForeignKey}
+import dbtarzan.db.*
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{TableIdLabel, TableUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import scalafx.Includes.*
-import scalafx.beans.property.{ObjectProperty, StringProperty}
+import scalafx.beans.property.ObjectProperty
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
 import scalafx.scene.control.TableColumn.*
