@@ -13,7 +13,7 @@ import scalafx.scene.layout.BorderPane
 
 /*	The list of database to choose from*/
 class ForeignKeyListWithFilter(queryId : QueryId, dbActor: ActorRef, log: Logger, localization : Localization) extends TControlBuilder {
-  private val foreignKeyList = new ForeignKeyList(log)
+  private val foreignKeyList = new ForeignKeyList(localization, log)
   private val filterText = new FilterText(dbActor ! QueryForeignKeysByPattern(queryId, _), localization)
   private val pane = new BorderPane {
     top = filterText.control
