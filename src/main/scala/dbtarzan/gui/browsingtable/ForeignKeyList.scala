@@ -4,15 +4,14 @@ import dbtarzan.db.{ForeignKey, ForeignKeys}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{ForeignKeyIcons, JFXUtil, TableIdLabel, TableUtil}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.{QueryForeignKeyRowsNumber, QueryForeignKeys, QueryId, TLogger}
+import dbtarzan.messages.{QueryId, TLogger}
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
-import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
-import scalafx.scene.control.{Button, Label, SelectionMode, TableCell, TableColumn, TableView, TextArea, ToggleButton}
-import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.layout.{BorderPane, VBox}
+import scalafx.scene.control.{TableColumn, TableView, TextArea, ToggleButton}
+import scalafx.scene.image.Image
+import scalafx.scene.layout.BorderPane
 
 
 /**	foreign keys list */
