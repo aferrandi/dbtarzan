@@ -4,18 +4,20 @@ import dbtarzan.db.{ForeignKey, ForeignKeys}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.util.{ForeignKeyIcons, JFXUtil, TableIdLabel, TableUtil}
 import dbtarzan.localization.Localization
-import dbtarzan.messages.TLogger
+import dbtarzan.messages.{QueryForeignKeyRowsNumber, QueryForeignKeys, QueryId, TLogger}
+import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
-import scalafx.scene.control.{Label, SelectionMode, TableCell, TableColumn, TableView, TextArea}
+import scalafx.scene.control.{Button, Label, SelectionMode, TableCell, TableColumn, TableView, TextArea, ToggleButton}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, VBox}
 
 
 /**	foreign keys list */
-class ForeignKeyList(localization : Localization, log: TLogger) extends TControlBuilder {
+class ForeignKeyList(queryId : QueryId, dbActor: ActorRef, localization : Localization, log: TLogger) extends TControlBuilder {
+  private var showRowsNumber = false
   private val buffer = ObservableBuffer.empty[ForeignKey]
   private val keyTable = buildTable()
   private val keyDescription = new TextArea {
@@ -24,24 +26,25 @@ class ForeignKeyList(localization : Localization, log: TLogger) extends TControl
     wrapText = true
     maxHeight = JFXUtil.averageCharacterHeight() * 6
   }
-
-  private val layout = new BorderPane {
-    center = keyTable
+  private val buttonRowsNumber = new ToggleButton() {
+    text = localization.rowsNumber
+    selected.onChange((_, _, newValue) => {
+      showRowsNumber = newValue
+    })
   }
 
-
+  private val layout = new BorderPane {
+    center = new BorderPane {
+      center = keyTable
+      bottom = buttonRowsNumber
+    }
+  }
+  
   /* builds table with the two columns (name and description) */
   def buildTable(): TableView[ForeignKey] = new TableView[ForeignKey](buffer) {
     columns ++= List(directionColumn(), tableToColumn(), tableFromFields(), tableToFields())
     editable = false
     columnResizePolicy = javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
-    selectionModel().selectedItem.onChange(
-      (_, _, key) => {
-        keyDescription.visible = true
-        keyDescription.text = keyToText(key)
-        layout.bottom = keyDescription
-      }
-    )
   }
 
   private def keyToText(key: ForeignKey): String =
@@ -50,8 +53,15 @@ class ForeignKeyList(localization : Localization, log: TLogger) extends TControl
       f"From Table:${TableIdLabel.toLabel(key.from.table)}",
       s"From Fields:${key.from.fields.mkString(" ")}",
       s"To Table:${TableIdLabel.toLabel(key.to.table)}",
-      s"To Columns:${key.to.fields.mkString(" ")}"
+      s"To Fields:${key.to.fields.mkString(" ")}",
     ).mkString("\n")
+
+  private def keyWithRowCountToText(key: ForeignKey, rowsCount: Int): String =
+    List(
+      keyToText(key),
+      s"To Rows Number:${rowsCount}",
+    ).mkString("\n")
+
 
   /* the column with the from table description  */
   private def tableFromFields() = TableUtil.buildTextTableColumn[ForeignKey](localization.columnsFrom, _.value.from.fields.mkString(" "))
@@ -82,14 +92,30 @@ class ForeignKeyList(localization : Localization, log: TLogger) extends TControl
     setForeignKeys(newForeignKeys)
   }
 
+  def showForeignKeyRowsNumber(foreigKey: ForeignKey, rowsNumber: Int): Unit = {
+    keyDescription.text = keyWithRowCountToText(foreigKey, rowsNumber)
+  }
+
   /* foreign key double-clicked. handled by BrowsingTable that has knowledge of tables too */
-  def onForeignKeySelected(useKey : (ForeignKey, Boolean)  => Unit) : Unit =
+  def onForeignKeyDoubleClicked(useKey : (ForeignKey, Boolean)  => Unit) : Unit =
      JFXUtil.onAction(keyTable, { (selectedKey : ForeignKey, ctrlDown) =>
         log.debug(s"Selected $selectedKey")
         Option(selectedKey).foreach(key => useKey(key, ctrlDown))
       })
 
-
+  /* foreign key selected. handled by BrowsingTable that has knowledge of tables too */
+  def onForeignKeySelected(useKey : ForeignKey  => Unit) : Unit =
+    keyTable.selectionModel().selectedItem.onChange(
+      (_, _, key) => {
+        keyDescription.visible = true
+        keyDescription.text = keyToText(key)
+        layout.bottom = keyDescription
+        if(showRowsNumber)
+          useKey(key)
+      }
+    )
+  
+  
   def control : Parent = layout
 }
 

@@ -4,7 +4,7 @@ import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password}
 import dbtarzan.db.{ForeignKey, *}
-import dbtarzan.db.foreignkeys.VirtualForeignKeyToForeignKey
+import dbtarzan.db.foreignkeys.{ForeignKeyMapper, VirtualForeignKeyToForeignKey}
 import dbtarzan.db.sql.SqlBuilder
 import dbtarzan.db.util.ExceptionToText
 import dbtarzan.localization.Localization
@@ -152,11 +152,17 @@ class DatabaseActor(
     }, logError)
 
   private def queryColumns(qry: QueryColumns) : Unit = coreHandler.withCore(qry.tableId, core => {
-      val tableName = qry.tableId.tableName
-      val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-        guiActor ! ResponseColumns(qry.tableId, columns, core.attributes)
-    }, logError)
+    val tableName = qry.tableId.tableName
+    val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+    guiActor ! ResponseColumns(qry.tableId, columns, core.attributes)
+  }, logError)
 
+  private def queryColumnsFollow(qry: QueryColumnsFollow): Unit = coreHandler.withCore(qry.tableId, core => {
+    val tableName = qry.tableId.tableName
+    val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+    guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
+  }, logError)
+  
   private def queryIndexes(qry: QueryIndexes) : Unit = coreHandler.withCore(qry.queryId, core => {
     val tableName = qry.queryId.tableId.tableName
     val indexes = cache.cachedIndexes(tableName, core.indexesLoader.indexes(tableName))
@@ -170,16 +176,21 @@ class DatabaseActor(
     guiActor ! ResponseRowsNumber(qry.queryId, rowsNumber)
   }, e => guiActor ! ErrorRows(qry.queryId, e))
 
+  private def queryForeignKeyRowsNumber(qry: QueryForeignKeyRowsNumber): Unit = coreHandler.withCore(qry.queryId, core => {
+    val tableName = qry.queryId.tableId.tableName
+    val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+    val followTable = ForeignKeyMapper.toFollowTable(qry.follow, columnsFollow, qry.structure.attributes)
+    val sql = SqlBuilder.buildCountSql(followTable)
+    val queryTimeouts = calcQueryTimeouts(core)
+    val rowsNumber = core.queryRowsNumberLoader.query(sql, queryTimeouts)
+    guiActor ! ResponseForeignKeyRowsNumber(qry.queryId, qry.follow.key, rowsNumber)
+  }, e => guiActor ! ErrorRows(qry.queryId, e))
+
+
   private def calcQueryTimeouts(core: DatabaseCore) = {
     core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
   }
-
-  private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  coreHandler.withCore(qry.tableId, core => {
-    val tableName = qry.tableId.tableName
-    val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-    guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
-  }, logError)
-
+  
   private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
     val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
@@ -228,6 +239,7 @@ class DatabaseActor(
     case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
     case qry : QueryColumnsForForeignKeys => queryColumnsForForeignKeys(qry)
     case qry : QueryForeignKeys => queryForeignKeys(qry)
+    case qry : QueryForeignKeyRowsNumber => queryForeignKeyRowsNumber(qry)
     case qry : QueryForeignKeysByPattern => queryForeignKeysByPattern(qry)
     case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)

@@ -9,12 +9,17 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : Que
 
 	private def toFollowTable() : DBTableStructure = {
 		try {
-			val fkRows = follow.rows.map(row => buildKeyValuesForRow(row))
-			val keyCriteria = ForeignKeyCriteria(fkRows, follow.key.to.fields.map(name => newColumns.fields.find(f => f.name.equalsIgnoreCase(name)).get))
+			val keyCriteria: Option[ForeignKeyCriteria] = follow.rows.map(buildCriteria)
 			val description = TableDescription(follow.key.to.table.tableName, Option(follow.key.from.table.tableName), None)
-			DBTableStructure(description, newColumns, Some(keyCriteria), None, None, attributes)
+			DBTableStructure(description, newColumns, keyCriteria, None, None, attributes)
 		} catch
 			case ex: Exception => throw  new Exception(s"Following to table with newColumns $newColumns and follow fields to ${follow.key.to.fields} got ", ex)
+	}
+
+	private def buildCriteria(row: List[Row]): ForeignKeyCriteria = {
+		val fkRows = row.map(row => buildKeyValuesForRow(row))
+		val keyCriteria = ForeignKeyCriteria(fkRows, follow.key.to.fields.map(name => newColumns.fields.find(f => f.name.equalsIgnoreCase(name)).get))
+		keyCriteria
 	}
 
 	/* has a foreignkey FK(keyfrom, keyto), the columns from */
