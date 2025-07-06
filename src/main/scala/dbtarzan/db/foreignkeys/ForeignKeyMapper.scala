@@ -7,7 +7,7 @@ import dbtarzan.db.{ FollowKey, Fields, QueryAttributes, DBTableStructure, Table
 class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : QueryAttributes) {
 	val mapNameToIndex: Map[String, Int] = follow.columns.map(_.name.toUpperCase).zipWithIndex.toMap
 
-	private def toFollowTable() : DBTableStructure = {
+	private def buildFollowTable() : DBTableStructure = {
 		try {
 			val keyCriteria: Option[ForeignKeyCriteria] = follow.rows.map(buildCriteria)
 			val description = TableDescription(follow.key.to.table.tableName, Option(follow.key.from.table.tableName), None)
@@ -17,8 +17,12 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : Que
 	}
 
 	private def buildCriteria(row: List[Row]): ForeignKeyCriteria = {
+		def findForeignKeyToFieldInToTable(name: String) =
+			newColumns.fields.find(f => f.name.equalsIgnoreCase(name)).get
+
 		val fkRows = row.map(row => buildKeyValuesForRow(row))
-		val keyCriteria = ForeignKeyCriteria(fkRows, follow.key.to.fields.map(name => newColumns.fields.find(f => f.name.equalsIgnoreCase(name)).get))
+		val fkFields = follow.key.to.fields.map(findForeignKeyToFieldInToTable)
+		val keyCriteria = ForeignKeyCriteria(fkRows, fkFields)
 		keyCriteria
 	}
 
@@ -38,5 +42,5 @@ class ForeignKeyMapper(follow : FollowKey, newColumns : Fields, attributes : Que
 
 object ForeignKeyMapper {
 	def toFollowTable(follow : FollowKey, newColumns : Fields, attributes : QueryAttributes) : DBTableStructure = 
-		new ForeignKeyMapper(follow, newColumns, attributes).toFollowTable()
+		new ForeignKeyMapper(follow, newColumns, attributes).buildFollowTable()
 }
