@@ -23,7 +23,7 @@ class ForeignKeyList(queryId : QueryId, dbActor: ActorRef, localization : Locali
     text = ""
     editable = false
     wrapText = true
-    maxHeight = JFXUtil.averageCharacterHeight() * 6
+    maxHeight = JFXUtil.averageCharacterHeight() * 7
   }
   private val buttonRowsNumber = new ToggleButton() {
     text = localization.rowsNumber
