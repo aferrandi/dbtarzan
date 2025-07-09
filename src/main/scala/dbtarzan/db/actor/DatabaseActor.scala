@@ -1,20 +1,17 @@
 package dbtarzan.db.actor
 
-import org.apache.pekko.actor.{Actor, ActorRef}
 import dbtarzan.config.connections.ConnectionData
-import dbtarzan.config.password.{EncryptionKey, Password}
-import dbtarzan.db.{ForeignKey, *}
-import dbtarzan.db.foreignkeys.VirtualForeignKeyToForeignKey
+import dbtarzan.config.password.EncryptionKey
+import dbtarzan.db.foreignkeys.{ForeignKeyMapper, VirtualForeignKeyToForeignKey}
 import dbtarzan.db.sql.SqlBuilder
-import dbtarzan.db.util.ExceptionToText
+import dbtarzan.db.*
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
-import dbtarzan.messages.DatabaseIdUtil.databaseIdText
 import dbtarzan.messages.*
+import dbtarzan.messages.DatabaseIdUtil.databaseIdText
+import org.apache.pekko.actor.{Actor, ActorRef}
 
 import java.nio.file.Path
-import java.sql.{Connection, SQLException}
-import java.time.LocalDateTime
 import scala.collection.mutable
 import scala.concurrent.duration.*
 import scala.language.postfixOps
@@ -46,7 +43,7 @@ class DatabaseActor(
       val foreignFromFile = new DatabaseForeignKeysFromFile(databaseId, SimpleDatabaseId(data.name), localization, keyFilesDirPath, log)
       foreignFromFile.loadForeignKeysFromFile()
     })
-    mutable.HashMap(keysForAllSimpleDatabases.toSeq*)
+    mutable.HashMap(keysForAllSimpleDatabases *)
   }
 
   private def logError(e: Exception) : Unit = log.error("dbWorker", e)
@@ -131,7 +128,7 @@ class DatabaseActor(
   }
 
   private def schemaIds(cores: List[DatabaseCore]): List[SchemaId] = {
-    cores.flatMap(core => core.schemasLoader.schemasNames().map(schemaName => SchemaId(databaseId, core.simpleDatabaseId, schemaName))).toList
+    cores.flatMap(core => core.schemasLoader.schemasNames().map(schemaName => SchemaId(databaseId, core.simpleDatabaseId, schemaName)))
   }
 
   private def querySchemas(qry: QuerySchemas) : Unit = coreHandler.withCores(cores => {
@@ -152,10 +149,16 @@ class DatabaseActor(
     }, logError)
 
   private def queryColumns(qry: QueryColumns) : Unit = coreHandler.withCore(qry.tableId, core => {
-      val tableName = qry.tableId.tableName
-      val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-        guiActor ! ResponseColumns(qry.tableId, columns, core.attributes)
-    }, logError)
+    val tableName = qry.tableId.tableName
+    val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+    guiActor ! ResponseColumns(qry.tableId, columns, core.attributes)
+  }, logError)
+
+  private def queryColumnsFollow(qry: QueryColumnsFollow): Unit = coreHandler.withCore(qry.tableId, core => {
+    val tableName = qry.tableId.tableName
+    val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
+    guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
+  }, logError)
 
   private def queryIndexes(qry: QueryIndexes) : Unit = coreHandler.withCore(qry.queryId, core => {
     val tableName = qry.queryId.tableId.tableName
@@ -170,15 +173,20 @@ class DatabaseActor(
     guiActor ! ResponseRowsNumber(qry.queryId, rowsNumber)
   }, e => guiActor ! ErrorRows(qry.queryId, e))
 
+  private def queryForeignKeyRowsNumber(qry: QueryForeignKeyRowsNumber): Unit = coreHandler.withCore(qry.queryId, core => {
+    val toTableName = qry.follow.key.to.table.tableName
+    val columnsFollow = cache.cachedFields(toTableName, core.columnsLoader.columnNames(toTableName))
+    val followTable = ForeignKeyMapper.toFollowTable(qry.follow, columnsFollow, qry.structure.attributes)
+    val sql = SqlBuilder.buildCountSql(followTable)
+    val queryTimeouts = calcQueryTimeouts(core)
+    val rowsNumber = core.queryRowsNumberLoader.query(sql, queryTimeouts)
+    guiActor ! ResponseForeignKeyRowsNumber(qry.queryId, qry.follow.key, rowsNumber)
+  }, e => guiActor ! ErrorRows(qry.queryId, e))
+
+
   private def calcQueryTimeouts(core: DatabaseCore) = {
     core.limits.queryTimeoutInSeconds.map(_.seconds).getOrElse(10 seconds)
   }
-
-  private def queryColumnsFollow(qry: QueryColumnsFollow) : Unit =  coreHandler.withCore(qry.tableId, core => {
-    val tableName = qry.tableId.tableName
-    val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-    guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
-  }, logError)
 
   private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
@@ -189,7 +197,7 @@ class DatabaseActor(
   private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = coreHandler.withCore(qry.queryId, core => {
     val tableName = qry.queryId.tableId.tableName
     val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
-    log.debug(s"Primary keys ${primaryKeys}")
+    log.debug(s"Primary keys $primaryKeys")
     guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
   }, logError)
 
@@ -210,7 +218,7 @@ class DatabaseActor(
       log.error(localization.errorAFKAlreadyExisting(intersection))
   }
 
-  def queryOneRow(qry: QueryOneRow): Unit = coreHandler.withCore(qry.queryId, core => {
+  private def queryOneRow(qry: QueryOneRow): Unit = coreHandler.withCore(qry.queryId, core => {
     val queryTimeput = calcQueryTimeouts(core)
     core.queryLoader.query(SqlBuilder.buildSingleRowSql(qry.structure), 1, queryTimeput, None, qry.structure.columns, rows =>
       guiActor ! ResponseOneRow(qry.queryId, qry.structure, rows.rows.head)
@@ -228,6 +236,7 @@ class DatabaseActor(
     case qry : QueryColumnsFollow =>  queryColumnsFollow(qry)
     case qry : QueryColumnsForForeignKeys => queryColumnsForForeignKeys(qry)
     case qry : QueryForeignKeys => queryForeignKeys(qry)
+    case qry : QueryForeignKeyRowsNumber => queryForeignKeyRowsNumber(qry)
     case qry : QueryForeignKeysByPattern => queryForeignKeysByPattern(qry)
     case qry : QueryPrimaryKeys => queryPrimaryKeys(qry)
     case qry : QuerySchemas => querySchemas(qry)

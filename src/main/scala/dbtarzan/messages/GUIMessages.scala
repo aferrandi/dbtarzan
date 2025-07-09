@@ -54,6 +54,9 @@ case class ResponseIndexes(queryId : QueryId, indexes: Indexes)
 case class ResponseRowsNumber(queryId : QueryId, rowsNumber: Int)
   extends TWithQueryId
 
+case class ResponseForeignKeyRowsNumber(queryId: QueryId, foreignKey: ForeignKey, rowsNumber: Int)
+  extends TWithQueryId
+
 case class ResponseColumnsFollow(tableId: TableId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 

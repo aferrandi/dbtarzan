@@ -63,7 +63,8 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     center = splitter.control
     bottom = progressBar.control
   }
-  foreignKeyList.onForeignKeySelected(openTableConnectedByForeignKey)
+  foreignKeyList.onForeignKeyDoubleClicked(openTableConnectedByForeignKey)
+  foreignKeyList.onForeignKeySelected(rowsNumberOfTableConnectedByForeignKey)
 
   private def openRowDisplay(row: Row): Unit = {
     rowDetailsView.foreach(details => {
@@ -128,18 +129,23 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   }
 
   private def openTableConnectedByForeignKey(key : ForeignKey, closeCurrentTab : Boolean) : Unit = {
-      log.debug("Selected "+key)
-      if(closeCurrentTab)
-        guiActor ! RequestRemovalThisTab(queryId) 
-      val checkedRows = table.getCheckedRows
-      val foreignTableId = key.to.table
-      if(checkedRows.nonEmpty) {
-        dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.fields, key, checkedRows))
-      } else {
-        dbActor ! QueryColumns(foreignTableId)
-        log.warning(localization.noRowsFromForeignKey(key.name, key.to.table.tableName))
-      }
-  } 
+    log.debug(s"Opening table connected by foreign key $key")
+    if(closeCurrentTab)
+      guiActor ! RequestRemovalThisTab(queryId)
+    val checkedRows = table.getCheckedRows
+    val foreignTableId = key.to.table
+    dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.fields, key, if (checkedRows.nonEmpty) Some(checkedRows) else None))
+    if (checkedRows.isEmpty)
+      log.warning(localization.noRowsFromForeignKey(key.name, key.to.table.tableName))
+  }
+
+  private def rowsNumberOfTableConnectedByForeignKey(key: ForeignKey): Unit = {
+    log.debug("Get rows number of table connected by foreign key $key")
+    val checkedRows = table.getCheckedRows
+    dbActor ! QueryForeignKeyRowsNumber(queryId, structure, FollowKey(dbTable.fields, key, if (checkedRows.nonEmpty) Some(checkedRows) else None))
+    if(checkedRows.isEmpty)
+      log.warning(localization.noRowsFromForeignKey(key.name, key.to.table.tableName))
+  }
 
   private def buildTop() : BorderPane = new BorderPane {        
     stylesheets += "orderByMenuBar.css"
@@ -191,6 +197,9 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
 
   def showRowsNumber(rowsNumber: ResponseRowsNumber): Unit =
     queryInfo.showRowsNumber(rowsNumber.rowsNumber)
+
+  def showForeignKeyRowsNumber(rowsNumber: ResponseForeignKeyRowsNumber): Unit =
+    foreignKeyList.showForeignKeyRowsNumber(rowsNumber.foreignKey, rowsNumber.rowsNumber)    
 
   def rowsError() : Unit = queryText.showError()
 

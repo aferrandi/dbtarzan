@@ -1,7 +1,7 @@
 package dbtarzan.messages
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{VirtualalForeignKey, Composite, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, TableId}
+import dbtarzan.db.{Composite, DBRowStructure, DBTableStructure, DatabaseId, FollowKey, ForeignKey, TableId, VirtualalForeignKey}
 
 
 case class OriginalQuery(queryId : QueryId, closeCurrentTab : Boolean)
@@ -23,6 +23,8 @@ case class QueryColumnsFollow(tableId: TableId, follow : FollowKey)
 case class QueryPrimaryKeys(queryId : QueryId, structure : DBTableStructure)
 
 case class QueryForeignKeys(queryId : QueryId, structure : DBTableStructure)
+
+case class QueryForeignKeyRowsNumber(queryId : QueryId, structure : DBTableStructure, follow : FollowKey)
 
 case class QueryForeignKeysByPattern(queryId : QueryId, pattern: String)
 

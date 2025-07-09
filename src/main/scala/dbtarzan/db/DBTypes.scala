@@ -52,7 +52,7 @@ Contains:
 - the foreign key
 - the rows checked by the user in the original table
  */
-case class FollowKey(columns : List[Field], key : ForeignKey, rows : List[Row])
+case class FollowKey(columns : List[Field], key : ForeignKey, rows : Option[List[Row]])
 /* the foreign keys involving a table, with the table */
 case class ForeignKeysForTable(tableId : TableId, keys : ForeignKeys)
 /* all the foreign keys for all tables in the database */
