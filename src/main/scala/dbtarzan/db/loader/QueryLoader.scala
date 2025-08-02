@@ -35,7 +35,7 @@ class QueryLoader(connection : java.sql.Connection, log: TLogger) {
       val rs = statement.executeQuery(qry.sql)
       val meta = rs.getMetaData
       val columnCount = meta.getColumnCount
-      log.debug("Column count:" + columnCount + ". Rows to read :" + maxRows)
+      log.debug(s"Column count: $columnCount. Rows to read :$maxRows")
       var rows = Vector.empty[Row]
       var i = 0
       while (i < maxRows && !executionTime.isOver && rs.next()) {
