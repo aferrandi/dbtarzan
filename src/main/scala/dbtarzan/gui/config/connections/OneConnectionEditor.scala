@@ -111,7 +111,7 @@ class OneConnectionEditor(
     add(lblQueryTimeoutInSeconds, 0, 10)
     add(new HBox { children = List(txtQueryTimeoutInSeconds)}, 1, 10)
     add(lblMaxFieldSize, 0, 11)
-    add(new HBox { children = List(txtMaxFieldSizeValue)}, 1, 11)
+    add(new HBox { children = List(txtMaxFieldSizeValue, comboMaxFieldSize.control)}, 1, 11)
     add(lblUseInClause, 0, 12)
     add(chkInClause, 1, 12)
     add(lblMaxInClauseCount, 0, 13)

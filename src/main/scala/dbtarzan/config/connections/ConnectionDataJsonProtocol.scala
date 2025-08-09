@@ -15,7 +15,7 @@ given JsonInput[MaxFieldSize] with
   def read(json: JsonValue): MaxFieldSize = MaxFieldSize(json("value").as[Int], json.readOption("leftFunction"))
 
 given JsonOutput[MaxFieldSize] with
-  def write(u: MaxFieldSize): JsonObject = Json.obj("value" -> u.value.toString, "leftFunction" -> u.leftFunction)
+  def write(u: MaxFieldSize): JsonObject = Json.obj("value" -> u.value, "leftFunction" -> u.leftFunction)
 
 given JsonInput[SchemaName] with
   def read(json: JsonValue): SchemaName = SchemaName(json.as[String])
@@ -24,12 +24,8 @@ given JsonOutput[SchemaName] with
   def write(u: SchemaName): JsonValue = JsonString(u.schema)
 
 given JsonInput[ConnectionData] = {
-  def readMaxFieldSizeOrInt(value: JsonValue)(using inputMaxFieldSize: JsonInput[MaxFieldSize])(using inputInt: JsonInput[Int]) = {
-    try
-     inputMaxFieldSize.read(value)
-    catch
-      case _ => MaxFieldSize(inputInt.read(value), None)    
-  }
+  def readMaxFieldSizeOrInt(value: JsonValue): MaxFieldSize =
+    eitherJsonInput[MaxFieldSize,Int].read(value).fold(identity, MaxFieldSize(_, None))
   json =>
     ConnectionData(
       json.getString("jar"),
