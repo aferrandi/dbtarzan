@@ -11,8 +11,10 @@ object IdentifierDelimitersValues {
 
 case class DBDefinition(schemaId : Option[SchemaId], catalog : Option[String])
 
-case class QueryAttributes(delimiters : Option[IdentifierDelimiters], definition : DBDefinition, maxFieldSize: Option[Int], maxInClauseCount: Option[Int])
+case class QueryAttributes(delimiters : Option[IdentifierDelimiters], definition : DBDefinition, maxFieldSize: Option[MaxFieldSize], maxInClauseCount: Option[Int])
 
 object QueryAttributes {
 	def none(): QueryAttributes = QueryAttributes(None, DBDefinition(None, None), None, Some(1000))
-} 
+}
+
+case class MaxFieldSize(value: Int, leftFunction: Option[String])

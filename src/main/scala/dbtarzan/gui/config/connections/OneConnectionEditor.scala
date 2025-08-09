@@ -5,11 +5,11 @@ import scalafx.scene.layout.{ColumnConstraints, GridPane, HBox, Priority}
 import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import scalafx.geometry.{HPos, Insets}
-import scalafx.Includes._
+import scalafx.Includes.*
 import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
-import dbtarzan.db.SchemaName
+import dbtarzan.db.{MaxFieldSize, SchemaName}
 import dbtarzan.gui.OpenWeb
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
@@ -55,10 +55,15 @@ class OneConnectionEditor(
   private val cmbDelimiters = new ComboDelimiters()
   private val txtMaxRows = JFXUtil.numTextField()
   private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
-  private val txtMaxFieldSize = JFXUtil.numTextField()
+  private val txtMaxFieldSizeValue = JFXUtil.numTextField()
+
+  private val comboMaxFieldSize = ComboMaxFieldSize()
+  
+  
   private val chkInClause = new CheckBox {
     selected.onChange((_, _, newValue) => txtMaxInClauseCount.disable = !newValue)
   }
+  
   private val txtMaxInClauseCount = JFXUtil.numTextField()
 
 
@@ -106,7 +111,7 @@ class OneConnectionEditor(
     add(lblQueryTimeoutInSeconds, 0, 10)
     add(new HBox { children = List(txtQueryTimeoutInSeconds)}, 1, 10)
     add(lblMaxFieldSize, 0, 11)
-    add(new HBox { children = List(txtMaxFieldSize)}, 1, 11)
+    add(new HBox { children = List(txtMaxFieldSizeValue)}, 1, 11)
     add(lblUseInClause, 0, 12)
     add(chkInClause, 1, 12)
     add(lblMaxInClauseCount, 0, 13)
@@ -145,7 +150,7 @@ class OneConnectionEditor(
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.fromOptInt(data.maxRows)
     txtQueryTimeoutInSeconds.fromOptInt(data.queryTimeoutInSeconds)
-    txtMaxFieldSize.fromOptInt(data.maxFieldSize)
+    txtMaxFieldSizeValue.fromOptInt(data.maxFieldSize.map(_.value))
     chkInClause.selected = data.maxInClauseCount.isDefined
     txtMaxInClauseCount.fromOptInt(data.maxInClauseCount)
     txtMaxInClauseCount.disable = data.maxInClauseCount.isEmpty
@@ -163,7 +168,7 @@ class OneConnectionEditor(
       lblQueryTimeoutInSeconds,
       txtQueryTimeoutInSeconds,
       lblMaxFieldSize,
-      txtMaxFieldSize,
+      txtMaxFieldSizeValue,
       lblUseInClause,
       chkInClause,
       lblMaxInClauseCount,
@@ -193,7 +198,7 @@ class OneConnectionEditor(
         cmbDelimiters.retrieveDelimiters(),
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
-        txtMaxFieldSize.toOptInt,
+        txtMaxFieldSizeValue.toOptInt.map(fs => MaxFieldSize(fs, comboMaxFieldSize.retrieveLeftFunction())),
         inClauseToData(),
         StringUtil.emptyToNone(txtCatalog.text())
     )
@@ -222,7 +227,7 @@ class OneConnectionEditor(
       txtPassword.text,
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
-      txtMaxFieldSize.text,
+      txtMaxFieldSizeValue.text,
       txtMaxInClauseCount.text,
       txtCatalog.text,
       chkPassword.selected,

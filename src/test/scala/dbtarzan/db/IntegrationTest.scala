@@ -103,7 +103,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
           ))),
         QueryAttributes.none()
     )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     var rows : Rows = Rows(List())
     new QueryLoader(connection, new FakeLogger()).query(sql, 500, 10 seconds, None, structure.columns, rs => rows = rs)
     assert(Rows(List(Row(List(1, 1232, 500, 64, 5.0, "12x", 600.0)), Row(List(7, 1232, 500, 32, 10.0, "12x", 400.0))))  === rows)
@@ -118,7 +118,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     var rows : Rows = Rows(List())
     new QueryLoader(connection, new FakeLogger()).query(sql, 3, 10 seconds, None, structure.columns, rs => rows = rs)
     assert(3  === rows.rows.length)

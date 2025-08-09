@@ -5,21 +5,37 @@ import dbtarzan.db.*
 
 
 object SqlBuilder {
-  val selectClause = "SELECT * FROM "
+
   val countClause = "SELECT COUNT(*) FROM "
 
   /* builds the SQL to query the table from the (potential) original foreign key (to know which rows it has to show), the potential where filter and the table name */
-  def buildQuerySql(structure: DBTableStructure) : QuerySql = {
+  def buildQuerySql(structure: DBTableStructure, maxFieldSize: Option[MaxFieldSize]) : QuerySql = {
     val foreignClosure = buildForeignClosure(structure)
     val filters = buildFilters(structure, foreignClosure)
     val delimitedTableNameWithSchema = buildTableName(structure.attributes, structure.description.name)
     val orderBy: String = structure.orderByFields.map(SqlPartsBuilder.buildOrderBy).getOrElse("")
-    QuerySql(selectClause + delimitedTableNameWithSchema + SqlPartsBuilder.buildFilters(filters) + orderBy)
+    val selectClause: String = buildSqlClause(structure, maxFieldSize)
+    QuerySql(s"SELECT $selectClause FROM $delimitedTableNameWithSchema ${SqlPartsBuilder.buildFilters(filters)} $orderBy")
+  }
+
+  private def buildSqlClause(structure: DBTableStructure, maxFieldSize: Option[MaxFieldSize]): String = {
+    def extractFieldNameNoSubstring(field: Field): String = field.name
+    def extractFieldNameSubstring(textApplier: TextLeftApplier)(field: Field): String =
+      if(field.fieldType == FieldType.STRING )  textApplier.replaceColumnName(field.name) else field.name
+    val extractFieldName: Field => String = maxFieldSize match {
+      case Some(m) => m.leftFunction match {
+        case Some(l) => extractFieldNameSubstring(TextLeftApplier(l, m.value))
+        case None => extractFieldNameNoSubstring
+      }
+      case None => extractFieldNameNoSubstring
+    }
+    structure.columns.fields.map(extractFieldName).mkString(", ")
   }
 
   def buildSingleRowSql(structure: DBRowStructure) : QuerySql = {
     val delimitedTableNameWithSchema = buildTableName(structure.attributes, structure.tableName)
     val sqlFieldBuilder = new SqlFieldBuilder(structure.columns.fields, structure.attributes)
+    val selectClause = "SELECT * FROM "
     QuerySql(selectClause + delimitedTableNameWithSchema + SqlPartsBuilder.buildFilters(structure.filter.map(sqlFieldBuilder.buildFieldText)))
   }
 

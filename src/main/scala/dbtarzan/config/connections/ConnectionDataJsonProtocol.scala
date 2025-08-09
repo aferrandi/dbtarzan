@@ -1,7 +1,7 @@
 package dbtarzan.config.connections
 
-import dbtarzan.db.{CompositeId, IdentifierDelimiters, SchemaName}
-import grapple.json.{*, given}
+import dbtarzan.db.{CompositeId, IdentifierDelimiters, MaxFieldSize, SchemaName}
+import grapple.json.{JsonInput, JsonOutput, *, given}
 import dbtarzan.config.password.{*, given}
 import dbtarzan.config.connections.ConnectionData
 
@@ -11,13 +11,25 @@ given JsonInput[IdentifierDelimiters] with
 given JsonOutput[IdentifierDelimiters] with
   def write(u: IdentifierDelimiters): JsonObject = Json.obj("start" -> u.start.toString, "end" -> u.end.toString)
 
+given JsonInput[MaxFieldSize] with
+  def read(json: JsonValue): MaxFieldSize = MaxFieldSize(json("value").as[Int], json.readOption("leftFunction"))
+
+given JsonOutput[MaxFieldSize] with
+  def write(u: MaxFieldSize): JsonObject = Json.obj("value" -> u.value.toString, "leftFunction" -> u.leftFunction)
+
 given JsonInput[SchemaName] with
   def read(json: JsonValue): SchemaName = SchemaName(json.as[String])
 
 given JsonOutput[SchemaName] with
   def write(u: SchemaName): JsonValue = JsonString(u.schema)
 
-given JsonInput[ConnectionData] =
+given JsonInput[ConnectionData] = {
+  def readMaxFieldSizeOrInt(value: JsonValue)(using inputMaxFieldSize: JsonInput[MaxFieldSize])(using inputInt: JsonInput[Int]) = {
+    try
+     inputMaxFieldSize.read(value)
+    catch
+      case _ => MaxFieldSize(inputInt.read(value), None)    
+  }
   json =>
     ConnectionData(
       json.getString("jar"),
@@ -31,10 +43,11 @@ given JsonInput[ConnectionData] =
       json.readOption[IdentifierDelimiters]("identifierDelimiters"),
       json.readOption[Int]("maxRows"),
       json.readOption[Int]("queryTimeoutInSeconds"),
-      json.readOption[Int]("maxFieldSize"),
+      json.get("maxFieldSize").filter(JsonNull.!=).map(v => readMaxFieldSizeOrInt(v)),
       json.readOption[Int]("maxInClauseCount"),
       json.readOption[String]("catalog")
     )
+}
 
 
 given JsonOutput[ConnectionData] with
