@@ -107,15 +107,15 @@ class OneConnectionEditor(
     add(lblDelimiters, 0, 8)
     add(cmbDelimiters.control, 1, 8)
     add(lblMaxRows, 0, 9)
-    add(new HBox { children = List(txtMaxRows)}, 1, 9)
+    add(HBox(txtMaxRows), 1, 9)
     add(lblQueryTimeoutInSeconds, 0, 10)
-    add(new HBox { children = List(txtQueryTimeoutInSeconds)}, 1, 10)
+    add(HBox(txtQueryTimeoutInSeconds), 1, 10)
     add(lblMaxFieldSize, 0, 11)
-    add(new HBox { children = List(txtMaxFieldSizeValue, comboMaxFieldSize.control)}, 1, 11)
+    add(HBox(20.0, txtMaxFieldSizeValue, comboMaxFieldSize.control), 1, 11)
     add(lblUseInClause, 0, 12)
     add(chkInClause, 1, 12)
     add(lblMaxInClauseCount, 0, 13)
-    add(new HBox { children = List(txtMaxInClauseCount)}, 1, 13)
+    add(HBox(txtMaxInClauseCount), 1, 13)
     add(lblCatalog, 0, 14)
     add(txtCatalog, 1, 14)
     add(linkToJdbcUrls, 1, 15)
@@ -169,6 +169,7 @@ class OneConnectionEditor(
       txtQueryTimeoutInSeconds,
       lblMaxFieldSize,
       txtMaxFieldSizeValue,
+      comboMaxFieldSize.control,
       lblUseInClause,
       chkInClause,
       lblMaxInClauseCount,
