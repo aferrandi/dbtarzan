@@ -57,8 +57,8 @@ class OneConnectionEditor(
   private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
   private val txtMaxFieldSizeValue = JFXUtil.numTextField()
 
-  private val comboLeftSqlFunction = ComboLeftSQLFunction()
-  txtMaxFieldSizeValue.text.onChange((_, _, newValue) => JFXUtil.changeControlsVisibility(newValue.nonEmpty , comboLeftSqlFunction.control))
+  private val cmbLeftSqlFunction = ComboLeftSQLFunction()
+  txtMaxFieldSizeValue.text.onChange((_, _, newValue) => JFXUtil.changeControlsVisibility(newValue.nonEmpty , cmbLeftSqlFunction.control))
   
   private val chkInClause = new CheckBox {
     selected.onChange((_, _, newValue) => txtMaxInClauseCount.disable = !newValue)
@@ -114,7 +114,7 @@ class OneConnectionEditor(
     add(lblMaxFieldSize, 0, 11)
     add(HBox(txtMaxFieldSizeValue), 1, 11)
     add(lblLeftSqlFunction, 0, 12)
-    add(HBox(comboLeftSqlFunction.control), 1, 12)
+    add(HBox(cmbLeftSqlFunction.control), 1, 12)
     add(lblUseInClause, 0, 13)
     add(chkInClause, 1, 13)
     add(lblMaxInClauseCount, 0, 14)
@@ -173,7 +173,7 @@ class OneConnectionEditor(
       lblMaxFieldSize,
       txtMaxFieldSizeValue,
       lblLeftSqlFunction,
-      comboLeftSqlFunction.control,
+      cmbLeftSqlFunction.control,
       lblUseInClause,
       chkInClause,
       lblMaxInClauseCount,
@@ -203,7 +203,7 @@ class OneConnectionEditor(
         cmbDelimiters.retrieveDelimiters(),
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
-        txtMaxFieldSizeValue.toOptInt.map(fs => MaxFieldSize(fs, comboLeftSqlFunction.retrieveLeftFunction())),
+        txtMaxFieldSizeValue.toOptInt.map(fs => MaxFieldSize(fs, cmbLeftSqlFunction.retrieveLeftFunction())),
         inClauseToData(),
         StringUtil.emptyToNone(txtCatalog.text())
     )
@@ -241,7 +241,8 @@ class OneConnectionEditor(
     jarSelector.onChange(safe.onChange(() => useData(toData)))
     List(
       cmbDelimiters,
-      cmbSchemas
+      cmbSchemas,
+      cmbLeftSqlFunction,
     ).foreach(_.onChanged(() => safe.onChange(() => useData(toData))))
   }
 

@@ -1,6 +1,5 @@
 package dbtarzan.gui.config.connections
 
-import dbtarzan.db.{IdentifierDelimiters, IdentifierDelimitersValues}
 import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
@@ -37,7 +36,8 @@ class ComboLeftSQLFunction() extends TControlBuilder with TCombo {
   }
 
   def retrieveLeftFunction() : Option[String] = {
-    val text = cmbDeLeftFunction.getEditor.getText()
+    val text = cmbDeLeftFunction.value.value
+    println(s"retrieveLeftFunction Text: $text")
     if(!text.isBlank)
       Some(text)
     else
@@ -46,8 +46,9 @@ class ComboLeftSQLFunction() extends TControlBuilder with TCombo {
 
   def control : Parent = cmbDeLeftFunction
 
-  def onChanged(useDelimiters : () => Unit) : Unit = {
-    cmbDeLeftFunction.onAction = (_: ActionEvent) => useDelimiters()
+  def onChanged(useLeftFunction : () => Unit) : Unit = {
+    // cmbDeLeftFunction.onAction = (_: ActionEvent) => useLeftFunction()
+    cmbDeLeftFunction.editor.value.textProperty().onChange((_, _, _) => { cmbDeLeftFunction.value.value = cmbDeLeftFunction.editor.value.text(); useLeftFunction() })
   }
 }
 
