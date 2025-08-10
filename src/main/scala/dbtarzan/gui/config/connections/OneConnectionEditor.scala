@@ -57,8 +57,8 @@ class OneConnectionEditor(
   private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
   private val txtMaxFieldSizeValue = JFXUtil.numTextField()
 
-  private val comboMaxFieldSize = ComboMaxFieldSize()
-  
+  private val comboLeftSqlFunction = ComboLeftSQLFunction()
+  txtMaxFieldSizeValue.text.onChange((_, _, newValue) => JFXUtil.changeControlsVisibility(newValue.nonEmpty , comboLeftSqlFunction.control))
   
   private val chkInClause = new CheckBox {
     selected.onChange((_, _, newValue) => txtMaxInClauseCount.disable = !newValue)
@@ -71,6 +71,7 @@ class OneConnectionEditor(
   private val lblMaxRows = new Label { text = localization.maxRows+":" }
   private val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
   private val lblMaxFieldSize = new Label { text = localization.maxFieldSize+":" }
+  private val lblLeftSqlFunction = new Label {text = localization.leftSQLFunction + ":"}
   private val lblUseInClause = new Label { text = localization.useInClause+":" }
   private val lblMaxInClauseCount = new Label { text = localization.maxInClauseCount+":" }
   private val lblCatalog = new Label { text = localization.catalog+":" }
@@ -111,14 +112,16 @@ class OneConnectionEditor(
     add(lblQueryTimeoutInSeconds, 0, 10)
     add(HBox(txtQueryTimeoutInSeconds), 1, 10)
     add(lblMaxFieldSize, 0, 11)
-    add(HBox(20.0, txtMaxFieldSizeValue, comboMaxFieldSize.control), 1, 11)
-    add(lblUseInClause, 0, 12)
-    add(chkInClause, 1, 12)
-    add(lblMaxInClauseCount, 0, 13)
-    add(HBox(txtMaxInClauseCount), 1, 13)
-    add(lblCatalog, 0, 14)
-    add(txtCatalog, 1, 14)
-    add(linkToJdbcUrls, 1, 15)
+    add(HBox(txtMaxFieldSizeValue), 1, 11)
+    add(lblLeftSqlFunction, 0, 12)
+    add(HBox(comboLeftSqlFunction.control), 1, 12)
+    add(lblUseInClause, 0, 13)
+    add(chkInClause, 1, 13)
+    add(lblMaxInClauseCount, 0, 14)
+    add(HBox(txtMaxInClauseCount), 1, 14)
+    add(lblCatalog, 0, 15)
+    add(txtCatalog, 1, 15)
+    add(linkToJdbcUrls, 1, 16)
     GridPane.setHalignment(linkToJdbcUrls, HPos.Right)
     padding = Insets(10)
     vgap = 10
@@ -169,7 +172,8 @@ class OneConnectionEditor(
       txtQueryTimeoutInSeconds,
       lblMaxFieldSize,
       txtMaxFieldSizeValue,
-      comboMaxFieldSize.control,
+      lblLeftSqlFunction,
+      comboLeftSqlFunction.control,
       lblUseInClause,
       chkInClause,
       lblMaxInClauseCount,
@@ -199,7 +203,7 @@ class OneConnectionEditor(
         cmbDelimiters.retrieveDelimiters(),
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
-        txtMaxFieldSizeValue.toOptInt.map(fs => MaxFieldSize(fs, comboMaxFieldSize.retrieveLeftFunction())),
+        txtMaxFieldSizeValue.toOptInt.map(fs => MaxFieldSize(fs, comboLeftSqlFunction.retrieveLeftFunction())),
         inClauseToData(),
         StringUtil.emptyToNone(txtCatalog.text())
     )

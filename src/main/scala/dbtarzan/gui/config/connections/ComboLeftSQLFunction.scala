@@ -10,7 +10,7 @@ import scalafx.scene.control.{ComboBox, ListCell}
 
 
 /* A combo box from which to select the identfier delimiters that get stored in the configuration file */
-class ComboMaxFieldSize() extends TControlBuilder with TCombo {
+class ComboLeftSQLFunction() extends TControlBuilder with TCombo {
   private val leftFunctions : ObservableBuffer[String] = ObservableBuffer.from(List(
     "LEFT($column, $max)",
     "SUBSTR($column, 1, $max)",
