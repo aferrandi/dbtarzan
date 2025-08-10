@@ -23,7 +23,7 @@ object SqlBuilder {
     def extractFieldNameSubstring(textApplier: TextLeftApplier)(field: Field): String =
       if(field.fieldType == FieldType.STRING )  textApplier.replaceColumnName(field.name) else field.name
     val extractFieldName: Field => String = maxFieldSize match {
-      case Some(m) => m.leftFunction match {
+      case Some(m) => m.lefSQLFunction match {
         case Some(l) => extractFieldNameSubstring(TextLeftApplier(l, m.value))
         case None => extractFieldNameNoSubstring
       }

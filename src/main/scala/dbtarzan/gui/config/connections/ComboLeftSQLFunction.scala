@@ -37,7 +37,7 @@ class ComboLeftSQLFunction() extends TControlBuilder with TCombo {
   }
 
   def retrieveLeftFunction() : Option[String] = {
-    val text = cmbDeLeftFunction.getSelectionModel.selectedItem().trim()
+    val text = cmbDeLeftFunction.getEditor.getText()
     if(!text.isBlank)
       Some(text)
     else

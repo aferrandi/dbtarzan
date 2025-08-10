@@ -12,10 +12,10 @@ given JsonOutput[IdentifierDelimiters] with
   def write(u: IdentifierDelimiters): JsonObject = Json.obj("start" -> u.start.toString, "end" -> u.end.toString)
 
 given JsonInput[MaxFieldSize] with
-  def read(json: JsonValue): MaxFieldSize = MaxFieldSize(json("value").as[Int], json.readOption("leftFunction"))
+  def read(json: JsonValue): MaxFieldSize = MaxFieldSize(json("value").as[Int], json.readOption("leftSQLFunction"))
 
 given JsonOutput[MaxFieldSize] with
-  def write(u: MaxFieldSize): JsonObject = Json.obj("value" -> u.value, "leftFunction" -> u.leftFunction)
+  def write(u: MaxFieldSize): JsonObject = Json.obj("value" -> u.value, "leftSQLFunction" -> u.lefSQLFunction)
 
 given JsonInput[SchemaName] with
   def read(json: JsonValue): SchemaName = SchemaName(json.as[String])
