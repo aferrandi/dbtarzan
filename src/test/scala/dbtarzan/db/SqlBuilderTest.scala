@@ -15,7 +15,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     assert("SELECT * FROM customer" === sql.sql)
   }
 
@@ -28,7 +28,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         DBTableStructureBuilder.buildAttributes()
         )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     assert("SELECT * FROM [TST].[customer]" === sql.sql)
   }
 
@@ -41,7 +41,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     assert("SELECT * FROM customer WHERE (\n(name='John' AND age=23))" === sql.sql)
   }
 
@@ -54,7 +54,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     assert("SELECT * FROM customer WHERE (\nname = 'john')" === sql.sql)
   }
 
@@ -67,7 +67,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         Some(DBTableStructureBuilder.buildOrderByFields()),
         QueryAttributes.none()
     )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     assert("SELECT * FROM customer ORDER BY name ASC, age DESC" === sql.sql)
   }
 
@@ -80,7 +80,7 @@ class SqlBuilderTest extends AnyFlatSpec {
         Some(OrderByFields(List.empty[OrderByField])),
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     assert("SELECT * FROM customer" === sql.sql)
   }
 

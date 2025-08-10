@@ -92,7 +92,8 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
     val structure = DBTableStructure(
         TableDescription("pc", None, None),
         Fields(
-          List(FieldType.INT, FieldType.INT, FieldType.INT, FieldType.INT, FieldType.FLOAT, FieldType.STRING, FieldType.FLOAT).map(t => Field("x", t, ""))
+          List(FieldType.INT, FieldType.INT, FieldType.INT, FieldType.INT, FieldType.FLOAT, FieldType.STRING, FieldType.FLOAT)
+            .map(t => Field("x", t, ""))
           ),
         Some(
           ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "")))
