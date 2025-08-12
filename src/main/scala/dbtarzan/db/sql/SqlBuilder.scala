@@ -15,7 +15,12 @@ object SqlBuilder {
     val delimitedTableNameWithSchema = buildTableName(structure.attributes, structure.description.name)
     val orderBy: String = structure.orderByFields.map(SqlPartsBuilder.buildOrderBy).getOrElse("")
     val selectClause: String = buildSqlClause(structure, maxFieldSize)
-    QuerySql(s"SELECT $selectClause FROM $delimitedTableNameWithSchema ${SqlPartsBuilder.buildFilters(filters)} $orderBy")
+    val whereClause = SqlPartsBuilder.buildFilters(filters)
+    QuerySql(List(
+      s"SELECT $selectClause FROM $delimitedTableNameWithSchema",
+      whereClause,
+      orderBy
+    ).filter(_.nonEmpty).mkString(" "))
   }
 
   private def buildSqlClause(structure: DBTableStructure, maxFieldSize: Option[MaxFieldSize]): String = {
@@ -35,8 +40,12 @@ object SqlBuilder {
   def buildSingleRowSql(structure: DBRowStructure) : QuerySql = {
     val delimitedTableNameWithSchema = buildTableName(structure.attributes, structure.tableName)
     val sqlFieldBuilder = new SqlFieldBuilder(structure.columns.fields, structure.attributes)
-    val selectClause = "SELECT * FROM "
-    QuerySql(selectClause + delimitedTableNameWithSchema + SqlPartsBuilder.buildFilters(structure.filter.map(sqlFieldBuilder.buildFieldText)))
+    val selectClause = "SELECT * FROM"
+    val whereClause = SqlPartsBuilder.buildFilters(structure.filter.map(sqlFieldBuilder.buildFieldText))
+    QuerySql(List(
+      selectClause,
+      delimitedTableNameWithSchema,
+      whereClause).filter(_.nonEmpty).mkString(" "))
   }
 
   def buildCountSql(structure: DBTableStructure): QuerySql = {

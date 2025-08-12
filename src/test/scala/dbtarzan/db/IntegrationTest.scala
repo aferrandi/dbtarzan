@@ -92,8 +92,8 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
     val structure = DBTableStructure(
         TableDescription("pc", None, None),
         Fields(
-          List(FieldType.INT, FieldType.INT, FieldType.INT, FieldType.INT, FieldType.FLOAT, FieldType.STRING, FieldType.FLOAT)
-            .map(t => Field("x", t, ""))
+          List(Field("code", FieldType.INT, ""), Field("model", FieldType.INT, ""), Field("speed", FieldType.INT, ""),
+            Field("ram", FieldType.INT, ""), Field("hd", FieldType.FLOAT, ""), Field("cd", FieldType.STRING, ""), Field("price", FieldType.FLOAT, ""))
           ),
         Some(
           ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "")))
@@ -113,7 +113,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "query of PC" should "give the no more rows than the limit" in {
     val structure = DBTableStructure(
         TableDescription("pc", None, None),
-        noFields(),
+        Fields(List(Field("code", FieldType.INT, ""), Field("model", FieldType.STRING, ""))),
         None,
         None,
         None,

@@ -5,7 +5,7 @@ import dbtarzan.db.{DBEnumsText, FieldType, FieldValue, FieldWithValue, OrderByF
 object SqlPartsBuilder {
   def buildFilters(filters : List[String]) : String = {
     if(filters.nonEmpty)
-      filters.mkString(" WHERE (\n",
+      filters.mkString("WHERE (\n",
         ") AND (\n"
         , ")")
     else
@@ -17,7 +17,7 @@ object SqlPartsBuilder {
 
   def buildOrderBy(orderByFields: OrderByFields) : String = 
     if (orderByFields.fields.nonEmpty)
-      " ORDER BY " + orderByFields.fields.map(buildOrderByOne).mkString(", ")
+      "ORDER BY " + orderByFields.fields.map(buildOrderByOne).mkString(", ")
     else
       ""
 
