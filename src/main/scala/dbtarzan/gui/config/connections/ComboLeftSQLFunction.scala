@@ -3,7 +3,6 @@ package dbtarzan.gui.config.connections
 import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
-import scalafx.event.ActionEvent
 import scalafx.scene.Parent
 import scalafx.scene.control.{ComboBox, ListCell}
 
@@ -39,7 +38,6 @@ class ComboLeftSQLFunction() extends TControlBuilder with TCombo {
 
   def retrieveLeftFunction() : Option[String] = {
     val text = cmbDeLeftFunction.value.value
-    println(s"retrieveLeftFunction Text: $text")
     if(!text.isBlank)
       Some(text)
     else
@@ -49,8 +47,9 @@ class ComboLeftSQLFunction() extends TControlBuilder with TCombo {
   def control : Parent = cmbDeLeftFunction
 
   def onChanged(useLeftFunction : () => Unit) : Unit = {
-    // cmbDeLeftFunction.onAction = (_: ActionEvent) => useLeftFunction()
-    cmbDeLeftFunction.editor.value.textProperty().onChange((_, _, _) => { cmbDeLeftFunction.value.value = cmbDeLeftFunction.editor.value.text(); useLeftFunction() })
+    cmbDeLeftFunction.editor.value.textProperty().onChange(
+      (_, _, _) => { cmbDeLeftFunction.value.value = cmbDeLeftFunction.editor.value.text(); useLeftFunction() }
+    )
   }
 }
 

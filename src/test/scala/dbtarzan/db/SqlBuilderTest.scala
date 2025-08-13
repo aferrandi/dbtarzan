@@ -1,8 +1,6 @@
 package dbtarzan.db
 
-import dbtarzan.db.foreignkeys.{FKRow, ForeignKeyCriteria}
 import dbtarzan.db.sql.SqlBuilder
-import dbtarzan.testutil.TestDatabaseIds
 import org.scalatest.flatspec.AnyFlatSpec
 
 class SqlBuilderTest extends AnyFlatSpec {
@@ -32,7 +30,35 @@ class SqlBuilderTest extends AnyFlatSpec {
     assert("SELECT id, name, age FROM [TST].[customer]" === sql.sql)
   }
 
-  "a table with foreign criteria" should "give a query with a where clause" in {
+
+    "a simple table with a left sql function" should "give a query that uses the function for the strings" in {
+      val structure = DBTableStructure(
+        DBTableStructureBuilder.buildDescription(),
+        sampleFields(),
+        None,
+        None,
+        None,
+        QueryAttributes.none()
+      )
+      val sql = SqlBuilder.buildQuerySql(structure, Some(MaxFieldSize(200, Some("LEFT($column, $max)"))))
+      assert("SELECT id, LEFT(name, 200), age FROM customer" === sql.sql)
+    }
+
+  "a simple table with a substr sql function" should "give a query that uses the function for the strings" in {
+    val structure = DBTableStructure(
+      DBTableStructureBuilder.buildDescription(),
+      sampleFields(),
+      None,
+      None,
+      None,
+      QueryAttributes.none()
+    )
+    val sql = SqlBuilder.buildQuerySql(structure, Some(MaxFieldSize(200, Some("SUBSTR($column, 1, $max)"))))
+    assert("SELECT id, SUBSTR(name, 1, 200), age FROM customer" === sql.sql)
+  }
+
+
+    "a table with foreign criteria" should "give a query with a where clause" in {
     val structure = DBTableStructure(
         DBTableStructureBuilder.buildDescription(),
         sampleFields(),
