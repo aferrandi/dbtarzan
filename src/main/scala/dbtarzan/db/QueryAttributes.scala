@@ -17,4 +17,4 @@ object QueryAttributes {
 	def none(): QueryAttributes = QueryAttributes(None, DBDefinition(None, None), None, Some(1000))
 }
 
-case class MaxFieldSize(value: Int, lefSQLFunction: Option[String])
+case class MaxFieldSize(value: Int, leftSQLFunction: Option[String])
