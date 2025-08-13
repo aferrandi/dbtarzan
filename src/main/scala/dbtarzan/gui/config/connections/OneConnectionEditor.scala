@@ -154,7 +154,7 @@ class OneConnectionEditor(
     txtMaxRows.fromOptInt(data.maxRows)
     txtQueryTimeoutInSeconds.fromOptInt(data.queryTimeoutInSeconds)
     txtMaxFieldSizeValue.fromOptInt(data.maxFieldSize.map(_.value))
-    cmbLeftSqlFunction.show(data.maxFieldSize.map(_.lefSQLFunction.getOrElse("")).getOrElse(""))
+    cmbLeftSqlFunction.show(data.maxFieldSize.map(_.leftSQLFunction.getOrElse("")).getOrElse(""))
     chkInClause.selected = data.maxInClauseCount.isDefined
     txtMaxInClauseCount.fromOptInt(data.maxInClauseCount)
     txtMaxInClauseCount.disable = data.maxInClauseCount.isEmpty
