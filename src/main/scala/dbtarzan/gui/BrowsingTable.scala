@@ -28,7 +28,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
   private val foreignKeyList = new ForeignKeyListWithFilter(queryId, dbActor, log, localization)
   private val foreignKeyListWithTitle = JFXUtil.withTitle(foreignKeyList.control, localization.foreignKeys) 
   private val columnsTable = new ColumnsTable(structure.columns, localization)
-  private val queryInfo = new QueryInfo(SqlBuilder.buildQuerySql(structure), localization, () => {
+  private val queryInfo = new QueryInfo(SqlBuilder.buildQuerySql(structure, None), localization, () => {
     dbActor ! QueryRowsNumber(queryId, structure : DBTableStructure)
   })
   private val indexInfo = new IndexesInfo(localization)

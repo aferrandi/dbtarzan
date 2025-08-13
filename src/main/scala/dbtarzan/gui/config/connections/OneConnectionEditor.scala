@@ -5,11 +5,11 @@ import scalafx.scene.layout.{ColumnConstraints, GridPane, HBox, Priority}
 import scalafx.scene.Parent
 import scalafx.event.ActionEvent
 import scalafx.geometry.{HPos, Insets}
-import scalafx.Includes._
+import scalafx.Includes.*
 import dbtarzan.gui.util.{JFXUtil, OnChangeSafe, StringUtil}
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.{EncryptionKey, Password, PasswordEncryption}
-import dbtarzan.db.SchemaName
+import dbtarzan.db.{MaxFieldSize, SchemaName}
 import dbtarzan.gui.OpenWeb
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.localization.Localization
@@ -55,10 +55,15 @@ class OneConnectionEditor(
   private val cmbDelimiters = new ComboDelimiters()
   private val txtMaxRows = JFXUtil.numTextField()
   private val txtQueryTimeoutInSeconds = JFXUtil.numTextField()
-  private val txtMaxFieldSize = JFXUtil.numTextField()
+  private val txtMaxFieldSizeValue = JFXUtil.numTextField()
+
+  private val cmbLeftSqlFunction = ComboLeftSQLFunction()
+  txtMaxFieldSizeValue.text.onChange((_, _, newValue) => JFXUtil.changeControlsVisibility(newValue.nonEmpty , cmbLeftSqlFunction.control))
+  
   private val chkInClause = new CheckBox {
     selected.onChange((_, _, newValue) => txtMaxInClauseCount.disable = !newValue)
   }
+  
   private val txtMaxInClauseCount = JFXUtil.numTextField()
 
 
@@ -66,6 +71,7 @@ class OneConnectionEditor(
   private val lblMaxRows = new Label { text = localization.maxRows+":" }
   private val lblQueryTimeoutInSeconds = new Label { text = localization.queryTimeoutInSeconds+":" }
   private val lblMaxFieldSize = new Label { text = localization.maxFieldSize+":" }
+  private val lblLeftSqlFunction = new Label {text = localization.leftSQLFunction + ":"}
   private val lblUseInClause = new Label { text = localization.useInClause+":" }
   private val lblMaxInClauseCount = new Label { text = localization.maxInClauseCount+":" }
   private val lblCatalog = new Label { text = localization.catalog+":" }
@@ -102,18 +108,20 @@ class OneConnectionEditor(
     add(lblDelimiters, 0, 8)
     add(cmbDelimiters.control, 1, 8)
     add(lblMaxRows, 0, 9)
-    add(new HBox { children = List(txtMaxRows)}, 1, 9)
+    add(HBox(txtMaxRows), 1, 9)
     add(lblQueryTimeoutInSeconds, 0, 10)
-    add(new HBox { children = List(txtQueryTimeoutInSeconds)}, 1, 10)
+    add(HBox(txtQueryTimeoutInSeconds), 1, 10)
     add(lblMaxFieldSize, 0, 11)
-    add(new HBox { children = List(txtMaxFieldSize)}, 1, 11)
-    add(lblUseInClause, 0, 12)
-    add(chkInClause, 1, 12)
-    add(lblMaxInClauseCount, 0, 13)
-    add(new HBox { children = List(txtMaxInClauseCount)}, 1, 13)
-    add(lblCatalog, 0, 14)
-    add(txtCatalog, 1, 14)
-    add(linkToJdbcUrls, 1, 15)
+    add(HBox(txtMaxFieldSizeValue), 1, 11)
+    add(lblLeftSqlFunction, 0, 12)
+    add(HBox(cmbLeftSqlFunction.control), 1, 12)
+    add(lblUseInClause, 0, 13)
+    add(chkInClause, 1, 13)
+    add(lblMaxInClauseCount, 0, 14)
+    add(HBox(txtMaxInClauseCount), 1, 14)
+    add(lblCatalog, 0, 15)
+    add(txtCatalog, 1, 15)
+    add(linkToJdbcUrls, 1, 16)
     GridPane.setHalignment(linkToJdbcUrls, HPos.Right)
     padding = Insets(10)
     vgap = 10
@@ -145,7 +153,8 @@ class OneConnectionEditor(
     cmbDelimiters.show(data.identifierDelimiters)
     txtMaxRows.fromOptInt(data.maxRows)
     txtQueryTimeoutInSeconds.fromOptInt(data.queryTimeoutInSeconds)
-    txtMaxFieldSize.fromOptInt(data.maxFieldSize)
+    txtMaxFieldSizeValue.fromOptInt(data.maxFieldSize.map(_.value))
+    cmbLeftSqlFunction.show(data.maxFieldSize.map(_.leftSQLFunction.getOrElse("")).getOrElse(""))
     chkInClause.selected = data.maxInClauseCount.isDefined
     txtMaxInClauseCount.fromOptInt(data.maxInClauseCount)
     txtMaxInClauseCount.disable = data.maxInClauseCount.isEmpty
@@ -163,7 +172,9 @@ class OneConnectionEditor(
       lblQueryTimeoutInSeconds,
       txtQueryTimeoutInSeconds,
       lblMaxFieldSize,
-      txtMaxFieldSize,
+      txtMaxFieldSizeValue,
+      lblLeftSqlFunction,
+      cmbLeftSqlFunction.control,
       lblUseInClause,
       chkInClause,
       lblMaxInClauseCount,
@@ -193,7 +204,7 @@ class OneConnectionEditor(
         cmbDelimiters.retrieveDelimiters(),
         txtMaxRows.toOptInt,
         txtQueryTimeoutInSeconds.toOptInt,
-        txtMaxFieldSize.toOptInt,
+        txtMaxFieldSizeValue.toOptInt.map(fs => MaxFieldSize(fs, cmbLeftSqlFunction.retrieveLeftFunction())),
         inClauseToData(),
         StringUtil.emptyToNone(txtCatalog.text())
     )
@@ -222,7 +233,7 @@ class OneConnectionEditor(
       txtPassword.text,
       txtMaxRows.text,
       txtQueryTimeoutInSeconds.text,
-      txtMaxFieldSize.text,
+      txtMaxFieldSizeValue.text,
       txtMaxInClauseCount.text,
       txtCatalog.text,
       chkPassword.selected,
@@ -231,7 +242,8 @@ class OneConnectionEditor(
     jarSelector.onChange(safe.onChange(() => useData(toData)))
     List(
       cmbDelimiters,
-      cmbSchemas
+      cmbSchemas,
+      cmbLeftSqlFunction,
     ).foreach(_.onChanged(() => safe.onChange(() => useData(toData))))
   }
 

@@ -2,7 +2,7 @@ package dbtarzan.gui.config
 
 import dbtarzan.config.connections.ConnectionData
 import dbtarzan.config.password.Password
-import dbtarzan.db.{IdentifierDelimiters, SchemaName}
+import dbtarzan.db.{IdentifierDelimiters, MaxFieldSize, SchemaName}
 import dbtarzan.gui.config.connections.ConnectionDataValidation
 import org.scalatest.flatspec.AnyFlatSpec
 
@@ -21,7 +21,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         Some(IdentifierDelimiters('[', ']')),
         Some(300),
         Some(20),
-        Some(1000),
+        Some(MaxFieldSize(1000, None)),
         Some(1000),
         None
       )
@@ -65,7 +65,7 @@ class ConnectionDataValidationTest extends AnyFlatSpec {
         None,
         None,
         None,
-        Some (100),
+        Some (MaxFieldSize(100, None)),
         Some(1000),
         None
       )

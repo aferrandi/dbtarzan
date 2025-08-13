@@ -1,7 +1,7 @@
 package dbtarzan.config.connections
 
 import dbtarzan.config.password.Password
-import dbtarzan.db.{IdentifierDelimiters, SchemaName}
+import dbtarzan.db.{IdentifierDelimiters, MaxFieldSize, SchemaName}
 
 
 /* JDBC configuration for a database */
@@ -29,7 +29,7 @@ case class ConnectionData(
    /* the max time a query can take in seconds */
    queryTimeoutInSeconds : Option[Int],
    /* to avoid slow queries because of very large fields values. In bytes */
-   maxFieldSize: Option[Int],
+   maxFieldSize: Option[MaxFieldSize],
    /* maximum amounts of elements in an in clause for this database */
    maxInClauseCount: Option[Int],
    /* the catalog of the database containing the data, used when the schema is not enough (table user n MySQL)  */

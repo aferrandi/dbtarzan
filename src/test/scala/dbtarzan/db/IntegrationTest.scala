@@ -92,7 +92,8 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
     val structure = DBTableStructure(
         TableDescription("pc", None, None),
         Fields(
-          List(FieldType.INT, FieldType.INT, FieldType.INT, FieldType.INT, FieldType.FLOAT, FieldType.STRING, FieldType.FLOAT).map(t => Field("x", t, ""))
+          List(Field("code", FieldType.INT, ""), Field("model", FieldType.INT, ""), Field("speed", FieldType.INT, ""),
+            Field("ram", FieldType.INT, ""), Field("hd", FieldType.FLOAT, ""), Field("cd", FieldType.STRING, ""), Field("price", FieldType.FLOAT, ""))
           ),
         Some(
           ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "")))
@@ -103,7 +104,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
           ))),
         QueryAttributes.none()
     )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     var rows : Rows = Rows(List())
     new QueryLoader(connection, new FakeLogger()).query(sql, 500, 10 seconds, None, structure.columns, rs => rows = rs)
     assert(Rows(List(Row(List(1, 1232, 500, 64, 5.0, "12x", 600.0)), Row(List(7, 1232, 500, 32, 10.0, "12x", 400.0))))  === rows)
@@ -112,13 +113,13 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "query of PC" should "give the no more rows than the limit" in {
     val structure = DBTableStructure(
         TableDescription("pc", None, None),
-        noFields(),
+        Fields(List(Field("code", FieldType.INT, ""), Field("model", FieldType.STRING, ""))),
         None,
         None,
         None,
         QueryAttributes.none()
       )
-    val sql = SqlBuilder.buildQuerySql(structure)
+    val sql = SqlBuilder.buildQuerySql(structure, None)
     var rows : Rows = Rows(List())
     new QueryLoader(connection, new FakeLogger()).query(sql, 3, 10 seconds, None, structure.columns, rs => rows = rs)
     assert(3  === rows.rows.length)

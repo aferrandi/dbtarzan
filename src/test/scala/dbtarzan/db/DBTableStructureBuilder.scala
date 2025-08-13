@@ -25,8 +25,6 @@ object DBTableStructureBuilder {
 
   def tableName: String = "customer"
 
-  def noFields(): Fields = Fields(List())
-
   def buildRow(name: String, age: String): FKRow = FKRow(buildFields(name, age))
 
   def buildAttributes(): QueryAttributes =
