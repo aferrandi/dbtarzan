@@ -31,7 +31,6 @@ class ComboLeftSQLFunction() extends TControlBuilder with TCombo {
 
 
   def show(leftFunction : String) : Unit = {
-    println(f"show $leftFunction")
     cmbDeLeftFunction.value = leftFunction
     cmbDeLeftFunction.editor.value.text = leftFunction
   }
