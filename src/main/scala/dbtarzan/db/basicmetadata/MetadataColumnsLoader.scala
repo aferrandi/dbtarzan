@@ -57,6 +57,12 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, l
 
   private def readColumns(rs: ResultSet): List[Field] = {
     case class RawField(fieldName: String, fieldType: Int, typeName: String, columnSize: Option[Int], decimalDigits: Option[Int], nullable: Int)
+    def fromRawFieldToField(rawField: RawField): Field = {
+      val fieldType = toType(rawField.fieldType)
+      val description = toTypeDescription(rawField.typeName, rawField.columnSize, rawField.decimalDigits, rawField.nullable)
+      val fieldSize = if (fieldType == FieldType.STRING) rawField.columnSize else None
+      Field(rawField.fieldName, fieldType, description, fieldSize)
+    }
     val rawFields = ResultSetReader.readRS(rs, r => {
       RawField(
         fieldName = r.getString("COLUMN_NAME"),
@@ -68,10 +74,10 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, l
       )
     })
 //    log.info(s"RawField: $rawFields")
-    val fields = rawFields.map(r =>
-      Field(r.fieldName, toType(r.fieldType), toTypeDescription(r.typeName, r.columnSize, r.decimalDigits, r.nullable), r.columnSize),
-    )
-    // log.info(s"Field: $fields")
+    val fields = rawFields.map(fromRawFieldToField)
+    // println(s"Field: $fields")
     fields
   }
+
+
 }

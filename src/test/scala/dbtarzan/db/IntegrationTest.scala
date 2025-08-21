@@ -44,7 +44,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
     assert(
       List(
         Field("CODE", FieldType.INT, "INTEGER [32,0]", None),
-        Field("MODEL", FieldType.STRING, "CHARACTER VARYING [50,0]", None),
+        Field("MODEL", FieldType.STRING, "CHARACTER VARYING [50,0]", Some(50)),
         Field("SPEED", FieldType.INT, "INTEGER [32,0]", None),
         Field("RAM", FieldType.INT, "INTEGER [32,0]", None),
         Field("HD", FieldType.FLOAT, "DOUBLE PRECISION [53,0]", None),
