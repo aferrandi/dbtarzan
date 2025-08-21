@@ -72,7 +72,7 @@ case class SchemaId(databaseId: DatabaseId, simpleDatabaseId: SimpleDatabaseId, 
 case class SchemaIds(schemaIds : List[SchemaId])
 /* an index of a table in the database */
 case class IndexField(name: String, direction: Option[OrderByDirection])
-case class Index(name: String, fields: List[IndexField])
+case class Index(name: String, unique: Boolean, fields: List[IndexField])
 case class Indexes(indexes: List[Index])
 case class SimpleDatabaseInfo(simpleDatabaseId: SimpleDatabaseId, needsPassword: Boolean)
 case class CompositeInfo(compositeId: CompositeId, databaseInfos: List[SimpleDatabaseInfo])

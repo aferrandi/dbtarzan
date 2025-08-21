@@ -8,7 +8,7 @@ import java.sql.{DatabaseMetaData, ResultSet, SQLException}
 
 class MetadataIndexesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
   private case class IndexFieldWithPosition(ordinalPosition: Short, field: IndexField)
-  private case class IndexLine(name: String, fieldWithPosition: IndexFieldWithPosition)
+  private case class IndexLine(name: String, unique: Boolean, fieldWithPosition: IndexFieldWithPosition)
 
   def indexes(tableName : String) : Indexes = try {
     using(meta.getIndexInfo(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName, false, true)) { rs =>
@@ -24,7 +24,7 @@ class MetadataIndexesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
     val stringToLines = lines
       .filter(index => Option(index.name).isDefined)
       .groupBy(_.name).map({
-        case  (indexName, fields)  => Index(indexName, fields.sortBy(_.fieldWithPosition.ordinalPosition).map(_.fieldWithPosition.field))
+        case  (indexName, fields)  => Index(indexName, fields.exists(_.unique), fields.sortBy(_.fieldWithPosition.ordinalPosition).map(_.fieldWithPosition.field))
       })
     stringToLines.toList
   }
@@ -34,8 +34,9 @@ class MetadataIndexesLoader(definition: DBDefinition, meta : DatabaseMetaData) {
       val indexName = r.getString("INDEX_NAME")
       val fieldName = r.getString("COLUMN_NAME")
       val directionText = r.getString("ASC_OR_DESC")
+      val unique = !r.getBoolean("NON_UNIQUE")
       val ordinalPosition = r.getShort("ORDINAL_POSITION")
-      IndexLine(indexName, IndexFieldWithPosition(ordinalPosition, IndexField(fieldName, toDirection(directionText))))
+      IndexLine(indexName, unique, IndexFieldWithPosition(ordinalPosition, IndexField(fieldName, toDirection(directionText))))
     })
 
   /* converts the database column type to a DBTarzan internal type */
