@@ -5,14 +5,17 @@ import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.orderby.UpDownIcons
 import dbtarzan.gui.util.{JFXUtil, TableUtil}
 import dbtarzan.localization.Localization
-import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Parent
-import scalafx.scene.control.{Label, TableCell, TableColumn, TableView}
+import scalafx.scene.control.{Label, TableColumn, TableView}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.VBox
 import scalafx.Includes.*
 
+object IndexInfo {
+  def uniqueText(index: Index): String =
+    if (index.unique) "UNIQUE" else "NOT UNIQUE"
+}
 
 class IndexInfo(localization : Localization, index: Index) extends TControlBuilder {
   case class TableLine(fieldName: String, direction: Option[OrderByDirection])
@@ -24,8 +27,14 @@ class IndexInfo(localization : Localization, index: Index) extends TControlBuild
 
   val content: VBox = new VBox {
     fillWidth = true
-    children = List(new Label(localization.name+": "+index.name), table)
+    children = List(indexLabel(), table)
   }
+
+  private def indexLabel() = new Label {
+      text = s"${localization.name}: ${index.name} ${IndexInfo.uniqueText(index)}"
+      graphic = if (index.unique) new ImageView(JFXUtil.loadIcon("primaryKey.png")) else null
+    }
+
   val upIcon: Image = JFXUtil.loadIcon("up.png")
   val downIcon: Image = JFXUtil.loadIcon("down.png")
 
@@ -50,7 +59,6 @@ class IndexInfo(localization : Localization, index: Index) extends TControlBuild
     val lines = index.fields.map(field => TableLine(field.name, field.direction))
     buffer ++= lines
   }
-
 
   def control : Parent = content
 }
