@@ -24,7 +24,7 @@ case class TableIds(tableIds : List[TableId])
 case class TableNames(names : List[String])
 
 /* a field in a table (name and type) */
-case class Field(name : String,  fieldType : FieldType, typeDescription : String)
+case class Field(name : String,  fieldType : FieldType, typeDescription : String, maxLength: Option[Int])
 /* all fields in a table */
 case class Fields(fields : List[Field])
 /* all fields in a table (with the table name)n*/

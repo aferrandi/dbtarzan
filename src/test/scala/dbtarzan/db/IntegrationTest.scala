@@ -43,13 +43,13 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
     val columnNames = metadataLoader.columnNames("LAPTOP")
     assert(
       List(
-        Field("CODE", FieldType.INT, "INTEGER [32,0]"),
-        Field("MODEL", FieldType.STRING, "CHARACTER VARYING [50,0]"),
-        Field("SPEED", FieldType.INT, "INTEGER [32,0]"),
-        Field("RAM", FieldType.INT, "INTEGER [32,0]"),
-        Field("HD", FieldType.FLOAT, "DOUBLE PRECISION [53,0]"),
-        Field("PRICE", FieldType.FLOAT, "DOUBLE PRECISION [53,0] NULL"),
-        Field("SCREEN",FieldType.INT, "INTEGER [32,0]")
+        Field("CODE", FieldType.INT, "INTEGER [32,0]", None),
+        Field("MODEL", FieldType.STRING, "CHARACTER VARYING [50,0]", None),
+        Field("SPEED", FieldType.INT, "INTEGER [32,0]", None),
+        Field("RAM", FieldType.INT, "INTEGER [32,0]", None),
+        Field("HD", FieldType.FLOAT, "DOUBLE PRECISION [53,0]", None),
+        Field("PRICE", FieldType.FLOAT, "DOUBLE PRECISION [53,0] NULL", None),
+        Field("SCREEN",FieldType.INT, "INTEGER [32,0]", None)
         ) === columnNames.fields)
   }
 
@@ -92,15 +92,15 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
     val structure = DBTableStructure(
         TableDescription("pc", None, None),
         Fields(
-          List(Field("code", FieldType.INT, ""), Field("model", FieldType.INT, ""), Field("speed", FieldType.INT, ""),
-            Field("ram", FieldType.INT, ""), Field("hd", FieldType.FLOAT, ""), Field("cd", FieldType.STRING, ""), Field("price", FieldType.FLOAT, ""))
+          List(Field("code", FieldType.INT, "", None), Field("model", FieldType.INT, "", None), Field("speed", FieldType.INT, "", None),
+            Field("ram", FieldType.INT, "", None), Field("hd", FieldType.FLOAT, "", None), Field("cd", FieldType.STRING, "", None), Field("price", FieldType.FLOAT, "", None))
           ),
         Some(
-          ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "")))
+          ForeignKeyCriteria(List(FKRow(List(FieldWithValue("model", "1232")))), List(Field("model",  FieldType.STRING, "", None)))
           ),
         Some(Filter("speed > 450")),
         Some(OrderByFields(List(
-          OrderByField(Field("model",  FieldType.STRING, ""), OrderByDirection.ASC)
+          OrderByField(Field("model",  FieldType.STRING, "", None), OrderByDirection.ASC)
           ))),
         QueryAttributes.none()
     )
@@ -113,7 +113,7 @@ class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   "query of PC" should "give the no more rows than the limit" in {
     val structure = DBTableStructure(
         TableDescription("pc", None, None),
-        Fields(List(Field("code", FieldType.INT, ""), Field("model", FieldType.STRING, ""))),
+        Fields(List(Field("code", FieldType.INT, "", None), Field("model", FieldType.STRING, "", None))),
         None,
         None,
         None,

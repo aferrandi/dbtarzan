@@ -54,8 +54,8 @@ class SqlFieldBuilderTest extends AnyFlatSpec {
 
   private def fields() = {
     List(
-      Field("name", FieldType.STRING, "the name of the person"),
-      Field("age", FieldType.INT, "the age of the person")
+      Field("name", FieldType.STRING, "the name of the person", None),
+      Field("age", FieldType.INT, "the age of the person", None)
     )
   }
 }

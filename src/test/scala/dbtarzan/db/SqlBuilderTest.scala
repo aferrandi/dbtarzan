@@ -111,7 +111,7 @@ class SqlBuilderTest extends AnyFlatSpec {
   }
 
   private def sampleFields(): Fields =
-    Fields(List(Field("id", FieldType.INT, "INT"), Field("name", FieldType.STRING, "VARCHAR"), Field("age", FieldType.INT, "INT")))
+    Fields(List(Field("id", FieldType.INT, "INT", None), Field("name", FieldType.STRING, "VARCHAR(255)", Some(255)), Field("age", FieldType.INT, "INT", None)))
 
   "a row structure with no attributes" should "give a simple query" in {
     val structure = DBRowStructure(

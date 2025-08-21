@@ -14,7 +14,7 @@ object SqlBuilder {
     val filters = buildFilters(structure, foreignClosure)
     val delimitedTableNameWithSchema = buildTableName(structure.attributes, structure.description.name)
     val orderBy: String = structure.orderByFields.map(SqlPartsBuilder.buildOrderBy).getOrElse("")
-    val selectClause: String = buildSqlClause(structure, maxFieldSize)
+    val selectClause: String = SqlClauseBuilder.buildSqlClause(structure, maxFieldSize)
     val whereClause = SqlPartsBuilder.buildFilters(filters)
     QuerySql(List(
       s"SELECT $selectClause FROM $delimitedTableNameWithSchema",
@@ -23,19 +23,6 @@ object SqlBuilder {
     ).filter(_.nonEmpty).mkString(" "))
   }
 
-  private def buildSqlClause(structure: DBTableStructure, maxFieldSize: Option[MaxFieldSize]): String = {
-    def extractFieldNameNoSubstring(field: Field): String = field.name
-    def extractFieldNameSubstring(textApplier: TextLeftApplier)(field: Field): String =
-      if(field.fieldType == FieldType.STRING )  textApplier.replaceColumnName(field.name) else field.name
-    val extractFieldName: Field => String = maxFieldSize match {
-      case Some(m) => m.leftSQLFunction match {
-        case Some(l) => extractFieldNameSubstring(TextLeftApplier(l, m.value))
-        case None => extractFieldNameNoSubstring
-      }
-      case None => extractFieldNameNoSubstring
-    }
-    structure.columns.fields.map(extractFieldName).mkString(", ")
-  }
 
   def buildSingleRowSql(structure: DBRowStructure) : QuerySql = {
     val delimitedTableNameWithSchema = buildTableName(structure.attributes, structure.tableName)
