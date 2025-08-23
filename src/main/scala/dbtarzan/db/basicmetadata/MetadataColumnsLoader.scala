@@ -13,12 +13,12 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, l
   def columnNames(tableName: String): Fields = try {
     using(meta.getColumns(definition.catalog.orNull, definition.schemaId.map(_.schema.schema).orNull, tableName, "%")) { rs =>
       val list = readColumns(rs)
-      log.debug("Columns with schema " + definition + " loaded")
+      log.debug(s"Columns with schema $definition loaded")
       Fields(list)
     }
   } catch {
-    case se: SQLException => throw new Exception("Reading the columns of the " + tableName + " table got " + ExceptionToText.sqlExceptionText(se), se)
-    case ex: Throwable => throw new Exception("Reading the columns of the " + tableName + " table got", ex)
+    case se: SQLException => throw new Exception(s"Reading the columns of the $tableName table got ${ExceptionToText.sqlExceptionText(se)}", se)
+    case ex: Throwable => throw new Exception(s"Reading the columns of the $tableName table got", ex)
   }
 
 

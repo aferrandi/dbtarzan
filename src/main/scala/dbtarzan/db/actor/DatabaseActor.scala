@@ -89,6 +89,7 @@ class DatabaseActor(
 
   private def queryRows(qry: QueryRows) : Unit = coreHandler.withCore(qry.queryId, core => {
     val sql = SqlBuilder.buildQuerySql(qry.structure, core.attributes.maxFieldSize )
+    log.info(s"Actual SQL: $sql")
     val maxRows = core.limits.maxRows.getOrElse(500)
     val queryTimeouts = calcQueryTimeouts(core)
     core.queryLoader.query(sql, maxRows, queryTimeouts, core.attributes.maxFieldSize.map(_.value), qry.structure.columns, rows =>

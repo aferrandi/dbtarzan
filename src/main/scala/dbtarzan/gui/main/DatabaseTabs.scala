@@ -24,7 +24,7 @@ class DatabaseTabs(guiActor: ActorRef,
 
 
   private def addDatabaseTab(dbActor: ActorRef, databaseId: DatabaseId, tableIds: List[TableId]): Database = {
-    log.debug("add database tab for " + DatabaseIdUtil.databaseIdText(databaseId))
+    log.debug(s"add database tab for ${DatabaseIdUtil.databaseIdText(databaseId)}")
     addDatabaseTabWithGUIActor(dbActor, guiActor, databaseId, tableIds, log)
   }
 
@@ -98,7 +98,7 @@ class DatabaseTabs(guiActor: ActorRef,
   /* shows the tab of a database */
   def showDatabase(databaseId: DatabaseId): Boolean = {
     val optTab = getTabByDatabaseId(databaseId)
-    log.debug(s"database ${databaseId} tab ${optTab}")
+    log.debug(s"database $databaseId tab $optTab")
     optTab.foreach(tab => selectTab(tab))
     optTab.isDefined
   }
