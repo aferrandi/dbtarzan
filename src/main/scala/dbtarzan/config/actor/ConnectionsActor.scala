@@ -21,7 +21,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
                        localization : Localization,
                        keyFilesDirPath : Path
                       ) extends Actor {
-  case class ConnectionsInitState(guiActor: ActorRef, log: Logger)
+  private case class ConnectionsInitState(guiActor: ActorRef, log: Logger)
   
   private val mapDBWorker = mutable.HashMap.empty[DatabaseId, ActorRef]
   private var connectionsDataMap = new ConnectionsDataMap(connectionsDatas)
@@ -50,7 +50,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
          mapDBWorker += databaseId -> dbActor
          dbActor
        }
-       case None => throw new Exception(s"No datas found for ${databaseId}")
+       case None => throw new Exception(s"No data found for $databaseId")
      }
 
 
@@ -61,7 +61,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
          val copyActor = ConnectionBuilder.buildCopyWorker(databaseId, registerDriver, datas, encriptionKey, state.guiActor, state.log, context, localization, keyFilesDirPath, loginPasswords)
          copyActor ! CopyToFile
        }
-       case None => throw new Exception(s"No datas found for ${databaseId}")
+       case None => throw new Exception(s"No data found for $databaseId")
    }
 
   /* if no actors are serving the queries to a specific database, creates them */
@@ -131,7 +131,7 @@ class ConnectionsActor(connectionsDatas : List[ConnectionData],
 
   def receive: PartialFunction[Any, Unit] = {
     case initData : ConnectionsInitData  => {
-      this.initState = Some(new ConnectionsInitState(initData.guiActor, new Logger(initData.logActor)))
+      this.initState = Some(ConnectionsInitState(initData.guiActor, new Logger(initData.logActor)))
       context.become(intiialized)
     }
   }

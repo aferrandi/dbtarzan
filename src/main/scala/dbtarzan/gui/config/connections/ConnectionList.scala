@@ -37,9 +37,11 @@ class ConnectionList(connectionDatasRead : List[ConnectionData], localization : 
 
   private val newConnectionName = "<NEW>"
 
-  def newData(): ConnectionData = ConnectionData("", newConnectionName, "","",None,"", Some(Password("")),None, None, None, None, None, Some(1000), None)
+  private def newData(): ConnectionData =
+    ConnectionData("", newConnectionName, "","",None,"", Some(Password("")),None, None, None, None, None, Some(1000), None)
+
   /* returns Some(selected index) if it makes sense (> )0), None otherwise */
-  def retrieveSelectedIndex(): Option[Int] = {
+  private def retrieveSelectedIndex(): Option[Int] = {
     val index = Some(list.selectionModel().selectedIndex()).filter(_ >= 0)
     // println("Selected index:"+index)
     index
