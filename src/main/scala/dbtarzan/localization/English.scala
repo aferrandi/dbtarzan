@@ -120,7 +120,8 @@ class English extends Localization {
     def editingConnectionFile(fileName: Path): String = "Editing connections configuration file " + fileName
     def editingCompositeFile(fileName: Path): String = "Editing composite configuration file " + fileName
     def indexes = "Indexes"
-    def rowsNumber = "Rows number"
+    def tableRowsNumber = "Rows number from query"
+    def foreignKeyRowsNumber = "Rows number from foreign key"
     def errorConnectingToDatabase(databaseName : String): String = "Cronnecting to the database "+databaseName+" got"
     def errorQueryingDatabase(databaseName : String): String = "Querying the database "+databaseName+" got"
     def errorRequestingTheRows(queryId : QueryId): String = "Requesting the rows for the tab "+queryId+" got"

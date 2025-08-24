@@ -19,7 +19,7 @@ class QueryInfo(sql : QuerySql, localization : Localization, requestRowsNumber :
   }
 
   private val buttonRowsNumber = new Button {
-    text = localization.rowsNumber
+    text = localization.tableRowsNumber
     onAction = (_: ActionEvent) => { requestRowsNumber() }
   }
 

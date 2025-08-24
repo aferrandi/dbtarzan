@@ -120,7 +120,8 @@ class Italian extends Localization {
     def editingConnectionFile(fileName: Path): String = "Sto editando il file di configurazione delle connessioni " + fileName
     def editingCompositeFile(fileName: Path): String = "Sto editando il file di configurazione delle combinazioni " + fileName
     def indexes = "Indici"
-    def rowsNumber = "Numero di righe"
+    def tableRowsNumber = "Numero di righe dalla query"
+    def foreignKeyRowsNumber = "Numero di righe dalla chiave esterna"
     def errorConnectingToDatabase(databaseName : String): String = "La connessione al database "+databaseName+" e' fallita a causa di"
     def errorQueryingDatabase(databaseName : String): String = "L'apertura del database "+databaseName+" e' fallita a causa di"
     def errorRequestingTheRows(queryId : QueryId): String = "La richiesta delle righe di "+queryId+" e' fallita a a causa di"

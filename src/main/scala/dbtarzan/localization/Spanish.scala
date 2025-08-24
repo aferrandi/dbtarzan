@@ -120,7 +120,8 @@ class Spanish extends Localization {
     def editingConnectionFile(fileName: Path): String = "Estoy editando el archivo de configuración de las conexiones " + fileName
     def editingCompositeFile(fileName: Path): String = "Estoy editando el archivo de configuración de las combinaciones " + fileName
     def indexes = "Indices"
-    def rowsNumber = "Numero de filas"
+    def tableRowsNumber = "Numero de filas de la consulta"
+    def foreignKeyRowsNumber = "Numero de filas de la llave extranjera"
     def errorConnectingToDatabase(databaseName : String): String = "La conexión a la base de datos "+databaseName+" y 'fallado debido a"
     def errorQueryingDatabase(databaseName : String): String = "La apertura de la base de datos "+databaseName+" y 'fallado debido a"
     def errorRequestingTheRows(queryId : QueryId): String = "La solicitud de las filas de "+queryId+" y 'fallado debido a"

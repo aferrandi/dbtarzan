@@ -120,7 +120,8 @@ trait Localization {
   def editingConnectionFile(fileName: Path) : String
   def editingCompositeFile(compositeConfigPath: Path): String
   def indexes: String
-  def rowsNumber: String
+  def tableRowsNumber: String
+  def foreignKeyRowsNumber: String
   def errorConnectingToDatabase(databaseName : String) : String
   def errorQueryingDatabase(databaseName : String) : String
   def errorRequestingTheRows(queryId : QueryId) : String

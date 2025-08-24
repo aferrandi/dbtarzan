@@ -26,7 +26,7 @@ class ForeignKeyList(queryId : QueryId, dbActor: ActorRef, localization : Locali
     maxHeight = JFXUtil.averageCharacterHeight() * 7
   }
   private val buttonRowsNumber = new ToggleButton() {
-    text = localization.rowsNumber
+    text = localization.foreignKeyRowsNumber
     selected.onChange((_, _, newValue) => {
       showRowsNumber = newValue
     })
@@ -58,7 +58,7 @@ class ForeignKeyList(queryId : QueryId, dbActor: ActorRef, localization : Locali
   private def keyWithRowCountToText(key: ForeignKey, rowsCount: Int): String =
     List(
       keyToText(key),
-      s"To Rows Number:${rowsCount}",
+      s"To Rows Number:$rowsCount",
     ).mkString("\n")
 
 
