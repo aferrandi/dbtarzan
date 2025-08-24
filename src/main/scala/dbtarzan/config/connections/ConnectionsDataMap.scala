@@ -14,7 +14,7 @@ class ConnectionsDataMap(val connectionDatas : List[ConnectionData]) {
       if (datasPerName.size == 1)
         datasPerName.head
       else
-        throw new Exception("Multiple connections with the name " + name)
-    ).getOrElse(throw new Exception("No connection with the name " + name))
+        throw new Exception(s"Multiple connections with the name $name")
+    ).getOrElse(throw new Exception(s"No connection with the name $name"))
   }
 }

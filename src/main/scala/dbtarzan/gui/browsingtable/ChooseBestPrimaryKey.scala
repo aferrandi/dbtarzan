@@ -3,7 +3,7 @@ package dbtarzan.gui.browsingtable
 import dbtarzan.db.{Field, FieldType, PrimaryKey, PrimaryKeys}
 
 class ChooseBestPrimaryKey(tableFields : List[Field]) {
-  val fieldsByName: Map[String, FieldType] = tableFields.map(f => (f.name, f.fieldType)).toMap
+  private val fieldsByName: Map[String, FieldType] = tableFields.map(f => (f.name, f.fieldType)).toMap
 
   private def noStringFields(key: PrimaryKey) : Boolean =
     !key.fields.map(fieldName => fieldsByName(fieldName)).contains(FieldType.STRING)

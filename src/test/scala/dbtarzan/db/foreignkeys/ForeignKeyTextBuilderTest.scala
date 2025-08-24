@@ -60,13 +60,13 @@ class ForeignKeyTextBuilderTest extends AnyFlatSpec {
   private def inClauseAttributes() = QueryAttributes(None, DBDefinition(None, None), None, Some(1000))
 
   private def buildColumns() = List(
-    Field("name", FieldType.STRING, ""),
-    Field("age", FieldType.INT, "")
+    Field("name", FieldType.STRING, "", None),
+    Field("age", FieldType.INT, "", None)
   )
 
 
   private def builColumnsOnlyName() = List(
-    Field("name", FieldType.STRING, ""),
+    Field("name", FieldType.STRING, "", None),
   )
 
   private def buildRow(name : String, age: String) = FKRow(

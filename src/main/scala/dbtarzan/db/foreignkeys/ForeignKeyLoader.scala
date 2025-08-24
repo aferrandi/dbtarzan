@@ -43,9 +43,9 @@ class ForeignKeyLoader(connection : java.sql.Connection, databaseId: DatabaseId,
   private def foreignColumnsToForeignKeys(list : List[ForeignKeyColumn]) : List[ForeignKey] = {
     val mapByKey = list.groupBy(column => column.key)
     mapByKey.toList.map({case (key, listOfKey) => 
-      foreignKeyColumnsToForeignKey(key,  
-        listOfKey.map(_.fromField).toList, 
-        listOfKey.map(_.toField).toList
+      foreignKeyColumnsToForeignKey(key,
+        listOfKey.map(_.fromField),
+        listOfKey.map(_.toField)
       )
     })
   }

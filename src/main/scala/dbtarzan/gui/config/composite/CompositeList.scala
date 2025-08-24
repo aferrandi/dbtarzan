@@ -11,7 +11,7 @@ import scalafx.scene.control._
 case class CompositeErrors(compositeId: CompositeId, errors : List[String])
 
 object CompositeList {
- val newCompositeName = "<NEW>"
+ private val newCompositeName = "<NEW>"
 }
 
 

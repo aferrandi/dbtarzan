@@ -9,10 +9,10 @@ import org.scalatest.flatspec.AnyFlatSpec
 class TableColumnsMaxSizesTest extends AnyFlatSpec {
   "maxLength" should "contain the maximum lengths of rows and header" in {
     val sizes = new TableColumnsMaxSizes(List(
-        Field("id", FieldType.STRING, ""), 
-        Field("verylong", FieldType.STRING, ""),
-        Field("muchlongerthanthat", FieldType.STRING, ""),
-        Field("shorter", FieldType.STRING, "")
+        Field("id", FieldType.STRING, "", Some(10)), 
+        Field("verylong", FieldType.STRING, "", Some(1000)),
+        Field("muchlongerthanthat", FieldType.STRING, "", Some(10000)),
+        Field("shorter", FieldType.STRING, "", Some(30))
     ), new Random(32321))
     sizes.addRows(List(
         Row(List("1", "a", "b", "0123456789")),
@@ -24,8 +24,8 @@ class TableColumnsMaxSizesTest extends AnyFlatSpec {
   }
    "maxLength for zero lines" should "not give an excepion"  in {
     val sizes = new TableColumnsMaxSizes(List(
-        Field("id", FieldType.STRING, ""), 
-        Field("verylong", FieldType.STRING, "")
+        Field("id", FieldType.STRING, "", Some(10)), 
+        Field("verylong", FieldType.STRING, "", Some(1000))
         ), new Random(32321))
     sizes.addRows(List.empty)
    }

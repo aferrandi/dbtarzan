@@ -10,9 +10,9 @@ object DBTableStructureBuilder {
     ForeignKeyCriteria(rows, buildColumns())
   }
 
-  def buildNameColumn(): Field = Field("name", FieldType.STRING, "")
+  def buildNameColumn(): Field = Field("name", FieldType.STRING, "", None)
 
-  def buildAgeColumn(): Field = Field("age", FieldType.INT, "")
+  def buildAgeColumn(): Field = Field("age", FieldType.INT, "", None)
 
   def buildColumns(): List[Field] =
     List(

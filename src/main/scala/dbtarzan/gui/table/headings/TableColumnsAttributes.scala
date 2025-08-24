@@ -14,7 +14,7 @@ class TableColumnsAttributes(keys : List[String]) {
       keysToAdd.map(toHeadingText)
     } catch {
       case e: Exception =>
-        throw new Exception("Finding key in keysAttributes " + keysAttributes.keys.mkString(",") + " got", e)
+        throw new Exception(s"Finding key in keysAttributes ${keysAttributes.keys.mkString(",")} got", e)
     }
   }
 

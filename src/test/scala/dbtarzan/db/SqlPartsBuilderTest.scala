@@ -8,8 +8,8 @@ class SqlPartsBuilderTest extends AnyFlatSpec {
   "an order by with rwo fields" should "give an order by clause" in {
     val sql = SqlPartsBuilder.buildOrderBy(
       OrderByFields(List(
-        OrderByField(Field("name", FieldType.STRING, "the name of the person"), OrderByDirection.DESC),
-        OrderByField(Field("age", FieldType.INT, "the age of the person"), OrderByDirection.ASC)
+        OrderByField(Field("name", FieldType.STRING, "the name of the person", None), OrderByDirection.DESC),
+        OrderByField(Field("age", FieldType.INT, "the age of the person", None), OrderByDirection.ASC)
       ))
     )
     assert("ORDER BY name DESC, age ASC" === sql)
@@ -18,7 +18,7 @@ class SqlPartsBuilderTest extends AnyFlatSpec {
   "an order by with one field" should "give an order by clause" in {
     val sql = SqlPartsBuilder.buildOrderBy(
       OrderByFields(List(
-        OrderByField(Field("name", FieldType.STRING, "the name of the person"), OrderByDirection.DESC),
+        OrderByField(Field("name", FieldType.STRING, "the name of the person", None), OrderByDirection.DESC),
       ))
     )
     assert("ORDER BY name DESC" === sql)
@@ -32,7 +32,7 @@ class SqlPartsBuilderTest extends AnyFlatSpec {
   }
 
   "an order by field" should "give an order by clause with one element" in {
-    val sql = SqlPartsBuilder.buildOrderByOne(OrderByField(Field("name", FieldType.STRING, "the name of the person"), OrderByDirection.DESC))
+    val sql = SqlPartsBuilder.buildOrderByOne(OrderByField(Field("name", FieldType.STRING, "the name of the person", None), OrderByDirection.DESC))
     assert("name DESC" === sql)
   }
 
