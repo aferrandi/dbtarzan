@@ -5,7 +5,7 @@ ROOTDIR=$1
 WINDIR=$ROOTDIR/mkwin
 VERSION=$2
 SCALA_VERSION=$3
-JRE=$WINDIR/jre17
+JRE=$WINDIR/jre21
 echo "ROOTDIR $ROOTDIR"
 echo "WINDIR $WINDIR"
 echo "VERSION $VERSION"
@@ -26,7 +26,7 @@ $ROOTDIR/../../bin/launch4j/launch4j $LAUNCH4J_CONFIG
 if [ $? -eq 0 ]
 then
   rm -r $JRE
-  wget -O $JRE.zip "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.8%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.8_7.zip"
+  wget -O $JRE.zip "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8%2B9/OpenJDK21U-debugimage_x64_windows_hotspot_21.0.8_9.zip"
   unzip $JRE.zip
   mv jdk* $JRE
   makensis -DVERSION=$VERSION $WINDIR/nsis.nsi

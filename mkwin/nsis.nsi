@@ -54,7 +54,7 @@ Section "DBTarzan Base" SecBase
 
   ;ADD YOUR OWN FILES HERE...
   File "dbtarzan_${VERSION}.exe"
-  File /r "jre17"
+  File /r "jre21"
   CreateDirectory "$SMPROGRAMS\DBTarzan"
   CreateDirectory "$APPDATA\DBTarzan"
   CreateShortCut "$SMPROGRAMS\DBTarzan\DBTarzan.lnk" "$INSTDIR\dbtarzan_${VERSION}.exe" "--configPath=$APPDATA\DBTarzan"

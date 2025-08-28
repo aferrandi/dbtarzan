@@ -13,7 +13,7 @@ class SqlFieldBuilder(columns : List[Field], attributes : QueryAttributes) {
   def typeOfField(field : String) : FieldType =
     typeByName.get(field.toUpperCase) match {
       case Some(fieldType) => fieldType
-      case None => throw new Exception(f"field $field  not found in column types ${typeByName.keys}")
+      case None => throw new Exception(f"field $field not found in column types ${typeByName.keys}")
     }
 
   private def buildFieldValueWithType(fieldWithValue : FieldWithValue, fieldType : FieldType): String = {
