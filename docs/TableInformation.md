@@ -21,7 +21,7 @@ Shows the **query** that extracted the content displayed in the table.
 It can be **copied**, just selecting it and copying the selection.
 So you can for example run the query in **other applications**.
 
-Pressing the button **Rows number** on the bottom, shows the number of rows retrieved by the query (not only the ones displayed, all of them). 
+Pressing the button **Rows number from query** on the bottom, shows the number of rows retrieved by the query (not only the ones displayed, all of them). 
 
 ### Table Fields
 
@@ -35,7 +35,7 @@ The **copy content to clipboard menu** copies the whole table structure (fields 
 
 ### Table Indexes
 
-![Table fields](images/tableIndexes.png)
+![Table indexes](images/tableIndexes.png)
 
 Shows a list of the indexes of a table.
 Eech index is displayed with:
