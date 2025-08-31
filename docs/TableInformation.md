@@ -39,7 +39,7 @@ The **copy content to clipboard menu** copies the whole table structure (fields 
 
 Shows a list of the indexes of a table.
 Eech index is displayed with:
-* its **name**
+* its **name** and its **uniqueness** (unique - not unique). If it is unique a blue key icon is displayed. 
 * a list of the **fields** included in the index, each with its **direction** in the index (ascending, descending)
 
 Other informations, for example the fields' types, can be found in the **table fields**.
