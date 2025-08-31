@@ -48,11 +48,11 @@ class ForeignKeyList(queryId : QueryId, dbActor: ActorRef, localization : Locali
 
   private def keyToText(key: ForeignKey): String =
     List(
-      s"Name:${key.name}",
-      f"From Table:${TableIdLabel.toLabel(key.from.table)}",
-      s"From Fields:${key.from.fields.mkString(" ")}",
-      s"To Table:${TableIdLabel.toLabel(key.to.table)}",
-      s"To Fields:${key.to.fields.mkString(" ")}",
+      s"${localization.name}: ${key.name}",
+      f"${localization.tableFrom}: ${TableIdLabel.toLabel(key.from.table)}",
+      s"${localization.columnsFrom}: ${key.from.fields.mkString(" ")}",
+      s"${localization.tableTo}: ${TableIdLabel.toLabel(key.to.table)}",
+      s"${localization.columnsTo}: ${key.to.fields.mkString(" ")}",
     ).mkString("\n")
 
   private def keyWithRowCountToText(key: ForeignKey, rowsCount: Int): String =
@@ -68,8 +68,8 @@ class ForeignKeyList(queryId : QueryId, dbActor: ActorRef, localization : Locali
   /* the column with the from table description  */
   private def tableToColumn() = TableUtil.buildTextTableColumn[ForeignKey](localization.tableTo, x => TableIdLabel.toLabel(x.value.to.table))
   
-  /* the column with the from table description  */
-  private def tableToFields() = TableUtil.buildTextTableColumn[ForeignKey](localization.columnsFrom, _.value.from.fields.mkString(" "))
+  /* the column with the to table description  */
+  private def tableToFields() = TableUtil.buildTextTableColumn[ForeignKey](localization.columnsTo, _.value.to.fields.mkString(" "))
   
   /* build the column on the left, that shows the icon (error, warn, info) */
   private def directionColumn() = TableUtil.buildImageTableColumn((row: TableColumn.CellDataFeatures[ForeignKey, Image]) => ForeignKeyIcons.iconForDirection(row.value.direction))

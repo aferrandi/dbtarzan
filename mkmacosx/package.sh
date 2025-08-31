@@ -5,19 +5,19 @@
 DIR=$1
 VERSION=$2
 SCALA_VERSION=$3
-JRE=jre17
+JRE=jre21
 # delete previous versions
 rm -r $DIR/DBTarzan-*.app*
 rm $DIR/dbtarzan-assembly-*.jar
 # download jre
 rm -r $DIR/$JRE
-wget -O $DIR/$JRE.tar.gz "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.8%2B7/OpenJDK17U-jre_aarch64_mac_hotspot_17.0.8_7.tar.gz"
+wget -O $DIR/$JRE.tar.gz "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8%2B9/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.8_9.tar.gz"
 tar -zxvf $DIR/$JRE.tar.gz -C $DIR
 mv $DIR/jdk* $DIR/$JRE
 # create app
 APP=DBTarzan-$VERSION.app
 cp $DIR/../prjmac/target/scala-$SCALA_VERSION/dbtarzan-assembly-$VERSION.jar $DIR
-(cd $DIR; jar2app dbtarzan-assembly-$VERSION.jar -n "DBTarzan-$VERSION" -i monkey-face-cartoon_256x256.icns -j "-DconfigPath=\$HOME/Library/ApplicationSupport/dbtarzan" -e universalJavaApplicationStub -r $DIR/jre17)
+(cd $DIR; jar2app dbtarzan-assembly-$VERSION.jar -n "DBTarzan-$VERSION" -i monkey-face-cartoon_256x256.icns -j "-DconfigPath=\$HOME/Library/ApplicationSupport/dbtarzan" -e universalJavaApplicationStub -r $DIR/jre21)
 # fix executable (https://github.com/tofi86/universalJavaApplicationStub)
 cp $DIR/universalJavaApplicationStub $DIR/$APP/Contents/MacOS
 #unzip -d $DIR/$APP/Contents/PlugIns/jre17/Contents/Home/lib $DIR/dbtarzan-assembly-$VERSION.jar  "*.dylib"
