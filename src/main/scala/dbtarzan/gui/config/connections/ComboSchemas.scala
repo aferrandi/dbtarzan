@@ -12,7 +12,7 @@ import scalafx.util.StringConverter
 import scala.collection.immutable
 
 /* A combo box from which to select the identfier delimiters that get stored in the configuration file */
-class ComboSchemas() extends TControlBuilder with TCombo {
+class ComboSchemas extends TControlBuilder with TCombo {
   private val schemas = ObservableBuffer.empty[Option[SchemaName]]
   private val cmbSchemas = new ComboBox[Option[SchemaName]] {
     items = schemas

@@ -69,7 +69,7 @@ class SingleEditor(
   private def buildTableCell() = new ListCell[TableIdForCombo] {
     item.onChange {
       (_, _, value) => {
-          val textValue = Option(value).map(value => value.comboLabel).getOrElse("");
+          val textValue = Option(value).map(value => value.comboLabel).getOrElse("")
           text.value = textValue
         }
       }

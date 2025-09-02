@@ -54,6 +54,7 @@ class CheckedRowFromRow(checked : CheckedRowsBuffer, selectionModel: MultipleSel
     case FieldType.INT => new IntegerProperty(this, field.name, value.asInstanceOf[Int])
     case FieldType.FLOAT => new DoubleProperty(this, field.name, value.asInstanceOf[Double])
     case FieldType.BINARY => new StringProperty(this, field.name, truncateToFirstLine(value.asInstanceOf[Binary].asString))
+    case FieldType.OTHER => new StringProperty(this, field.name, toDisplayOnlyOneLine(field, value.asInstanceOf[String]))
   }
 
 	

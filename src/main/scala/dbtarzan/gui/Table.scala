@@ -19,7 +19,7 @@ import scalafx.scene.image.ImageView
 /** The GUI table control showing the content of a database table in a GUI table*/
 class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localization : Localization, log: Logger) extends TControlBuilder {
   val fields : List[Field] = dbTable.fields
-  log.debug("ColumnNames: "+fields.map(f => f.name+ DBEnumsText.fieldTypeToText(f.fieldType)))
+  log.debug("ColumnNames: "+fields.map(f => f.name+ f.fieldType.toString))
   /* the content of the table in terms of rows. Updated by the table itself */
   private val buffer = ObservableBuffer.empty[CheckedRow]
   /* keeps track of the rows that have the check box turned on */
@@ -43,6 +43,7 @@ class Table(guiActor : ActorRef, queryId : QueryId, dbTable : DBTable, localizat
       case FieldType.INT => TableColumnsBuild.buildIntColumn(field, i)
       case FieldType.FLOAT => TableColumnsBuild.buildFloatColumn(field, i)
       case FieldType.BINARY => TableColumnsBuild.buildBinaryColumn(field, i)
+      case FieldType.OTHER => TableColumnsBuild.buildOtherColumn(field, i)
     } })
     editable = true
     selectionModel().selectionMode() = SelectionMode.Multiple

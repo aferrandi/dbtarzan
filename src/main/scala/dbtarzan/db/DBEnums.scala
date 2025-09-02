@@ -2,7 +2,7 @@ package dbtarzan.db
 
 /* the fields types that are normally used in a foreign key */
 enum FieldType {
-  case STRING, INT, FLOAT, BINARY
+  case STRING, INT, FLOAT, BINARY, OTHER
 }
 
 

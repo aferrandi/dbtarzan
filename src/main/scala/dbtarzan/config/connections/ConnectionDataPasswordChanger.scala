@@ -11,7 +11,7 @@ case class EncryptionKeyChange(
 class ConnectionDataPasswordChanger(change : EncryptionKeyChange) {
     private val originalEncryptionKey = change.originalEncryptionKey.getOrElse(PasswordEncryption.defaultEncryptionKey)
     private val decrypter = new PasswordEncryption(originalEncryptionKey)
-    private val newEncryptionKey = change.newEncryptionKey.getOrElse(PasswordEncryption.defaultEncryptionKey);
+    private val newEncryptionKey = change.newEncryptionKey.getOrElse(PasswordEncryption.defaultEncryptionKey)
     private val encrypter = new PasswordEncryption(newEncryptionKey)
 
     def updateDatas(configPath : Path) : Unit = {

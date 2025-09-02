@@ -9,7 +9,7 @@ import dbtarzan.gui.interfaces.TControlBuilder
 import scalafx.event.ActionEvent
 
 /* A combo box from which to select the identfier delimiters that get stored in the configuration file */
-class ComboDelimiters() extends TControlBuilder with TCombo {
+class ComboDelimiters extends TControlBuilder with TCombo {
   private val possibleDelimiters : ObservableBuffer[Option[IdentifierDelimiters]] = ObservableBuffer.from(List(
     None,
     Some(IdentifierDelimitersValues.squareBrackets),

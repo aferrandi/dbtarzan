@@ -82,7 +82,7 @@ class RowDetailsCellText(field: Field, localization: Localization, log: Logger) 
 
   private def valueAsText(): String = {
     field.fieldType match {
-      case FieldType.STRING => currentValueMaybe.map(_.asInstanceOf[String]).getOrElse("")
+      case FieldType.STRING | FieldType.OTHER => currentValueMaybe.map(_.asInstanceOf[String]).getOrElse("")
       case FieldType.BINARY => currentValueMaybe.map(_.asInstanceOf[Binary].asString).getOrElse("")
       case _ => throw new RuntimeException(s"Field type not recognized ${field.fieldType} in field ${field.name}")
     }

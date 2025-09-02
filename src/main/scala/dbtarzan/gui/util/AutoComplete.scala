@@ -1,4 +1,4 @@
-package dbtarzan.gui.util;
+package dbtarzan.gui.util
 
 import scalafx.geometry.Side
 import scalafx.scene.control.{ContextMenu, MenuItem, TextField}

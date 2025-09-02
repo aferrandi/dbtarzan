@@ -10,7 +10,7 @@ import scalafx.scene.layout.VBox
 
 class RowDetailsCell(field: Field, localization: Localization, log: Logger) {
   private val cell = field.fieldType match {
-    case FieldType.STRING | FieldType.BINARY => new RowDetailsCellText(field, localization, log)
+    case FieldType.STRING | FieldType.BINARY | FieldType.OTHER => new RowDetailsCellText(field, localization, log)
     case _ => new RowDetailsCellNumber(field)
   }
 

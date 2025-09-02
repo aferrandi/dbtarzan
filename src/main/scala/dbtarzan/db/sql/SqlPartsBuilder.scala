@@ -1,6 +1,6 @@
 package dbtarzan.db.sql
 
-import dbtarzan.db.{DBEnumsText, FieldType, FieldValue, FieldWithValue, OrderByField, OrderByFields}
+import dbtarzan.db.{FieldType, FieldValue, FieldWithValue, OrderByField, OrderByFields}
 
 object SqlPartsBuilder {
   def buildFilters(filters : List[String]) : String = {
@@ -13,7 +13,7 @@ object SqlPartsBuilder {
   }
 
   def buildOrderByOne(orderByField: OrderByField) : String =
-    orderByField.field.name + " " + DBEnumsText.orderByDirectionToText(orderByField.direction)
+    s"${orderByField.field.name} ${orderByField.direction.toString}"
 
   def buildOrderBy(orderByFields: OrderByFields) : String = 
     if (orderByFields.fields.nonEmpty)

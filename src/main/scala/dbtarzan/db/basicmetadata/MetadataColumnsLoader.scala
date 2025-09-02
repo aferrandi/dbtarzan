@@ -20,16 +20,15 @@ class MetadataColumnsLoader(definition: DBDefinition, meta : DatabaseMetaData, l
     case se: SQLException => throw new Exception(s"Reading the columns of the $tableName table got ${ExceptionToText.sqlExceptionText(se)}", se)
     case ex: Throwable => throw new Exception(s"Reading the columns of the $tableName table got", ex)
   }
-
-
   /* converts the database column type to a DBTarzan internal type */
   private def toType(sqlType: Int): FieldType =
     sqlType match {
-      case java.sql.Types.CHAR => FieldType.STRING
+      case java.sql.Types.CHAR | java.sql.Types.VARCHAR | java.sql.Types.LONGVARCHAR | java.sql.Types.CLOB |
+          java.sql.Types.NCHAR | java.sql.Types.NVARCHAR | java.sql.Types.LONGNVARCHAR | java.sql.Types.NCLOB  => FieldType.STRING
       case java.sql.Types.INTEGER => FieldType.INT
       case java.sql.Types.FLOAT | java.sql.Types.DOUBLE => FieldType.FLOAT
       case java.sql.Types.BINARY | java.sql.Types.BLOB | java.sql.Types.VARBINARY | java.sql.Types.LONGVARBINARY => FieldType.BINARY
-      case _ => FieldType.STRING
+      case _ => FieldType.OTHER
     }
 
   private def toSizeDescription(columnSize: Option[Int], decimalDigits: Option[Int]): Option[String] = {

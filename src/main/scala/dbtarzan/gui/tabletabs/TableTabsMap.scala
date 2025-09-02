@@ -13,7 +13,7 @@ trait TTableForMapWithId {
 case class TTableWithTab[TBL <: TTableForMapWithId](table : TBL, tab : Tab)
 
 /* One tab for each table */
-class TableTabsMap[TBL <: TTableForMapWithId]() {
+class TableTabsMap[TBL <: TTableForMapWithId] {
   private val mapTable = mutable.HashMap.empty[QueryId, TTableWithTab[TBL]]
 
   def idsFromTabs(toCloseTabs : List[javafx.scene.control.Tab]) : List[QueryId] = 

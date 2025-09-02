@@ -59,6 +59,7 @@ class QueryLoader(connection : java.sql.Connection, log: TLogger) {
       case FieldType.INT => rs.getInt(i)
       case FieldType.FLOAT => rs.getDouble(i)
       case FieldType.BINARY => Binary(rs.getBytes(i))
+      case FieldType.OTHER => rs.getString(i)
     }
   }
 }

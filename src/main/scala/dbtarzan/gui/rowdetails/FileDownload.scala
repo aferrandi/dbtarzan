@@ -11,6 +11,7 @@ object FileDownload {
       field.fieldType match {
         case FieldType.STRING => writeTextFile(file, value.asInstanceOf[String])
         case FieldType.BINARY => writeBinaryFile(file, value.asInstanceOf[Binary])
+        case FieldType.OTHER => writeTextFile(file, value.asInstanceOf[String])
         case _ => throw new RuntimeException(s"Field type not recognized ${field.fieldType} in field ${field.name}")
       }
   }
