@@ -1,15 +1,21 @@
 package dbtarzan.gui.config.connections
 
 import dbtarzan.gui.interfaces.TControlBuilder
-import scalafx.scene.control.{ TextField, Button }
-import scalafx.scene.layout.{ GridPane, ColumnConstraints, Priority }
+import scalafx.scene.control.{Button, TextField}
+import scalafx.scene.layout.{ColumnConstraints, GridPane, Priority}
 import scalafx.scene.Parent
 import scalafx.stage.FileChooser
-import scalafx.stage.FileChooser._
+import scalafx.stage.FileChooser.*
 import scalafx.event.ActionEvent
-import scalafx.Includes._
+import scalafx.Includes.*
+
 import java.io.File
 import dbtarzan.localization.Localization
+
+object JarSelector {
+  def normalizeWindowsPath(path: String): String =
+    path.replace("\\", "/")
+}
 
 /* The list of database to choose from*/
 class JarSelector(localization : Localization) extends TControlBuilder {
@@ -46,16 +52,22 @@ class JarSelector(localization : Localization) extends TControlBuilder {
       val optSelectedJar = Option(fileChooser.showOpenDialog(grid.scene().window()))
 
       optSelectedJar.foreach(file =>
-        txtJar.text = file.getPath
+        txtJar.text = JarSelector.normalizeWindowsPath(file.getPath)
       )
   }
+
+  private def isWindows: Boolean =
+    Option(System.getProperty("os.name")) match {
+      case Some(osName) => osName.toLowerCase().contains("windows")
+      case None => false
+    }
 
   def jarFilePath() : String = txtJar.text()
 
   def show(optJarFilePath : Option[String]) : Unit = {
     this.optJarFilePath = optJarFilePath
     optJarFilePath.foreach(jarFilePath => 
-      txtJar.text = jarFilePath
+      txtJar.text = if (isWindows) JarSelector.normalizeWindowsPath(jarFilePath) else jarFilePath
     )
   }
 
