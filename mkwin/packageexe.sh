@@ -26,7 +26,7 @@ $ROOTDIR/../../bin/launch4j/launch4j $LAUNCH4J_CONFIG
 if [ $? -eq 0 ]
 then
   rm -r $JRE
-  wget -O $JRE.zip "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8%2B9/OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip"
+  wget -O $JRE.zip "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8%2B9/OpenJDK21U-jre_x64_windows_hotspot_21.0.8_9.zip"
   unzip $JRE.zip
   mv jdk* $JRE
   makensis -DVERSION=$VERSION $WINDIR/nsis.nsi
