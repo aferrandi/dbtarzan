@@ -11,7 +11,7 @@ rm -r $DIR/DBTarzan-*.app*
 rm $DIR/dbtarzan-assembly-*.jar
 # download jre
 rm -r $DIR/$JRE
-wget -O $DIR/$JRE.tar.gz "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8%2B9/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.8_9.tar.gz"
+wget -O $DIR/$JRE.tar.gz "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8%2B9/OpenJDK21U-jre_aarch64_mac_hotspot_21.0.8_9.tar.gz"
 tar -zxvf $DIR/$JRE.tar.gz -C $DIR
 mv $DIR/jdk* $DIR/$JRE
 # create app
