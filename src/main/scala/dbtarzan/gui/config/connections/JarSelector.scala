@@ -67,7 +67,7 @@ class JarSelector(localization : Localization) extends TControlBuilder {
   def show(optJarFilePath : Option[String]) : Unit = {
     this.optJarFilePath = optJarFilePath
     optJarFilePath.foreach(jarFilePath => 
-      txtJar.text = if (isWindows) JarSelector.normalizeWindowsPath(jarFilePath) else jarFilePath
+      txtJar.text = jarFilePath
     )
   }
 
