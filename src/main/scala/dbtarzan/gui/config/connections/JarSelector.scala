@@ -51,8 +51,10 @@ class JarSelector(localization : Localization) extends TControlBuilder {
 
       val optSelectedJar = Option(fileChooser.showOpenDialog(grid.scene().window()))
 
-      optSelectedJar.foreach(file =>
-        txtJar.text = JarSelector.normalizeWindowsPath(file.getPath)
+      optSelectedJar.foreach(file => {
+        val path = file.getPath
+        txtJar.text = if (isWindows) JarSelector.normalizeWindowsPath(path) else path
+      }
       )
   }
 
