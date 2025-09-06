@@ -10,21 +10,23 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 
 DBTarzan changelog
 =================
-- Release 1.34
+- Release 1.36
 
-Possibility to filter the foreign keys with a text, useful when having many foreign keys in the table.
+use LEFT functions on large strings in the SQL queries to improve performance and prevent timeouts. Specify the LEFT function to use for the database in the connection configuration to do this.
 
-Possibility to filter the databases names with a text, useful when having many databases. In cases of composites matches also the simple databases contained in the composites.
+the foreign keys list becomes a grid with the most important columns (table to, columns from, columns to) and a text box showing all the information related to a single foreign key (included the number of tows which will be displayed following it, if desired)
 
-Uses JavaFX 21 and the related ScalaFX library.
+radio button under the foreign key list to show the number of rows that will be displayed if you follow one foreign key. When exploring databases with many foreign keys it is useful to know which foreign keys is meaningful to follow (not the ones with 0 rows).
 
-Fixed the filtering of tables so that also the fields are matched against the pattern.
+adds an icon and a text to the unique indexes in the indexes info view, so that it is clear which indexes are unique and which are not.
 
-- Release 1.33
+**WINDOWS: not working existing database connections can be fixed reloading the JDBC driver JAR file in the connection editor.**
 
-Shows the number of rows in the table pressing the button Rows number under the query text o the bottom right panel.
+- Release 1.35
 
-New log actor that writes all log in the dbactor.log file and sends the INFO, WARNING, ERROR logs to the GUI so that they can be displayed in the log view as they did before.
+removed the possibility to have non encrypted passwords in the connection config file.
+
+possibility to use IN clauses instead of ORs in the queries resulting from tables traversal using foreign keys.
 
 
 
