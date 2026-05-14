@@ -4,15 +4,22 @@ import dbtarzan.db.{CompositeId, IdentifierDelimiters, MaxFieldSize, SchemaName}
 import grapple.json.{JsonInput, JsonOutput, *, given}
 import dbtarzan.config.password.{*, given}
 import dbtarzan.config.connections.ConnectionData
+import grapple.json
 
 given JsonInput[IdentifierDelimiters] with
-  def read(json: JsonValue): IdentifierDelimiters = IdentifierDelimiters(json("start").as[String].charAt(0), json("end").as[String].charAt(0))
+  def read(json: JsonValue): IdentifierDelimiters = {
+    val jsonObj = json.as[JsonObject]
+    IdentifierDelimiters(jsonObj("start").as[String].charAt(0), jsonObj("end").as[String].charAt(0))
+  }
 
 given JsonOutput[IdentifierDelimiters] with
   def write(u: IdentifierDelimiters): JsonObject = Json.obj("start" -> u.start.toString, "end" -> u.end.toString)
 
 given JsonInput[MaxFieldSize] with
-  def read(json: JsonValue): MaxFieldSize = MaxFieldSize(json("value").as[Int], json.readOption("leftSQLFunction"))
+  def read(json: JsonValue): MaxFieldSize = {
+    val jsonObj = json.as[JsonObject]
+    MaxFieldSize(jsonObj("value").as[Int], jsonObj.readOption("leftSQLFunction"))
+  }
 
 given JsonOutput[MaxFieldSize] with
   def write(u: MaxFieldSize): JsonObject = Json.obj("value" -> u.value, "leftSQLFunction" -> u.leftSQLFunction)
@@ -27,21 +34,22 @@ given JsonInput[ConnectionData] = {
   def readMaxFieldSizeOrInt(value: JsonValue): MaxFieldSize =
     eitherJsonInput[MaxFieldSize,Int].read(value).fold(identity, MaxFieldSize(_, None))
   json =>
+    val jsonObj = json.as[JsonObject]
     ConnectionData(
-      json.getString("jar"),
-      json.getString("name"),
-      json.getString("driver"),
-      json.getString("url"),
-      json.readOption[SchemaName]("schema"),
-      json.getString("user"),
-      json.readOption[Password]("password"),
-      json.readOption[Int]("instances"),
-      json.readOption[IdentifierDelimiters]("identifierDelimiters"),
-      json.readOption[Int]("maxRows"),
-      json.readOption[Int]("queryTimeoutInSeconds"),
-      json.get("maxFieldSize").filter(JsonNull.!=).map(v => readMaxFieldSizeOrInt(v)),
-      json.readOption[Int]("maxInClauseCount"),
-      json.readOption[String]("catalog")
+      jsonObj.getString("jar"),
+      jsonObj.getString("name"),
+      jsonObj.getString("driver"),
+      jsonObj.getString("url"),
+      jsonObj.readOption[SchemaName]("schema"),
+      jsonObj.getString("user"),
+      jsonObj.readOption[Password]("password"),
+      jsonObj.readOption[Int]("instances"),
+      jsonObj.readOption[IdentifierDelimiters]("identifierDelimiters"),
+      jsonObj.readOption[Int]("maxRows"),
+      jsonObj.readOption[Int]("queryTimeoutInSeconds"),
+      jsonObj.get("maxFieldSize").filter(JsonNull.!=).map(v => readMaxFieldSizeOrInt(v)),
+      jsonObj.readOption[Int]("maxInClauseCount"),
+      jsonObj.readOption[String]("catalog")
     )
 }
 

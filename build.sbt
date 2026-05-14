@@ -44,10 +44,10 @@ lazy val commonConfiguration = Seq(
 )
 
 lazy val standardLibraries = Seq (
-  "com.github.losizm" %% "grapple" % "17.0.0",
-  "org.apache.pekko" %% "pekko-actor" % "1.1.3",
-  "com.h2database" % "h2" % "2.2.220" % Test,
-  "org.scalatest" %% "scalatest" % "3.2.16" % Test,
+  "com.github.losizm" %% "grapple" % "18.1.0",
+  "org.apache.pekko" %% "pekko-actor" % "1.5.0",
+  "com.h2database" % "h2" % "2.4.240" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.20" % Test,
   ("org.scalafx" %% "scalafx" % scalaFxVersion).excludeAll(
     // you cannot use the ibraries requested by scalafx because they are only the ones in the OS of this PC
     ExclusionRule(organization="org.openjfx")

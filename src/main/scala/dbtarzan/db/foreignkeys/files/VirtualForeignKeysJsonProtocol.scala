@@ -4,29 +4,32 @@ import dbtarzan.db.{VirtualalForeignKey, CompositeId, DatabaseId, FieldsOnTable,
 import grapple.json.{*, given}
 
 given JsonInput[SimpleDatabaseId] with
-  def read(json: JsonValue): SimpleDatabaseId = SimpleDatabaseId(json("databaseName"))
+  def read(json: JsonValue): SimpleDatabaseId = SimpleDatabaseId(json.as[JsonObject]("databaseName"))
 
 given JsonOutput[SimpleDatabaseId] with
   def write(u: SimpleDatabaseId): JsonObject = Json.obj("databaseName" -> u.databaseName)
 
 given JsonInput[CompositeId] with
-  def read(json: JsonValue): CompositeId = CompositeId(json("compositeName"))
+  def read(json: JsonValue): CompositeId = CompositeId(json.as[JsonObject]("compositeName"))
 
 given JsonOutput[CompositeId] with
   def write(u: CompositeId): JsonObject = Json.obj("compositeName" -> u.compositeName)
 
 given JsonInput[DatabaseId] with
-  def read(json: JsonValue): DatabaseId = DatabaseId(json("origin"))
+  def read(json: JsonValue): DatabaseId = DatabaseId(json.as[JsonObject]("origin"))
 
 given JsonOutput[DatabaseId] with
   def write(u: DatabaseId): JsonObject = Json.obj("origin" -> u.origin)
 
 given JsonInput[TableId] with
-  def read(json: JsonValue): TableId = TableId(
-    json("databaseId"),
-    json("simpleDatabaseId"),
-    json("tableName")
-  )
+  def read(json: JsonValue): TableId = {
+    val jsonObj = json.as[JsonObject]
+    TableId(
+      jsonObj("databaseId"),
+      jsonObj("simpleDatabaseId"),
+      jsonObj("tableName")
+    )
+  }
 
 given JsonOutput[TableId] with
   def write(u: TableId): JsonObject = Json.obj(
@@ -36,10 +39,13 @@ given JsonOutput[TableId] with
   )
 
 given JsonInput[FieldsOnTable] with
-  def read(json: JsonValue): FieldsOnTable = FieldsOnTable(
-    json("table"),
-    json("fields").as[List[String]]
-  )
+  def read(json: JsonValue): FieldsOnTable = {
+    val jsonObj = json.as[JsonObject]
+    FieldsOnTable(
+      jsonObj("table"),
+      jsonObj("fields").as[List[String]]
+    )
+  }
 
 given JsonOutput[FieldsOnTable] with
   def write(u: FieldsOnTable): JsonObject = Json.obj(
@@ -48,12 +54,15 @@ given JsonOutput[FieldsOnTable] with
   )
 
 given JsonInput[ForeignKey] with
-  def read(json: JsonValue): ForeignKey = ForeignKey(
-    json("name"),
-    json("from").as[FieldsOnTable],
-    json("to").as[FieldsOnTable],
-    json("direction").as[ForeignKeyDirection]
-  )
+  def read(json: JsonValue): ForeignKey = {
+    val jsonObj = json.as[JsonObject]
+    ForeignKey(
+      jsonObj("name"),
+      jsonObj("from").as[FieldsOnTable],
+      jsonObj("to").as[FieldsOnTable],
+      jsonObj("direction").as[ForeignKeyDirection]
+    )
+  }
 
 given JsonOutput[ForeignKey] with
   def write(u: ForeignKey): JsonObject = Json.obj(
@@ -64,26 +73,32 @@ given JsonOutput[ForeignKey] with
   )
 
 given JsonInput[ForeignKeys] with
-  def read(json: JsonValue): ForeignKeys = ForeignKeys(json("keys").as[List[ForeignKey]])
+  def read(json: JsonValue): ForeignKeys = ForeignKeys(json.as[JsonObject]("keys").as[List[ForeignKey]])
 
 given JsonOutput[ForeignKeys] with
   def write(u: ForeignKeys): JsonObject = Json.obj("keys" -> u.keys)
 
 given JsonInput[ForeignKeysForTable] with
-  def read(json: JsonValue): ForeignKeysForTable = ForeignKeysForTable(
-    json("tableId"),
-    json("keys").as[ForeignKeys]
-  )
+  def read(json: JsonValue): ForeignKeysForTable = {
+    val jsonObj = json.as[JsonObject]
+    ForeignKeysForTable(
+      jsonObj("tableId"),
+      jsonObj("keys").as[ForeignKeys]
+    )
+  }
 
 given JsonOutput[ForeignKeysForTable] with
   def write(u: ForeignKeysForTable): JsonObject = Json.obj("tableId" -> u.tableId, "keys" -> u.keys)
 
 given JsonInput[VirtualalForeignKey] with
-  def read(json: JsonValue): VirtualalForeignKey = VirtualalForeignKey(
-    json("name"),
-    json("from").as[FieldsOnTable],
-    json("to").as[FieldsOnTable]
-  )
+  def read(json: JsonValue): VirtualalForeignKey = {
+    val jsonObj = json.as[JsonObject]
+    VirtualalForeignKey(
+      jsonObj("name"),
+      jsonObj("from").as[FieldsOnTable],
+      jsonObj("to").as[FieldsOnTable]
+    )
+  }
 
 given JsonOutput[VirtualalForeignKey] with
   def write(u: VirtualalForeignKey): JsonObject = Json.obj(
@@ -93,11 +108,14 @@ given JsonOutput[VirtualalForeignKey] with
   )
 
 given JsonInput[VirtualForeignKeyVer1] with
-  def read(json: JsonValue): VirtualForeignKeyVer1 = VirtualForeignKeyVer1(
-    json("name"),
-    json("from").as[FieldsOnTableOneDb],
-    json("to").as[FieldsOnTableOneDb]
-  )
+  def read(json: JsonValue): VirtualForeignKeyVer1 = {
+    val jsonObj = json.as[JsonObject]
+    VirtualForeignKeyVer1(
+      jsonObj("name"),
+      jsonObj("from").as[FieldsOnTableOneDb],
+      jsonObj("to").as[FieldsOnTableOneDb]
+    )
+  }
 
 given JsonOutput[VirtualForeignKeyVer1] with
   def write(u: VirtualForeignKeyVer1): JsonObject = Json.obj(
