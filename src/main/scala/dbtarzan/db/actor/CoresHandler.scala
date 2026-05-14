@@ -32,7 +32,7 @@ class CoresHandler(databaseId: DatabaseId,
     try {
       connection.setReadOnly(true)
     } catch {
-      case _: Exception => None
+      case _: Exception =>
     }
   }
 

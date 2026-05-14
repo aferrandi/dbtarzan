@@ -1,18 +1,18 @@
 package dbtarzan.gui.config.global
 
-import scalafx.stage.{ Stage, StageStyle, WindowEvent }
+import scalafx.stage.{Stage, StageStyle, WindowEvent}
 import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.Scene
-import scalafx.Includes._
+import scalafx.Includes.*
 import org.apache.pekko.actor.ActorRef
 import scalafx.scene.layout.Region
-
-import dbtarzan.config.connections.{EncryptionKeyChange, ConnectionDataPasswordChanger}
-import dbtarzan.config.global.{ GlobalDataReader, GlobalDataWriter, GlobalData }
+import dbtarzan.config.connections.{ConnectionDataPasswordChanger, EncryptionKeyChange}
+import dbtarzan.config.global.{GlobalData, GlobalDataReader, GlobalDataWriter}
 import dbtarzan.localization.Localization
 import dbtarzan.types.ConfigPath
 import dbtarzan.log.actor.Logger
+import scalafx.scene.control.PopupControl.UsePrefSize
 
 /* to start the connection editor. It handles all the cancel/closing/save events */
 object GlobalEditorStarter
@@ -32,7 +32,7 @@ object GlobalEditorStarter
                     new Alert(AlertType.Information) { 
                         headerText= localization.editGlobalSettings
                         contentText= localization.globalChangesAfterRestart
-                        dialogPane().minHeight_=(Region.USE_PREF_SIZE)
+                        dialogPane().minHeight_=(UsePrefSize)
                     }.showAndWait()
                     window().hide()
                 }

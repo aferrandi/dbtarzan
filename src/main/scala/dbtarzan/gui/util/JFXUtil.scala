@@ -7,10 +7,11 @@
   import scalafx.scene.text.Text
   import scalafx.geometry.Insets
   import scalafx.scene.input.{Clipboard, ClipboardContent, KeyCode, KeyEvent, MouseButton, MouseEvent}
-  import scalafx.Includes._
+  import scalafx.Includes.*
   import scalafx.event.ActionEvent
   import scalafx.scene.control.Alert.AlertType
   import scalafx.collections.ObservableBuffer
+  import scalafx.scene.control.PopupControl.UsePrefSize
   import scalafx.scene.layout.Region
 
   object JFXUtil {
@@ -92,7 +93,7 @@
         headerText= header
         contentText= error
         // show long text without truncating it
-        dialogPane().minHeight_=(Region.USE_PREF_SIZE)
+        dialogPane().minHeight_=(UsePrefSize)
       }.showAndWait()
 
 

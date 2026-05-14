@@ -3,14 +3,12 @@ package dbtarzan.gui.main
 import dbtarzan.gui.config.composite.CompositeEditorStarter
 import dbtarzan.gui.config.connections.ConnectionEditorStarter
 import dbtarzan.gui.config.global.GlobalEditorStarter
-import dbtarzan.gui.main.EncryptionKeyExtractor
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.gui.{Global, OpenWeb}
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.types.ConfigPath
 import org.apache.pekko.actor.ActorRef
-import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.JFXApp3
 import scalafx.scene.control.{Menu, MenuBar}
 
