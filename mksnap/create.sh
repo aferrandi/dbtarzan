@@ -1,11 +1,12 @@
-#prj/dbtarzan> mksnap/create.sh $PWD 1.28 3.1.1
+#prj/dbtarzan> mksnap/create.sh $PWD 1.28 3.1.1 26
 ROOTDIR=$1
 VERSION=$2
 SCALA_VER=$3
+JVM_VER=$4
 SNAPDIR=$ROOTDIR/mksnap
 cd $SNAPDIR
 cp snapcraft.mod snapcraft.yaml
-sed -i "s/VERSION/$VERSION/g" snapcraft.yaml
+sed -i -e "s/%VERSION%/$VERSION/g" -e "s/%JVM_VER%/$JVM_VER/g" snapcraft.yaml
 rm dbtarzan_$VERSION.0_amd64.snap
 find . -type f -name "dbtarzan-assembly*" -delete
 ASSEMBLY=../prjlinux/target/scala-$SCALA_VER/dbtarzan-assembly-$VERSION.jar

@@ -7,7 +7,7 @@ fork := true
 
 val versionNumber = "1.37"
 val scala3Version = "3.8.3"
-val jvmVersion = "26"
+val jvmVersion = "25"
 val scalaFxVersion = "26.0.0-R38"
 val javaFxVersion = "26"
 
@@ -128,7 +128,7 @@ lazy val packageSnap = taskKey[Unit]("Packages Snap")
 packageSnap := {
   val rootDir = baseDirectory.value
   (linux/assembly).value // dependency
-  "mksnap/create.sh "+rootDir+" "+ version.value +" " + scalaVersion.value !
+  "mksnap/create.sh "+rootDir+" "+ version.value +" " + scalaVersion.value +" " + jvmVersion !
 }
 
 addCommandAlias("packageAll", 

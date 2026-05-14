@@ -1,6 +1,6 @@
 name: dbtarzan
 base: core24
-version: 'VERSION.0' 
+version: '%VERSION%.0'
 summary: Database browser
 description: Explore the tables of a relational database following the relations defined in their foreign keys.
 grade: stable
@@ -9,7 +9,7 @@ confinement: strict
 
 apps:
   dbtarzan:
-    command: java.sh VERSION
+    command: java.sh %VERSION%
     desktop: dbtarzan.desktop
     extensions: [gnome]
     environment:
@@ -17,10 +17,10 @@ apps:
         XDG_DATA_HOME: $SNAP/usr/share
         FONTCONFIG_PATH: "$SNAP/etc/fonts"
         # Standard libraries for Java
-        JAVA_HOME: $SNAP/usr/lib/jvm/java-21-openjdk-amd64
+        JAVA_HOME: $SNAP/usr/lib/jvm/java-%JVM_VER%-openjdk-amd64
         JAVA_TOOL_OPTIONS: "-Duser.home=$SNAP_USER_COMMON"
-        PATH: $SNAP/usr/lib/jvm/java-21-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-21-openjdk-amd64/jre/bin:$PATH
-        LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-21-openjdk-amd64/jre/lib/amd64/
+        PATH: $SNAP/usr/lib/jvm/java-%JVM_VER%-openjdk-amd64/bin:$SNAP/usr/lib/jvm/java-%JVM_VER%-openjdk-amd64/jre/bin:$PATH
+        LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH:$SNAP/usr/lib/jvm/java-%JVM_VER%-openjdk-amd64/jre/lib/amd64/
         LIBGL_DRIVERS_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/dri
     plugs: [desktop, home, x11, wayland, network, network-bind]
 
@@ -29,8 +29,8 @@ parts:
   dbtarzan:
     plugin: dump
     source: source/
-    build-packages: [ca-certificates, ca-certificates-java, openjdk-21-jre]
-    stage-packages: [openjdk-21-jre, zlib1g]
+    build-packages: [ca-certificates, ca-certificates-java, openjdk-%JVM_VER%-jre]
+    stage-packages: [openjdk-%JVM_VER%-jre, zlib1g]
     override-prime: |
         snapcraftctl prime
-        rm -vf usr/lib/jvm/java-21-openjdk-*/lib/security/blacklisted.certs
+        rm -vf usr/lib/jvm/java-%JVM_VER%-openjdk-*/lib/security/blacklisted.certs
