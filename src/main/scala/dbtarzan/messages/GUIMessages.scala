@@ -33,7 +33,7 @@ case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId])
 case class ResponseSchemas(databaseId : DatabaseId, schemaIds: SchemaIds)
   extends TWithDatabaseId
 
-case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes : QueryAttributes) 
+case class ResponseColumns(tableId  : TableW, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
 case class  ResponseColumnsForForeignKeys(tableId  : TableId, columns : Fields)

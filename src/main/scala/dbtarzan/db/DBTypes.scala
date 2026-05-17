@@ -14,6 +14,7 @@ case class Composite(compositeId: CompositeId, databaseIds: List[SimpleDatabaseI
 case class DatabaseId(origin : Either[SimpleDatabaseId, CompositeId])
 /* The database id + the table name identifies a table */
 case class TableId(databaseId : DatabaseId, simpleDatabaseId: SimpleDatabaseId, tableName : String)
+
 /* an sql expression */
 case class QuerySql(sql: String)
 /* a table: its name, the name of the original table if it comes from another table */
