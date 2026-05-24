@@ -1,4 +1,4 @@
-#prj/dbtarzan> mksnap/create.sh $PWD 1.28 3.1.1 26
+#prj/dbtarzan> mksnap/create.sh $PWD 1.28 3.1.1 25
 ROOTDIR=$1
 VERSION=$2
 SCALA_VER=$3
