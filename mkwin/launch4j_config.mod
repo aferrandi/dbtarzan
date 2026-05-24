@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>JARFILE</jar>
-  <outfile>OUTFILE</outfile>
+  <jar>%JARFILE%</jar>
+  <outfile>%OUTFILE%</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -13,12 +13,12 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>ICONFILE</icon>
+  <icon>%ICONFILE%</icon>
   <jre>
-    <path>jre21</path>
+    <path>jre%JAVAVERSION%</path>
     <bundledJre64Bit>true</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
-    <minVersion>21</minVersion>
+    <minVersion>%JAVAVERSION%</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
     <runtimeBits>64/32</runtimeBits>

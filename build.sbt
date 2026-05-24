@@ -114,14 +114,14 @@ lazy val packageWin = taskKey[Unit]("Packages Windows app")
 packageWin := {
   val rootDir = baseDirectory.value
   (win/assembly).value // dependency
-  "mkwin/packageexe.sh "+rootDir+" "+version.value +" " + scalaVersion.value !
+  "mkwin/packageexe.sh "+rootDir+" "+version.value +" " + scalaVersion.value +" " + jvmVersion !
 }
 
 lazy val packageMacOS = taskKey[Unit]("Packages MacOS app")
 packageMacOS := {
   val macOsDir = baseDirectory.value / "mkmacosx"
   (mac/assembly).value // dependency
-  "mkmacosx/package.sh "+macOsDir+" "+version.value +" " + scalaVersion.value !
+  "mkmacosx/package.sh "+macOsDir+" "+version.value +" " + scalaVersion.value +" " + jvmVersion !
 }
 
 lazy val packageSnap = taskKey[Unit]("Packages Snap")
