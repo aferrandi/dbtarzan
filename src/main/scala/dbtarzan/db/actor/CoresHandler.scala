@@ -7,7 +7,7 @@ import dbtarzan.db.*
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.messages.DatabaseIdUtil.databaseIdText
-import dbtarzan.messages.{DatabaseIdUtil, QueryId}
+import dbtarzan.messages.{DatabaseIdUtil, QueryId, TableInJobId}
 
 import java.sql.{Connection, SQLException}
 
@@ -70,8 +70,8 @@ class CoresHandler(databaseId: DatabaseId,
   def withCore[R](queryId: QueryId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
     withCore(queryId.tableId, operation, errHandler)
 
-  def withCore[R](tableId: TableId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
-    withCore(tableId.simpleDatabaseId, operation, errHandler)
+  def withCore[R](tableId: TableInJobId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
+    withCore(tableId.tableId.simpleDatabaseId, operation, errHandler)
 
   def withCores[R](operation: List[DatabaseCore] => Any, errHandler: Exception => Unit): Unit =
     optCores match {

@@ -61,11 +61,11 @@ class DatabaseTabs(guiActor: ActorRef,
 
   /* utility method to do something (given by a closure) to a table */
   private def withQueryId(queryId: QueryId, doWith: Database => Unit): Unit =
-    withDatabaseId(queryId.tableId.databaseId, doWith)
+    withDatabaseId(queryId.tableId.tableId.databaseId, doWith)
 
   /* utility method to do something (given by a closure) to a table */
-  private def withTableId(tableId: TableId, doWith: Database => Unit): Unit =
-    withDatabaseId(tableId.databaseId, doWith)
+  private def withTableId(tableId: TableInJobId, doWith: Database => Unit): Unit =
+    withDatabaseId(tableId.tableId.databaseId, doWith)
 
 
   def handleQueryIdMessage(msg: TWithQueryId): Unit =

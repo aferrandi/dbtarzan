@@ -8,7 +8,7 @@ trait TWithDatabaseId { def databaseId : DatabaseId }
 
 trait TWithQueryId { def queryId : QueryId }
 
-trait TWithTableId { def tableId : TableId }
+trait TWithTableId { def tableId : TableInJobId }
 
 trait TWithDatabases { }
       
@@ -33,10 +33,10 @@ case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId])
 case class ResponseSchemas(databaseId : DatabaseId, schemaIds: SchemaIds)
   extends TWithDatabaseId
 
-case class ResponseColumns(tableId  : TableW, columns : Fields, queryAttributes : QueryAttributes) 
+case class ResponseColumns(tableId  : TableInJobId, columns : Fields, queryAttributes : QueryAttributes)
     extends TWithTableId
 
-case class  ResponseColumnsForForeignKeys(tableId  : TableId, columns : Fields)
+case class  ResponseColumnsForForeignKeys(tableId  : TableInJobId, columns : Fields)
     extends TWithTableId
 
 case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, keys : PrimaryKeys)
@@ -57,7 +57,7 @@ case class ResponseRowsNumber(queryId : QueryId, rowsNumber: Int)
 case class ResponseForeignKeyRowsNumber(queryId: QueryId, foreignKey: ForeignKey, rowsNumber: Int)
   extends TWithQueryId
 
-case class ResponseColumnsFollow(tableId: TableId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
+case class ResponseColumnsFollow(tableId: TableInJobId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
 case class ResponseCloseDatabase(databaseId : DatabaseId) 
