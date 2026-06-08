@@ -2,10 +2,15 @@ package dbtarzan.messages
 
 import dbtarzan.db.TableId
 
-opaque type Jobid = Int
+opaque type JobId = Int
+
+object JobId:
+	def apply(value: Int): JobId = value
+	def toInt(id: JobId): Int = id
+	def increment(id: JobId): JobId = JobId(JobId.toInt(id) + 1)
 
 /* the id of atable in A job */
-case class TableInJobId(tableId: TableId, jobId: Jobid)
+case class TableInJobId(tableId: TableId, jobId: JobId)
 
 /* identifies a table tab in the GUI, which is relative to the query that loads its rows.
 Since there can potentially be several tabs based on the same table, we use a generated id to distinguish among them */

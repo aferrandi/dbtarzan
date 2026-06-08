@@ -134,7 +134,7 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
       guiActor ! RequestRemovalThisTab(queryId)
     val checkedRows = table.getCheckedRows
     val foreignTableId = key.to.table
-    dbActor ! QueryColumnsFollow(foreignTableId, FollowKey(dbTable.fields, key, if (checkedRows.nonEmpty) Some(checkedRows) else None))
+    dbActor ! QueryColumnsFollow(TableInJobId(foreignTableId, queryId.tableId.jobId),FollowKey(dbTable.fields, key, if (checkedRows.nonEmpty) Some(checkedRows) else None))
     if (checkedRows.isEmpty)
       log.warning(localization.noRowsFromForeignKey(key.name, key.to.table.tableName))
   }

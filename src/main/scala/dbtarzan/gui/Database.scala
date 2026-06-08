@@ -5,6 +5,7 @@ import dbtarzan.db.{DatabaseId, TableId}
 import dbtarzan.gui.database.{DatabaseButtonBar, TableListWIthFilter, TableTabs}
 import dbtarzan.gui.foreignkeys.{VirtualForeignKeysEditor, VirtualForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
+import dbtarzan.gui.jobs.Jobs
 import dbtarzan.gui.util.{FilterText, JFXUtil}
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
@@ -17,12 +18,19 @@ import scalafx.scene.layout.{BorderPane, FlowPane, VBox}
 import scalafx.stage.Stage
 
 
+
+
 /* A panel containing all the tabs related to a database */
 class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId, localization : Localization, tableIds: List[TableId], log: Logger) extends TControlBuilder {
   private val tableListWithSearch = new TableListWIthFilter(dbActor, databaseId, tableIds, localization)
-  private val tableTabs = new TableTabs(dbActor, guiActor, localization, log)
+  private val jobs = new Jobs(dbActor, guiActor, localization, log)
   private var virtualForeignKeyEditor : Option[VirtualForeignKeysEditor] = Option.empty
-  tableListWithSearch.onTableSelected(tableId => dbActor ! QueryColumns(tableId))
+  tableListWithSearch.onTableSelected(tableId => createJobFromTableId(tableId))
+
+  private def createJobFromTableId(tableId: TableId): Unit = {
+    val jobId = jobs.createJobWith(tableId)
+    dbActor ! QueryColumns(TableInJobId(tableId, jobId))
+  }
 
   private val pane = new SplitPane {
     private val tableListWithTitle = new BorderPane {
@@ -31,7 +39,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
       }
       center = tableListWithSearch.control
     }
-    items.addAll(tableListWithTitle, tableTabs.control)
+    items.addAll(tableListWithTitle, jobs.control)
     dividerPositions = 0.20
     SplitPane.setResizableWithParent(tableListWithTitle, value = false)
   }
@@ -41,13 +49,13 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   private def stage() : Stage = 
     new Stage(pane.scene().window().asInstanceOf[javafx.stage.Stage])
 
-  def handleQueryIdMessage(msg: TWithQueryId) : Unit = 
-    tableTabs.handleQueryIdMessage(msg)
+  def handleQueryIdMessage(msg: TWithQueryId) : Unit =
+    jobs.handleQueryIdMessage(msg)
 
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTablesByPattern => tableListWithSearch.addTableNames(tables.tabeIds)
-    case tables : ResponseCloseTables => tableTabs.removeTables(tables.ids)
-    case _: RequestRemovalAllTabs => tableTabs.requestRemovalAllTabs()
+    case tables : ResponseCloseTables => jobs.removeTables(tables.ids)
+    case _: RequestRemovalAllTabs => jobs.requestRemovalAllTabs()
     case virtualKeys: ResponseVirtualForeignKeys =>  openVirtualForeignKeysEditor(virtualKeys)
     case _ => log.error(localization.errorDatabaseMessage(msg))
   }
@@ -65,13 +73,13 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   }
 
   def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
-    case columns : ResponseColumns => tableTabs.addColumns(columns)
-    case columns : ResponseColumnsFollow => tableTabs.addColumnsFollow(columns)
-    case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
-    case _ => log.error(localization.errorTableMessage(msg))
-  }  
+    case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId.tableId, columns.columns))
+    case _ => jobs.handleTableIdMessage(msg)
+  }
 
   def getId : DatabaseId = databaseId
 
-  def currentTableId : Option[QueryId] =  tableTabs.currentTableId  
+  def currentTableId: Option[QueryId] =  jobs.currentTableId
+
+  def currentJobId: Option[JobId] = jobs.currentJobId
 }

@@ -14,18 +14,18 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(jobId: Jobid, dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
+class TableTabs(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
   extends TControlBuilder {
   private val tabs = new TabPane()
   private val tables = new TableTabsMap[BrowsingTable]()
   private val tablesToClose = new TabsToClose()
 
-  def addColumns(columns : ResponseColumns) : Unit =  {
+  private def addColumns(columns : ResponseColumns) : Unit =  {
     val structure = createTable(columns.tableId.tableId, columns.columns, columns.queryAttributes)
     queryTableContent(columns.tableId, None, structure)
   }
 
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
+  private def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
     val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
     queryTableContent(columns.tableId, None, structure)
   }
@@ -68,6 +68,13 @@ class TableTabs(jobId: Jobid, dbActor : ActorRef, guiActor : ActorRef, localizat
     case reloadQuery: ReloadQuery => tables.tableWithQueryId(reloadQuery.queryId, _.reloadQuery(reloadQuery.closeCurrentTab))
     case _ => log.error(localization.errorTableMessage(msg))
   }
+
+  def handleTableIdMessage(msg: TWithTableId): Unit =
+      msg match {
+        case columns: ResponseColumns => addColumns(columns)
+        case columns: ResponseColumnsFollow => addColumnsFollow(columns)
+        case _ => log.error(localization.errorTableMessage(msg))
+      }
 
   /* creates a table from scratch */
   private def createTable(tableId : TableId, columns : Fields, attributes : QueryAttributes) : DBTableStructure = 
