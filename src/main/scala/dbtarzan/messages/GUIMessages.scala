@@ -36,7 +36,7 @@ case class ResponseSchemas(databaseId : DatabaseId, schemaIds: SchemaIds)
 case class ResponseColumns(tableId  : TableInJobId, columns : Fields, queryAttributes : QueryAttributes)
     extends TWithTableId
 
-case class  ResponseColumnsForForeignKeys(tableId  : TableInJobId, columns : Fields)
+case class  ResponseColumnsForForeignKeys(tableId  : TableId, columns : Fields)
     extends TWithTableId
 
 case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, keys : PrimaryKeys)
@@ -72,7 +72,7 @@ case class RequestRemovalTabsBefore(queryId : QueryId)
 case class RequestRemovalThisTab(queryId : QueryId) 
     extends TWithQueryId
 
-case class RequestRemovalAllTabs(databaseId : DatabaseId) 
+case class RequestRemovalAllTabs(databaseId : DatabaseId, jobId: JobId)
     extends TWithDatabaseId
 
 case class CopySelectionToClipboard(queryId : QueryId, includeHeaders : Boolean) 

@@ -42,7 +42,7 @@ object TableButtonBar {
         button(localization.closeThisTab, CLOSE_THIS_TAB, "deleteThis", (_: ActionEvent) => guiActor ! RequestRemovalThisTab(queryId)),
         button(localization.closeTabsBeforeThis, CLOSE_TAB_BEFORE_KEY, "deleteBefore", (_: ActionEvent) => guiActor ! RequestRemovalTabsBefore(queryId)),
         button(localization.closeTabsAfterThis, CLOSE_TAB_AFTER_KEY, "deleteAfter", (_: ActionEvent) => guiActor ! RequestRemovalTabsAfter(queryId)),
-        button(localization.closeAllTabs, "deleteAll", (_: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.tableId.databaseId)),
+//        button(localization.closeAllTabs, "deleteAll", (_: ActionEvent) => guiActor ! RequestRemovalAllTabs(queryId.tableId.tableId.databaseId)),
         button(localization.checkAll, CHECK_ALL_KEY, "checkAll", (_: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
         button(localization.uncheckAll, CHECK_NONE_KEY, "checkNone", (_: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
         button(localization.rowDetails, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),

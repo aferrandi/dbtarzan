@@ -15,6 +15,9 @@ import org.apache.pekko.actor.ActorRef
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 import scalafx.scene.Parent
 import scalafx.geometry.Side
+import dbtarzan.messages.RequestRemovalAllTabs
+import scalafx.event.Event
+import scalafx.Includes.*
 
 class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger) extends TControlBuilder {
     private val tabs = new TabPane {
@@ -51,6 +54,9 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         text = s"Job ${job.jobId} from $tableId"
         content = job.control
         tooltip.value = Tooltip("")
+        onCloseRequest = (ev: Event) => {
+            guiActor ! RequestRemovalAllTabs(tableId.databaseId, job.jobId)
+        }
     }
     
     def requestRemovalThisJob(jobId : JobId) : Unit = {
@@ -63,6 +69,7 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         val jobId = nextJobId
         val job = new TableTabs(jobId, dbActor, guiActor, localization, log)
         val tab = buildJobTab(tableId, job)
+
         tabs += tab
         tabs.selectionModel().select(tab)
         jobs.addJob(job, tab)

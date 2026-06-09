@@ -73,6 +73,9 @@ class CoresHandler(databaseId: DatabaseId,
   def withCore[R](tableId: TableInJobId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
     withCore(tableId.tableId.simpleDatabaseId, operation, errHandler)
 
+  def withCore[R](tableId: TableId, operation: DatabaseCore => Any, errHandler: Exception => Unit): Unit =
+    withCore(tableId.simpleDatabaseId, operation, errHandler)
+
   def withCores[R](operation: List[DatabaseCore] => Any, errHandler: Exception => Unit): Unit =
     optCores match {
       case Some(cores) => ExceptionToHandler.handleErr(errHandler, operation(cores.values.toList))

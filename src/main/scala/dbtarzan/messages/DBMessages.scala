@@ -16,9 +16,9 @@ case class QueryTablesByPattern(databaseId : DatabaseId, pattern: String)
 
 case class QueryColumns(tableId: TableInJobId)
 
-case class QueryColumnsForForeignKeys(tableId: TableInJobId)
+case class QueryColumnsForForeignKeys(tableId: TableId)
 
-case class QueryColumnsFollow(tableId: TableInJobId, follow : FollowKey) 
+case class QueryColumnsFollow(tableId: TableInJobId, follow : FollowKey)
 
 case class QueryPrimaryKeys(queryId : QueryId, structure : DBTableStructure)
 
