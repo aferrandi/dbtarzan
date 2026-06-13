@@ -1,7 +1,7 @@
 package dbtarzan.localization
 
 import java.nio.file.Path
-import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId }
+import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithJobId, TWithTableId, TWithQueryId }
 
 trait Localization {
   def settings : String
@@ -138,6 +138,7 @@ trait Localization {
   def errorEncryptionKeysDifferent : String
   def errorWrongEncryptionKeySize : String
   def errorDatabaseMessage(msg : TWithDatabaseId) : String
+  def errorJobMessage(msg : TWithJobId): String
   def errorTableMessage(msg : TWithTableId) : String
   def errorTableMessage(msg : TWithQueryId) : String
   def errorNoTables(databaseName : String, schemasText : String) : String

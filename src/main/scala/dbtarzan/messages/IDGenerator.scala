@@ -1,13 +1,8 @@
 package dbtarzan.messages
 
-import dbtarzan.db.TableId
+import dbtarzan.db.{TableId, JobId}
 
-opaque type JobId = Int
 
-object JobId:
-	def apply(value: Int): JobId = value
-	def toInt(id: JobId): Int = id
-	def increment(id: JobId): JobId = JobId(JobId.toInt(id) + 1)
 
 /* the id of atable in A job */
 case class TableInJobId(tableId: TableId, jobId: JobId)

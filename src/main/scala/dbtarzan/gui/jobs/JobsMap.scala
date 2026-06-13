@@ -1,7 +1,8 @@
 package dbtarzan.gui.jobs
 
 import dbtarzan.gui.database.TableTabs
-import dbtarzan.messages.{JobId, QueryId}
+import dbtarzan.messages.QueryId
+import dbtarzan.db.JobId
 
 import scalafx.scene.control.Tab
 import scala.collection.mutable

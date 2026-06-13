@@ -1,7 +1,7 @@
 package dbtarzan.gui
 
 import org.apache.pekko.actor.ActorRef
-import dbtarzan.db.{DatabaseId, TableId}
+import dbtarzan.db.{DatabaseId, TableId, JobId}
 import dbtarzan.gui.database.{DatabaseButtonBar, TableListWIthFilter, TableTabs}
 import dbtarzan.gui.foreignkeys.{VirtualForeignKeysEditor, VirtualForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
@@ -16,8 +16,6 @@ import scalafx.scene.Parent
 import scalafx.scene.control.*
 import scalafx.scene.layout.{BorderPane, FlowPane, VBox}
 import scalafx.stage.Stage
-
-
 
 
 /* A panel containing all the tabs related to a database */
@@ -54,11 +52,13 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
 
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTablesByPattern => tableListWithSearch.addTableNames(tables.tabeIds)
-    case tables : ResponseCloseTables => jobs.removeTables(tables.ids)
-    case _: RequestRemovalAllTabs => jobs.requestRemovalAllTabs()
     case virtualKeys: ResponseVirtualForeignKeys =>  openVirtualForeignKeysEditor(virtualKeys)
-    case _ => log.error(localization.errorDatabaseMessage(msg))
+    case msg => log.error(localization.errorDatabaseMessage(msg))
   }
+
+  def handleJobIdMessage(msg: TWithJobId) : Unit =
+    jobs.handleJobIdMessage(msg)
+
 
   private def openVirtualForeignKeysEditor(virtualKeys: ResponseVirtualForeignKeys): Unit = {
     virtualForeignKeyEditor = Some(VirtualForeignKeysEditorStarter.openVirtualForeignKeysEditor(
@@ -73,7 +73,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   }
 
   def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
-    case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId.tableId, columns.columns))
+    case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case _ => jobs.handleTableIdMessage(msg)
   }
 

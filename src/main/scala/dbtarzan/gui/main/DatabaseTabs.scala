@@ -1,6 +1,6 @@
 package dbtarzan.gui.main
 
-import dbtarzan.db.{DatabaseId, TableId}
+import dbtarzan.db.{DatabaseId, TableId, JobId, JobInDatabaseId}
 import dbtarzan.gui.interfaces.{TControlBuilder, TDatabases}
 import dbtarzan.gui.Database
 import dbtarzan.localization.Localization
@@ -67,6 +67,9 @@ class DatabaseTabs(guiActor: ActorRef,
   private def withTableId(tableId: TableInJobId, doWith: Database => Unit): Unit =
     withDatabaseId(tableId.tableId.databaseId, doWith)
 
+  /* utility method to do something (given by a closure) to a table */
+  private def withJobId(jobId: JobInDatabaseId, doWith: Database => Unit): Unit =
+    withDatabaseId(jobId.databaseId, doWith)
 
   def handleQueryIdMessage(msg: TWithQueryId): Unit =
     withQueryId(msg.queryId, database => database.handleQueryIdMessage(msg))
@@ -76,6 +79,9 @@ class DatabaseTabs(guiActor: ActorRef,
     case rsp: ResponseTables => addDatabaseTab(rsp.dbActor, rsp.databaseId, rsp.names.tableIds)
     case _ => withDatabaseId(msg.databaseId, database => database.handleDatabaseIdMessage(msg))
   }
+
+  def handleJobIdMessage(msg: TWithJobId): Unit =
+    withJobId(msg.jobId, database => database.handleJobIdMessage(msg))
 
   def handleTableIdMessage(msg: TWithTableId): Unit =
     withTableId(msg.tableId, database => database.handleTableIdMessage(msg))

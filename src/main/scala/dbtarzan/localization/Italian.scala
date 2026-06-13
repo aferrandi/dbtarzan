@@ -1,7 +1,7 @@
 package dbtarzan.localization
 
 import java.nio.file.Path
-import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId }
+import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithJobId, TWithTableId, TWithQueryId }
 
 class Italian extends Localization {
     def settings = "Opzioni"
@@ -138,6 +138,7 @@ class Italian extends Localization {
     def errorWrongEncryptionKeySize = "La lunghezza della master password e' errata. Possibili lunghezze"
     def errorEncryptionKeysDifferent = "Le Master password sono diverse"
     def errorDatabaseMessage(msg : TWithDatabaseId): String = "Messaggio dal database "+msg+" non riconosciuto"
+    def errorJobMessage(msg : TWithJobId): String = "Messaggio dal job "+msg+" non riconosciuto"
     def errorTableMessage(msg : TWithTableId): String = "Messaggio dalla tabella "+msg+" non riconosciuto"
     def errorTableMessage(msg : TWithQueryId): String = "Messaggio dalla tabella "+msg+" non riconosciuto"
     def errorNoTables(databaseName : String, schemasText : String): String = "Nessuna tabella letta dal database "+databaseName+". Schema errato? Schemi disponibili: "+schemasText

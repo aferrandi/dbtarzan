@@ -79,3 +79,12 @@ case class SimpleDatabaseInfo(simpleDatabaseId: SimpleDatabaseId, needsPassword:
 case class CompositeInfo(compositeId: CompositeId, databaseInfos: List[SimpleDatabaseInfo])
 case class DatabaseInfo(origin : Either[SimpleDatabaseInfo, CompositeInfo])
 case class LoginPasswords(loginPasswords : Map[SimpleDatabaseId, Password])
+
+opaque type JobId = Int
+
+object JobId:
+  def apply(value: Int): JobId = value
+  def toInt(id: JobId): Int = id
+  def increment(id: JobId): JobId = JobId(JobId.toInt(id) + 1)
+
+case class JobInDatabaseId(jobId: JobId, databaseId: DatabaseId)

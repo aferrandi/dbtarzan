@@ -192,7 +192,7 @@ class DatabaseActor(
   private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
     val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-    guiActor ! ResponseColumnsForForeignKeys(qry.tableId, columns)
+    guiActor ! ResponseColumnsForForeignKeys(qry.tableId.databaseId, qry.tableId, columns)
   }, logError)
 
   private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = coreHandler.withCore(qry.queryId, core => {

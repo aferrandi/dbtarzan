@@ -6,6 +6,8 @@ import dbtarzan.config.connections.ConnectionData
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
 
+trait TWithJobId { def jobId : JobInDatabaseId }
+
 trait TWithQueryId { def queryId : QueryId }
 
 trait TWithTableId { def tableId : TableInJobId }
@@ -27,8 +29,8 @@ case class ResponseTables(databaseId : DatabaseId, names: TableIds, dbActor : Ac
 case class ResponseTablesByPattern(databaseId : DatabaseId, tabeIds: TableIds)
     extends TWithDatabaseId
 
-case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId]) 
-    extends TWithDatabaseId
+case class ResponseCloseTables(jobId: JobInDatabaseId, ids : List[QueryId])
+    extends TWithJobId
 
 case class ResponseSchemas(databaseId : DatabaseId, schemaIds: SchemaIds)
   extends TWithDatabaseId
@@ -36,8 +38,8 @@ case class ResponseSchemas(databaseId : DatabaseId, schemaIds: SchemaIds)
 case class ResponseColumns(tableId  : TableInJobId, columns : Fields, queryAttributes : QueryAttributes)
     extends TWithTableId
 
-case class  ResponseColumnsForForeignKeys(tableId  : TableId, columns : Fields)
-    extends TWithTableId
+case class  ResponseColumnsForForeignKeys(databaseId: DatabaseId, tableId  : TableId, columns : Fields)
+    extends TWithDatabaseId
 
 case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, keys : PrimaryKeys)
     extends TWithQueryId
@@ -72,8 +74,8 @@ case class RequestRemovalTabsBefore(queryId : QueryId)
 case class RequestRemovalThisTab(queryId : QueryId) 
     extends TWithQueryId
 
-case class RequestRemovalAllTabs(databaseId : DatabaseId, jobId: JobId)
-    extends TWithDatabaseId
+case class RequestRemovalAllTabs(jobId : JobInDatabaseId)
+    extends TWithJobId
 
 case class CopySelectionToClipboard(queryId : QueryId, includeHeaders : Boolean) 
     extends TWithQueryId

@@ -95,7 +95,7 @@ class TableTabs(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, local
   private def removeTabs(toCloseTabs : List[javafx.scene.control.Tab]) : Unit = {
     val toCloseIds = tables.idsFromTabs(toCloseTabs)
     toCloseIds.groupBy(toCloseId => toCloseId.tableId.tableId.databaseId)
-      .foreach({case (databaseId, toCloseIdsWithDatabaseId) => guiActor ! ResponseCloseTables(databaseId, toCloseIdsWithDatabaseId)})
+      .foreach({case (databaseId, toCloseIdsWithDatabaseId) => guiActor ! ResponseCloseTables(JobInDatabaseId(jobId, databaseId), toCloseIdsWithDatabaseId)})
   }
 
   private def removeTabsBefore(queryId : QueryId, allTabsInOrder : List[javafx.scene.control.Tab]) : Unit = 
