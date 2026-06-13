@@ -20,31 +20,22 @@ import scalafx.event.Event
 import scalafx.Includes.*
 
 class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger) extends TControlBuilder {
-    private val tabs = new TabPane {
-        side = Side.Left
-        rotateGraphic = false
-    }
-    tabs += spacingTab()
-
 
     private val jobsMap = new JobsMap()
 
     private var nextJobId: JobId = JobId(0)
 
-    def currentJobId : Option[JobId] = {
-        val currentTab = tabs.selectionModel().selectedItem()
-        jobsMap.jobIdForTab(currentTab)
-    }
+    private val jobsTabs = new JobsTabs()
 
-
+    def currentJobId : Option[JobId] =
+        jobsMap.jobIdForTab(jobsTabs.currentTab())
 
     def currentTableId : Option[QueryId] = {
         val job = currentJobId.flatMap(jobId => jobsMap.jobWithJobId(jobId))
         job.flatMap(j => j.currentTableId)
     }
 
-
-    def control : Parent = tabs
+    def control : Parent = jobsTabs.control
 
     def handleTableIdMessage(msg: TWithTableId): Unit =
         jobsMap.jobWithJobId(msg.tableId.jobId).foreach(job =>
@@ -77,16 +68,11 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         val jobId = nextJobId
         val job = new TableTabs(jobId, dbActor, guiActor, localization, log)
         val tab = buildJobTab(tableId, job)
-        tabs += tab
-        tabs.selectionModel().select(tab)
+        jobsTabs.addTab(tab)
         jobsMap.addJob(job, tab)
         jobId
     }
 
-    private def spacingTab() = new Tab {
-        closable = false
-        style = "-fx-pref-width: 30px; -fx-background-color: transparent;"
-    }
 }
 
 
