@@ -44,11 +44,16 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
           job.handleQueryIdMessage(msg)
         )
 
+
     def handleJobIdMessage(msg: TWithJobId) : Unit = msg match {
-        case tables : ResponseCloseTables => jobsMap.jobWithJobId(msg.jobId.jobId).foreach(_.removeTables(tables.ids))
-        case msg: RequestRemovalAllTabs => jobsMap.jobWithJobId(msg.jobId.jobId).foreach(_.requestRemovalAllTabs())
+        case tables : ResponseCloseTables => withJob(msg.jobId.jobId, _.removeTables(tables.ids))
+        case msg: RequestRemovalAllTabs => withJob(msg.jobId.jobId, _.requestRemovalAllTabs())
         case _ => log.error(localization.errorJobMessage(msg))
     }
+
+    private def withJob(jobId: JobId, doWith: TableTabs => Unit): Unit =
+        jobsMap.jobWithJobId(jobId).foreach(job => doWith(job))
+
 
     private def buildJobTab(tableId: TableId, job: TableTabs) = new Tab() {
         text = s"Job ${job.jobId}"
