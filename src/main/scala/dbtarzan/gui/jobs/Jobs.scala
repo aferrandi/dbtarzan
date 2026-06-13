@@ -12,7 +12,7 @@ import dbtarzan.log.actor.Logger
 import dbtarzan.messages.{ QueryId, TWithTableId, TWithQueryId, TWithJobId, ResponseCloseTables }
 import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyles.tableTabs
 import org.apache.pekko.actor.ActorRef
-import scalafx.scene.control.{Tab, TabPane, Tooltip}
+import scalafx.scene.control.{Tab, TabPane, Tooltip, Label}
 import scalafx.scene.Parent
 import scalafx.geometry.Side
 import dbtarzan.messages.RequestRemovalAllTabs
@@ -22,7 +22,11 @@ import scalafx.Includes.*
 class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger) extends TControlBuilder {
     private val tabs = new TabPane {
         side = Side.Left
+        rotateGraphic = false
     }
+    tabs += spacingTab()
+
+
     private val jobsMap = new JobsMap()
 
     private var nextJobId: JobId = JobId(0)
@@ -31,6 +35,8 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         val currentTab = tabs.selectionModel().selectedItem()
         jobsMap.jobIdForTab(currentTab)
     }
+
+
 
     def currentTableId : Option[QueryId] = {
         val job = currentJobId.flatMap(jobId => jobsMap.jobWithJobId(jobId))
@@ -58,9 +64,9 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
 
 
     private def buildJobTab(tableId: TableId, job: TableTabs) = new Tab() {
-        text = s"Job ${job.jobId} from $tableId"
+        graphic = Label(text=s"${job.jobId}")
         content = job.control
-        tooltip.value = Tooltip("")
+        tooltip.value = Tooltip(f"Job from ${tableId.tableName}")
         onCloseRequest = (ev: Event) => {
             guiActor ! RequestRemovalAllTabs(JobInDatabaseId(job.jobId, tableId.databaseId))
         }
@@ -71,11 +77,17 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         val jobId = nextJobId
         val job = new TableTabs(jobId, dbActor, guiActor, localization, log)
         val tab = buildJobTab(tableId, job)
-
         tabs += tab
         tabs.selectionModel().select(tab)
         jobsMap.addJob(job, tab)
         jobId
     }
+
+    private def spacingTab() = new Tab {
+        closable = false
+        style = "-fx-pref-width: 30px; -fx-background-color: transparent;"
+    }
 }
+
+
 
