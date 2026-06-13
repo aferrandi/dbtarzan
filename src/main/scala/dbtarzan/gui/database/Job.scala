@@ -14,7 +14,7 @@ import scalafx.scene.Parent
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
+class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
   extends TControlBuilder {
   private val tabs = new TabPane()
   private val tables = new TableTabsMap[BrowsingTable]()

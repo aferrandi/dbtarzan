@@ -4,7 +4,7 @@ import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
 import dbtarzan.gui.BrowsingTable
-import dbtarzan.gui.database.TableTabs
+import dbtarzan.gui.database.Job
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization

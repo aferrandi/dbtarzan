@@ -2,7 +2,7 @@ package dbtarzan.gui
 
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.db.{DatabaseId, TableId, JobId}
-import dbtarzan.gui.database.{DatabaseButtonBar, TableListWIthFilter, TableTabs}
+import dbtarzan.gui.database.{DatabaseButtonBar, TableListWIthFilter, Job}
 import dbtarzan.gui.foreignkeys.{VirtualForeignKeysEditor, VirtualForeignKeysEditorStarter}
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.jobs.Jobs

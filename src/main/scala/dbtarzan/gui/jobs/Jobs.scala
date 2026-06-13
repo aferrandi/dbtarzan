@@ -4,7 +4,7 @@ import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.db.*
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
 import dbtarzan.gui.BrowsingTable
-import dbtarzan.gui.database.TableTabs
+import dbtarzan.gui.database.Job
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
@@ -51,11 +51,11 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         case _ => log.error(localization.errorJobMessage(msg))
     }
 
-    private def withJob(jobId: JobId, doWith: TableTabs => Unit): Unit =
+    private def withJob(jobId: JobId, doWith: Job => Unit): Unit =
         jobsMap.jobWithJobId(jobId).foreach(job => doWith(job))
 
 
-    private def buildJobTab(tableId: TableId, job: TableTabs) = new Tab() {
+    private def buildJobTab(tableId: TableId, job: Job) = new Tab() {
         text = s"Job ${job.jobId}"
         content = job.control
         tooltip.value = Tooltip(f"Job from ${tableId.tableName}")
@@ -67,7 +67,7 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
     def createJobWith(tableId: TableId): JobId = {
         nextJobId = JobId.increment(nextJobId)
         val jobId = nextJobId
-        val job = new TableTabs(jobId, dbActor, guiActor, localization, log)
+        val job = new Job(jobId, dbActor, guiActor, localization, log)
         val tab = buildJobTab(tableId, job)
         jobsTabs.addTab(tab)
         jobsMap.addJob(job, tab)
