@@ -23,6 +23,7 @@ class JobsTabs() extends TControlBuilder {
     private val tabs = new TabPane {
         side = Side.Left
         rotateGraphic = false
+        visible = false
     }
     tabs += spacingTab()
 
@@ -32,6 +33,7 @@ class JobsTabs() extends TControlBuilder {
     }
 
     def addTab(tab: Tab): Unit = {
+        tabs.visible = true
         tabs += tab
         tabs.selectionModel().select(tab)
     }

@@ -20,11 +20,8 @@ import scalafx.event.Event
 import scalafx.Includes.*
 
 class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger) extends TControlBuilder {
-
     private val jobsMap = new JobsMap()
-
     private var nextJobId: JobId = JobId(0)
-
     private val jobsTabs = new JobsTabs()
 
     def currentJobId : Option[JobId] =
@@ -53,9 +50,8 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         case _ => log.error(localization.errorJobMessage(msg))
     }
 
-
     private def buildJobTab(tableId: TableId, job: TableTabs) = new Tab() {
-        graphic = Label(text=s"${job.jobId}")
+        text = s"Job ${job.jobId}"
         content = job.control
         tooltip.value = Tooltip(f"Job from ${tableId.tableName}")
         onCloseRequest = (ev: Event) => {
@@ -72,8 +68,8 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         jobsMap.addJob(job, tab)
         jobId
     }
-
 }
+
 
 
 
