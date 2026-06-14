@@ -19,7 +19,7 @@ import scala.compiletime.uninitialized
 class IntegrationTest extends AnyFlatSpec with BeforeAndAfter {
   var connection: Connection = uninitialized
 
-  def productTableId: TableId = TestDatabaseIds.simpleTableId( "PRODUCT")
+  def productTableId: TableId = TestDatabaseIds.simpleTableId("PRODUCT")
 
   def laptopTableId: TableId = TestDatabaseIds.simpleTableId("LAPTOP")
 

@@ -8,9 +8,9 @@ import scalafx.Includes._
 case class SimpleTableForMap(getId : QueryId) extends TTableForMapWithId
 
 class TableTabsMapTest extends AnyFlatSpec {
-  val table1AId: QueryId = QueryId(TestDatabaseIds.simpleTableId("table1"), "0x1232")
-  val table2BId: QueryId = QueryId(TestDatabaseIds.simpleTableId("table2"), "0x3232")
-  val table3CId: QueryId = QueryId(TestDatabaseIds.simpleTableId("table3"), "0x2243")
+  val table1AId: QueryId = QueryId(TestDatabaseIds.simpleTableInJobId(1, "table1"), "0x1232")
+  val table2BId: QueryId = QueryId(TestDatabaseIds.simpleTableInJobId(1, "table2"), "0x3232")
+  val table3CId: QueryId = QueryId(TestDatabaseIds.simpleTableInJobId(1, "table3"), "0x2243")
   val tab1A = new javafx.scene.control.Tab("table1A")
   val tab2B = new javafx.scene.control.Tab("table2B")
   val tab3C = new javafx.scene.control.Tab("table3C")
