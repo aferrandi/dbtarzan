@@ -53,6 +53,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
   def handleDatabaseIdMessage(msg: TWithDatabaseId) : Unit = msg match {
     case tables : ResponseTablesByPattern => tableListWithSearch.addTableNames(tables.tabeIds)
     case virtualKeys: ResponseVirtualForeignKeys =>  openVirtualForeignKeysEditor(virtualKeys)
+    case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case msg => log.error(localization.errorDatabaseMessage(msg))
   }
 
@@ -72,10 +73,8 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     virtualForeignKeyEditor.foreach(_.handleForeignKeys(virtualKeys.keys))
   }
 
-  def handleTableIdMessage(msg: TWithTableId) : Unit = msg match {
-    case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
-    case _ => jobs.handleTableIdMessage(msg)
-  }
+  def handleTableIdMessage(msg: TWithTableId) : Unit =
+    jobs.handleTableIdMessage(msg)
 
   def getId : DatabaseId = databaseId
 
