@@ -11,6 +11,7 @@ import dbtarzan.messages.*
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.scene.Parent
+import scalafx.event.Event
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
@@ -19,16 +20,6 @@ class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localizatio
   private val tabs = new TabPane()
   private val tables = new TableTabsMap[BrowsingTable]()
   private val tablesToClose = new TabsToClose()
-
-  private def addColumns(columns : ResponseColumns) : Unit =  {
-    val structure = createTable(columns.tableId.tableId, columns.columns, columns.queryAttributes)
-    queryTableContent(columns.tableId, None, structure)
-  }
-
-  private def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
-    val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
-    queryTableContent(columns.tableId, None, structure)
-  }
 
   def removeTables(ids : List[QueryId]) : Unit = {
     val tabsToClose = tables.tabsWithIds(ids)
@@ -43,6 +34,9 @@ class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localizatio
     val currentTab = tabs.selectionModel().selectedItem()
     tables.tableIdForTab(currentTab)
   }
+
+  def isEmpty: Boolean =
+    tabs.tabs.isEmpty
 
   def control : Parent = tabs
 
@@ -69,6 +63,16 @@ class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localizatio
     case _ => log.error(localization.errorTableMessage(msg))
   }
 
+  private def addColumns(columns : ResponseColumns) : Unit =  {
+    val structure = createTable(columns.tableId.tableId, columns.columns, columns.queryAttributes)
+    queryTableContent(columns.tableId, None, structure)
+  }
+
+  private def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
+    val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
+    queryTableContent(columns.tableId, None, structure)
+  }
+
   def handleTableIdMessage(msg: TWithTableId): Unit =
       msg match {
         case columns: ResponseColumns => addColumns(columns)
@@ -86,10 +90,14 @@ class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localizatio
     ForeignKeyMapper.toFollowTable(follow, columns, attributes) 
   }
 
-  private def buildTab(dbTable : DBTableStructure, browsingTable :  BrowsingTable) = new Tab() {      
+  private def buildTab(dbTable : DBTableStructure, browsingTable : BrowsingTable) = new Tab() {
     text = TableStructureText.buildTabText(dbTable)
     content = browsingTable.control     
     tooltip.value = Tooltip("")
+    onCloseRequest = (ev: Event) => {
+      val queryId = browsingTable.getId
+      guiActor ! ResponseCloseTables(JobInDatabaseId(jobId, queryId.tableId.tableId.databaseId), List(queryId))
+    }
   }
 
   private def removeTabs(toCloseTabs : List[javafx.scene.control.Tab]) : Unit = {

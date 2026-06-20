@@ -18,6 +18,7 @@ import scalafx.geometry.Side
 import dbtarzan.messages.RequestRemovalAllTabs
 import scalafx.event.Event
 import scalafx.Includes.*
+import dbtarzan.log.actor.Logger
 
 class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger) extends TControlBuilder {
     private val jobsMap = new JobsMap()
@@ -46,9 +47,15 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
 
 
     def handleJobIdMessage(msg: TWithJobId) : Unit = msg match {
-        case tables : ResponseCloseTables => withJob(msg.jobId.jobId, _.removeTables(tables.ids))
-        case msg: RequestRemovalAllTabs => withJob(msg.jobId.jobId, _.requestRemovalAllTabs())
+        case tables: ResponseCloseTables => withJob(tables.jobId.jobId, job => removeTables(job, tables.ids))
+        case tables: RequestRemovalAllTabs => withJob(tables.jobId.jobId, _.requestRemovalAllTabs())
         case _ => log.error(localization.errorJobMessage(msg))
+    }
+
+    private def removeTables(job: Job,  tableIds : List[QueryId]): Unit = {
+        job.removeTables(tableIds)
+        if(job.isEmpty)
+            removeJob(job.jobId)
     }
 
     private def withJob(jobId: JobId, doWith: Job => Unit): Unit =
@@ -73,7 +80,16 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         jobsMap.addJob(job, tab)
         jobId
     }
+
+    private def removeJob(jobId: JobId): Unit = {
+        println(s"Closing job $jobId")
+        jobsMap.tabWithJobId(jobId).foreach(tab =>
+            jobsTabs.removeTab(tab)
+        )
+        jobsMap.removeJob(jobId)
+    }
 }
+
 
 
 

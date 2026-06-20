@@ -38,6 +38,9 @@ class JobsTabs() extends TControlBuilder {
         tabs.selectionModel().select(tab)
     }
 
+    def removeTab(tab: Tab) : Unit =
+        tabs.tabs -= tab
+
     def currentTab(): Tab = tabs.selectionModel().selectedItem()
 
     def control : Parent = tabs

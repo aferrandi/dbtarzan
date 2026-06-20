@@ -18,9 +18,15 @@ class JobsMap {
   def jobWithJobId(jobId: JobId): Option[Job] =
     mapTable.get(jobId).map(_.job)
 
+  def tabWithJobId(jobId: JobId): Option[Tab] =
+    mapTable.get(jobId).map(_.tab)
+
   def jobWithTabForJobId(jobId: JobId): Option[JobWithTab] =
     mapTable.get(jobId)
 
   def addJob(job: Job, tab: scalafx.scene.control.Tab): Unit =
     mapTable += job.jobId -> JobWithTab(job, tab)
+
+  def removeJob(jobId: JobId): Unit =
+    mapTable.remove(jobId)
 }
