@@ -9,7 +9,7 @@ import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, TabsToClose}
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
-import dbtarzan.messages.{ QueryId, TWithTableId, TWithQueryId, TWithJobId, ResponseCloseTables }
+import dbtarzan.messages.{ QueryId, TWithTableId, TWithQueryId, TWithJobId, ResponseCloseTables, TableInJobId, ResponseColumnsWithStructure }
 import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyles.tableTabs
 import org.apache.pekko.actor.ActorRef
 import scalafx.scene.control.{Tab, TabPane, Tooltip, Label}
@@ -79,6 +79,12 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         jobsTabs.addTab(tab)
         jobsMap.addJob(job, tab)
         jobId
+    }
+
+
+    def createJobFromStructure(tableId: TableId, structure: DBTableStructure): Unit = {
+        val jobId = createJobWith(tableId)
+        guiActor ! ResponseColumnsWithStructure(TableInJobId(tableId, jobId), structure)
     }
 
     private def removeJob(jobId: JobId): Unit = {

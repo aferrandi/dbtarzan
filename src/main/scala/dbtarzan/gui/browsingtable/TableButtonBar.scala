@@ -21,6 +21,7 @@ object TableButtonBar {
     val CHECK_NONE_KEY = new KeyCodeCombination(KeyCode.N, KeyCombination.ControlDown, KeyCombination.ShiftDown)
     val REFRESH_KEY = new KeyCodeCombination(KeyCode.R, KeyCombination.ControlDown)
     val REFRESH_KEEP_KEY = new KeyCodeCombination(KeyCode.R, KeyCombination.ControlDown, KeyCombination.ShiftDown)
+    val JOB_FROM_TABLE_KEY = new KeyCodeCombination(KeyCode.J, KeyCombination.ControlDown, KeyCombination.ShiftDown)
 
     private def button(text: String, code: KeyCodeCombination, icon: String, ev : ActionEvent => Unit) : Button =
       new Button(text) {
@@ -46,7 +47,8 @@ object TableButtonBar {
         button(localization.checkAll, CHECK_ALL_KEY, "checkAll", (_: ActionEvent) => guiActor ! CheckAllTableRows(queryId)),
         button(localization.uncheckAll, CHECK_NONE_KEY, "checkNone", (_: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
         button(localization.rowDetails, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
-        button(localization.refresh, REFRESH_KEY, "refresh", (ev: ActionEvent) => guiActor ! ReloadQuery(queryId, true))
+        button(localization.refresh, REFRESH_KEY, "refresh", (ev: ActionEvent) => guiActor ! ReloadQuery(queryId, true)),
+        button(localization.jobFromTable, JOB_FROM_TABLE_KEY, "jobFromTable", (_: ActionEvent) => guiActor ! CraateJobFromQuery(queryId))
       )
       spacing = 5
     }
@@ -60,5 +62,6 @@ object TableButtonBar {
             else if(CHECK_NONE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CheckNoTableRows(id))
             else if(REFRESH_KEY.`match`(ev)) tableId().foreach(id => guiActor ! ReloadQuery(id, true))
             else if(REFRESH_KEEP_KEY.`match`(ev)) tableId().foreach(id => guiActor ! ReloadQuery(id, false))
+            else if(JOB_FROM_TABLE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CraateJobFromQuery(id))
         }
 }

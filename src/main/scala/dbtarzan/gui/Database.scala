@@ -54,12 +54,12 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case tables : ResponseTablesByPattern => tableListWithSearch.addTableNames(tables.tabeIds)
     case virtualKeys: ResponseVirtualForeignKeys =>  openVirtualForeignKeysEditor(virtualKeys)
     case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
+    case create: CreateJobFromStructure => jobs.createJobFromStructure(create.tableId, create.structure)
     case msg => log.error(localization.errorDatabaseMessage(msg))
   }
 
   def handleJobIdMessage(msg: TWithJobId) : Unit =
     jobs.handleJobIdMessage(msg)
-
 
   private def openVirtualForeignKeysEditor(virtualKeys: ResponseVirtualForeignKeys): Unit = {
     virtualForeignKeyEditor = Some(VirtualForeignKeysEditorStarter.openVirtualForeignKeysEditor(

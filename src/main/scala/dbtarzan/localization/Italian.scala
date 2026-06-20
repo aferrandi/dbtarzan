@@ -67,6 +67,7 @@ class Italian extends Localization {
     def closeAllTabs = "Chiudi tutte le tab"
     def checkAll = "Spunta Tutto"
     def uncheckAll = "Rimuovi tutte le spunte"
+    def jobFromTable = "Lavoro da tabella"
     def copyMessageToClipboard = "Copia Messaggio Nel Clipboard"
     def queryText = "Testo Della Query"
     def filterFields = "Filtra i campi"

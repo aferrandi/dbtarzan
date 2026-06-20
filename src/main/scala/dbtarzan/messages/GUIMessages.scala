@@ -62,6 +62,9 @@ case class ResponseForeignKeyRowsNumber(queryId: QueryId, foreignKey: ForeignKey
 case class ResponseColumnsFollow(tableId: TableInJobId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
 
+case class ResponseColumnsWithStructure(tableId: TableInJobId,  structure: DBTableStructure)
+  extends TWithTableId
+
 case class ResponseCloseDatabase(databaseId : DatabaseId) 
     extends TWithDatabaseId
 
@@ -115,5 +118,12 @@ case class ResponseVirtualForeignKeys(databaseId : DatabaseId, keys : List[Virtu
 case class ResponseTestConnection(data : ConnectionData,  ex: Option[Exception])
 
 case class ResponseSchemaExtraction(data : ConnectionData,  schemas: Option[SchemaNames],  ex: Option[Exception])
+
+case class CraateJobFromQuery(queryId : QueryId)
+  extends TWithQueryId
+
+case class CreateJobFromStructure(databaseId: DatabaseId, tableId: TableId, structure: DBTableStructure)
+  extends TWithDatabaseId
+
 
 

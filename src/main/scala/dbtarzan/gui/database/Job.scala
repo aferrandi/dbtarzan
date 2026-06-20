@@ -60,6 +60,7 @@ class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localizatio
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
     case reloadQuery: ReloadQuery => tables.tableWithQueryId(reloadQuery.queryId, _.reloadQuery(reloadQuery.closeCurrentTab))
+    case createJob: CraateJobFromQuery => tables.tableWithQueryId(createJob.queryId, _.createJobFromThisQuery())
     case _ => log.error(localization.errorTableMessage(msg))
   }
 
@@ -73,10 +74,15 @@ class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localizatio
     queryTableContent(columns.tableId, None, structure)
   }
 
+  private def addColumnsWIthStructure(columns : ResponseColumnsWithStructure) : Unit =
+    queryTableContent(columns.tableId, None, columns.structure)
+
+
   def handleTableIdMessage(msg: TWithTableId): Unit =
       msg match {
         case columns: ResponseColumns => addColumns(columns)
         case columns: ResponseColumnsFollow => addColumnsFollow(columns)
+        case columns: ResponseColumnsWithStructure => addColumnsWIthStructure(columns)
         case _ => log.error(localization.errorTableMessage(msg))
       }
 

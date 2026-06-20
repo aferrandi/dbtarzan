@@ -103,6 +103,11 @@ class BrowsingTable(dbActor : ActorRef, guiActor : ActorRef, structure : DBTable
     useNewTable(dbTable.structure, closeCurrentTab)
   }
 
+  def createJobFromThisQuery() : Unit = {
+    val tableId = queryId.tableId
+    guiActor ! CreateJobFromStructure(tableId.tableId.databaseId, tableId.tableId, structure)
+  }
+
   private def removeProgressBar() : Unit = 
     layout.setBottom(null)
 

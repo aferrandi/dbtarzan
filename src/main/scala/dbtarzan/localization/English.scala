@@ -67,6 +67,7 @@ class English extends Localization {
     def closeAllTabs = "Close all tabs"
     def checkAll = "Check All"
     def uncheckAll = "Uncheck All"
+    def jobFromTable = "Job From Table"
     def queryText = "Query text"
     def filterFields = "Filter fields"
     def columnsDescription = "Columns Description"
