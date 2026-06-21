@@ -24,7 +24,10 @@ class JobsTabs() extends TControlBuilder {
         side = Side.Left
         rotateGraphic = false
         visible = false
+
     }
+    val originalHeight = tabs.tabMaxHeight()
+    tabs.tabMaxHeight = 0
     tabs += spacingTab()
 
     private def spacingTab() = new Tab {
@@ -36,10 +39,21 @@ class JobsTabs() extends TControlBuilder {
         tabs.visible = true
         tabs += tab
         tabs.selectionModel().select(tab)
+        resetTabPaneSize()
     }
+
+    private def resetTabPaneSize(): Unit =
+        tabs.tabMaxHeight = newTabPaneSize()
+
+    private def newTabPaneSize(): Double =
+        if (tabs.tabs.size > 2)
+            originalHeight
+        else
+            0
 
     def removeTab(tab: Tab) : Unit =
         tabs.tabs -= tab
+        resetTabPaneSize()
 
     def currentTab(): Tab = tabs.selectionModel().selectedItem()
 
