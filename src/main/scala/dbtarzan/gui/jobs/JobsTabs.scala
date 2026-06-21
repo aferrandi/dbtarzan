@@ -51,9 +51,10 @@ class JobsTabs() extends TControlBuilder {
         else
             0
 
-    def removeTab(tab: Tab) : Unit =
+    def removeTab(tab: Tab) : Unit = {
         tabs.tabs -= tab
         resetTabPaneSize()
+    }
 
     def currentTab(): Tab = tabs.selectionModel().selectedItem()
 

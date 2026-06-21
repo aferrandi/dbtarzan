@@ -2,6 +2,7 @@ package dbtarzan.gui.jobs;
 
 import dbtarzan.gui.interfaces.TControlBuilder
 import dbtarzan.db.*
+import dbtarzan.db.{ jobIdGenerator, JobId}
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
 import dbtarzan.gui.BrowsingTable
 import dbtarzan.gui.database.Job
@@ -22,7 +23,7 @@ import dbtarzan.log.actor.Logger
 
 class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger) extends TControlBuilder {
     private val jobsMap = new JobsMap()
-    private var nextJobId: JobId = JobId(0)
+    private val jobIdGenerator = new jobIdGenerator()
     private val jobsTabs = new JobsTabs()
 
     def currentJobId : Option[JobId] =
@@ -72,8 +73,7 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
     }
 
     def createJobWith(tableId: TableId): JobId = {
-        nextJobId = JobId.increment(nextJobId)
-        val jobId = nextJobId
+        val jobId = jobIdGenerator.nextJobId()
         val job = new Job(jobId, dbActor, guiActor, localization, log)
         val tab = buildJobTab(tableId, job)
         jobsTabs.addTab(tab)
