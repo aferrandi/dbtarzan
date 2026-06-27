@@ -13,7 +13,7 @@ import dbtarzan.log.actor.Logger
 import dbtarzan.messages.{ QueryId, TWithTableId, TWithQueryId, TWithJobId, ResponseCloseTables, TableInJobId, ResponseColumnsWithStructure }
 import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyles.tableTabs
 import org.apache.pekko.actor.ActorRef
-import scalafx.scene.control.{Tab, TabPane, Tooltip, Label}
+import scalafx.scene.control.{Tab, TabPane, Tooltip, Label, TextInputDialog}
 import scalafx.scene.Parent
 import scalafx.geometry.Side
 import dbtarzan.messages.RequestRemovalAllTabs
@@ -52,6 +52,22 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         case tables: RequestRemovalAllTabs => withJob(tables.jobId.jobId, _.requestRemovalAllTabs())
         case _ => log.error(localization.errorJobMessage(msg))
     }
+
+    def renameJob(jobId: JobId): Unit =
+        jobsMap.tabWithJobId(jobId).foreach(
+            tab => {
+                val currentName = tab.text()
+                val dialog = new TextInputDialog(defaultValue = currentName) {
+                    title = f"Renam job $jobId"
+                    initOwner(control.scene.value.getWindow)
+                    headerText = ""
+                    contentText = "Please enter job name:"
+                }
+                dialog.showAndWait() match {
+                    case Some(name) => tab.text = name
+                    case None       => println("Dialog was canceled.")
+                }
+            })
 
     private def removeTables(job: Job,  tableIds : List[QueryId]): Unit = {
         job.removeTables(tableIds)

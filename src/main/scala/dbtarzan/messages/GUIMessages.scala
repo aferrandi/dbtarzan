@@ -125,5 +125,8 @@ case class CraateJobFromQuery(queryId : QueryId)
 case class CreateJobFromStructure(databaseId: DatabaseId, tableId: TableId, structure: DBTableStructure)
   extends TWithDatabaseId
 
+case class RenameJob(databaseId: DatabaseId, jobId: JobId)
+  extends TWithDatabaseId
+
 
 

@@ -68,6 +68,7 @@ class Spanish extends Localization {
     def checkAll = "Marcar todo"
     def uncheckAll = "Desmarcar todo"
     def jobFromTable = "Trabajo de tabla"
+    def renameJob = "Renombrar el Trabajo"
     def copyMessageToClipboard = "Copiar mensaje al portapapeles"
     def queryText = "Texto De La Consulta"
     def filterFields = "filtrar los campos"

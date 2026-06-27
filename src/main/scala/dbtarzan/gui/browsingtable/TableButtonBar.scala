@@ -2,6 +2,7 @@ package dbtarzan.gui.browsingtable
 
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
+import dbtarzan.db.JobInDatabaseId
 import dbtarzan.messages.*
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
@@ -22,6 +23,7 @@ object TableButtonBar {
     val REFRESH_KEY = new KeyCodeCombination(KeyCode.R, KeyCombination.ControlDown)
     val REFRESH_KEEP_KEY = new KeyCodeCombination(KeyCode.R, KeyCombination.ControlDown, KeyCombination.ShiftDown)
     val JOB_FROM_TABLE_KEY = new KeyCodeCombination(KeyCode.J, KeyCombination.ControlDown, KeyCombination.ShiftDown)
+    val RENAME_JOB_KEY = new KeyCodeCombination(KeyCode.N, KeyCombination.ControlDown, KeyCombination.ShiftDown)
 
     private def button(text: String, code: KeyCodeCombination, icon: String, ev : ActionEvent => Unit) : Button =
       new Button(text) {
@@ -48,7 +50,8 @@ object TableButtonBar {
         button(localization.uncheckAll, CHECK_NONE_KEY, "checkNone", (_: ActionEvent) => guiActor ! CheckNoTableRows(queryId)),
         button(localization.rowDetails, "details", (_: ActionEvent) => guiActor ! SwitchRowDetails(queryId)),
         button(localization.refresh, REFRESH_KEY, "refresh", (ev: ActionEvent) => guiActor ! ReloadQuery(queryId, true)),
-        button(localization.jobFromTable, JOB_FROM_TABLE_KEY, "jobFromTable", (_: ActionEvent) => guiActor ! CraateJobFromQuery(queryId))
+        button(localization.jobFromTable, JOB_FROM_TABLE_KEY, "jobFromTable", (_: ActionEvent) => guiActor ! CraateJobFromQuery(queryId)),
+        button(localization.renameJob, RENAME_JOB_KEY, "renameJob", (_: ActionEvent) => guiActor ! RenameJob(queryId.tableId.tableId.databaseId, queryId.tableId.jobId))
       )
       spacing = 5
     }
@@ -63,5 +66,6 @@ object TableButtonBar {
             else if(REFRESH_KEY.`match`(ev)) tableId().foreach(id => guiActor ! ReloadQuery(id, true))
             else if(REFRESH_KEEP_KEY.`match`(ev)) tableId().foreach(id => guiActor ! ReloadQuery(id, false))
             else if(JOB_FROM_TABLE_KEY.`match`(ev)) tableId().foreach(id => guiActor ! CraateJobFromQuery(id))
+            else if(RENAME_JOB_KEY.`match`(ev)) tableId().foreach(id => guiActor ! RenameJob(id.tableId.tableId.databaseId, id.tableId.jobId))
         }
 }

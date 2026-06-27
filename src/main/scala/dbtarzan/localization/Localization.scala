@@ -68,6 +68,7 @@ trait Localization {
   def checkAll: String
   def uncheckAll: String
   def jobFromTable: String
+  def renameJob: String
   def copyMessageToClipboard : String
   def queryText : String
   def filterFields: String

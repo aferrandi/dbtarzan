@@ -55,6 +55,7 @@ class Database (dbActor : ActorRef, guiActor : ActorRef, databaseId : DatabaseId
     case virtualKeys: ResponseVirtualForeignKeys =>  openVirtualForeignKeysEditor(virtualKeys)
     case columns : ResponseColumnsForForeignKeys => virtualForeignKeyEditor.foreach(_.handleColumns(columns.tableId, columns.columns))
     case create: CreateJobFromStructure => jobs.createJobFromStructure(create.tableId, create.structure)
+    case rename: RenameJob => jobs.renameJob(rename.jobId)
     case msg => log.error(localization.errorDatabaseMessage(msg))
   }
 
