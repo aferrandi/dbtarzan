@@ -19,6 +19,7 @@ import scalafx.geometry.Side
 import scalafx.event.Event
 import scalafx.Includes.*
 import dbtarzan.log.actor.Logger
+import scalafx.application.Platform
 
 class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger) extends TControlBuilder {
     private val jobsMap = new JobsMap()
@@ -81,6 +82,10 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         text = s"Job ${job.jobId}"
         content = job.control
         tooltip.value = Tooltip(f"Job from ${tableId.tableName}")
+        onClosed = () => {
+            println("closing")
+            jobsTabs.refreshAfterRemove()
+        }
     }
 
     def createJobWith(tableId: TableId): JobId = {

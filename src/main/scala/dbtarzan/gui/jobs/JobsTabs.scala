@@ -59,6 +59,12 @@ class JobsTabs() extends TControlBuilder {
 
     def control : Parent = tabs
 
+    def refreshAfterRemove(): Unit = {
+        val selectionModel = tabs.selectionModel()
+        selectionModel.clearSelection()
+        selectionModel.selectLast()
+    }
+
 }
 
 
