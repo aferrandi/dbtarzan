@@ -15,7 +15,6 @@ import org.apache.pekko.actor.ActorRef
 import scalafx.scene.control.{Tab, TabPane, Tooltip, Label}
 import scalafx.scene.Parent
 import scalafx.geometry.Side
-import dbtarzan.messages.RequestRemovalAllTabs
 import scalafx.event.Event
 import scalafx.Includes.*
 

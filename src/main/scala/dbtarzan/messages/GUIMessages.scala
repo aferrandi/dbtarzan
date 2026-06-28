@@ -77,9 +77,6 @@ case class RequestRemovalTabsBefore(queryId : QueryId)
 case class RequestRemovalThisTab(queryId : QueryId) 
     extends TWithQueryId
 
-case class RequestRemovalAllTabs(jobId : JobInDatabaseId)
-    extends TWithJobId
-
 case class CopySelectionToClipboard(queryId : QueryId, includeHeaders : Boolean) 
     extends TWithQueryId
 

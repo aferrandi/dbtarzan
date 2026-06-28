@@ -16,7 +16,6 @@ import org.apache.pekko.actor.ActorRef
 import scalafx.scene.control.{Tab, TabPane, Tooltip, Label, TextInputDialog}
 import scalafx.scene.Parent
 import scalafx.geometry.Side
-import dbtarzan.messages.RequestRemovalAllTabs
 import scalafx.event.Event
 import scalafx.Includes.*
 import dbtarzan.log.actor.Logger
@@ -49,7 +48,6 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
 
     def handleJobIdMessage(msg: TWithJobId) : Unit = msg match {
         case tables: ResponseCloseTables => withJob(tables.jobId.jobId, job => removeTables(job, tables.ids))
-        case tables: RequestRemovalAllTabs => withJob(tables.jobId.jobId, _.requestRemovalAllTabs())
         case _ => log.error(localization.errorJobMessage(msg))
     }
 
@@ -83,9 +81,6 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         text = s"Job ${job.jobId}"
         content = job.control
         tooltip.value = Tooltip(f"Job from ${tableId.tableName}")
-        onCloseRequest = (ev: Event) => {
-            guiActor ! RequestRemovalAllTabs(JobInDatabaseId(job.jobId, tableId.databaseId))
-        }
     }
 
     def createJobWith(tableId: TableId): JobId = {

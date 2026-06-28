@@ -27,9 +27,6 @@ class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localizatio
     tabs.tabs --= tabsToClose
   }
 
-  def requestRemovalAllTabs() : Unit =
-    removeTabs(tabs.tabs.toList)
-
   def currentTableId : Option[QueryId] = {
     val currentTab = tabs.selectionModel().selectedItem()
     tables.tableIdForTab(currentTab)
