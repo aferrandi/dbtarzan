@@ -101,7 +101,6 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
     }
 
     private def removeJob(jobId: JobId): Unit = {
-        println(s"Closing job $jobId")
         jobsMap.tabWithJobId(jobId).foreach(tab =>
             jobsTabs.removeTab(tab)
         )
