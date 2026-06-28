@@ -53,19 +53,16 @@ class JobsTabs() extends TControlBuilder {
     def removeTab(tab: Tab) : Unit = {
         tabs.tabs -= tab
         resetTabPaneSize()
+        refreshAfterRemoveTab()
     }
 
     def currentTab(): Tab = tabs.selectionModel().selectedItem()
 
     def control : Parent = tabs
 
-    def refreshAfterRemove(): Unit = {
-        val selectionModel = tabs.selectionModel()
-        selectionModel.clearSelection()
-        selectionModel.selectLast()
-    }
-
+    /* needed because otherwise the tab content is just gray */
+    def refreshAfterRemoveTab(): Unit =
+        if(!tabs.tabs.isEmpty)
+            tabs.selectionModel().selectLast()
 }
-
-
 

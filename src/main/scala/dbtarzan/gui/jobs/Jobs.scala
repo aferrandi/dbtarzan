@@ -82,10 +82,7 @@ class Jobs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization,
         text = s"Job ${job.jobId}"
         content = job.control
         tooltip.value = Tooltip(f"Job from ${tableId.tableName}")
-        onClosed = () => {
-            println("closing")
-            jobsTabs.refreshAfterRemove()
-        }
+        onClosed = () => jobsTabs.refreshAfterRemoveTab()
     }
 
     def createJobWith(tableId: TableId): JobId = {
