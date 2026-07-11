@@ -16,7 +16,7 @@ and have been configured in the [connections editor](Connections-editor).
 
 ![Database List](images/databaseList.png)
 
-**Double-clicking** on a database or composite, DBTarzan connects to it and the tables of that database 
+**Double-clicking** on a database or composite, DBTarzan connects to it and the [tables](Table-list) of that database 
 or composite are displayed on the right.
 If no password was defined for that database or composite in the connection editor,
 we need to enter it (or them, for composites) in the password dialog to login.
