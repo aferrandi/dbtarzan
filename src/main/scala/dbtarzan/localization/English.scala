@@ -1,7 +1,7 @@
 package dbtarzan.localization
 
 import java.nio.file.Path
-import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithTableId, TWithQueryId }
+import dbtarzan.messages.{ QueryId, TWithDatabaseId, TWithJobId, TWithTableId, TWithQueryId }
 
 class English extends Localization {
     def settings = "Settings"
@@ -67,6 +67,8 @@ class English extends Localization {
     def closeAllTabs = "Close all tabs"
     def checkAll = "Check All"
     def uncheckAll = "Uncheck All"
+    def jobFromTable = "Job From Table"
+    def renameJob = "Rename Job"
     def queryText = "Query text"
     def filterFields = "Filter fields"
     def columnsDescription = "Columns Description"
@@ -138,6 +140,7 @@ class English extends Localization {
     def errorWrongEncryptionKeySize = "Wrong master password length. Possible lengths"
     def errorEncryptionKeysDifferent = "Master passwords are different"
     def errorDatabaseMessage(msg : TWithDatabaseId): String = "Database message "+msg+" not recognized"
+    def errorJobMessage(msg : TWithJobId): String = "Job message "+msg+" not recognized"
     def errorTableMessage(msg : TWithTableId): String = "Table message "+msg+" not recognized"
     def errorTableMessage(msg : TWithQueryId): String = "Table message "+msg+" not recognized"
     def errorNoTables(databaseName : String, schemasText : String): String = "No tables read from database "+databaseName+". Wrong schema? Available schemas: "+schemasText

@@ -11,24 +11,15 @@ import dbtarzan.messages.*
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*
 import scalafx.scene.Parent
+import scalafx.event.Event
 import scalafx.scene.control.{Tab, TabPane, Tooltip}
 
 /* One tab for each table */
-class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
+class Job(val jobId: JobId, dbActor : ActorRef, guiActor : ActorRef, localization : Localization, log: Logger)
   extends TControlBuilder {
   private val tabs = new TabPane()
   private val tables = new TableTabsMap[BrowsingTable]()
   private val tablesToClose = new TabsToClose()
-
-  def addColumns(columns : ResponseColumns) : Unit =  {
-    val structure = createTable(columns.tableId, columns.columns, columns.queryAttributes)
-    queryTableContent(columns.tableId, None, structure)
-  }
-
-  def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
-    val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
-    queryTableContent(columns.tableId, None, structure)
-  }
 
   def removeTables(ids : List[QueryId]) : Unit = {
     val tabsToClose = tables.tabsWithIds(ids)
@@ -36,13 +27,13 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     tabs.tabs --= tabsToClose
   }
 
-  def requestRemovalAllTabs() : Unit =
-    removeTabs(tabs.tabs.toList)
-
   def currentTableId : Option[QueryId] = {
     val currentTab = tabs.selectionModel().selectedItem()
     tables.tableIdForTab(currentTab)
   }
+
+  def isEmpty: Boolean =
+    tabs.tabs.isEmpty
 
   def control : Parent = tabs
 
@@ -66,8 +57,31 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     case errorRows : ErrorRows => tables.tableWithQueryId(errorRows.queryId, rowsError(_, errorRows))
     case oneRow : ResponseOneRow =>  tables.tableWithQueryId(oneRow.queryId, addOneRow(_, oneRow))
     case reloadQuery: ReloadQuery => tables.tableWithQueryId(reloadQuery.queryId, _.reloadQuery(reloadQuery.closeCurrentTab))
+    case createJob: CraateJobFromQuery => tables.tableWithQueryId(createJob.queryId, _.createJobFromThisQuery())
     case _ => log.error(localization.errorTableMessage(msg))
   }
+
+  private def addColumns(columns : ResponseColumns) : Unit =  {
+    val structure = createTable(columns.tableId.tableId, columns.columns, columns.queryAttributes)
+    queryTableContent(columns.tableId, None, structure)
+  }
+
+  private def addColumnsFollow(columns : ResponseColumnsFollow) : Unit =  {
+    val structure = createTableFollow(columns.columns, columns.follow, columns.queryAttributes)
+    queryTableContent(columns.tableId, None, structure)
+  }
+
+  private def addColumnsWIthStructure(columns : ResponseColumnsWithStructure) : Unit =
+    queryTableContent(columns.tableId, None, columns.structure)
+
+
+  def handleTableIdMessage(msg: TWithTableId): Unit =
+      msg match {
+        case columns: ResponseColumns => addColumns(columns)
+        case columns: ResponseColumnsFollow => addColumnsFollow(columns)
+        case columns: ResponseColumnsWithStructure => addColumnsWIthStructure(columns)
+        case _ => log.error(localization.errorTableMessage(msg))
+      }
 
   /* creates a table from scratch */
   private def createTable(tableId : TableId, columns : Fields, attributes : QueryAttributes) : DBTableStructure = 
@@ -79,16 +93,20 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     ForeignKeyMapper.toFollowTable(follow, columns, attributes) 
   }
 
-  private def buildTab(dbTable : DBTableStructure, browsingTable :  BrowsingTable) = new Tab() {      
+  private def buildTab(dbTable : DBTableStructure, browsingTable : BrowsingTable) = new Tab() {
     text = TableStructureText.buildTabText(dbTable)
     content = browsingTable.control     
     tooltip.value = Tooltip("")
+    onCloseRequest = (ev: Event) => {
+      val queryId = browsingTable.getId
+      guiActor ! ResponseCloseTables(JobInDatabaseId(jobId, queryId.tableId.tableId.databaseId), List(queryId))
+    }
   }
 
   private def removeTabs(toCloseTabs : List[javafx.scene.control.Tab]) : Unit = {
     val toCloseIds = tables.idsFromTabs(toCloseTabs)
-    toCloseIds.groupBy(toCloseId => toCloseId.tableId.databaseId)
-      .foreach({case (databaseId, toCloseIdsWithDatabaseId) => guiActor ! ResponseCloseTables(databaseId, toCloseIdsWithDatabaseId)})
+    toCloseIds.groupBy(toCloseId => toCloseId.tableId.tableId.databaseId)
+      .foreach({case (databaseId, toCloseIdsWithDatabaseId) => guiActor ! ResponseCloseTables(JobInDatabaseId(jobId, databaseId), toCloseIdsWithDatabaseId)})
   }
 
   private def removeTabsBefore(queryId : QueryId, allTabsInOrder : List[javafx.scene.control.Tab]) : Unit = 
@@ -137,7 +155,7 @@ class TableTabs(dbActor : ActorRef, guiActor : ActorRef, localization : Localiza
     log.error(localization.errorRequestingTheRows(error.queryId), error.ex)
   }
 
-  private def queryTableContent(tableId: TableId, originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
+  private def queryTableContent(tableId: TableInJobId, originalQuery : Option[OriginalQuery], structure : DBTableStructure) : Unit = {
     val queryId = IDGenerator.queryId(tableId)
     tablesToClose.addToCloseWhenNewTabOpens(queryId, originalQuery)
     // requests the foreign keys for this table.

@@ -6,9 +6,11 @@ import dbtarzan.config.connections.ConnectionData
 
 trait TWithDatabaseId { def databaseId : DatabaseId }
 
+trait TWithJobId { def jobId : JobInDatabaseId }
+
 trait TWithQueryId { def queryId : QueryId }
 
-trait TWithTableId { def tableId : TableId }
+trait TWithTableId { def tableId : TableInJobId }
 
 trait TWithDatabases { }
       
@@ -27,17 +29,17 @@ case class ResponseTables(databaseId : DatabaseId, names: TableIds, dbActor : Ac
 case class ResponseTablesByPattern(databaseId : DatabaseId, tabeIds: TableIds)
     extends TWithDatabaseId
 
-case class ResponseCloseTables(databaseId : DatabaseId, ids : List[QueryId]) 
-    extends TWithDatabaseId
+case class ResponseCloseTables(jobId: JobInDatabaseId, ids : List[QueryId])
+    extends TWithJobId
 
 case class ResponseSchemas(databaseId : DatabaseId, schemaIds: SchemaIds)
   extends TWithDatabaseId
 
-case class ResponseColumns(tableId  : TableId, columns : Fields, queryAttributes : QueryAttributes) 
+case class ResponseColumns(tableId  : TableInJobId, columns : Fields, queryAttributes : QueryAttributes)
     extends TWithTableId
 
-case class  ResponseColumnsForForeignKeys(tableId  : TableId, columns : Fields)
-    extends TWithTableId
+case class  ResponseColumnsForForeignKeys(databaseId: DatabaseId, tableId  : TableId, columns : Fields)
+    extends TWithDatabaseId
 
 case class ResponsePrimaryKeys(queryId : QueryId, structure : DBTableStructure, keys : PrimaryKeys)
     extends TWithQueryId
@@ -57,8 +59,11 @@ case class ResponseRowsNumber(queryId : QueryId, rowsNumber: Int)
 case class ResponseForeignKeyRowsNumber(queryId: QueryId, foreignKey: ForeignKey, rowsNumber: Int)
   extends TWithQueryId
 
-case class ResponseColumnsFollow(tableId: TableId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
+case class ResponseColumnsFollow(tableId: TableInJobId,  follow : FollowKey, columns : Fields, queryAttributes : QueryAttributes) 
     extends TWithTableId
+
+case class ResponseColumnsWithStructure(tableId: TableInJobId,  structure: DBTableStructure)
+  extends TWithTableId
 
 case class ResponseCloseDatabase(databaseId : DatabaseId) 
     extends TWithDatabaseId
@@ -71,9 +76,6 @@ case class RequestRemovalTabsBefore(queryId : QueryId)
     
 case class RequestRemovalThisTab(queryId : QueryId) 
     extends TWithQueryId
-
-case class RequestRemovalAllTabs(databaseId : DatabaseId) 
-    extends TWithDatabaseId
 
 case class CopySelectionToClipboard(queryId : QueryId, includeHeaders : Boolean) 
     extends TWithQueryId
@@ -113,5 +115,15 @@ case class ResponseVirtualForeignKeys(databaseId : DatabaseId, keys : List[Virtu
 case class ResponseTestConnection(data : ConnectionData,  ex: Option[Exception])
 
 case class ResponseSchemaExtraction(data : ConnectionData,  schemas: Option[SchemaNames],  ex: Option[Exception])
+
+case class CraateJobFromQuery(queryId : QueryId)
+  extends TWithQueryId
+
+case class CreateJobFromStructure(databaseId: DatabaseId, tableId: TableId, structure: DBTableStructure)
+  extends TWithDatabaseId
+
+case class RenameJob(databaseId: DatabaseId, jobId: JobId)
+  extends TWithDatabaseId
+
 
 

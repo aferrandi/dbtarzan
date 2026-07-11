@@ -38,6 +38,7 @@ class GUIActor(
 
   def intiialized: Receive = {
         case rsp: TWithQueryId => runLater{ _.databaseTabs.handleQueryIdMessage(rsp) }
+        case rsp: TWithJobId => runLater{ _.databaseTabs.handleJobIdMessage(rsp) }
         case rsp: TWithDatabaseId => runLater{ _.databaseTabs.handleDatabaseIdMessage(rsp) }
         case rsp: TWithTableId => runLater { _.databaseTabs.handleTableIdMessage(rsp) }
         case rsp: ResponseTestConnection => runLater { _.global.handleTestConnectionResponse(rsp) }

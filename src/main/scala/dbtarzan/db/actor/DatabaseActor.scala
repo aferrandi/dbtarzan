@@ -68,7 +68,7 @@ class DatabaseActor(
 
   private def queryForeignKeys(qry : QueryForeignKeys) : Unit = coreHandler.withCore(qry.queryId, core => {
       val tableId = qry.queryId.tableId
-      val foreignKeys = ForeignKeys(extractForeignKeys(core, tableId))
+      val foreignKeys = ForeignKeys(extractForeignKeys(core, tableId.tableId))
       guiActor ! ResponseForeignKeys(qry.queryId, qry.structure, foreignKeys)
     }, logError)
 
@@ -81,7 +81,7 @@ class DatabaseActor(
 
   private def queryForeignKeysByPattern(qry : QueryForeignKeysByPattern) : Unit = coreHandler.withCore(qry.queryId, core => {
     val tableId = qry.queryId.tableId
-    val foreignKeys = ForeignKeys(ForeignKeysByPattern.filterForeignKeysByPattern(extractForeignKeys(core, tableId), qry.pattern))
+    val foreignKeys = ForeignKeys(ForeignKeysByPattern.filterForeignKeysByPattern(extractForeignKeys(core, tableId.tableId), qry.pattern))
     guiActor ! ResponseForeignKeysByPatterns(qry.queryId, foreignKeys)
   }, logError)
 
@@ -150,19 +150,19 @@ class DatabaseActor(
     }, logError)
 
   private def queryColumns(qry: QueryColumns) : Unit = coreHandler.withCore(qry.tableId, core => {
-    val tableName = qry.tableId.tableName
+    val tableName = qry.tableId.tableId.tableName
     val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
     guiActor ! ResponseColumns(qry.tableId, columns, core.attributes)
   }, logError)
 
   private def queryColumnsFollow(qry: QueryColumnsFollow): Unit = coreHandler.withCore(qry.tableId, core => {
-    val tableName = qry.tableId.tableName
+    val tableName = qry.tableId.tableId.tableName
     val columnsFollow = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
     guiActor ! ResponseColumnsFollow(qry.tableId, qry.follow, columnsFollow, core.attributes)
   }, logError)
 
   private def queryIndexes(qry: QueryIndexes) : Unit = coreHandler.withCore(qry.queryId, core => {
-    val tableName = qry.queryId.tableId.tableName
+    val tableName = qry.queryId.tableId.tableId.tableName
     val indexes = cache.cachedIndexes(tableName, core.indexesLoader.indexes(tableName))
     guiActor ! ResponseIndexes(qry.queryId, indexes)
   }, logError)
@@ -192,11 +192,11 @@ class DatabaseActor(
   private def queryColumnsForForeignKeys(qry: QueryColumnsForForeignKeys) : Unit = coreHandler.withCore(qry.tableId, core => {
     val tableName = qry.tableId.tableName
     val columns = cache.cachedFields(tableName, core.columnsLoader.columnNames(tableName))
-    guiActor ! ResponseColumnsForForeignKeys(qry.tableId, columns)
+    guiActor ! ResponseColumnsForForeignKeys(qry.tableId.databaseId, qry.tableId, columns)
   }, logError)
 
   private def queryPrimaryKeys(qry: QueryPrimaryKeys) : Unit = coreHandler.withCore(qry.queryId, core => {
-    val tableName = qry.queryId.tableId.tableName
+    val tableName = qry.queryId.tableId.tableId.tableName
     val primaryKeys = cache.cachedPrimaryKeys(tableName, core.primaryKeysLoader.primaryKeys(tableName))
     log.debug(s"Primary keys $primaryKeys")
     guiActor ! ResponsePrimaryKeys(qry.queryId, qry.structure, primaryKeys)
