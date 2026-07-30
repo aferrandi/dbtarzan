@@ -10,7 +10,6 @@ import dbtarzan.gui.tabletabs.{TTableWithTab, TableStructureText, TableTabsMap, 
 import dbtarzan.localization.Localization
 import dbtarzan.log.actor.Logger
 import dbtarzan.messages.{ QueryId, TWithTableId, TWithQueryId, TWithJobId, ResponseCloseTables }
-import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyles.tableTabs
 import org.apache.pekko.actor.ActorRef
 import scalafx.scene.control.{Tab, TabPane, Tooltip, Label}
 import scalafx.scene.Parent
