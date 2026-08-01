@@ -18,5 +18,5 @@ snapcraft clean
 snapcraft build
 find parts/java -type f -name "dbtarzan-assembly*" -delete
 find . -type f -name "dbtarzan_source.tar.bz2" -delete
-snapcraft snap
+snapcraft pack
 cd -

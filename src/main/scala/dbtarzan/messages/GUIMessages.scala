@@ -1,6 +1,6 @@
 package dbtarzan.messages
 
-import dbtarzan.db.*
+import dbtarzan.db.{JobId, TableId, DatabaseId, FollowKey, QueryAttributes, DBTableStructure, JobInDatabaseId, Fields, Field, VirtualalForeignKey, TableIds, DBRowStructure, SchemaIds, DatabaseInfo, Indexes, PrimaryKeys, ForeignKeys, Rows, Row, ForeignKey, OrderByDirection, CompositeId, SchemaNames}
 import org.apache.pekko.actor.ActorRef
 import dbtarzan.config.connections.ConnectionData
 

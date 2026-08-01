@@ -2,7 +2,7 @@ package dbtarzan.gui.browsingtable
 
 import dbtarzan.gui.util.JFXUtil
 import dbtarzan.localization.Localization
-import dbtarzan.db.JobInDatabaseId
+import dbtarzan.db.{JobInDatabaseId, JobId}
 import dbtarzan.messages.*
 import org.apache.pekko.actor.ActorRef
 import scalafx.Includes.*

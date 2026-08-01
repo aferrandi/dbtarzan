@@ -1,8 +1,7 @@
 package dbtarzan.gui.jobs;
 
 import dbtarzan.gui.interfaces.TControlBuilder
-import dbtarzan.db.*
-import dbtarzan.db.{ jobIdGenerator, JobId}
+import dbtarzan.db.{ jobIdGenerator, JobId, DBTableStructure, TableId}
 import dbtarzan.db.foreignkeys.ForeignKeyMapper
 import dbtarzan.gui.BrowsingTable
 import dbtarzan.gui.database.Job
