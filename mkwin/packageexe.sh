@@ -31,7 +31,7 @@ then
   wget -O $JRE.zip $JRE_URL
   unzip $JRE.zip
   mv jdk* $JRE
-  makensis -DVERSION=$VERSION $WINDIR/nsis.nsi
+  makensis -DVERSION=$VERSION -DJRE=$JRE $WINDIR/nsis.nsi
 else
   echo "launch4j failed with exit code $?"
 fi
