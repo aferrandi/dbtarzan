@@ -7,7 +7,7 @@ object JobId {
 }
 
 class jobIdGenerator() {
-  private var nextJobIdValue: Int = 0
+  private var nextJobIdValue: Int = 1
 
   def nextJobId(): JobId = {
     val jobId = JobId(nextJobIdValue)
