@@ -17,6 +17,8 @@ import scalafx.geometry.Side
 import scalafx.event.Event
 import scalafx.Includes.*
 
+case class OriginalTabSize(maxHeight: Double, minHeight: Double, maxWidth: Double, minWidth: Double)
+
 class JobsTabs() extends TControlBuilder {
     private val tabs = new TabPane {
         side = Side.Left
@@ -24,8 +26,9 @@ class JobsTabs() extends TControlBuilder {
         visible = false
 
     }
-    val originalHeight = tabs.tabMaxHeight()
-    tabs.tabMaxHeight = 0
+    val originalSize = OriginalTabSize(tabs.tabMaxHeight(), tabs.tabMinHeight(), tabs.tabMaxWidth(), tabs.tabMinWidth())
+    val zeroSize = OriginalTabSize(0, 0, 0, 0)
+    setTabSize(zeroSize)
     tabs += spacingTab()
 
     private def spacingTab() = new Tab {
@@ -40,14 +43,23 @@ class JobsTabs() extends TControlBuilder {
         resetTabPaneSize()
     }
 
-    private def resetTabPaneSize(): Unit =
-        tabs.tabMaxHeight = newTabPaneSize()
+    private def resetTabPaneSize(): Unit = {
+        val tabSize = newTabPaneSize()
+        setTabSize(tabSize)
+    }
 
-    private def newTabPaneSize(): Double =
+    private def setTabSize(tabSize: OriginalTabSize): Unit = {
+        tabs.tabMaxHeight = tabSize.maxHeight
+        tabs.tabMinHeight = tabSize.minHeight
+        tabs.tabMaxWidth = tabSize.maxWidth
+        tabs.tabMinWidth = tabSize.minWidth
+    }
+
+    private def newTabPaneSize(): OriginalTabSize =
         if (tabs.tabs.size > 2)
-            originalHeight
+            originalSize
         else
-            0
+            zeroSize
 
     def removeTab(tab: Tab) : Unit = {
         tabs.tabs -= tab
