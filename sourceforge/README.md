@@ -10,6 +10,13 @@ dbtarzan_XXX_all.deb : Debian pacakge for Linux. Download it and install it as a
 
 DBTarzan changelog
 =================
+- Release 1.37
+
+Job tabs. 
+Clicking on a table of the database list creates a new job. Any query on that table, any foreign key followed remains in the same job tab. But opening a new table of the database list creates a new job tab.
+A job tab contains all the tables and queres related to a specific purpose.
+
+
 - Release 1.36
 
 use LEFT functions on large strings in the SQL queries to improve performance and prevent timeouts. Specify the LEFT function to use for the database in the connection configuration to do this.
@@ -21,19 +28,3 @@ radio button under the foreign key list to show the number of rows that will be 
 adds an icon and a text to the unique indexes in the indexes info view, so that it is clear which indexes are unique and which are not.
 
 **WINDOWS: not working existing database connections can be fixed reloading the JDBC driver JAR file in the connection editor.**
-
-- Release 1.35
-
-removed the possibility to have non encrypted passwords in the connection config file.
-
-possibility to use IN clauses instead of ORs in the queries resulting from tables traversal using foreign keys.
-
-
-
-
-
-
-
-
-
-

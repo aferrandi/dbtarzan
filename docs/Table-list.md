@@ -16,7 +16,7 @@ The tables list shows the list of tables in a database or [composite](Composites
 If the tables of a single database are displayed, they are identified by their name,
 if the tables of a composite are displayed, thay are identified by the database name + table name.
 
-**Double-clicking** on a table, the table is [displayed](Table-tab) on the right. 
+**Double-clicking** on a table, the table is [displayed](Table-tab) on the right, in a new [job](Job-tabs). 
 
 The **table filter**, a text box on the top of the table list allows to filter the tables.
 
