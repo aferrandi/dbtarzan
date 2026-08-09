@@ -1,7 +1,7 @@
 ---
 
 layout: default
-title: Foreign keys
+title: Jobs
 resource: true
 categories: [Structure]
 
